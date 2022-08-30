@@ -67,6 +67,7 @@ microservice-chart:
           metricAggregationType: Count
           targetValue: "30"
   envConfig:
+    DB_HOST: pagopaafmcalculatordata-microservice-chart:4000
     CACHE_SIZE: '1000'
     CACHE_EXPIRATION_TIME: '10s'
   #    APPLICATIONINSIGHTS_CONNECTION_STRING: ai-d-connection-string
