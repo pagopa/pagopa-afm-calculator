@@ -595,6 +595,7 @@
           "paymentMethod": {
             "type": "string",
             "enum": [
+              "ANY",
               "PPAL",
               "BPAY",
               "PAYBP",
@@ -609,6 +610,7 @@
           "touchpoint": {
             "type": "string",
             "enum": [
+              "ANY",
               "IO",
               "WISP",
               "CHECKOUT"
@@ -661,6 +663,20 @@
           }
         }
       },
+      "AppInfo": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          }
+        }
+      },
       "Bundle": {
         "type": "object",
         "properties": {
@@ -668,6 +684,12 @@
             "type": "string"
           },
           "idPsp": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
             "type": "string"
           },
           "paymentAmount": {
@@ -685,6 +707,7 @@
           "paymentMethod": {
             "type": "string",
             "enum": [
+              "ANY",
               "PPAL",
               "BPAY",
               "PAYBP",
@@ -699,6 +722,7 @@
           "touchpoint": {
             "type": "string",
             "enum": [
+              "ANY",
               "IO",
               "WISP",
               "CHECKOUT"
@@ -787,20 +811,6 @@
             "format": "int64"
           },
           "name": {
-            "type": "string"
-          }
-        }
-      },
-      "AppInfo": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "version": {
-            "type": "string"
-          },
-          "environment": {
             "type": "string"
           }
         }
