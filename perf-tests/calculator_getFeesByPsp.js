@@ -55,8 +55,11 @@ export default function calculator_getFeesByPsp() {
 
     const idPsp = String(10).padStart(11, '0');
 	let response = getFeesByPsp(rootUrl, idPsp, payload, params);
+	if (response.status !== 200){
+		console.log(new Date(), ' error ', response.status);
+	}
 	check(response, {
-		'getFeesByPsp': (r) => r.status === 200,
+		'getFeesByPsp': () => response.status === 200,
 	});
 }
 
