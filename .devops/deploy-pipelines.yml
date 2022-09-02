@@ -81,11 +81,14 @@ stages:
 
           - template: templates/maven-github-release/template.yaml@pagopaCommons
             parameters:
-              semver: '${{ parameters.SEMVER }}'
               release_branch: $(SOURCE_BRANCH)
               gitEmail: $(GIT_EMAIL)
               gitUsername: $(GIT_USERNAME)
               gitHubConnection: $(GITHUB_CONNECTION)
+              ${{ if eq(parameters.SEMVER, 'skip') }}:
+                semver: 'buildNumber'
+              ${{ if ne(parameters.SEMVER, 'skip') }}:
+                semver: '${{ parameters.SEMVER }}'
 
   # Deploy on Azure ACR
   - stage: 'Build'
