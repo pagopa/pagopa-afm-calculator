@@ -33,7 +33,7 @@ export default function calculator_getFeesByPsp() {
 	};
 
     // to give randomness to request in order to avoid caching
-	const paymentAmount = Math.floor(Math.random() * __VU % 100);
+	const paymentAmount = Math.floor(Math.random() * (100 + __VU) % 100);
 	const primaryCreditorInstitution = 'fiscalCode-' + Math.floor(Math.random() * 2) + 1;
 
 	let payload = {
@@ -53,13 +53,12 @@ export default function calculator_getFeesByPsp() {
         ]
     };
 
-    const idPsp = String(10).padStart(11, '0');
+    const idPsp = String(Math.floor(Math.random() * 10) + 1).padStart(11, '0');
+
 	let response = getFeesByPsp(rootUrl, idPsp, payload, params);
-	if (response.status !== 200){
-		console.log(new Date(), ' error ', response.status);
-	}
+
 	check(response, {
-		'getFeesByPsp': () => response.status === 200,
+		'getFeesByPsp': (response) => response.status === 200,
 	});
 }
 
