@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopadcommonacr.azurecr.io/pagopaafmcalculator
-    tag: "0.0.1-5" #improve
+    tag: "0.0.1-6" #improve
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -43,33 +43,27 @@ microservice-chart:
   resources:
     requests:
       memory: "512Mi"
-      cpu: "350m"
+      cpu: "0.25"
     limits:
       memory: "1Gi"
-      cpu: "350m"
+      cpu: "0.5"
   autoscaling:
     enable: true
-    minReplica: 1
-    maxReplica: 5
-    pollingInterval: 1 # seconds
-    cooldownPeriod: 10 # seconds
+    minReplica: 3
+    maxReplica: 10
+    pollingInterval: 10 # seconds
+    cooldownPeriod: 50 # seconds
     triggers:
-      - type: azure-monitor
+      - type: cpu
         metadata:
-          tenantId: 7788edaf-0346-4068-9d79-c868aed15b3d
-          subscriptionId: bbe47ad4-08b3-4925-94c5-1278e5819b86
-          resourceGroupName: pagopa-d-afm-sec-rg
-          resourceURI: Microsoft.KeyVault/vaults/pagopa-d-afm-kv
-          metricName: ServiceApiHit
-          # metricNamespace: Microsoft.KeyVault/vaults
-          # metricFilter: namespace eq 'default'
-          # metricAggregationInterval: "-1:1:0"
-          metricAggregationType: Count
-          targetValue: "30"
+          # Required
+          type: Utilization # Allowed types are 'Utilization' or 'AverageValue'
+          value: "75"
   envConfig:
+    DB_HOST: 'pagopaafmcalculatordata-microservice-chart:4000'
     CACHE_SIZE: '1000'
     CACHE_EXPIRATION_TIME: '10s'
-  #    APPLICATIONINSIGHTS_CONNECTION_STRING: ai-d-connection-string
+    APPLICATIONINSIGHTS_CONNECTION_STRING: ai-d-connection-string
 
   envSecret: []
   keyvault:
