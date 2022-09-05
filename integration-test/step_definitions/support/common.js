@@ -7,16 +7,16 @@ const afm_host = properties.afm_host;
 
 function get(url) {
     return axios.get(afm_host + url)
-         .then(res => {
-             return res;
-         })
-         .catch(error => {
-             return error.response;
-         });
+        .then(res => {
+            return res;
+        })
+        .catch(error => {
+            return error.response;
+        });
 }
 
 function post(url, body) {
-    return axios.post(afm_host + url, config, body)
+    return axios.post(afm_host + url, body)
         .then(res => {
             return res;
         })
@@ -46,14 +46,20 @@ function del(url) {
         });
 }
 
-function call(method, url, body){
-    return axios.call(method, afm_host + url, body)
-        .then(res => {
-            return res;
-        })
-        .catch(error => {
-            return error.response;
-        });
+function call(method, url, body) {
+    if (method === 'GET') {
+        return get(url)
+    }
+    if (method === 'POST') {
+        return post(url, body)
+    }
+    if (method === 'PUT') {
+        return put(url, body)
+    }
+    if (method === 'DELETE') {
+        return del(url)
+    }
+
 }
 
 module.exports = {get, post, put, del, call}

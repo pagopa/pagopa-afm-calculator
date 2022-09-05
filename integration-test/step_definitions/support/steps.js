@@ -13,12 +13,14 @@ Given('bundles are available', async function () {
 Given(/^CI attributes are available$/, function () {
     // TODO
 });
+
 Given(/^initial json$/, function (payload) {
     body = JSON.parse(payload);
 });
 
 When(/^the client send (GET|POST|PUT|DELETE) to (.*)$/, async function (method, url) {
     responseToCheck = await call(method, url, body)
+    console.log(responseToCheck)
 });
 
 Then(/^check errorCode is (\d+)$/, function (status) {
