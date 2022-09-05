@@ -1,12 +1,10 @@
 const axios = require("axios");
 const fs = require('fs');
 
-let rawdata = fs.readFileSync('./config/properties.json');
-let properties = JSON.parse(rawdata);
-const afm_host = properties.afm_host;
+
 
 function get(url) {
-    return axios.get(afm_host + url)
+    return axios.get(url)
         .then(res => {
             return res;
         })
@@ -16,7 +14,7 @@ function get(url) {
 }
 
 function post(url, body) {
-    return axios.post(afm_host + url, body)
+    return axios.post(url, body)
         .then(res => {
             return res;
         })
@@ -26,7 +24,7 @@ function post(url, body) {
 }
 
 function put(url, body) {
-    return axios.put(afm_host + url, body)
+    return axios.put(url, body)
         .then(res => {
             return res;
         })
@@ -37,7 +35,7 @@ function put(url, body) {
 
 
 function del(url) {
-    return axios.delete(afm_host + url)
+    return axios.delete(url)
         .then(res => {
             return res;
         })

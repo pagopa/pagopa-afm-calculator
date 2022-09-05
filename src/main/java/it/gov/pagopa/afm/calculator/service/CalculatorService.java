@@ -86,8 +86,8 @@ public class CalculatorService {
                         if (cibundle.getAttributes().size() > 0) {
                             transfers.addAll(cibundle.getAttributes().parallelStream()
                                     .filter(attribute -> (attribute.getTransferCategory() == null ||
-                                            (attribute.getTransferCategoryRelation().equals(TransferCategoryRelation.EQUAL) && primaryTransferCategoryList.contains(attribute.getTransferCategory()) ||
-                                                    (attribute.getTransferCategoryRelation().equals(TransferCategoryRelation.NOT_EQUAL) && !primaryTransferCategoryList.contains(attribute.getTransferCategory()))
+                                            (TransferCategoryRelation.EQUAL.equals(attribute.getTransferCategoryRelation()) && primaryTransferCategoryList.contains(attribute.getTransferCategory()) ||
+                                                    (TransferCategoryRelation.NOT_EQUAL.equals(attribute.getTransferCategoryRelation()) && !primaryTransferCategoryList.contains(attribute.getTransferCategory()))
                                             )))
                                     .map(attribute -> {
                                         // primaryCiIncurredFee = min (paymentAmount, min(ciIncurredFee, PspFee))

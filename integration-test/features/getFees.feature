@@ -1,8 +1,7 @@
 Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
 
   Background:
-    Given bundles are available
-    And CI attributes are available
+    Given the configuration "data.json"
 
   Scenario: Execute a GetFees request
     Given initial json
