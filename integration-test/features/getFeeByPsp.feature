@@ -29,8 +29,8 @@ Feature: GetFeeByPsp
     """
     [
       {
-        "taxPayerFee": 1.30,
-        "primaryCiIncurredFee": 0.20,
+        "taxPayerFee": 130,
+        "primaryCiIncurredFee": 20,
         "paymentMethod": null,
         "touchpoint": null,
         "idBundle": "1",
@@ -65,8 +65,8 @@ Feature: GetFeeByPsp
     """
     [
       {
-        "taxPayerFee": 0.80,
-        "primaryCiIncurredFee": 0.00,
+        "taxPayerFee": 80,
+        "primaryCiIncurredFee": 0,
         "paymentMethod": "PO",
         "touchpoint": null,
         "idBundle": "2",
@@ -74,8 +74,8 @@ Feature: GetFeeByPsp
         "idPsp": "88888888888"
       },
       {
-        "taxPayerFee": 1.30,
-        "primaryCiIncurredFee": 0.20,
+        "taxPayerFee": 130,
+        "primaryCiIncurredFee": 20,
         "paymentMethod": null,
         "touchpoint": null,
         "idBundle": "1",
@@ -109,8 +109,8 @@ Feature: GetFeeByPsp
     """
     [
       {
-        "taxPayerFee": 0.30,
-        "primaryCiIncurredFee": 0.20,
+        "taxPayerFee": 30,
+        "primaryCiIncurredFee": 20,
         "paymentMethod": null,
         "touchpoint": null,
         "idBundle": "4",
@@ -145,8 +145,8 @@ Feature: GetFeeByPsp
     """
     [
       {
-        "taxPayerFee": 0.30,
-        "primaryCiIncurredFee": 0.20,
+        "taxPayerFee": 30,
+        "primaryCiIncurredFee": 20,
         "paymentMethod": null,
         "touchpoint": null,
         "idBundle": "4",
@@ -154,8 +154,8 @@ Feature: GetFeeByPsp
         "idPsp": "88888888889"
       },
       {
-        "taxPayerFee": 1.00,
-        "primaryCiIncurredFee": 0.00,
+        "taxPayerFee": 100,
+        "primaryCiIncurredFee": 0,
         "paymentMethod": null,
         "touchpoint": "IO",
         "idBundle": "6",

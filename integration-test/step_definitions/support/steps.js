@@ -35,5 +35,5 @@ Then(/^check errorCode is (\d+)$/, function (status) {
 
 Then(/^check response body is$/, function (payload) {
     console.log(responseToCheck.data)
-    assert.strictEqual(responseToCheck.data, payload);
+    assert.strictEqual(responseToCheck.data, JSON.parse(payload));
 });

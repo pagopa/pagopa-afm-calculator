@@ -30,8 +30,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     """
     [
       {
-        "taxPayerFee": 0.30,
-        "primaryCiIncurredFee": 0.20,
+        "taxPayerFee": 30,
+        "primaryCiIncurredFee": 20,
         "paymentMethod": null,
         "touchpoint": null,
         "idBundle": "4",
@@ -41,8 +41,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889"
       },
       {
-        "taxPayerFee": 0.90,
-        "primaryCiIncurredFee": 0.00,
+        "taxPayerFee": 90,
+        "primaryCiIncurredFee": 0,
         "paymentMethod": "CP",
         "touchpoint": null,
         "idBundle": "3",
@@ -52,8 +52,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889"
       },
       {
-        "taxPayerFee": 1.30,
-        "primaryCiIncurredFee": 0.20,
+        "taxPayerFee": 130,
+        "primaryCiIncurredFee": 20,
         "paymentMethod": null,
         "touchpoint": null,
         "idBundle": "1",
@@ -92,8 +92,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     """
     [
       {
-        "taxPayerFee": 0.30,
-        "primaryCiIncurredFee": 0.20,
+        "taxPayerFee": 30,
+        "primaryCiIncurredFee": 20,
         "paymentMethod": null,
         "touchpoint": null,
         "idBundle": "4",
@@ -103,8 +103,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889"
       },
       {
-        "taxPayerFee": 0.90,
-        "primaryCiIncurredFee": 0.00,
+        "taxPayerFee": 90,
+        "primaryCiIncurredFee": 0,
         "paymentMethod": "CP",
         "touchpoint": null,
         "idBundle": "3",
@@ -114,8 +114,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889"
       },
       {
-        "taxPayerFee": 1.30,
-        "primaryCiIncurredFee": 0.20,
+        "taxPayerFee": 130,
+        "primaryCiIncurredFee": 20,
         "paymentMethod": null,
         "touchpoint": null,
         "idBundle": "1",
@@ -154,8 +154,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     """
     [
       {
-        "taxPayerFee": 0.30,
-        "primaryCiIncurredFee": 0.20,
+        "taxPayerFee": 30,
+        "primaryCiIncurredFee": 20,
         "paymentMethod": null,
         "touchpoint": null,
         "idBundle": "4",
@@ -165,8 +165,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889"
       },
       {
-        "taxPayerFee": 0.90,
-        "primaryCiIncurredFee": 0.00,
+        "taxPayerFee": 90,
+        "primaryCiIncurredFee": 00,
         "paymentMethod": "CP",
         "touchpoint": null,
         "idBundle": "3",

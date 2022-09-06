@@ -42,7 +42,7 @@ public class CalculatorService {
 
         var paymentMethodFilter = new BundleSpecification(new SearchCriteria("paymentMethod", SearchOperation.NULL_OR_EQUAL, paymentOption.getPaymentMethod()));
 
-        List<String> idPspList = paymentOption.getIdPspList() != null && paymentOption.getIdPspList().size() == 0 ? null : paymentOption.getIdPspList();
+        List<String> idPspList = paymentOption.getIdPspList() != null && paymentOption.getIdPspList().isEmpty() ? null : paymentOption.getIdPspList();
         var pspFilter = new BundleSpecification(new SearchCriteria("idPsp", SearchOperation.IN, idPspList));
 
         // retrieve public and private bundles
