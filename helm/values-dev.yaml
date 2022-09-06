@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopadcommonacr.azurecr.io/pagopaafmcalculator
-    tag: "0.0.1-5" #improve
+    tag: "0.0.1-7"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -61,10 +61,8 @@ microservice-chart:
           value: "75"
   envConfig:
     WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
-
     CACHE_SIZE: '1000'
     CACHE_EXPIRATION_TIME: '10s'
-
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'ai-d-connection-string'
