@@ -4,7 +4,7 @@
     "title": "PagoPA API Spontaneous Payment",
     "description": "Calculator microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "0.0.1-5"
+    "version": "0.0.1-6"
   },
   "servers": [
     {
