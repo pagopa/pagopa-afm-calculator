@@ -39,28 +39,33 @@ parameters:
 variables:
   imageRepository: '$(IMAGE_REPOSITORY_NAME)'
   nameSpace: '$(K8S_NAMESPACE)'
-  APPINSIGHTS_SERVICE_CONN_PROD: "$(TF_APPINSIGHTS_SERVICE_CONN_PROD)"
-  APPINSIGHTS_RESOURCE_ID_PROD: "$(TF_APPINSIGHTS_RESOURCE_ID_PROD)"
 
   ${{ if eq(parameters['ENV'], 'dev') }}:
     dockerRegistryServiceConnection: $(DEV_CONTAINER_REGISTRY_SERVICE_CONN)
     dockerRegistryFqdn: $(DEV_CONTAINER_NAMESPACE)
     kubernetesServiceConnection: '$(DEV_KUBERNETES_SERVICE_CONN)'
     poolImage: 'pagopa-dev-linux'
+    appInsightsServiceConn: "$(TF_APPINSIGHTS_SERVICE_CONN_DEV)"
+    appInsightsResourceId: "$(TF_APPINSIGHTS_RESOURCE_ID_DEV)"
   ${{ if eq(parameters['ENV'], 'uat') }}:
     dockerRegistryServiceConnection: $(UAT_CONTAINER_REGISTRY_SERVICE_CONN)
     dockerRegistryFqdn: $(UAT_CONTAINER_NAMESPACE)
     kubernetesServiceConnection: '$(UAT_KUBERNETES_SERVICE_CONN)'
     poolImage: 'pagopa-uat-linux'
+    appInsightsServiceConn: "$(TF_APPINSIGHTS_SERVICE_CONN_UAT)"
+    appInsightsResourceId: "$(TF_APPINSIGHTS_RESOURCE_ID_UAT)"
   ${{ if eq(parameters['ENV'], 'prod') }}:
     dockerRegistryServiceConnection: $(PROD_CONTAINER_REGISTRY_SERVICE_CONN)
     dockerRegistryFqdn: $(PROD_CONTAINER_NAMESPACE)
     kubernetesServiceConnection: '$(PROD_KUBERNETES_SERVICE_CONN)'
     poolImage: 'pagopa-prod-linux'
+    appInsightsServiceConn: "$(TF_APPINSIGHTS_SERVICE_CONN_PROD)"
+    appInsightsResourceId: "$(TF_APPINSIGHTS_RESOURCE_ID_PROD)"
+
   ${{ if eq(variables['Build.SourceBranchName'], 'merge') }}:
-    SOURCE_BRANCH: "main" # force to main branch
+    sourceBranch: "main" # force to main branch
   ${{ if ne(variables['Build.SourceBranchName'], 'merge') }}:
-    SOURCE_BRANCH: ${{ variables['Build.SourceBranchName'] }}
+    sourceBranch: ${{ variables['Build.SourceBranchName'] }}
 
 
 
@@ -86,7 +91,7 @@ stages:
 
           - template: templates/maven-github-release/template.yaml@pagopaCommons
             parameters:
-              release_branch: $(SOURCE_BRANCH)
+              release_branch: $(sourceBranch)
               gitEmail: $(GIT_EMAIL)
               gitUsername: $(GIT_USERNAME)
               gitHubConnection: $(GITHUB_CONNECTION)
