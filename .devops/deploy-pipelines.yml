@@ -158,6 +158,6 @@ stages:
                     APP_NAME: $(imageRepository)
                     VALUE_FILE: "helm/values-${{ parameters['ENV'] }}.yaml"
                     DEPLOY_VERSION: $(deploy_version)
-                    APPINSIGHTS_SERVICE_CONN: ${{ appInsightsServiceConn }}
-                    APPINSIGHTS_RESOURCE_ID: ${{ appInsightsResourceId }}
+                    APPINSIGHTS_SERVICE_CONN: ${{ variables.appInsightsServiceConn }}
+                    APPINSIGHTS_RESOURCE_ID: ${{ variables.appInsightsResourceId }}
 
