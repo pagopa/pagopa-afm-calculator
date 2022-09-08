@@ -11,7 +11,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>microservice</artifactId>
-    <version>0.0.1-13</version>
+    <version>0.0.1-14</version>
     <name>afm-calculator</name>
     <description>Calculator Logic microservice for pagoPA AFM</description>
 
