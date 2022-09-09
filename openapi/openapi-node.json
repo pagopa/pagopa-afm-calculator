@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "PagoPA API Spontaneous Payment for Node",
-    "description": "Calculator microservice for pagoPA AFM",
+    "title": "PagoPA API Calculator Data for Node",
+    "description": "Calculator Data microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
     "version": "0.0.1-11"
   },
