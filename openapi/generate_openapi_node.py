@@ -13,9 +13,9 @@ filteredTags = []
 for tag in data['tags']:
     if 'Calculator' == tag['name']:
         filteredTags.append(tag)
-        print(filteredTags)
 data['tags'] = filteredTags
 
+data['info']['title'] = 'PagoPA API Spontaneous Payment for Node'
 
 with open('openapi-node.json', 'w') as f:
     json.dump(data, f, indent=2)
