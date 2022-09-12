@@ -63,7 +63,7 @@ microservice-chart:
     WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
     DB_HOST: pagopaafmcalculatordata-microservice-chart:4000
     CACHE_SIZE: '1000'
-    CACHE_EXPIRATION_TIME: '10s'
+    CACHE_EXPIRATION_TIME: '3m'
   envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-u-connection-string
   keyvault:
