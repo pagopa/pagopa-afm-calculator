@@ -54,7 +54,7 @@ jobs:
           destination_repo: 'pagopa/pagopa-infra'
           destination_folder: 'src/domains/afm-app/api/calculator-service/node/v1'
           destination_base_branch: 'main'
-          destination_head_branch: 'AFM-Calculator-Data-swagger-update'
+          destination_head_branch: 'AFM-Calculator-Node-swagger-update'
           user_email: 'github-bot@pagopa.it'
           user_name: 'pagopa-github-bot'
           allow_force_push: 'true'
