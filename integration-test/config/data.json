@@ -95,7 +95,7 @@
           "id": "1",
           "maxPaymentAmount": 20,
           "transferCategory": "TAX1",
-          "transferCategoryRel": "EQUAL"
+          "transferCategoryRelation": "EQUAL"
         }
       ]
     },
@@ -108,7 +108,7 @@
           "id": "2",
           "maxPaymentAmount": 20,
           "transferCategory": "TAX1",
-          "transferCategoryRel": "NOT_EQUAL"
+          "transferCategoryRelation": "NOT_EQUAL"
         }
       ]
     },

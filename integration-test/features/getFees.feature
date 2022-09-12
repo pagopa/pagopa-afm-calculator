@@ -10,7 +10,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       "paymentAmount": 70,
       "primaryCreditorInstitution": "77777777777",
       "paymentMethod": "CP",
-      "touchPoint": "CHECKOUT",
+      "touchpoint": "CHECKOUT",
       "idPspList": null,
       "transferList": [
         {
@@ -25,18 +25,18 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     }
     """
     When the client send POST to /fees?maxOccurrences=10
-    Then check errorCode is 200
+    Then check statusCode is 200
     And check response body is
     """
     [
       {
         "taxPayerFee": 30,
         "primaryCiIncurredFee": 20,
-        "paymentMethod": null,
-        "touchpoint": null,
+        "paymentMethod": "ANY",
+        "touchpoint": "ANY",
         "idBundle": "4",
-        "name": "pacchetto 4",
-        "description": "pacchetto 4",
+        "bundleName": "pacchetto 4",
+        "bundleDescription": "pacchetto 4",
         "idCiBundle": "3",
         "idPsp": "88888888889"
       },
@@ -44,35 +44,35 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "taxPayerFee": 90,
         "primaryCiIncurredFee": 0,
         "paymentMethod": "CP",
-        "touchpoint": null,
+        "touchpoint": "ANY",
         "idBundle": "3",
-        "name": "pacchetto 3",
-        "description": "pacchetto 3",
+        "bundleName": "pacchetto 3",
+        "bundleDescription": "pacchetto 3",
         "idCiBundle": null,
         "idPsp": "88888888889"
       },
       {
         "taxPayerFee": 130,
         "primaryCiIncurredFee": 20,
-        "paymentMethod": null,
-        "touchpoint": null,
+        "paymentMethod": "ANY",
+        "touchpoint": "ANY",
         "idBundle": "1",
-        "name": "pacchetto 1",
-        "description": "pacchetto 1",
+        "bundleName": "pacchetto 1",
+        "bundleDescription": "pacchetto 1",
         "idCiBundle": "1",
         "idPsp": "88888888888"
       }
     ]
     """
 
-  Scenario: Execute a GetFees request
+  Scenario: Execute a GetFees request 2
     Given initial json
     """
     {
       "paymentAmount": 70,
       "primaryCreditorInstitution": "77777777777",
       "paymentMethod": "CP",
-      "touchPoint": null,
+      "touchpoint": null,
       "idPspList": null,
       "transferList": [
         {
@@ -87,18 +87,18 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     }
     """
     When the client send POST to /fees?maxOccurrences=10
-    Then check errorCode is 200
+    Then check statusCode is 200
     And check response body is
     """
     [
       {
         "taxPayerFee": 30,
         "primaryCiIncurredFee": 20,
-        "paymentMethod": null,
-        "touchpoint": null,
+        "paymentMethod": "ANY",
+        "touchpoint": "ANY",
         "idBundle": "4",
-        "name": "pacchetto 4",
-        "description": "pacchetto 4",
+        "bundleName": "pacchetto 4",
+        "bundleDescription": "pacchetto 4",
         "idCiBundle": "3",
         "idPsp": "88888888889"
       },
@@ -106,21 +106,21 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "taxPayerFee": 90,
         "primaryCiIncurredFee": 0,
         "paymentMethod": "CP",
-        "touchpoint": null,
+        "touchpoint": "ANY",
         "idBundle": "3",
-        "name": "pacchetto 3",
-        "description": "pacchetto 3",
+        "bundleName": "pacchetto 3",
+        "bundleDescription": "pacchetto 3",
         "idCiBundle": null,
         "idPsp": "88888888889"
       },
       {
         "taxPayerFee": 130,
         "primaryCiIncurredFee": 20,
-        "paymentMethod": null,
-        "touchpoint": null,
+        "paymentMethod": "ANY",
+        "touchpoint": "ANY",
         "idBundle": "1",
-        "name": "pacchetto 1",
-        "description": "pacchetto 1",
+        "bundleName": "pacchetto 1",
+        "bundleDescription": "pacchetto 1",
         "idCiBundle": "1",
         "idPsp": "88888888888"
       }
@@ -134,7 +134,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       "paymentAmount": 70,
       "primaryCreditorInstitution": "77777777777",
       "paymentMethod": "CP",
-      "touchPoint": null,
+      "touchpoint": null,
       "idPspList": ["88888888889"],
       "transferList": [
         {
@@ -149,18 +149,18 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     }
     """
     When the client send POST to /fees?maxOccurrences=10
-    Then check errorCode is 200
+    Then check statusCode is 200
     And check response body is
     """
     [
       {
         "taxPayerFee": 30,
         "primaryCiIncurredFee": 20,
-        "paymentMethod": null,
-        "touchpoint": null,
+        "paymentMethod": "ANY",
+        "touchpoint": "ANY",
         "idBundle": "4",
-        "name": "pacchetto 4",
-        "description": "pacchetto 4",
+        "bundleName": "pacchetto 4",
+        "bundleDescription": "pacchetto 4",
         "idCiBundle": "3",
         "idPsp": "88888888889"
       },
@@ -168,10 +168,10 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "taxPayerFee": 90,
         "primaryCiIncurredFee": 00,
         "paymentMethod": "CP",
-        "touchpoint": null,
+        "touchpoint": "ANY",
         "idBundle": "3",
-        "name": "pacchetto 3",
-        "description": "pacchetto 3",
+        "bundleName": "pacchetto 3",
+        "bundleDescription": "pacchetto 3",
         "idCiBundle": null,
         "idPsp": "88888888889"
       }
@@ -185,7 +185,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       "paymentAmount": 70,
       "primaryCreditorInstitution": "77777777777",
       "paymentMethod": null,
-      "touchPoint": "IO",
+      "touchpoint": "IO",
       "idPspList": ["88888888888"],
       "transferList": [
         {
@@ -200,7 +200,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     }
     """
     When the client send POST to /fees?maxOccurrences=10
-    Then check errorCode is 200
+    Then check statusCode is 200
     And check response body is
     """
     [

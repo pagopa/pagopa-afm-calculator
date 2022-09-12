@@ -83,7 +83,7 @@ public class CalculatorService {
                     // check ciBundle belongs to primary CI
                     if (cibundle.getCiFiscalCode().equals(paymentOption.getPrimaryCreditorInstitution())) {
 
-                        if (cibundle.getAttributes().size() > 0) {
+                        if (!cibundle.getAttributes().isEmpty()) {
                             transfers.addAll(cibundle.getAttributes().parallelStream()
                                     .filter(attribute -> (attribute.getTransferCategory() == null ||
                                             (TransferCategoryRelation.EQUAL.equals(attribute.getTransferCategoryRelation()) && primaryTransferCategoryList.contains(attribute.getTransferCategory()) ||

@@ -10,7 +10,7 @@ Feature: GetFeeByPsp
         "paymentAmount": 70,
         "primaryCreditorInstitution": "77777777777",
         "paymentMethod": "CP",
-        "touchPoint": "CHECKOUT",
+        "touchpoint": "CHECKOUT",
         "transferList": [
           {
             "creditorInstitution": "77777777777",
@@ -31,9 +31,11 @@ Feature: GetFeeByPsp
       {
         "taxPayerFee": 130,
         "primaryCiIncurredFee": 20,
-        "paymentMethod": null,
-        "touchpoint": null,
+        "paymentMethod": "ANY",
+        "touchpoint": "ANY",
         "idBundle": "1",
+        "bundleName": "pacchetto 1",
+        "bundleDescription": "pacchetto 1",
         "idCiBundle": "1",
         "idPsp": "88888888888"
       }
@@ -60,7 +62,7 @@ Feature: GetFeeByPsp
       }
     """
     When the client send POST to /psps/88888888888/fees
-    Then check errorCode is 200
+    Then check statusCode is 200
     And check response body is
     """
     [
@@ -68,17 +70,21 @@ Feature: GetFeeByPsp
         "taxPayerFee": 80,
         "primaryCiIncurredFee": 0,
         "paymentMethod": "PO",
-        "touchpoint": null,
+        "touchpoint": "ANY",
         "idBundle": "2",
+        "bundleName": "pacchetto 2",
+        "bundleDescription": "pacchetto 2",
         "idCiBundle": null,
         "idPsp": "88888888888"
       },
       {
         "taxPayerFee": 130,
         "primaryCiIncurredFee": 20,
-        "paymentMethod": null,
-        "touchpoint": null,
+        "paymentMethod": "ANY",
+        "touchpoint": "ANY",
         "idBundle": "1",
+        "bundleName": "pacchetto 1",
+        "bundleDescription": "pacchetto 1",
         "idCiBundle": "1",
         "idPsp": "88888888888"
       }
@@ -104,16 +110,18 @@ Feature: GetFeeByPsp
       }
     """
     When the client send POST to /psps/88888888889/fees
-    Then check errorCode is 200
+    Then check statusCode is 200
     And check response body is
     """
     [
       {
         "taxPayerFee": 30,
         "primaryCiIncurredFee": 20,
-        "paymentMethod": null,
-        "touchpoint": null,
+        "paymentMethod": "ANY",
+        "touchpoint": "ANY",
         "idBundle": "4",
+        "bundleName": "pacchetto 4",
+        "bundleDescription": "pacchetto 4",
         "idCiBundle": "3",
         "idPsp": "88888888889"
       }
@@ -126,7 +134,7 @@ Feature: GetFeeByPsp
       {
         "paymentAmount": 70,
         "primaryCreditorInstitution": "77777777777",
-        "touchPoint": "IO",
+        "touchpoint": "IO",
         "transferList": [
           {
             "creditorInstitution": "77777777777",
@@ -140,15 +148,15 @@ Feature: GetFeeByPsp
       }
     """
     When the client send POST to /psps/88888888889/fees
-    Then check errorCode is 200
+    Then check statusCode is 200
     And check response body is
     """
     [
       {
         "taxPayerFee": 30,
         "primaryCiIncurredFee": 20,
-        "paymentMethod": null,
-        "touchpoint": null,
+        "paymentMethod": "ANY",
+        "touchpoint": "ANY",
         "idBundle": "4",
         "idCiBundle": "3",
         "idPsp": "88888888889"
@@ -156,7 +164,7 @@ Feature: GetFeeByPsp
       {
         "taxPayerFee": 100,
         "primaryCiIncurredFee": 0,
-        "paymentMethod": null,
+        "paymentMethod": "ANY",
         "touchpoint": "IO",
         "idBundle": "6",
         "idCiBundle": null,

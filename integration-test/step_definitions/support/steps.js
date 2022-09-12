@@ -15,7 +15,6 @@ Given('the configuration {string}', async function (filePath) {
     let file = fs.readFileSync('./config/' + filePath);
     let config = JSON.parse(file);
     const result = await post(afm_data_host + '/configuration', config);
-    console.log(result)
     assert.strictEqual(result.status, 201);
 });
 
@@ -25,15 +24,16 @@ Given(/^initial json$/, function (payload) {
 
 When(/^the client send (GET|POST|PUT|DELETE) to (.*)$/, async function (method, url) {
     responseToCheck = await call(method, afm_host + url, body)
-    console.log(responseToCheck)
 });
 
-Then(/^check errorCode is (\d+)$/, function (status) {
+Then(/^check statusCode is (\d+)$/, function (status) {
     assert.strictEqual(responseToCheck.status, status);
 
 });
 
 Then(/^check response body is$/, function (payload) {
     console.log(responseToCheck.data)
-    assert.strictEqual(responseToCheck.data, JSON.parse(payload));
+    console.log(payload)
+
+    assert.deepStrictEqual(responseToCheck.data, JSON.parse(payload));
 });
