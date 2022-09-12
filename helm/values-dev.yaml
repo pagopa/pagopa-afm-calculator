@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopadcommonacr.azurecr.io/pagopaafmcalculator
-    tag: "0.0.1-11"
+    tag: "0.0.3"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -43,26 +43,27 @@ microservice-chart:
   resources:
     requests:
       memory: "512Mi"
-      cpu: "0.25"
+      cpu: "0.5"
     limits:
-      memory: "1Gi"
+      memory: "768Mi"
       cpu: "0.5"
   autoscaling:
     enable: true
-    minReplica: 3
+    minReplica: 5
     maxReplica: 10
-    pollingInterval: 10 # seconds
-    cooldownPeriod: 50 # seconds
+    pollingInterval: 30 # seconds
+    cooldownPeriod: 60 # seconds
     triggers:
       - type: cpu
         metadata:
           # Required
           type: Utilization # Allowed types are 'Utilization' or 'AverageValue'
-          value: "75"
+          value: "70"
   envConfig:
     WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
+    DB_HOST: pagopaafmcalculatordata-microservice-chart:4000
     CACHE_SIZE: '1000'
-    CACHE_EXPIRATION_TIME: '10s'
+    CACHE_EXPIRATION_TIME: '3m'
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'ai-d-connection-string'

@@ -2,12 +2,15 @@ package it.gov.pagopa.afm.calculator.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.PaymentOptionByPsp;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
@@ -28,31 +31,38 @@ public class CalculatorController {
     @Autowired
     CalculatorService calculatorService;
 
-    @Operation(summary = "Get taxpayer fees of a specific idPSP", tags = {"Calculator"})
+    @Operation(summary = "Get taxpayer fees of the specified idPSP", security = {@SecurityRequirement(name = "ApiKey")}, tags = {"Calculator"})
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = List.class))),
+            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = Transfer.class)))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "500", description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
     @PostMapping(value = "/psps/{idPsp}/fees", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public List<Transfer> getFeeByPsp(
+    public List<Transfer> getFeesByPsp(
             @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp") String idPsp,
-            @RequestBody PaymentOption paymentOption, @RequestParam(required = false, defaultValue = "10") Integer limit) {
-        paymentOption.setIdPspList(List.of(idPsp));
-        return calculatorService.calculate(paymentOption, limit);
+            @RequestBody PaymentOptionByPsp paymentOptionByPsp, @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
+        PaymentOption paymentOption = PaymentOption.builder()
+                                            .paymentAmount(paymentOptionByPsp.getPaymentAmount())
+                                            .primaryCreditorInstitution(paymentOptionByPsp.getPrimaryCreditorInstitution())
+                                            .paymentMethod(paymentOptionByPsp.getPaymentMethod())
+                                            .touchpoint(paymentOptionByPsp.getTouchpoint())
+                                            .idPspList(List.of(idPsp))
+                                            .transferList(paymentOptionByPsp.getTransferList())
+                                            .build();
+        return calculatorService.calculate(paymentOption, maxOccurrences);
     }
 
-    @Operation(summary = "Get taxpayer fees of all or specified idPSP", tags = {"Calculator"})
+    @Operation(summary = "Get taxpayer fees of all or specified idPSP", security = {@SecurityRequirement(name = "ApiKey")}, tags = {"Calculator"})
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = List.class))),
+            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = Transfer.class)))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "500", description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
     @PostMapping(value = "/fees", produces = {MediaType.APPLICATION_JSON_VALUE})
     public List<Transfer> getFees(
-            @RequestBody PaymentOption paymentOption, @RequestParam(required = false, defaultValue = "10") Integer limit) {
-        return calculatorService.calculate(paymentOption, limit);
+            @RequestBody PaymentOption paymentOption, @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
+        return calculatorService.calculate(paymentOption, maxOccurrences);
     }
 }
