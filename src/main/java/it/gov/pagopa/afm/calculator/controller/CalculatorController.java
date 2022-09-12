@@ -40,7 +40,7 @@ public class CalculatorController {
     @PostMapping(value = "/psps/{idPsp}/fees", produces = {MediaType.APPLICATION_JSON_VALUE})
     public List<Transfer> getFeesByPsp(
             @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp") String idPsp,
-            @RequestBody PaymentOptionByPsp paymentOptionByPsp, @RequestParam(required = false, defaultValue = "10") Integer limit) {
+            @RequestBody PaymentOptionByPsp paymentOptionByPsp, @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
         PaymentOption paymentOption = PaymentOption.builder()
                                             .paymentAmount(paymentOptionByPsp.getPaymentAmount())
                                             .primaryCreditorInstitution(paymentOptionByPsp.getPrimaryCreditorInstitution())
@@ -49,7 +49,7 @@ public class CalculatorController {
                                             .idPspList(List.of(idPsp))
                                             .transferList(paymentOptionByPsp.getTransferList())
                                             .build();
-        return calculatorService.calculate(paymentOption, limit);
+        return calculatorService.calculate(paymentOption, maxOccurrences);
     }
 
     @Operation(summary = "Get taxpayer fees of all or specified idPSP", tags = {"Calculator"})
@@ -61,7 +61,7 @@ public class CalculatorController {
             @ApiResponse(responseCode = "500", description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
     @PostMapping(value = "/fees", produces = {MediaType.APPLICATION_JSON_VALUE})
     public List<Transfer> getFees(
-            @RequestBody PaymentOption paymentOption, @RequestParam(required = false, defaultValue = "10") Integer limit) {
-        return calculatorService.calculate(paymentOption, limit);
+            @RequestBody PaymentOption paymentOption, @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
+        return calculatorService.calculate(paymentOption, maxOccurrences);
     }
 }
