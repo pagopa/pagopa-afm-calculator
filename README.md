@@ -2,23 +2,13 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-afm-calculator&metric=alert_status)](https://sonarcloud.io/dashboard?id=pagopa_pagopa-afm-calculator)
 
-Spring Application exposes Api to manage configuration for EC/PSP on the _Nodo dei Pagamenti_.
+Spring Application exposes API to calculate taxpayer fees according to [_AFM Marketplace_](https://github.com/pagopa/pagopa-afm-marketplace-be) configuration.
 
-- [pagoPa Api Config](#pagopa-api-config)
-    - [Api Documentation 📖](#api-documentation-)
+- [PagoPa AFM Calculator](#pagopa-afm-calculator)
+    - [API Documentation 📖](#api-documentation-)
     - [Technology Stack](#technology-stack)
-    - [Start Project Locally 🚀](#start-project-locally-)
-        - [Prerequisites](#prerequisites)
-        - [Run docker container](#run-docker-container)
     - [Develop Locally 💻](#develop-locally-)
         - [Prerequisites](#prerequisites-1)
-        - [Run the project](#run-the-project)
-        - [Spring Profiles](#spring-profiles)
-        - [Oracle Docker Container](#oracle-docker-container)
-        - [Testing 🧪](#testing-)
-            - [Unit testing](#unit-testing)
-            - [Integration testing](#integration-testing)
-            - [Load testing](#load-testing)
     - [Contributors 👥](#contributors-)
         - [Mainteiners](#mainteiners)
 
