@@ -33,7 +33,7 @@ export default function calculator() {
 	};
 
 	// to give randomness to request in order to avoid caching
-    const paymentAmount = Math.floor(Math.random() * __VU % 100);
+    const paymentAmount = Math.floor(Math.random() * (100 + __VU) % 100);
     const primaryCreditorInstitution = 'fiscalCode-' + Math.floor(Math.random() * 2) + 1;
 
     let payload = {

@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopadcommonacr.azurecr.io/pagopaafmcalculator
-    tag: "0.0.1-11"
+    tag: "0.0.1-14"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -42,34 +42,30 @@ microservice-chart:
     allowPrivilegeEscalation: false
   resources:
     requests:
-      memory: "500Mi"
-      cpu: "350m"
+      memory: "512Mi"
+      cpu: "0.5"
     limits:
-      memory: "500Mi"
-      cpu: "350m"
+      memory: "768Mi"
+      cpu: "0.5"
   autoscaling:
-    minReplica: 1
-    maxReplica: 2
+    enable: true
+    minReplica: 5
+    maxReplica: 10
     pollingInterval: 30 # seconds
-    cooldownPeriod: 300 # seconds
+    cooldownPeriod: 60 # seconds
     triggers:
-      - type: azure-monitor
+      - type: cpu
         metadata:
-          tenantId: 7788edaf-0346-4068-9d79-c868aed15b3d
-          subscriptionId: b9fc9419-6097-45fe-9f74-ba0641c91912
-          resourceGroupName: pagopa-p-afm-sec-rg
-          resourceURI: Microsoft.KeyVault/vaults/pagopa-p-afm-kv
-          metricName: ServiceApiHit
-          # metricNamespace: Microsoft.KeyVault/vaults
-          # metricFilter: namespace eq 'default'
-          # metricAggregationInterval: "-1:1:0"
-          metricAggregationType: Count
-          targetValue: "30"
+          # Required
+          type: Utilization # Allowed types are 'Utilization' or 'AverageValue'
+          value: "70"
   envConfig:
+    WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
+    DB_HOST: pagopaafmcalculatordata-microservice-chart:4000
     CACHE_SIZE: '1000'
-    CACHE_EXPIRATION_TIME: '10s'
+    CACHE_EXPIRATION_TIME: '3m'
+  envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-p-connection-string
-  envSecret: []
   keyvault:
     name: "pagopa-p-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
