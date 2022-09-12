@@ -129,7 +129,7 @@
                 "operationId": "getFees",
                 "parameters": [
                     {
-                        "name": "limit",
+                        "name": "maxOccurrences",
                         "in": "query",
                         "required": false,
                         "schema": {
@@ -377,7 +377,7 @@
                         }
                     },
                     {
-                        "name": "limit",
+                        "name": "maxOccurrences",
                         "in": "query",
                         "required": false,
                         "schema": {
