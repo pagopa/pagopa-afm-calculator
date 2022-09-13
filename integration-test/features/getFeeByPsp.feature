@@ -24,7 +24,7 @@ Feature: GetFeeByPsp
       }
     """
     When the client send POST to /psps/88888888888/fees
-    Then check errorCode is 200
+    Then check statusCode is 200
     And check response body is
     """
     [
@@ -124,6 +124,28 @@ Feature: GetFeeByPsp
         "bundleDescription": "pacchetto 4",
         "idCiBundle": "3",
         "idPsp": "88888888889"
+      },
+      {
+        "taxPayerFee": 90,
+        "primaryCiIncurredFee": 0,
+        "paymentMethod": "CP",
+        "touchpoint": "ANY",
+        "idBundle": "3",
+        "bundleName": "pacchetto 3",
+        "bundleDescription": "pacchetto 3",
+        "idCiBundle": null,
+        "idPsp": "88888888889"
+      },
+      {
+        "taxPayerFee": 100,
+        "primaryCiIncurredFee": 0,
+        "paymentMethod": "ANY",
+        "touchpoint": "IO",
+        "idBundle": "6",
+        "bundleName": "pacchetto 6",
+        "bundleDescription": "pacchetto 6",
+        "idCiBundle": null,
+        "idPsp": "88888888889"
       }
     ]
     """
@@ -158,7 +180,20 @@ Feature: GetFeeByPsp
         "paymentMethod": "ANY",
         "touchpoint": "ANY",
         "idBundle": "4",
+        "bundleName": "pacchetto 4",
+        "bundleDescription": "pacchetto 4",
         "idCiBundle": "3",
+        "idPsp": "88888888889"
+      },
+      {
+        "taxPayerFee": 90,
+        "primaryCiIncurredFee": 0,
+        "paymentMethod": "CP",
+        "touchpoint": "ANY",
+        "idBundle": "3",
+        "bundleName": "pacchetto 3",
+        "bundleDescription": "pacchetto 3",
+        "idCiBundle": null,
         "idPsp": "88888888889"
       },
       {
@@ -167,6 +202,8 @@ Feature: GetFeeByPsp
         "paymentMethod": "ANY",
         "touchpoint": "IO",
         "idBundle": "6",
+        "bundleName": "pacchetto 6",
+        "bundleDescription": "pacchetto 6",
         "idCiBundle": null,
         "idPsp": "88888888889"
       }

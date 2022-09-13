@@ -103,6 +103,17 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889"
       },
       {
+        "taxPayerFee": 60,
+        "primaryCiIncurredFee": 0,
+        "paymentMethod": "CP",
+        "touchpoint": "IO",
+        "idBundle": "5",
+        "bundleName": "pacchetto 5",
+        "bundleDescription": "pacchetto 5",
+        "idCiBundle": null,
+        "idPsp": "88888888888"
+      },
+      {
         "taxPayerFee": 90,
         "primaryCiIncurredFee": 0,
         "paymentMethod": "CP",
@@ -110,6 +121,17 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idBundle": "3",
         "bundleName": "pacchetto 3",
         "bundleDescription": "pacchetto 3",
+        "idCiBundle": null,
+        "idPsp": "88888888889"
+      },
+      {
+        "taxPayerFee": 100,
+        "primaryCiIncurredFee": 0,
+        "paymentMethod": "ANY",
+        "touchpoint": "IO",
+        "idBundle": "6",
+        "bundleName": "pacchetto 6",
+        "bundleDescription": "pacchetto 6",
         "idCiBundle": null,
         "idPsp": "88888888889"
       },
@@ -166,12 +188,23 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       },
       {
         "taxPayerFee": 90,
-        "primaryCiIncurredFee": 00,
+        "primaryCiIncurredFee": 0,
         "paymentMethod": "CP",
         "touchpoint": "ANY",
         "idBundle": "3",
         "bundleName": "pacchetto 3",
         "bundleDescription": "pacchetto 3",
+        "idCiBundle": null,
+        "idPsp": "88888888889"
+      },
+      {
+        "taxPayerFee": 100,
+        "primaryCiIncurredFee": 0,
+        "paymentMethod": "ANY",
+        "touchpoint": "IO",
+        "idBundle": "6",
+        "bundleName": "pacchetto 6",
+        "bundleDescription": "pacchetto 6",
         "idCiBundle": null,
         "idPsp": "88888888889"
       }
@@ -204,5 +237,38 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And check response body is
     """
     [
+      {
+        "taxPayerFee": 60,
+        "primaryCiIncurredFee": 0,
+        "paymentMethod": "CP",
+        "touchpoint": "IO",
+        "idBundle": "5",
+        "bundleName": "pacchetto 5",
+        "bundleDescription": "pacchetto 5",
+        "idCiBundle": null,
+        "idPsp": "88888888888"
+      },
+      {
+        "taxPayerFee": 80,
+        "primaryCiIncurredFee": 0,
+        "paymentMethod": "PO",
+        "touchpoint": "ANY",
+        "idBundle": "2",
+        "bundleName": "pacchetto 2",
+        "bundleDescription": "pacchetto 2",
+        "idCiBundle": null,
+        "idPsp": "88888888888"
+      },
+      {
+        "taxPayerFee": 130,
+        "primaryCiIncurredFee": 20,
+        "paymentMethod": "ANY",
+        "touchpoint": "ANY",
+        "idBundle": "1",
+        "bundleName": "pacchetto 1",
+        "bundleDescription": "pacchetto 1",
+        "idCiBundle": "1",
+        "idPsp": "88888888888"
+      }
     ]
     """

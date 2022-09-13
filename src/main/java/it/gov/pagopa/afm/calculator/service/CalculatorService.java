@@ -38,6 +38,23 @@ public class CalculatorService {
     @Cacheable(value = "calculate")
     public List<Transfer> calculate(PaymentOption paymentOption, int limit) {
         // create filters
+        Specification<Bundle> specifications = getQueryFilters(paymentOption);
+        // do the query
+        var bundles = bundleRepository.findAll(specifications);
+
+        boolean primaryCiInTransferList = inTransferList(paymentOption.getPrimaryCreditorInstitution(), paymentOption.getTransferList());
+
+        // calculate the taxPayerFee
+        return calculateTaxPayerFee(paymentOption, limit, primaryCiInTransferList, bundles);
+    }
+
+    /**
+     * Null value are ignored -> they are skipped when building the specification filter
+     *
+     * @param paymentOption Get the Body of the Request
+     * @return map {@code paymentOption} parameter to {@code Specification} object to use in the query
+     */
+    private Specification<Bundle> getQueryFilters(PaymentOption paymentOption) {
         var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.NULL_OR_EQUAL, paymentOption.getTouchpoint()));
 
         var paymentMethodFilter = new BundleSpecification(new SearchCriteria("paymentMethod", SearchOperation.NULL_OR_EQUAL, paymentOption.getPaymentMethod()));
@@ -56,7 +73,7 @@ public class CalculatorService {
 
         var bundleTransferCategoryListFilter = new BundleTransferCategoryListSpecification(utilityComponent.getTransferCategoryList(paymentOption));
 
-        var specifications = Specification
+        return Specification
                 .where(touchpointFilter)
                 .and(paymentMethodFilter)
                 .and(pspFilter)
@@ -64,56 +81,18 @@ public class CalculatorService {
                 .and(minPriceRangeFilter)
                 .and(ciFilter.or(globalFilter))
                 .and(bundleTransferCategoryListFilter);
+    }
 
-        boolean primaryCiInTransferList = inTransferList(paymentOption.getPrimaryCreditorInstitution(), paymentOption.getTransferList());
-
-        // do the query
-        var bundles = bundleRepository.findAll(specifications);
-
-        // calculate the taxPayerFee
-
+    private List<Transfer> calculateTaxPayerFee(PaymentOption paymentOption, int limit, boolean primaryCiInTransferList, List<Bundle> bundles) {
         List<String> primaryTransferCategoryList = utilityComponent.getPrimaryTransferCategoryList(paymentOption, paymentOption.getPrimaryCreditorInstitution());
         List<Transfer> transfers = new ArrayList<>();
         for (Bundle bundle : bundles) {
 
             // if primaryCi is in transfer list we should evaluate the related incurred fee
             if (primaryCiInTransferList) {
-                // analyze public and private bundles
-                for (CiBundle cibundle : bundle.getCiBundles()) {
-                    // check ciBundle belongs to primary CI
-                    if (cibundle.getCiFiscalCode().equals(paymentOption.getPrimaryCreditorInstitution())) {
-
-                        if (!cibundle.getAttributes().isEmpty()) {
-                            transfers.addAll(cibundle.getAttributes().parallelStream()
-                                    .filter(attribute -> (attribute.getTransferCategory() == null ||
-                                            (TransferCategoryRelation.EQUAL.equals(attribute.getTransferCategoryRelation()) && primaryTransferCategoryList.contains(attribute.getTransferCategory()) ||
-                                                    (TransferCategoryRelation.NOT_EQUAL.equals(attribute.getTransferCategoryRelation()) && !primaryTransferCategoryList.contains(attribute.getTransferCategory()))
-                                            )))
-                                    .map(attribute -> {
-                                        // primaryCiIncurredFee = min (paymentAmount, min(ciIncurredFee, PspFee))
-                                        // The second min is to prevent error in order to check that PSP payment amount should be always greater than CI one.
-                                        // Note: this check should be done on Marketplace.
-                                        long primaryCiIncurredFee = Math.min(paymentOption.getPaymentAmount(), Math.min(bundle.getPaymentAmount(), attribute.getMaxPaymentAmount()));
-                                        return createTransfer(Math.max(0, bundle.getPaymentAmount() - primaryCiIncurredFee),
-                                                primaryCiIncurredFee, bundle, cibundle.getId());
-                                    })
-                                    .collect(Collectors.toList())
-                            );
-                        }
-                        else {
-                            transfers.add(createTransfer(bundle.getPaymentAmount(), 0, bundle, cibundle.getId()));
-                        }
-                    }
-                }
-
-                // analyze global bundles
-                if (bundle.getType().equals(BundleType.GLOBAL) && bundle.getCiBundles().size() == 0) {
-                    // no incurred fee is present
-                    Transfer transfer = createTransfer(bundle.getPaymentAmount(), 0, bundle, null);
-                    transfers.add(transfer);
-                }
-            }
-            else {
+                // add in transfers!
+                analyzeTransferList(transfers, paymentOption, primaryTransferCategoryList, bundle);
+            } else {
                 Transfer transfer = createTransfer(bundle.getPaymentAmount(), 0, bundle, null);
                 transfers.add(transfer);
             }
@@ -122,16 +101,68 @@ public class CalculatorService {
         // sort according taxpayer fee
         Collections.sort(transfers);
 
-        return transfers.stream().limit(limit).collect(Collectors.toList());
+        return transfers.stream()
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 
     /**
-     * Create transfer item
-     * @param taxPayerFee
-     * @param primaryCiIncurredFee
-     * @param bundle
-     * @param idCiBundle
-     * @return
+     * Add in {@code transfers} the created transfer objects
+     *
+     * @param transfers list of transfers where add the transfer
+     * @param paymentOption Request of the User
+     * @param primaryTransferCategoryList  transfers of the primary CI
+     * @param bundle Bundle info
+     */
+    private void analyzeTransferList(List<Transfer> transfers, PaymentOption paymentOption, List<String> primaryTransferCategoryList,  Bundle bundle) {
+        // analyze public and private bundles
+        for (CiBundle cibundle : bundle.getCiBundles()) {
+            // check ciBundle belongs to primary CI
+            if (cibundle.getCiFiscalCode().equals(paymentOption.getPrimaryCreditorInstitution())) {
+                if (!cibundle.getAttributes().isEmpty()) {
+                    transfers.addAll(cibundle.getAttributes().parallelStream()
+                            .filter(attribute -> (attribute.getTransferCategory() != null &&
+                                    (TransferCategoryRelation.NOT_EQUAL.equals(attribute.getTransferCategoryRelation()) && primaryTransferCategoryList.contains(attribute.getTransferCategory())
+                                    )))
+                            .map(attribute -> createTransfer(bundle.getPaymentAmount(), 0, bundle, null)
+                            )
+                            .collect(Collectors.toList())
+                    );
+                    transfers.addAll(cibundle.getAttributes().parallelStream()
+                            .filter(attribute -> (attribute.getTransferCategory() == null ||
+                                    (TransferCategoryRelation.EQUAL.equals(attribute.getTransferCategoryRelation()) && primaryTransferCategoryList.contains(attribute.getTransferCategory()) ||
+                                            (TransferCategoryRelation.NOT_EQUAL.equals(attribute.getTransferCategoryRelation()) && !primaryTransferCategoryList.contains(attribute.getTransferCategory()))
+                                    )))
+                            .map(attribute -> {
+                                // primaryCiIncurredFee = min (paymentAmount, min(ciIncurredFee, PspFee))
+                                // The second min is to prevent error in order to check that PSP payment amount should be always greater than CI one.
+                                // Note: this check should be done on Marketplace.
+                                long primaryCiIncurredFee = Math.min(paymentOption.getPaymentAmount(), Math.min(bundle.getPaymentAmount(), attribute.getMaxPaymentAmount()));
+                                return createTransfer(Math.max(0, bundle.getPaymentAmount() - primaryCiIncurredFee),
+                                        primaryCiIncurredFee, bundle, cibundle.getId());
+                            })
+                            .collect(Collectors.toList())
+                    );
+                } else {
+                    transfers.add(createTransfer(bundle.getPaymentAmount(), 0, bundle, cibundle.getId()));
+                }
+            }
+        }
+
+        // analyze global bundles
+        if (bundle.getType().equals(BundleType.GLOBAL) && bundle.getCiBundles().isEmpty()) {
+            // no incurred fee is present
+            Transfer transfer = createTransfer(bundle.getPaymentAmount(), 0, bundle, null);
+            transfers.add(transfer);
+        }
+    }
+
+    /**
+     * @param taxPayerFee fee of the user
+     * @param primaryCiIncurredFee fee of CI
+     * @param bundle info of the Bundle
+     * @param idCiBundle ID of CI-Bundle relation
+     * @return Create transfer item
      */
     private Transfer createTransfer(long taxPayerFee, long primaryCiIncurredFee, Bundle bundle, String idCiBundle) {
         return Transfer.builder()
@@ -148,10 +179,9 @@ public class CalculatorService {
     }
 
     /**
-     * Check if creditor institution belongs to transfer list
-     * @param creditorInstitutionFiscalCode
-     * @param transferList
-     * @return
+     * @param creditorInstitutionFiscalCode primary CI fiscal code
+     * @param transferList list of transfers
+     * @return Check if creditor institution belongs to transfer list
      */
     private boolean inTransferList(String creditorInstitutionFiscalCode, ArrayList<TransferListItem> transferList) {
         return transferList.parallelStream()
