@@ -136,7 +136,8 @@ stages:
 
   # Deploy on K8s with Helm
   - stage: "Deploy"
-    dependsOn: "Build"
+#    dependsOn: "Build"
+    condition: not(failed('Build'))
     variables:
       deploy_version: $[ stageDependencies.Build.build.outputs['deploy_version_decision.value'] ]
     jobs:
