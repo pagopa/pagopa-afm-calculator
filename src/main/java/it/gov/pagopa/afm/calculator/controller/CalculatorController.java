@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionByPsp;
@@ -30,7 +31,7 @@ public class CalculatorController {
     @Autowired
     CalculatorService calculatorService;
 
-    @Operation(summary = "Get taxpayer fees of the specified idPSP", tags = {"Calculator"})
+    @Operation(summary = "Get taxpayer fees of the specified idPSP", security = {@SecurityRequirement(name = "ApiKey")}, tags = {"Calculator"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = Transfer.class)))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class))),
@@ -52,7 +53,7 @@ public class CalculatorController {
         return calculatorService.calculate(paymentOption, maxOccurrences);
     }
 
-    @Operation(summary = "Get taxpayer fees of all or specified idPSP", tags = {"Calculator"})
+    @Operation(summary = "Get taxpayer fees of all or specified idPSP", security = {@SecurityRequirement(name = "ApiKey")}, tags = {"Calculator"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = Transfer.class)))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class))),
