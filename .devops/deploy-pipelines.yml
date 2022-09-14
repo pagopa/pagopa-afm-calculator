@@ -97,6 +97,8 @@ stages:
               gitHubConnection: $(GITHUB_CONNECTION)
               ${{ if ne(parameters.SEMVER, 'skip') }}:
                 semver: '${{ parameters.SEMVER }}'
+              ${{ if eq(parameters.SEMVER, 'skip') }}:
+                semver: 'buildNumber' # this case is impossible due to main condition, but it is necessary to work property
 
           - template: templates/maven-github-current-version/template.yaml@pagopaCommons
 
