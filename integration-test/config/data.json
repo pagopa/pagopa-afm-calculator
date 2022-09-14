@@ -1,0 +1,127 @@
+{
+  "bundles": [
+    {
+      "id": "1",
+      "idPsp": "88888888888",
+      "name": "pacchetto 1",
+      "description": "pacchetto 1",
+      "paymentAmount": 150,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null
+    },
+    {
+      "id": "2",
+      "idPsp": "88888888888",
+      "name": "pacchetto 2",
+      "description": "pacchetto 2",
+      "paymentAmount": 80,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "paymentMethod": "PO",
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null
+    },
+    {
+      "id": "3",
+      "idPsp": "88888888889",
+      "name": "pacchetto 3",
+      "description": "pacchetto 3",
+      "paymentAmount": 90,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "paymentMethod": "CP",
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null
+    },
+    {
+      "id": "4",
+      "idPsp": "88888888889",
+      "name": "pacchetto 4",
+      "description": "pacchetto 4",
+      "paymentAmount": 50,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "type": "GLOBAL",
+      "transferCategoryList": [
+        "TAX1"
+      ],
+      "validityDateFrom": null,
+      "validityDateTo": null
+    },
+    {
+      "id": "5",
+      "idPsp": "88888888888",
+      "name": "pacchetto 5",
+      "description": "pacchetto 5",
+      "paymentAmount": 60,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "paymentMethod": "CP",
+      "touchpoint": "IO",
+      "type": "GLOBAL",
+      "transferCategoryList": [
+        "TAX1",
+        "TAX2"
+      ],
+      "validityDateFrom": null,
+      "validityDateTo": null
+    },
+    {
+      "id": "6",
+      "idPsp": "88888888889",
+      "name": "pacchetto 6",
+      "description": "pacchetto 6",
+      "paymentAmount": 100,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "touchpoint": "IO",
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null
+    }
+  ],
+  "ciBundles": [
+    {
+      "id": "1",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "1",
+      "attributes": [
+        {
+          "id": "1",
+          "maxPaymentAmount": 20,
+          "transferCategory": "TAX1",
+          "transferCategoryRelation": "EQUAL"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "2",
+      "attributes": [
+        {
+          "id": "2",
+          "maxPaymentAmount": 20,
+          "transferCategory": "TAX1",
+          "transferCategoryRelation": "NOT_EQUAL"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "4",
+      "attributes": [
+        {
+          "id": "3",
+          "maxPaymentAmount": 20
+        }
+      ]
+    }
+  ]
+}

@@ -15,7 +15,8 @@ public enum Touchpoint {
     ANY("ANY"),
     IO("IO"),
     WISP("WISP"),
-    CHECKOUT("CHECKOUT");
+    CHECKOUT("CHECKOUT"),
+    PSP("PSP");
 
     private String value;
 
