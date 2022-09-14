@@ -81,9 +81,14 @@ stages:
 
   # Create a release on GitHub
   - stage: Release
-    condition: ne('${{ parameters.SEMVER }}', 'skip')
+
     jobs:
+      - job: previous_version
+        steps:
+          - template: templates/maven-github-current-version/template.yaml@pagopaCommons
+
       - job: make_release
+        condition: ne('${{ parameters.SEMVER }}', 'skip')
         steps:
           - checkout: self
             clean: true
@@ -100,16 +105,21 @@ stages:
               ${{ if eq(parameters.SEMVER, 'skip') }}:
                 semver: 'buildNumber' # this case is impossible due to main condition, but it is necessary to work property
 
+      - job: next_version
+        steps:
+          - script: |
+              git checkout $(sourceBranch)
+
           - template: templates/maven-github-current-version/template.yaml@pagopaCommons
 
   # Build and Push Docker Image
   - stage: Build
     dependsOn: Release
     variables:
-      next_version: $[ stageDependencies.Release.make_release.outputs['next_version.value'] ]
-      current_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
-      current_version_branch: $[ stageDependencies.Release.branch_version.outputs['current_version.value'] ]
-      current_version_tag: $[ stageDependencies.Release.tag_version.outputs['current_version.value'] ]
+      next_version: $[ stageDependencies.Release.next_version.outputs['current_version.value'] ]
+      current_version: $[ stageDependencies.Release.previous_version.outputs['current_version.value'] ]
+      current_version_branch: $[ stageDependencies.Release.previous_version.outputs['current_version.value'] ]
+      current_version_tag: $[ stageDependencies.Release.previous_version.outputs['current_version.value'] ]
     jobs:
       - job: "build"
         steps:
@@ -136,8 +146,7 @@ stages:
 
   # Deploy on K8s with Helm
   - stage: "Deploy"
-#    dependsOn: "Build"
-    condition: not(failed('Build'))
+    dependsOn: "Build"
     variables:
       deploy_version: $[ stageDependencies.Build.build.outputs['deploy_version_decision.value'] ]
     jobs:
