@@ -81,20 +81,15 @@ stages:
 
   # Create a release on GitHub
   - stage: Release
-
     jobs:
-      - job: previous_version
-        steps:
-          - template: templates/maven-github-current-version/template.yaml@pagopaCommons
-
       - job: make_release
-        condition: ne('${{ parameters.SEMVER }}', 'skip')
         steps:
           - checkout: self
             clean: true
             persistCredentials: true
 
           - template: templates/maven-github-release/template.yaml@pagopaCommons
+            condition: ne('${{ parameters.SEMVER }}', 'skip')
             parameters:
               release_branch: $(sourceBranch)
               gitEmail: $(GIT_EMAIL)
@@ -105,42 +100,25 @@ stages:
               ${{ if eq(parameters.SEMVER, 'skip') }}:
                 semver: 'buildNumber' # this case is impossible due to main condition, but it is necessary to work property
 
-      - job: next_version
-        steps:
-          - script: |
-              git checkout $(sourceBranch)
-
           - template: templates/maven-github-current-version/template.yaml@pagopaCommons
 
   # Build and Push Docker Image
   - stage: Build
     dependsOn: Release
     variables:
-      next_version: $[ stageDependencies.Release.next_version.outputs['current_version.value'] ]
       current_version: $[ stageDependencies.Release.previous_version.outputs['current_version.value'] ]
-      current_version_branch: $[ stageDependencies.Release.previous_version.outputs['current_version.value'] ]
-      current_version_tag: $[ stageDependencies.Release.previous_version.outputs['current_version.value'] ]
     jobs:
       - job: "build"
         steps:
           - script: |
               git checkout $(sourceBranch)
 
-          - template: templates/deploy-release-decision/template.yaml@pagopaCommons
-            parameters:
-              NEXT_VERSION: $(next_version)
-              CURRENT_VERSION: $(current_version)
-              CURRENT_VERSION_BRANCH: $(current_version_branch)
-              CURRENT_VERSION_TAG: $(current_version_tag)
-              BUILD_SOURCE_VERSION: $(Build.SourceVersion)
-              BUILD_SOURCE_BRANCH_NAME: $(Build.SourceBranchName)
-
           - template: templates/docker-release/template.yaml@pagopaCommons
             parameters:
               CONTAINER_REGISTRY_SERVICE_CONN: $(dockerRegistryServiceConnection)
               CONTAINER_REGISTRY_FQDN: $(dockerRegistryFqdn)
               DOCKER_IMAGE_NAME: $(imageRepository)
-              DOCKER_IMAGE_TAG: $(deploy_version_decision.value)
+              DOCKER_IMAGE_TAG: $(current_version)
               FORCE_REPLACE_DOCKER_IMAGE: ${{ parameters.FORCE_REPLACE_DOCKER_IMAGE }}
 
 
