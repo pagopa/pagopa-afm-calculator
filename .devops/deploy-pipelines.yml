@@ -136,8 +136,9 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
-                  displayName: "Checkout"
+                - script: |
+                    git checkout $(sourceBranch)
+                    echo "[INFO] Deploy version: ${{ variables.deploy_version }}"
 
                 - template: templates/helm-microservice-chart-setup/template.yaml@pagopaCommons
                   parameters:
