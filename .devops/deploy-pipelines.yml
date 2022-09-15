@@ -3,7 +3,7 @@ trigger: none
 pr: none
 
 pool:
-  vmImage: 'ubuntu-18.04'
+  vmImage: 'ubuntu-22.04'
 
 parameters:
   - name: ENV
@@ -106,7 +106,7 @@ stages:
   - stage: Build
     dependsOn: Release
     variables:
-      current_version: $[ stageDependencies.Release.previous_version.outputs['current_version.value'] ]
+      current_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
     jobs:
       - job: "build"
         steps:
@@ -126,7 +126,7 @@ stages:
   - stage: "Deploy"
     dependsOn: "Build"
     variables:
-      deploy_version: $[ stageDependencies.Build.build.outputs['deploy_version_decision.value'] ]
+      deploy_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
     jobs:
       - deployment: "deploy"
         pool:
