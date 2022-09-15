@@ -110,7 +110,8 @@ stages:
     jobs:
       - job: "build"
         steps:
-          - script: |
+          - name: checkout
+            script: |
               git checkout $(sourceBranch)
 
           - template: templates/docker-release/template.yaml@pagopaCommons
@@ -121,12 +122,14 @@ stages:
               DOCKER_IMAGE_TAG: $(current_version)
               FORCE_REPLACE_DOCKER_IMAGE: ${{ parameters.FORCE_REPLACE_DOCKER_IMAGE }}
 
+          - template: templates/maven-github-current-version/template.yaml@pagopaCommons
+
 
   # Deploy on K8s with Helm
   - stage: "Deploy"
     dependsOn: "Build"
     variables:
-      deploy_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
+      deploy_version: $[ stageDependencies.Build.build.outputs['current_version.value'] ]
     jobs:
       - deployment: "deploy"
         pool:
@@ -136,10 +139,9 @@ stages:
           runOnce:
             deploy:
               steps:
-                - script: |
+                - name: checkout
+                  script: |
                     git checkout $(sourceBranch)
-                
-                - script: |
                     echo "[INFO] Deploy version: $(deploy_version)"                
 
                 - template: templates/helm-microservice-chart-setup/template.yaml@pagopaCommons
