@@ -123,8 +123,10 @@ stages:
               FORCE_REPLACE_DOCKER_IMAGE: ${{ parameters.FORCE_REPLACE_DOCKER_IMAGE }}
 
   # Deploy on K8s with Helm
-  - stage: "Deploy"
-    dependsOn: "Build"
+  - stage: Deploy
+    dependsOn:
+      - Release
+      - Build
     variables:
       deploy_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
     jobs:
