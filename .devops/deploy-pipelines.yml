@@ -172,7 +172,7 @@ stages:
     jobs:
       - job: 'do_healthcheck'
         steps:
-          - template: templates/rest-healthcheck/template.yaml@templates
+          - template: templates/rest-healthcheck/template.yaml@pagopaCommons
             parameters:
               azureSubscription: '$(AZURE_SUBSCRIPTION)'
               appName: '$(imageRepository)'
