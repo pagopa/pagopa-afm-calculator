@@ -21,3 +21,5 @@ _Note_: configure environment through `*.environment.json` file.
 ##### Dev
 
  `k6 run --iterations 2 --vus 2 --env VARS=dev.environment.json <script>`
+
+K6_INFLUXDB_TOKEN=2QTeWlrKJsW0eY4MO1Rwm2m0xmKmiAcP K6_INFLUXDB_BUCKET=default K6_INFLUXDB_ORGANIZATION=influxdata ./k6 -o xk6-influxdb=http://localhost:56727/default script.js
