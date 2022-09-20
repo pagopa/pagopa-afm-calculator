@@ -3,7 +3,7 @@ trigger: none
 pr: none
 
 pool:
-  vmImage: 'ubuntu-18.04'
+  vmImage: 'ubuntu-22.04'
 
 parameters:
   - name: ENV
@@ -81,7 +81,6 @@ stages:
 
   # Create a release on GitHub
   - stage: Release
-    condition: ne('${{ parameters.SEMVER }}', 'skip')
     jobs:
       - job: make_release
         steps:
@@ -89,14 +88,17 @@ stages:
             clean: true
             persistCredentials: true
 
-          - template: templates/maven-github-release/template.yaml@pagopaCommons
-            parameters:
-              release_branch: $(sourceBranch)
-              gitEmail: $(GIT_EMAIL)
-              gitUsername: $(GIT_USERNAME)
-              gitHubConnection: $(GITHUB_CONNECTION)
-              ${{ if ne(parameters.SEMVER, 'skip') }}:
-                semver: '${{ parameters.SEMVER }}'
+          - ${{ if ne(parameters.SEMVER, 'skip') }}:
+            - template: templates/maven-github-release/template.yaml@pagopaCommons
+              parameters:
+                release_branch: $(sourceBranch)
+                gitEmail: $(GIT_EMAIL)
+                gitUsername: $(GIT_USERNAME)
+                gitHubConnection: $(GITHUB_CONNECTION)
+                ${{ if ne(parameters.SEMVER, 'skip') }}:
+                  semver: '${{ parameters.SEMVER }}'
+                ${{ if eq(parameters.SEMVER, 'skip') }}:
+                  semver: 'buildNumber' # this case is impossible due to main condition, but it is necessary to work property
 
           - template: templates/maven-github-current-version/template.yaml@pagopaCommons
 
@@ -104,39 +106,29 @@ stages:
   - stage: Build
     dependsOn: Release
     variables:
-      next_version: $[ stageDependencies.Release.make_release.outputs['next_version.value'] ]
       current_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
-      current_version_branch: $[ stageDependencies.Release.branch_version.outputs['current_version.value'] ]
-      current_version_tag: $[ stageDependencies.Release.tag_version.outputs['current_version.value'] ]
     jobs:
       - job: "build"
         steps:
           - script: |
               git checkout $(sourceBranch)
-
-          - template: templates/deploy-release-decision/template.yaml@pagopaCommons
-            parameters:
-              NEXT_VERSION: $(next_version)
-              CURRENT_VERSION: $(current_version)
-              CURRENT_VERSION_BRANCH: $(current_version_branch)
-              CURRENT_VERSION_TAG: $(current_version_tag)
-              BUILD_SOURCE_VERSION: $(Build.SourceVersion)
-              BUILD_SOURCE_BRANCH_NAME: $(Build.SourceBranchName)
+            displayName: Checkout
 
           - template: templates/docker-release/template.yaml@pagopaCommons
             parameters:
               CONTAINER_REGISTRY_SERVICE_CONN: $(dockerRegistryServiceConnection)
               CONTAINER_REGISTRY_FQDN: $(dockerRegistryFqdn)
               DOCKER_IMAGE_NAME: $(imageRepository)
-              DOCKER_IMAGE_TAG: $(deploy_version_decision.value)
+              DOCKER_IMAGE_TAG: $(current_version)
               FORCE_REPLACE_DOCKER_IMAGE: ${{ parameters.FORCE_REPLACE_DOCKER_IMAGE }}
 
-
   # Deploy on K8s with Helm
-  - stage: "Deploy"
-    dependsOn: "Build"
+  - stage: Deploy
+    dependsOn:
+      - Release
+      - Build
     variables:
-      deploy_version: $[ stageDependencies.Build.build.outputs['deploy_version_decision.value'] ]
+      deploy_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
     jobs:
       - deployment: "deploy"
         pool:
@@ -146,8 +138,10 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
-                  displayName: "Checkout"
+                - script: |
+                    git checkout $(sourceBranch)
+                    echo "[INFO] Deploy version: $(deploy_version)"                
+                  displayName: Checkout
 
                 - template: templates/helm-microservice-chart-setup/template.yaml@pagopaCommons
                   parameters:
