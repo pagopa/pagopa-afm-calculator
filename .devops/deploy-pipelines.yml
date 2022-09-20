@@ -47,7 +47,6 @@ variables:
     poolImage: 'pagopa-dev-linux'
     appInsightsServiceConn: "$(TF_APPINSIGHTS_SERVICE_CONN_DEV)"
     appInsightsResourceId: "$(TF_APPINSIGHTS_RESOURCE_ID_DEV)"
-    host: 'api.dev.platform.pagopa.it'
   ${{ if eq(parameters['ENV'], 'uat') }}:
     dockerRegistryServiceConnection: $(UAT_CONTAINER_REGISTRY_SERVICE_CONN)
     dockerRegistryFqdn: $(UAT_CONTAINER_NAMESPACE)
@@ -55,7 +54,6 @@ variables:
     poolImage: 'pagopa-uat-linux'
     appInsightsServiceConn: "$(TF_APPINSIGHTS_SERVICE_CONN_UAT)"
     appInsightsResourceId: "$(TF_APPINSIGHTS_RESOURCE_ID_UAT)"
-    host: 'api.uat.platform.pagopa.it'
   ${{ if eq(parameters['ENV'], 'prod') }}:
     dockerRegistryServiceConnection: $(PROD_CONTAINER_REGISTRY_SERVICE_CONN)
     dockerRegistryFqdn: $(PROD_CONTAINER_NAMESPACE)
@@ -63,7 +61,6 @@ variables:
     poolImage: 'pagopa-prod-linux'
     appInsightsServiceConn: "$(TF_APPINSIGHTS_SERVICE_CONN_PROD)"
     appInsightsResourceId: "$(TF_APPINSIGHTS_RESOURCE_ID_PROD)"
-    host: 'api.platform.pagopa.it'
 
   ${{ if eq(variables['Build.SourceBranchName'], 'merge') }}:
     sourceBranch: "main" # force to main branch
@@ -141,9 +138,6 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
-                  displayName: "Checkout"
-
                 - script: |
                     git checkout $(sourceBranch)
                     echo "[INFO] Branch: $(sourceBranch) Deploy version: $(deploy_version)"
@@ -165,23 +159,6 @@ stages:
                     APPINSIGHTS_SERVICE_CONN: ${{ variables.appInsightsServiceConn }}
                     APPINSIGHTS_RESOURCE_ID: ${{ variables.appInsightsResourceId }}
 
-  # Check that the instance is healthy
-  - stage: Healthcheck
-    dependsOn:
-      - Deploy
-    jobs:
-      - job: 'do_healthcheck'
-        steps:
-          - template: templates/rest-healthcheck/template.yaml@pagopaCommons
-            parameters:
-              azureSubscription: '$(AZURE_SUBSCRIPTION)'
-              appName: '$(imageRepository)'
-              endpoint: 'https://$(HOST)/$(APIM_BASEPATH)/info'
-              endpointType: 'public'
-              containerInstanceResourceGroup: ''
-              containerInstanceVNet: ''
-              containerInstanceSubnet: ''
-
 
   # Run Integration Tests
   - stage: Test
@@ -192,8 +169,9 @@ stages:
     jobs:
       - job: integration_tests
         steps:
-          - checkout: self
-            displayName: "Checkout"
+          - script: |
+              git checkout $(sourceBranch)
+            displayName: Checkout
 
           - script: |
               cd ./integration-test
