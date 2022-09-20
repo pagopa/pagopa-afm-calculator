@@ -174,9 +174,8 @@ stages:
         steps:
         - task: AzureCLI@2
           inputs:
-            azureSubscription: '$(dockerRegistryServiceConnection)'
+            azureSubscription: '$(AZURE_SUBSCRIPTION)'
             scriptType: 'batch'
-            failOnStandardError: false
             scriptLocation: 'inlineScript'
             inlineScript: |
               OUTPUT_REST = $(az rest --skip-authorization-header --method get --url "https://$(host)/$(APIM_BASEPATH)/info")
