@@ -172,23 +172,16 @@ stages:
     jobs:
       - job: 'do_healthcheck'
         steps:
-        - task: AzureCLI@2
-          inputs:
-            azureSubscription: '$(AZURE_SUBSCRIPTION)'
-            scriptType: 'batch'
-            scriptLocation: 'inlineScript'
-            inlineScript: |
-              OUTPUT_REST = $(az rest --skip-authorization-header --method get --url "https://$(host)/$(APIM_BASEPATH)/info")
-              echo ${OUTPUT_REST}
-              # check if rest response contains app-name
-              if [[ ${OUTPUT_REST} == *$(imageRepository)* ]]; then
-                echo "responseCheckString: '$(imageRepository)' found, continue"
-                exit 0
-              else
-                echo "responseCheckString: '$(imageRepository)' not found, fail"
-                exit 1
-              fi
-       
+          - template: templates/rest-healthcheck/template.yaml@templates
+            parameters:
+              azureSubscription: '$(AZURE_SUBSCRIPTION)'
+              appName: '$(imageRepository)'
+              endpoint: 'https://$(HOST)/$(APIM_BASEPATH)/info'
+              endpointType: 'public'
+              containerInstanceResourceGroup: ''
+              containerInstanceVNet: ''
+              containerInstanceSubnet: ''
+
 
   # Run Integration Tests
   - stage: Test
