@@ -1,4 +1,0 @@
-{
-  "afm_host": "https://api.dev.platform.pagopa.it/afm/calculator-service/v1",
-  "afm_data_host": "https://api.dev.platform.pagopa.it/afm/calculator-data-service/v1"
-}

@@ -188,7 +188,6 @@ stages:
 
           - script: |
               cd ./integration-test
-              yarn install
-              yarn test
+              sh run_integration_test.sh
             displayName: 'Run Integration Tests'
 
