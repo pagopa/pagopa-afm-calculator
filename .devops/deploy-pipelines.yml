@@ -110,9 +110,14 @@ stages:
     jobs:
       - job: "build"
         steps:
+          - checkout: self
+            persistCredentials: true
+
           - script: |
+              git rev-parse HEAD
               git checkout $(sourceBranch)
-            displayName: Checkout
+              git rev-parse HEAD
+            displayName: Checkout and update branch
 
           - template: templates/docker-release/template.yaml@pagopaCommons
             parameters:
@@ -138,10 +143,14 @@ stages:
           runOnce:
             deploy:
               steps:
+                - checkout: self
+                  persistCredentials: true
+
                 - script: |
+                    git rev-parse HEAD
                     git checkout $(sourceBranch)
-                    echo "[INFO] Branch: $(sourceBranch) Deploy version: $(deploy_version)"
-                  displayName: Checkout
+                    git rev-parse HEAD
+                  displayName: Checkout and update branch
 
                 - template: templates/helm-microservice-chart-setup/template.yaml@pagopaCommons
                   parameters:
@@ -168,9 +177,14 @@ stages:
     jobs:
       - job: integration_tests
         steps:
+          - checkout: self
+            persistCredentials: true
+
           - script: |
+              git rev-parse HEAD
               git checkout $(sourceBranch)
-            displayName: Checkout
+              git rev-parse HEAD
+            displayName: Checkout and update branch
 
           - script: |
               cd ./integration-test
