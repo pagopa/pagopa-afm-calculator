@@ -1,4 +1,4 @@
 {
-  "afm_host": "http://localhost:8585",
-  "afm_data_host": "http://localhost:8586"
+  "afm_host": "https://api.dev.platform.pagopa.it/afm/calculator-service/v1",
+  "afm_data_host": "https://api.dev.platform.pagopa.it/afm/calculator-data-service/v1"
 }
