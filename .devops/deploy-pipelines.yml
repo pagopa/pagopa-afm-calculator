@@ -164,7 +164,6 @@ stages:
   - stage: Test
     dependsOn:
       - Deploy
-      - Healthcheck
     condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
     jobs:
       - job: integration_tests
