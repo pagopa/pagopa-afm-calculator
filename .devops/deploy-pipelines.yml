@@ -32,9 +32,9 @@ parameters:
       - False
       - True
   - name: TEST
-    displayName: Run tests
+    displayName: Run integration tests
     type: boolean
-    default: false
+    default: true
 
 variables:
   imageRepository: '$(IMAGE_REPOSITORY_NAME)'
@@ -89,16 +89,16 @@ stages:
             persistCredentials: true
 
           - ${{ if ne(parameters.SEMVER, 'skip') }}:
-            - template: templates/maven-github-release/template.yaml@pagopaCommons
-              parameters:
-                release_branch: $(sourceBranch)
-                gitEmail: $(GIT_EMAIL)
-                gitUsername: $(GIT_USERNAME)
-                gitHubConnection: $(GITHUB_CONNECTION)
-                ${{ if ne(parameters.SEMVER, 'skip') }}:
-                  semver: '${{ parameters.SEMVER }}'
-                ${{ if eq(parameters.SEMVER, 'skip') }}:
-                  semver: 'buildNumber' # this case is impossible due to main condition, but it is necessary to work property
+              - template: templates/maven-github-release/template.yaml@pagopaCommons
+                parameters:
+                  release_branch: $(sourceBranch)
+                  gitEmail: $(GIT_EMAIL)
+                  gitUsername: $(GIT_USERNAME)
+                  gitHubConnection: $(GITHUB_CONNECTION)
+                  ${{ if ne(parameters.SEMVER, 'skip') }}:
+                    semver: '${{ parameters.SEMVER }}'
+                  ${{ if eq(parameters.SEMVER, 'skip') }}:
+                    semver: 'buildNumber' # this case is impossible due to main condition, but it is necessary to work property
 
           - template: templates/maven-github-current-version/template.yaml@pagopaCommons
 
@@ -140,7 +140,7 @@ stages:
               steps:
                 - script: |
                     git checkout $(sourceBranch)
-                    echo "[INFO] Deploy version: $(deploy_version)"                
+                    echo "[INFO] Branch: $(sourceBranch) Deploy version: $(deploy_version)"
                   displayName: Checkout
 
                 - template: templates/helm-microservice-chart-setup/template.yaml@pagopaCommons
@@ -158,4 +158,24 @@ stages:
                     DEPLOY_VERSION: $(deploy_version)
                     APPINSIGHTS_SERVICE_CONN: ${{ variables.appInsightsServiceConn }}
                     APPINSIGHTS_RESOURCE_ID: ${{ variables.appInsightsResourceId }}
+
+
+  # Run Integration Tests
+  - stage: Test
+    dependsOn:
+      - Deploy
+      - Healthcheck
+    condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
+    jobs:
+      - job: integration_tests
+        steps:
+          - script: |
+              git checkout $(sourceBranch)
+            displayName: Checkout
+
+          - script: |
+              cd ./integration-test
+              yarn install
+              yarn test
+            displayName: 'Run Integration Tests'
 
