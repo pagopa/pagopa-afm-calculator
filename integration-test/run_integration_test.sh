@@ -6,7 +6,7 @@ docker-compose up -d
 # waiting the containers
 printf 'Waiting for the service'
 attempt_counter=0
-max_attempts=10
+max_attempts=50
 until $(curl --output /dev/null --silent --head --fail http://localhost:8080/info); do
     if [ ${attempt_counter} -eq ${max_attempts} ];then
       echo "Max attempts reached"
@@ -15,7 +15,7 @@ until $(curl --output /dev/null --silent --head --fail http://localhost:8080/inf
 
     printf '.'
     attempt_counter=$(($attempt_counter+1))
-    sleep 5
+    sleep 6
 done
 printf 'Service Started'
 
