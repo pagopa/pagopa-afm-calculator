@@ -3,7 +3,7 @@ version: '2'
 services:
   app:
     container_name: 'calculator'
-    image: '${containerRegistry}/pagopaafmcalculator:latest'
+    image: ${containerRegistry}/pagopaafmcalculator:latest
     env_file:
       - .env
     ports:
@@ -13,7 +13,7 @@ services:
 
   data:
     container_name: 'data'
-    image: '${containerRegistry}/pagopaafmcalculatordata:latest'
+    image: ${containerRegistry}/pagopaafmcalculatordata:latest
     env_file:
       - .env
     ports:
