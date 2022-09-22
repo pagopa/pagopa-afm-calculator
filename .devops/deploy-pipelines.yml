@@ -32,7 +32,7 @@ parameters:
       - False
       - True
   - name: TEST
-    displayName: Run integration tests
+    displayName: Run integration/smoke tests
     type: boolean
     default: true
 
@@ -114,9 +114,7 @@ stages:
             persistCredentials: true
 
           - script: |
-              git rev-parse HEAD
               git checkout $(sourceBranch)
-              git rev-parse HEAD
             displayName: Checkout and update branch
 
           - template: templates/docker-release/template.yaml@pagopaCommons
@@ -127,11 +125,43 @@ stages:
               DOCKER_IMAGE_TAG: $(current_version)
               FORCE_REPLACE_DOCKER_IMAGE: ${{ parameters.FORCE_REPLACE_DOCKER_IMAGE }}
 
+  # Run Tests
+  - stage: Test
+    dependsOn:
+      - Build
+    condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
+    jobs:
+      - job: smoke_tests
+        steps:
+          - checkout: self
+            persistCredentials: true
+
+          - script: |
+              git checkout $(sourceBranch)
+            displayName: Checkout and update branch
+
+          - task: Docker@2
+            displayName: "Docker login"
+            inputs:
+              containerRegistry: "$(dockerRegistryServiceConnection)"
+              command: "login"
+
+          - task: Bash@3
+            displayName: 'Run Smoke Tests'
+            inputs:
+              targetType: 'inline'
+              script: |
+                cd ./integration-test
+                sh run_integration_test.sh
+            env:
+              containerRegistry: $(dockerRegistryFqdn)
+
   # Deploy on K8s with Helm
   - stage: Deploy
     dependsOn:
       - Release
       - Build
+      - Test
     variables:
       deploy_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
     jobs:
@@ -147,9 +177,7 @@ stages:
                   persistCredentials: true
 
                 - script: |
-                    git rev-parse HEAD
                     git checkout $(sourceBranch)
-                    git rev-parse HEAD
                   displayName: Checkout and update branch
 
                 - template: templates/helm-microservice-chart-setup/template.yaml@pagopaCommons
@@ -168,27 +196,4 @@ stages:
                     APPINSIGHTS_SERVICE_CONN: ${{ variables.appInsightsServiceConn }}
                     APPINSIGHTS_RESOURCE_ID: ${{ variables.appInsightsResourceId }}
 
-
-  # Run Integration Tests
-  - stage: Test
-    dependsOn:
-      - Deploy
-    condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
-    jobs:
-      - job: integration_tests
-        steps:
-          - checkout: self
-            persistCredentials: true
-
-          - script: |
-              git rev-parse HEAD
-              git checkout $(sourceBranch)
-              git rev-parse HEAD
-            displayName: Checkout and update branch
-
-          - script: |
-              cd ./integration-test
-              yarn install
-              yarn test
-            displayName: 'Run Integration Tests'
 
