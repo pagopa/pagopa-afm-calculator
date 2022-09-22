@@ -4,7 +4,6 @@ services:
   calculator:
     container_name: 'calculator'
     image: ${containerRegistry}/pagopaafmcalculator:latest
-    build: .
     env_file:
       - .env
     ports:
