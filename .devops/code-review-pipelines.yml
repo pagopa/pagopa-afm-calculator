@@ -17,7 +17,7 @@ variables:
 
 stages:
   # Create a release on GitHub
-  - stage: UnitTest
+  - stage: Test
     jobs:
       - job: unit_test
         steps:
@@ -68,16 +68,17 @@ stages:
             inputs:
               pollingTimeoutSec: '300'
 
-
-
-  # Run Tests
-  - stage: Test
-    dependsOn:
-    jobs:
       - job: smoke_tests
+        dependsOn:
         steps:
           - checkout: self
             persistCredentials: true
+
+          - task: Docker@2
+            displayName: "Docker login"
+            inputs:
+              containerRegistry: "$(DEV_CONTAINER_REGISTRY_SERVICE_CONN)"
+              command: "login"
 
           - task: Bash@3
             displayName: 'Run Integration Tests'
@@ -86,3 +87,5 @@ stages:
               script: |
                 cd ./integration-test
                 sh run_integration_test.sh -local
+
+

@@ -12,7 +12,7 @@ containerRegistry=pagopadcommonacr.azurecr.io sh ./run_integration_test.sh
 
 It is necessary to set `containerRegistry` env variable to specify the container registry.
 
-ℹ️ _Note_: for UAT and PROD ACR is **required** the login `az acr login -n <acr-name>`
+ℹ️ _Note_: for PagoPa ACR is **required** the login `az acr login -n <acr-name>`
 
 
 With this command **you test the images on Azure ACR**
