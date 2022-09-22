@@ -1,7 +1,7 @@
 # run from this directory
 
 # azure login
-az acr login -n pagopaucommonacr
+#az acr login -n pagopaucommonacr
 
 # create containers
 docker-compose up -d
