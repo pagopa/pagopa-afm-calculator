@@ -125,8 +125,8 @@ stages:
               DOCKER_IMAGE_TAG: $(current_version)
               FORCE_REPLACE_DOCKER_IMAGE: ${{ parameters.FORCE_REPLACE_DOCKER_IMAGE }}
 
-  # Run Tests
-  - stage: Test
+  # Testing the docker image
+  - stage: Smoke Test
     dependsOn:
       - Build
     condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
@@ -159,9 +159,7 @@ stages:
   # Deploy on K8s with Helm
   - stage: Deploy
     dependsOn:
-      - Release
-      - Build
-      - Test
+      - Smoke Test
     variables:
       deploy_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
     jobs:
@@ -197,3 +195,26 @@ stages:
                     APPINSIGHTS_RESOURCE_ID: ${{ variables.appInsightsResourceId }}
 
 
+  # Run Tests
+  - stage: Integration Test
+    dependsOn:
+      - Deploy
+    condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
+    jobs:
+      - job: integration_tests
+        steps:
+          - checkout: self
+            persistCredentials: true
+
+          - script: |
+              git checkout $(sourceBranch)
+            displayName: Checkout and update branch
+
+          - task: Bash@3
+            displayName: 'Run Integration Tests'
+            inputs:
+              targetType: 'inline'
+              script: |
+                cd ./integration-test
+                yarn install
+                yarn test
