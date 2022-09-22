@@ -3,7 +3,7 @@ version: '2'
 services:
   app:
     container_name: 'calculator'
-    image: 'pagopaucommonacr.azurecr.io/pagopaafmcalculator:latest'
+    image: 'pagopadcommonacr.azurecr.io/pagopaafmcalculator:latest'
     env_file:
       - .env
     ports:
@@ -13,7 +13,7 @@ services:
 
   data:
     container_name: 'data'
-    image: 'pagopaucommonacr.azurecr.io/pagopaafmcalculatordata:latest'
+    image: 'pagopadcommonacr.azurecr.io/pagopaafmcalculatordata:latest'
     env_file:
       - .env
     ports:
