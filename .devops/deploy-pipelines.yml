@@ -126,7 +126,7 @@ stages:
               FORCE_REPLACE_DOCKER_IMAGE: ${{ parameters.FORCE_REPLACE_DOCKER_IMAGE }}
 
   # Testing the docker image
-  - stage: Smoke Test
+  - stage: Smoke_Test
     dependsOn:
       - Build
     condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
@@ -159,7 +159,7 @@ stages:
   # Deploy on K8s with Helm
   - stage: Deploy
     dependsOn:
-      - Smoke Test
+      - Smoke_Test
     variables:
       deploy_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
     jobs:
@@ -196,7 +196,7 @@ stages:
 
 
   # Run Tests
-  - stage: Integration Test
+  - stage: Integration_Test
     dependsOn:
       - Deploy
     condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
