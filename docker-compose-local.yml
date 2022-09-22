@@ -1,9 +1,10 @@
 version: '2'
 
 services:
-  calculator:
-    container_name: 'calculator'
-    image: ${containerRegistry}/pagopaafmcalculator:latest
+
+  calculator-local:
+    container_name: 'calculator-local'
+    image: calculator:latest
     build: .
     env_file:
       - .env
@@ -14,7 +15,7 @@ services:
 
   calculator-data:
     container_name: 'calculator-data'
-    image: ${containerRegistry}/pagopaafmcalculatordata:latest
+    image: pagopadcommonacr.azurecr.io/pagopaafmcalculatordata:latest
     env_file:
       - .env
     ports:

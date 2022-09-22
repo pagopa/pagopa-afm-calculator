@@ -1,7 +1,10 @@
 # run from this directory
+# use -local for run docker-compose-local.yml
+# example: sh ./run_integration_test.sh -local
+cd ..
 
 # create containers
-docker-compose up -d
+docker-compose -f ./docker-compose$1.yml up -d --remove-orphans --force-recreate
 
 # waiting the containers
 printf 'Waiting for the service'
@@ -17,9 +20,9 @@ until $(curl --output /dev/null --silent --head --fail http://localhost:8080/inf
     attempt_counter=$(($attempt_counter+1))
     sleep 6
 done
-printf 'Service Started'
+echo 'Service Started'
 
 # run integration tests
-cd src || exit
+cd integration-test/src || exit
 yarn install
 yarn test
