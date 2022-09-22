@@ -1,7 +1,6 @@
 version: '2'
 
 services:
-
   calculator-local:
     container_name: 'calculator-local'
     image: calculator:latest
