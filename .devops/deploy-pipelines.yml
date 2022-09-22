@@ -172,7 +172,7 @@ stages:
   # Run Integration Tests
   - stage: Test
     dependsOn:
-      - Deploy
+      - Build
     condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
     jobs:
       - job: integration_tests
@@ -192,8 +192,11 @@ stages:
               containerRegistry: "$(dockerRegistryServiceConnection)"
               command: "login"
 
-          - script: |
-              cd ./integration-test
-              sh run_integration_test.sh
+          - task: Bash@3
             displayName: 'Run Integration Tests'
+            inputs:
+              targetType: "inline"
+              script: |
+                cd ./integration-test
+                sh run_integration_test.sh
 
