@@ -68,7 +68,7 @@ stages:
               pollingTimeoutSec: '300'
 
       - job: smoke_tests
-        dependsOn:
+        dependsOn: # parallel running job
         steps:
           - checkout: self
             persistCredentials: true
