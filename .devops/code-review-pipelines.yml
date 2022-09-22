@@ -16,7 +16,6 @@ variables:
 
 
 stages:
-  # Create a release on GitHub
   - stage: Test
     jobs:
       - job: unit_test
