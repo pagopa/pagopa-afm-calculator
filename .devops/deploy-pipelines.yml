@@ -200,5 +200,5 @@ stages:
                 cd ./integration-test
                 sh run_integration_test.sh
             env:
-              containerRegistry: $(dockerRegistryServiceConnection)
+              containerRegistry: $(dockerRegistryFqdn)
 
