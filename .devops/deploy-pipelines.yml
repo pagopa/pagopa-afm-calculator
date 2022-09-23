@@ -218,4 +218,4 @@ stages:
               script: |
                 cd ./integration-test/src
                 yarn install
-                yarn test
+                yarn test:${{ parameters.ENV }}

@@ -4,10 +4,8 @@ const assert = require("assert");
 const {call, get, post} = require("./common");
 const fs = require("fs");
 
-let rawdata = fs.readFileSync('./config/properties.json');
-let properties = JSON.parse(rawdata);
-const afm_host = properties.afm_host;
-const afm_data_host = properties.afm_data_host;
+const afm_host = process.env.AFM_HOST;
+const afm_data_host = process.env.AFM_DATA_HOST;
 
 let body;
 let responseToCheck;

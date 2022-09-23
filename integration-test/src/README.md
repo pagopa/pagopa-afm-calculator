@@ -45,5 +45,5 @@ npx cucumber-js -r step_definitions features/<filename>.feature:46
 
 Remember to start the Backend before start the tests.
 
-You can configure the host in `./config/properties.json` file.
+You can configure the host in `./config/.env.local` file.
 
