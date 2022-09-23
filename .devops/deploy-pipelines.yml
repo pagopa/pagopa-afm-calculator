@@ -216,6 +216,6 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                cd ./integration-test
+                cd ./integration-test/src
                 yarn install
                 yarn test
