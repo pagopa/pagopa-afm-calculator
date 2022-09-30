@@ -158,9 +158,9 @@ stages:
 
   # Deploy on K8s with Helm
   - stage: Deploy
+    condition: not(failed())
     dependsOn:
       - Release
-      - Smoke_Test
     variables:
       deploy_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
     jobs:
