@@ -161,6 +161,7 @@ stages:
     condition: not(failed())
     dependsOn:
       - Release
+      - Build
     variables:
       deploy_version: $[ stageDependencies.Release.make_release.outputs['current_version.value'] ]
     jobs:
