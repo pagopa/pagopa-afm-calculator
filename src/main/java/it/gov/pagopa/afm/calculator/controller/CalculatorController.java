@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController()
@@ -41,7 +42,7 @@ public class CalculatorController {
     @PostMapping(value = "/psps/{idPsp}/fees", produces = {MediaType.APPLICATION_JSON_VALUE})
     public List<Transfer> getFeesByPsp(
             @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp") String idPsp,
-            @RequestBody PaymentOptionByPsp paymentOptionByPsp, @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
+            @RequestBody @Valid PaymentOptionByPsp paymentOptionByPsp, @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
         PaymentOption paymentOption = PaymentOption.builder()
                                             .paymentAmount(paymentOptionByPsp.getPaymentAmount())
                                             .primaryCreditorInstitution(paymentOptionByPsp.getPrimaryCreditorInstitution())
@@ -62,7 +63,7 @@ public class CalculatorController {
             @ApiResponse(responseCode = "500", description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
     @PostMapping(value = "/fees", produces = {MediaType.APPLICATION_JSON_VALUE})
     public List<Transfer> getFees(
-            @RequestBody PaymentOption paymentOption, @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
+            @RequestBody @Valid PaymentOption paymentOption, @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
         return calculatorService.calculate(paymentOption, maxOccurrences);
     }
 }

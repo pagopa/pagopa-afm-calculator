@@ -20,6 +20,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,7 @@ public class CalculatorService {
     UtilityComponent utilityComponent;
 
     @Cacheable(value = "calculate")
-    public List<Transfer> calculate(PaymentOption paymentOption, int limit) {
+    public List<Transfer> calculate(@Valid PaymentOption paymentOption, int limit) {
         // create filters
         Specification<Bundle> specifications = getQueryFilters(paymentOption);
         // do the query

@@ -1,7 +1,11 @@
 package it.gov.pagopa.afm.calculator.entity;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Entity;
@@ -10,9 +14,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Data
-@Entity
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+@ToString
+@Entity
 @Table(name = "TRANSFERCATEGORY", schema = "AFM_CALCULATOR")
 @Slf4j
 public class TransferCategory {
@@ -21,11 +29,6 @@ public class TransferCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-   private String name;
-
-    public TransferCategory(String name) {
-        super();
-        this.name = name;
-    }
+    private String name;
 
 }

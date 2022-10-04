@@ -4,6 +4,11 @@ package it.gov.pagopa.afm.calculator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.afm.calculator.entity.Bundle;
+import it.gov.pagopa.afm.calculator.entity.CiBundle;
+import it.gov.pagopa.afm.calculator.entity.TransferCategory;
+import it.gov.pagopa.afm.calculator.model.BundleType;
+import it.gov.pagopa.afm.calculator.model.PaymentMethod;
+import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import lombok.experimental.UtilityClass;
 
 import java.io.File;
@@ -59,14 +64,37 @@ public class TestUtil {
 
 
     public static List<Bundle> getMockBundleList() {
-        return Collections.singletonList(getMockBuild());
+        return Collections.singletonList(getMockBundle());
     }
 
-    private static Bundle getMockBuild() {
+    private static Bundle getMockBundle() {
         return Bundle.builder()
                 .id("1")
                 .name("bundle1")
-                .idPsp("123")
+                .idPsp("ABC")
+                .ciBundles(List.of(getMockCiBundle()))
+                .paymentAmount(1L)
+                .minPaymentAmount(0L)
+                .maxPaymentAmount(1000L)
+                .type(BundleType.PUBLIC)
+                .touchpoint(Touchpoint.CHECKOUT)
+                .paymentMethod(PaymentMethod.CP)
+                .transferCategoryList(List.of(getMockTransferCategory()))
+                .build();
+    }
+
+    private static TransferCategory getMockTransferCategory(){
+        return TransferCategory.builder()
+                .id(1L)
+                .name("TAX1")
+                .build();
+    }
+
+    private static CiBundle getMockCiBundle() {
+        return CiBundle.builder()
+                .id("1")
+                .ciFiscalCode("77777777777")
+                .attributes(List.of())
                 .build();
     }
 

@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "taxPayerFee": 1,
+    "primaryCiIncurredFee": 0,
+    "paymentMethod": "CP",
+    "touchpoint": "CHECKOUT",
+    "idBundle": "1",
+    "bundleName": "bundle1",
+    "bundleDescription": null,
+    "idCiBundle": "1",
+    "idPsp": "ABC"
+  }
+]
