@@ -5,10 +5,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.afm.calculator.entity.Bundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
+import it.gov.pagopa.afm.calculator.entity.CiBundleAttribute;
 import it.gov.pagopa.afm.calculator.entity.TransferCategory;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.Touchpoint;
+import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import lombok.experimental.UtilityClass;
 
 import java.io.File;
@@ -94,7 +96,16 @@ public class TestUtil {
         return CiBundle.builder()
                 .id("1")
                 .ciFiscalCode("77777777777")
-                .attributes(List.of())
+                .attributes(List.of(getMockCiBundleAttribute()))
+                .build();
+    }
+
+    private static CiBundleAttribute getMockCiBundleAttribute() {
+        return CiBundleAttribute.builder()
+                .id("1")
+                .maxPaymentAmount(10L)
+                .transferCategory("TAX1")
+                .transferCategoryRelation(TransferCategoryRelation.EQUAL)
                 .build();
     }
 

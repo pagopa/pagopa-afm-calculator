@@ -110,12 +110,12 @@ public class CalculatorService {
     /**
      * Add in {@code transfers} the created transfer objects
      *
-     * @param transfers list of transfers where add the transfer
-     * @param paymentOption Request of the User
-     * @param primaryTransferCategoryList  transfers of the primary CI
-     * @param bundle Bundle info
+     * @param transfers                   list of transfers where add the transfer
+     * @param paymentOption               Request of the User
+     * @param primaryTransferCategoryList transfers of the primary CI
+     * @param bundle                      Bundle info
      */
-    private void analyzeTransferList(List<Transfer> transfers, PaymentOption paymentOption, List<String> primaryTransferCategoryList,  Bundle bundle) {
+    private void analyzeTransferList(List<Transfer> transfers, PaymentOption paymentOption, List<String> primaryTransferCategoryList, Bundle bundle) {
         // analyze public and private bundles
         for (CiBundle cibundle : bundle.getCiBundles()) {
             // check ciBundle belongs to primary CI
@@ -159,10 +159,10 @@ public class CalculatorService {
     }
 
     /**
-     * @param taxPayerFee fee of the user
+     * @param taxPayerFee          fee of the user
      * @param primaryCiIncurredFee fee of CI
-     * @param bundle info of the Bundle
-     * @param idCiBundle ID of CI-Bundle relation
+     * @param bundle               info of the Bundle
+     * @param idCiBundle           ID of CI-Bundle relation
      * @return Create transfer item
      */
     private Transfer createTransfer(long taxPayerFee, long primaryCiIncurredFee, Bundle bundle, String idCiBundle) {
@@ -181,7 +181,7 @@ public class CalculatorService {
 
     /**
      * @param creditorInstitutionFiscalCode primary CI fiscal code
-     * @param transferList list of transfers
+     * @param transferList                  list of transfers
      * @return Check if creditor institution belongs to transfer list
      */
     private boolean inTransferList(String creditorInstitutionFiscalCode, ArrayList<TransferListItem> transferList) {
