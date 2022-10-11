@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopadcommonacr.azurecr.io/pagopaafmcalculator
-    tag: "0.0.4-3"
+    tag: "0.0.4-4"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -61,7 +61,7 @@ microservice-chart:
           value: "70"
   envConfig:
     WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
-#    DB_HOST: pagopaafmcalculatordata-microservice-chart:4000
+    #    DB_HOST: pagopaafmcalculatordata-microservice-chart:4000
     DB_HOST: jdbc:postgresql://pagopa-d-postgresql.postgres.database.azure.com:5432/afmcalculator?sslmode=require
     CACHE_SIZE: '1000'
     CACHE_EXPIRATION_TIME: '3m'
@@ -70,7 +70,6 @@ microservice-chart:
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'ai-d-connection-string'
     DB_USERNAME: 'calculator-db-username'
     DB_PASSWORD: 'calculator-db-password'
-
   keyvault:
     name: "pagopa-d-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
