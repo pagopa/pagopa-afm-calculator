@@ -3,7 +3,7 @@
 
 import { check } from 'k6';
 import { SharedArray } from 'k6/data';
-import { getFeesByPsp, getFees } from './helpers/calculator_helper.js';
+import { getFeesByPsp } from './helpers/calculator_helper.js';
 
 // read configuration
 // note: SharedArray can currently only be constructed inside init code
@@ -13,9 +13,9 @@ const varsArray = new SharedArray('vars', function () {
 	return [data.environment[0], data.rampingVusLessRequests];
 });
 // workaround to use shared array (only array should be used)
-const vars = varsArray[0];
+const env = varsArray[0];
 const optsConfiguration = varsArray[1];
-const rootUrl = `${vars.host}`;
+const rootUrl = `${env.host}`;
 
 export const options = {
 	discardResponseBodies: true,
@@ -61,7 +61,6 @@ export default function calculator_getFeesByPsp() {
 		'getFeesByPsp': (response) => response.status === 200,
 	});
 }
-
 
 //export function handleSummary(data) {
 //	return { 'raw-data.json': JSON.stringify(data)};
