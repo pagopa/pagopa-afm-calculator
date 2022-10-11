@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 
 @AllArgsConstructor
@@ -14,6 +15,7 @@ public class PaymentOptionByPsp {
     private String primaryCreditorInstitution;
     private PaymentMethod paymentMethod;
     private Touchpoint touchpoint;
+    @Valid
     private ArrayList<TransferListItem> transferList;
 }
 

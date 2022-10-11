@@ -4,9 +4,11 @@ import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 @Builder
 @Data
+@ToString
 public class Transfer implements Comparable<Transfer> {
     private Long taxPayerFee;
     private long primaryCiIncurredFee;

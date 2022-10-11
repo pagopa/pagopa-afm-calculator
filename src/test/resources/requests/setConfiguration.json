@@ -1,0 +1,37 @@
+{
+  "bundles": [
+    {
+      "id": "test_1b7de84c012f",
+      "idPsp": "test_fdb480b05954",
+      "name": "test_697bd62512f8",
+      "description": "test_8851a12d59ff",
+      "paymentAmount": 45,
+      "minPaymentAmount": 43,
+      "maxPaymentAmount": 83,
+      "paymentMethod": "JIF",
+      "touchpoint": "IO",
+      "type": "PRIVATE",
+      "transferCategoryList": [
+        {
+          "id": 74,
+          "name": "test_d26c031bb0a9"
+        }
+      ]
+    }
+  ],
+  "ciBundles": [
+    {
+      "id": "test_66fa720c4449",
+      "ciFiscalCode": "test_48fb7da4dd68",
+      "idBundle": "test_d410c7a4e373",
+      "attributes": [
+        {
+          "id": "test_2fbb6329de53",
+          "maxPaymentAmount": 94,
+          "transferCategory": "test_0c1332bc430b",
+          "transferCategoryRelation": "NOT_EQUAL"
+        }
+      ]
+    }
+  ]
+}

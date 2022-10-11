@@ -20,6 +20,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,7 @@ public class CalculatorService {
     UtilityComponent utilityComponent;
 
     @Cacheable(value = "calculate")
-    public List<Transfer> calculate(PaymentOption paymentOption, int limit) {
+    public List<Transfer> calculate(@Valid PaymentOption paymentOption, int limit) {
         // create filters
         Specification<Bundle> specifications = getQueryFilters(paymentOption);
         // do the query
@@ -109,12 +110,12 @@ public class CalculatorService {
     /**
      * Add in {@code transfers} the created transfer objects
      *
-     * @param transfers list of transfers where add the transfer
-     * @param paymentOption Request of the User
-     * @param primaryTransferCategoryList  transfers of the primary CI
-     * @param bundle Bundle info
+     * @param transfers                   list of transfers where add the transfer
+     * @param paymentOption               Request of the User
+     * @param primaryTransferCategoryList transfers of the primary CI
+     * @param bundle                      Bundle info
      */
-    private void analyzeTransferList(List<Transfer> transfers, PaymentOption paymentOption, List<String> primaryTransferCategoryList,  Bundle bundle) {
+    private void analyzeTransferList(List<Transfer> transfers, PaymentOption paymentOption, List<String> primaryTransferCategoryList, Bundle bundle) {
         // analyze public and private bundles
         for (CiBundle cibundle : bundle.getCiBundles()) {
             // check ciBundle belongs to primary CI
@@ -158,10 +159,10 @@ public class CalculatorService {
     }
 
     /**
-     * @param taxPayerFee fee of the user
+     * @param taxPayerFee          fee of the user
      * @param primaryCiIncurredFee fee of CI
-     * @param bundle info of the Bundle
-     * @param idCiBundle ID of CI-Bundle relation
+     * @param bundle               info of the Bundle
+     * @param idCiBundle           ID of CI-Bundle relation
      * @return Create transfer item
      */
     private Transfer createTransfer(long taxPayerFee, long primaryCiIncurredFee, Bundle bundle, String idCiBundle) {
@@ -180,7 +181,7 @@ public class CalculatorService {
 
     /**
      * @param creditorInstitutionFiscalCode primary CI fiscal code
-     * @param transferList list of transfers
+     * @param transferList                  list of transfers
      * @return Check if creditor institution belongs to transfer list
      */
     private boolean inTransferList(String creditorInstitutionFiscalCode, ArrayList<TransferListItem> transferList) {
