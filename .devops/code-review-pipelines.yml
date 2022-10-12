@@ -85,6 +85,6 @@ stages:
               targetType: 'inline'
               script: |
                 cd ./integration-test
-                sh run_integration_test.sh -local
+                sh run_integration_test.sh local
 
 
