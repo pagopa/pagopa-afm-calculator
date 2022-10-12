@@ -43,5 +43,6 @@ steps:
         -e API_SUBSCRIPTION_KEY=${{ parameters.API_SUBSCRIPTION_KEY }} \
         -e VARS=${{ parameters.ENVIRONMENT }}.environment.json \
         -e TEST_TYPE=./test-types/${{ parameters.TEST_TYPE }}.json \
+        -e K6_OUT=influxdb=https://api.dev.platform.pagopa.it/shared/influxdb/v1/k6
         grafana/k6 run /script/${{ parameters.SCRIPT }}.js \
     displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.ENVIRONMENT }}
