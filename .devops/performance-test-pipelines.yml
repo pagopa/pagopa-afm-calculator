@@ -2,7 +2,7 @@
 trigger: none
 
 pool:
-  name: load-test-linux
+  name: performance-test-linux
 
 parameters:
   - name: "API_SUBSCRIPTION_KEY"
