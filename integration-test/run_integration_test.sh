@@ -1,9 +1,10 @@
-# run from this directory
 # example: sh ./run_integration_test.sh <local|dev|uat|prod>
-
+if [[ "$(pwd)" =~ .*"integration-test" ]]; then
+  cd ..
+fi
 
 # create containers
-cd ../docker || exit
+cd ./docker || exit
 sh ./run_docker.sh "$1"
 
 # waiting the containers
@@ -17,7 +18,7 @@ until $(curl --output /dev/null --silent --head --fail http://localhost:8080/inf
     fi
 
     printf '.'
-    attempt_counter=$(($attempt_counter+1))
+    attempt_counter=$((attempt_counter+1))
     sleep 6
 done
 echo 'Service Started'
