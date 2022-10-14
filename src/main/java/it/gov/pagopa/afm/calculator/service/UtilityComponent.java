@@ -52,4 +52,8 @@ public class UtilityComponent {
                         .collect(Collectors.toList())
                 : new ArrayList<>();
     }
+
+    public List<String> getTouchpoints(){
+        return null;
+    }
 }
