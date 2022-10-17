@@ -3,9 +3,12 @@ version: '2'
 services:
   calculator:
     container_name: 'calculator'
-    image: ${containerRegistry}/pagopaafmcalculator:latest
+    image: ${image}
+    build:
+      dockerfile: Dockerfile
+      context: ../
     env_file:
-      - .env
+      - ./config/.env
     ports:
       - 8080:8080
     depends_on:
@@ -15,7 +18,7 @@ services:
     container_name: 'calculator-data'
     image: ${containerRegistry}/pagopaafmcalculatordata:latest
     env_file:
-      - .env
+      - ./config/calculator_data.env
     ports:
       - 8081:8080
       - 4000:4000

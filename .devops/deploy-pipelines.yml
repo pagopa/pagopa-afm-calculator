@@ -152,7 +152,7 @@ stages:
               targetType: 'inline'
               script: |
                 cd ./integration-test
-                sh run_integration_test.sh
+                sh run_integration_test.sh local
             env:
               containerRegistry: $(dockerRegistryFqdn)
 
@@ -202,7 +202,7 @@ stages:
   - stage: Integration_Test
     dependsOn:
       - Deploy
-    condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
+    condition: and(and(succeeded(), eq('${{ parameters.TEST }}', 'true')), ne('${{ parameters.ENV }}', 'prod'))
     jobs:
       - job: integration_tests
         steps:
