@@ -30,6 +30,12 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-spring-data-cosmos</artifactId>
+            <version>3.27.0</version>
+        </dependency>
+
         <!-- Swagger/OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>

@@ -8,11 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Getter
 @Setter
@@ -20,8 +16,6 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@Entity
-@Table(name = "CIBUNDLEATTRIBUTE", schema = "AFM_CALCULATOR")
 public class CiBundleAttribute {
 
     @Id
@@ -31,7 +25,6 @@ public class CiBundleAttribute {
 
     private String transferCategory;
 
-    @Enumerated(EnumType.STRING)
     private TransferCategoryRelation transferCategoryRelation;
 
 }
