@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.afm.calculator.entity.Bundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundleAttribute;
-import it.gov.pagopa.afm.calculator.entity.TransferCategory;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.Touchpoint;
@@ -74,21 +73,13 @@ public class TestUtil {
                 .id("1")
                 .name("bundle1")
                 .idPsp("ABC")
-                .ciBundles(List.of(getMockCiBundle()))
                 .paymentAmount(1L)
                 .minPaymentAmount(0L)
                 .maxPaymentAmount(1000L)
                 .type(BundleType.PUBLIC)
                 .touchpoint(Touchpoint.CHECKOUT)
                 .paymentMethod(PaymentMethod.CP)
-                .transferCategoryList(List.of(getMockTransferCategory()))
-                .build();
-    }
-
-    private static TransferCategory getMockTransferCategory(){
-        return TransferCategory.builder()
-                .id(1L)
-                .name("TAX1")
+                .transferCategoryList(List.of("TAX1"))
                 .build();
     }
 
