@@ -5,24 +5,21 @@ import { check } from 'k6';
 import { SharedArray } from 'k6/data';
 import { getFeesByPsp, getFees } from './helpers/calculator_helper.js';
 
+
+
+export let options = JSON.parse(open(__ENV.TEST_TYPE));
+
 // read configuration
 // note: SharedArray can currently only be constructed inside init code
 // according to https://k6.io/docs/javascript-api/k6-data/sharedarray
 const varsArray = new SharedArray('vars', function () {
-	const data = JSON.parse(open(`./${__ENV.VARS}`))
-	return [data.environment[0], data.rampingVusNode];
+	return JSON.parse(open(`${__ENV.VARS}`)).environment;
 });
+
 // workaround to use shared array (only array should be used)
 const vars = varsArray[0];
 const optsConfiguration = varsArray[1];
 const rootUrl = `${vars.host}`;
-
-export const options = {
-	discardResponseBodies: true,
-	scenarios: {
-		rampingVus: optsConfiguration,
-	},
-};
 
 export default function calculator() {
 
@@ -54,7 +51,7 @@ export default function calculator() {
 			}
 		]
 	}
-    response = getFees(rootUrl, payload, params);
+    var response = getFees(rootUrl, payload, params);
 	check(response, {
 		'getFees': (r) => r.status === 200,
 	});

@@ -1,18 +1,18 @@
 # sh run_performance_test.sh <local|dev|uat|prod> <load|stress|spike|soak|...> <script-name> <db-name> <subkey>
 
-ENV=$1
-TEST_TYPE=$2
+ENVIRONMENT=$1
+TYPE=$2
 SCRIPT=$3
 DB_NAME=$4
 API_SUBSCRIPTION_KEY=$5
 
-if [ -z "$ENV" ]
+if [ -z "$ENVIRONMENT" ]
 then
   echo "No env specified: sh run_performance_test.sh <local|dev|uat|prod> <load|stress|spike|soak|...> <script-name> <db-name> <subkey>"
   exit 1
 fi
 
-if [ -z "$TEST_TYPE" ]
+if [ -z "$TYPE" ]
 then
   echo "No test type specified: sh run_performance_test.sh <local|dev|uat|prod> <load|stress|spike|soak|...> <script-name> <db-name> <subkey>"
   exit 1
@@ -29,11 +29,11 @@ then
   echo "No DB name specified: 'k6' is used."
 fi
 
-export ENV=${ENV}
-export TEST_TYPE=${TEST_TYPE}
-export SCRIPT=${SCRIPT}
-export DB_NAME=${DB_NAME}
-export API_SUBSCRIPTION_KEY=${API_SUBSCRIPTION_KEY}
+export env=${ENVIRONMENT}
+export type=${TYPE}
+export script=${SCRIPT}
+export db_name=${DB_NAME}
+export sub_key=${API_SUBSCRIPTION_KEY}
 
 stack_name=$(cd .. && basename "$PWD")
 docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate

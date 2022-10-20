@@ -6,11 +6,11 @@ services:
     volumes:
       - '${PWD}/src:/scripts'
     environment:
-      - API_SUBSCRIPTION_KEY=${API_SUBSCRIPTION_KEY}
-      - VARS=/scripts/${ENV}.environment.json
-      - TEST_TYPE=/scripts/test-types/${TEST_TYPE}.json
-      - K6_OUT=influxdb=http://nginx:8086/${DB_NAME}
-    command: run /scripts/${SCRIPT}.js
+      - API_SUBSCRIPTION_KEY=${sub_key}
+      - VARS=/scripts/${env}.environment.json
+      - TEST_TYPE=/scripts/test-types/${type}.json
+      - K6_OUT=influxdb=http://nginx:8086/${db_name}
+    command: run /scripts/${script}.js
     depends_on:
       - nginx
 

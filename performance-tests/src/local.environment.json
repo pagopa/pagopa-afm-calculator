@@ -4,16 +4,5 @@
       "env": "local",
       "host": "http://localhost:8586"
     }
-  ],
-  "rampingVus": {
-    "executor": "ramping-vus",
-    "startVUs": 0,
-    "stages": [
-      { "duration": "3s", "target": 300 },
-      { "duration": "10s", "target": 300 },
-      { "duration": "5s", "target": 750 },
-      { "duration": "5s", "target": 0 }
-    ],
-    "gracefulRampDown": "0s"
-  }
+  ]
 }
