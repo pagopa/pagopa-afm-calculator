@@ -183,7 +183,7 @@ stages:
 
                 - script: |
                     git checkout $(sourceBranch)
-                  displayName: Checkout and update branch
+                  displayName: Checkout and update branch $(Build.SourceBranchName)
 
                 - template: templates/helm-microservice-chart-setup/template.yaml@pagopaCommons
                   parameters:
