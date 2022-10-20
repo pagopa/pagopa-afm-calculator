@@ -54,7 +54,7 @@ steps:
         ${{ if eq(parameters.semver, 'major') }}:
           options: '-DnewVersion=${parsedVersion.nextMajorVersion}.0.0'
         ${{ if eq(parameters.semver, 'buildNumber') }}:
-          options: '-DnewVersion=${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-${parsedVersion.nextBuildNumber}+$(Build.SourceBranch)'
+          options: '-DnewVersion=${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-${parsedVersion.nextBuildNumber}+$(Build.SourceBranchName)'
 
   - task: Bash@3
     name: next_version
