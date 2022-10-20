@@ -88,7 +88,7 @@ stages:
             clean: true
             persistCredentials: true
 
-          - template: templates/maven-versioning.yml
+          - template: templates/maven-github-versioning.yml
             parameters:
               release_branch: $(sourceBranch)
               gitEmail: $(GIT_EMAIL)
