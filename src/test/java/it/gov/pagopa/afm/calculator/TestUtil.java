@@ -53,8 +53,8 @@ public class TestUtil {
 
     /**
      * @param relativePath a relative path of valid JSON file
-     * @param valueType class to convert the JSON
-     * @param <T> a Java Class
+     * @param valueType    class to convert the JSON
+     * @param <T>          a Java Class
      * @return an object of type T using the JSON
      * @throws IOException if an IO error occurs
      */

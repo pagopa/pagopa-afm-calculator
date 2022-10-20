@@ -14,7 +14,7 @@
 //import java.io.IOException;
 //
 //@SpringBootTest
-//@ContextConfiguration(initializers = {Initializer.class})
+//// @ContextConfiguration(initializers = {Initializer.class})
 //class CalculatorServiceTest {
 //
 //    @Autowired

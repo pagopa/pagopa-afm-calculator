@@ -15,7 +15,7 @@
 //
 //@SpringBootTest
 //@AutoConfigureMockMvc
-//@ContextConfiguration(initializers = {Initializer.class})
+//// @ContextConfiguration(initializers = {Initializer.class})
 //class ConfigurationControllerTest {
 //
 //    @Autowired
