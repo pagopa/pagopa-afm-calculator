@@ -22,6 +22,8 @@ parameters:
       - "load"
       - "spike"
       - "stress"
+      - "rampingVU"
+      - "rampingVULessRequests"
   - name: "SCRIPT"
     displayName: "Script name"
     type: string
