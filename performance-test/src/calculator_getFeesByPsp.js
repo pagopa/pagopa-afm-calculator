@@ -23,7 +23,8 @@ export default function calculator_getFeesByPsp() {
 	const params = {
 		headers: {
 			'Content-Type': 'application/json',
-		},
+            'Ocp-Apim-Subscription-Key': __ENV.API_SUBSCRIPTION_KEY
+        },
 	};
 
     // to give randomness to request in order to avoid caching

@@ -6,7 +6,6 @@ import { SharedArray } from 'k6/data';
 import { getFeesByPsp, getFees } from './helpers/calculator_helper.js';
 
 
-
 export let options = JSON.parse(open(__ENV.TEST_TYPE));
 
 // read configuration
@@ -26,6 +25,7 @@ export default function calculator() {
 	const params = {
 		headers: {
 			'Content-Type': 'application/json',
+			'Ocp-Apim-Subscription-Key': __ENV.API_SUBSCRIPTION_KEY
 		},
 	};
 
@@ -56,9 +56,4 @@ export default function calculator() {
 		'getFees': (r) => r.status === 200,
 	});
 
-}
-
-
-export function handleSummary(data) {
-	return { 'raw-data.json': JSON.stringify(data)};
 }

@@ -96,14 +96,6 @@ stages:
               gitHubConnection: $(GITHUB_CONNECTION)
               semver: "${{ parameters.SEMVER }}"
 
-#          - ${{ if ne(parameters.SEMVER, 'skip') }}:
-#              - template: templates/maven-github-release/template.yaml@pagopaCommons
-#                parameters:
-#                  ${{ if ne(parameters.SEMVER, 'skip') }}:
-#                    semver: '${{ parameters.SEMVER }}'
-#                  ${{ if eq(parameters.SEMVER, 'skip') }}:
-#                    semver: 'buildNumber' # this case is impossible due to main condition, but it is necessary to work property
-
           - template: templates/maven-github-current-version/template.yaml@pagopaCommons
 
   # Build and Push Docker Image
