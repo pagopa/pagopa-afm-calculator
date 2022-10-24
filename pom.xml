@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>it.gov.pagopa</groupId>
-    <artifactId>microservice</artifactId>
+    <artifactId>calculator</artifactId>
     <version>0.0.5-1-cosmos</version>
     <name>afm-calculator</name>
     <description>Calculator Logic microservice for pagoPA AFM</description>
