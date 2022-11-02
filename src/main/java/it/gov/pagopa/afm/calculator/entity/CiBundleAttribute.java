@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -19,6 +20,7 @@ import javax.persistence.Id;
 public class CiBundleAttribute {
 
     @Id
+    @NotNull
     private String id;
 
     private Long maxPaymentAmount;

@@ -2,9 +2,10 @@ package it.gov.pagopa.afm.calculator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
-//@EnableCaching TODO remember to enable the cache!
+@EnableCaching
 public class Application {
 
     public static void main(String[] args) {

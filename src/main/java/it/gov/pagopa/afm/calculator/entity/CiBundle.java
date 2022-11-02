@@ -1,7 +1,6 @@
 package it.gov.pagopa.afm.calculator.entity;
 
 import com.azure.spring.data.cosmos.core.mapping.Container;
-import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
 
-import javax.persistence.Id;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Getter
@@ -24,13 +25,16 @@ import java.util.List;
 public class CiBundle {
 
     @Id
+    @NotBlank
     private String id;
 
-    @PartitionKey
+    @NotBlank
     private String ciFiscalCode;
 
-    private String idBundle;
+//    @NotNull
+//    private String idBundle;
 
+    @Valid
     private List<CiBundleAttribute> attributes;
 
 }
