@@ -1,6 +1,7 @@
 package it.gov.pagopa.afm.calculator.controller;
 
 import it.gov.pagopa.afm.calculator.TestUtil;
+import it.gov.pagopa.afm.calculator.initializer.Initializer;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.IOException;
@@ -25,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-// @ContextConfiguration(initializers = {Initializer.class})
+@ContextConfiguration(initializers = {Initializer.class})
 class CalculatorControllerTest {
 
     @MockBean
