@@ -2,6 +2,7 @@ package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.Bundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
+import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
@@ -10,6 +11,7 @@ import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.TransferListItem;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.repository.BundleRepository;
+import it.gov.pagopa.afm.calculator.repository.TouchpointRepository;
 import it.gov.pagopa.afm.calculator.util.BundleSpecification;
 import it.gov.pagopa.afm.calculator.util.BundleTransferCategoryListSpecification;
 import it.gov.pagopa.afm.calculator.util.SearchCriteria;
@@ -19,6 +21,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -40,6 +43,8 @@ public class CalculatorService {
     @Autowired
     ModelMapper modelMapper;
 
+    @Autowired
+    TouchpointRepository touchpointRepository;
 
     @Cacheable(value = "calculate")
     public List<Transfer> calculate(@Valid PaymentOption paymentOption, int limit) {
@@ -61,7 +66,16 @@ public class CalculatorService {
      * @return map {@code paymentOption} parameter to {@code Specification} object to use in the query
      */
     private Specification<Bundle> getQueryFilters(PaymentOption paymentOption) {
-        var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.NULL_OR_EQUAL, paymentOption.getTouchpoint()));
+
+        var touchpoint = touchpointRepository.findByName(paymentOption.getTouchpoint());
+
+        if(paymentOption.getTouchpoint() != null && touchpoint.isEmpty()) {
+            throw new AppException(HttpStatus.NOT_FOUND, "Touchpoint not found", "Touchpoint with name "
+                    + paymentOption.getTouchpoint() + " not found");
+        }
+
+        var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.NULL_OR_EQUAL,
+                touchpoint.isEmpty() ? null : touchpoint.get()));
 
         var paymentMethodFilter = new BundleSpecification(new SearchCriteria("paymentMethod", SearchOperation.NULL_OR_EQUAL, paymentOption.getPaymentMethod()));
 

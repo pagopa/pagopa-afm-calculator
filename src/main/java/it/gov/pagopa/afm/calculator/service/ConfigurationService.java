@@ -83,6 +83,7 @@ public class ConfigurationService {
         return Configuration.builder()
                 .bundles(bundleRepository.findAll())
                 .ciBundles(ciBundleRepository.findAll().parallelStream().map(ciBundle -> modelMapper.map(ciBundle, it.gov.pagopa.afm.calculator.model.configuration.CiBundle.class)).collect(Collectors.toList()))
+                .touchpoints(touchpointRepository.findAll().parallelStream().map(touchpoint -> modelMapper.map(touchpoint, it.gov.pagopa.afm.calculator.model.Touchpoint.class)).collect(Collectors.toList()))
                 .build();
     }
 }

@@ -9,7 +9,11 @@
       "minPaymentAmount": 43,
       "maxPaymentAmount": 83,
       "paymentMethod": "JIF",
-      "touchpoint": "IO",
+      "touchpoint": {
+        "id": "test_66fa720c1112",
+        "name": "CHECKOUT",
+        "createdDate": "2007-12-03T10:15:30"
+      },
       "type": "PRIVATE",
       "transferCategoryList": [
         {
@@ -32,6 +36,13 @@
           "transferCategoryRelation": "NOT_EQUAL"
         }
       ]
+    }
+  ],
+  "touchpoints": [
+    {
+      "id": "test_66fa720c1112",
+      "name": "CHECKOUT",
+      "createdDate": "2007-12-03T10:15:30"
     }
   ]
 }
