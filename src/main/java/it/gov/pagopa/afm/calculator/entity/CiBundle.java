@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.calculator.entity;
 
+import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,15 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Getter
@@ -24,21 +20,18 @@ import java.util.List;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "CIBUNDLE", schema = "AFM_CALCULATOR")
+@Container(containerName = "cibundles")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CiBundle {
 
     @Id
+    @NotBlank
     private String id;
 
+    @NotBlank
     private String ciFiscalCode;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="bundleId", referencedColumnName = "id")
-    private Bundle bundle;
-
-    @OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Valid
     private List<CiBundleAttribute> attributes;
 
 }

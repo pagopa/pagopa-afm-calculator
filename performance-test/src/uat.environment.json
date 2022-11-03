@@ -1,0 +1,10 @@
+{
+  "environment": [
+    {
+      "env": "dev",
+      "host": "https://api.uat.platform.pagopa.it/afm/calculator-service/v1"
+    }
+  ]
+}
+
+

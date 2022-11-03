@@ -44,13 +44,13 @@ public class CalculatorController {
             @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp") String idPsp,
             @RequestBody @Valid PaymentOptionByPsp paymentOptionByPsp, @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
         PaymentOption paymentOption = PaymentOption.builder()
-                                            .paymentAmount(paymentOptionByPsp.getPaymentAmount())
-                                            .primaryCreditorInstitution(paymentOptionByPsp.getPrimaryCreditorInstitution())
-                                            .paymentMethod(paymentOptionByPsp.getPaymentMethod())
-                                            .touchpoint(paymentOptionByPsp.getTouchpoint())
-                                            .idPspList(List.of(idPsp))
-                                            .transferList(paymentOptionByPsp.getTransferList())
-                                            .build();
+                .paymentAmount(paymentOptionByPsp.getPaymentAmount())
+                .primaryCreditorInstitution(paymentOptionByPsp.getPrimaryCreditorInstitution())
+                .paymentMethod(paymentOptionByPsp.getPaymentMethod())
+                .touchpoint(paymentOptionByPsp.getTouchpoint())
+                .idPspList(List.of(idPsp))
+                .transferList(paymentOptionByPsp.getTransferList())
+                .build();
         return calculatorService.calculate(paymentOption, maxOccurrences);
     }
 

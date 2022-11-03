@@ -31,7 +31,7 @@ public class CiBundle {
 
     private String idBundle;
 
-    @OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CiBundleAttribute> attributes;
 
 }

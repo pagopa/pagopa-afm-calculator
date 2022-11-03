@@ -88,17 +88,13 @@ stages:
             clean: true
             persistCredentials: true
 
-          - ${{ if ne(parameters.SEMVER, 'skip') }}:
-              - template: templates/maven-github-release/template.yaml@pagopaCommons
-                parameters:
-                  release_branch: $(sourceBranch)
-                  gitEmail: $(GIT_EMAIL)
-                  gitUsername: $(GIT_USERNAME)
-                  gitHubConnection: $(GITHUB_CONNECTION)
-                  ${{ if ne(parameters.SEMVER, 'skip') }}:
-                    semver: '${{ parameters.SEMVER }}'
-                  ${{ if eq(parameters.SEMVER, 'skip') }}:
-                    semver: 'buildNumber' # this case is impossible due to main condition, but it is necessary to work property
+          - template: template/maven-github-release.yaml
+            parameters:
+              release_branch: $(sourceBranch)
+              gitEmail: $(GIT_EMAIL)
+              gitUsername: $(GIT_USERNAME)
+              gitHubConnection: $(GITHUB_CONNECTION)
+              semver: "${{ parameters.SEMVER }}"
 
           - template: templates/maven-github-current-version/template.yaml@pagopaCommons
 
@@ -158,7 +154,7 @@ stages:
 
   # Deploy on K8s with Helm
   - stage: Deploy
-    condition: not(failed('Smoke_Test'))
+    condition: and(succeeded('Build'), not(failed('Smoke_Test')))
     dependsOn:
       - Release
       - Build

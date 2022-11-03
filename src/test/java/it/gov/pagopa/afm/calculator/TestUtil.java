@@ -3,10 +3,9 @@ package it.gov.pagopa.afm.calculator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.gov.pagopa.afm.calculator.entity.Bundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundleAttribute;
-import it.gov.pagopa.afm.calculator.entity.TransferCategory;
+import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.Touchpoint;
@@ -54,8 +53,8 @@ public class TestUtil {
 
     /**
      * @param relativePath a relative path of valid JSON file
-     * @param valueType class to convert the JSON
-     * @param <T> a Java Class
+     * @param valueType    class to convert the JSON
+     * @param <T>          a Java Class
      * @return an object of type T using the JSON
      * @throws IOException if an IO error occurs
      */
@@ -64,31 +63,33 @@ public class TestUtil {
         return new ObjectMapper().readValue(jsonFile, valueType);
     }
 
-
-    public static List<Bundle> getMockBundleList() {
-        return Collections.singletonList(getMockBundle());
+    public static ValidBundle getMockGlobalValidBundle() {
+        return ValidBundle.builder()
+                .id("2")
+                .name("bundle2")
+                .idPsp("123")
+                .paymentAmount(2L)
+                .minPaymentAmount(0L)
+                .maxPaymentAmount(1000L)
+                .type(BundleType.GLOBAL)
+                .touchpoint(Touchpoint.CHECKOUT)
+                .paymentMethod(PaymentMethod.CP)
+                .build();
     }
 
-    private static Bundle getMockBundle() {
-        return Bundle.builder()
+    public static ValidBundle getMockValidBundle() {
+        return ValidBundle.builder()
                 .id("1")
                 .name("bundle1")
                 .idPsp("ABC")
-                .ciBundles(List.of(getMockCiBundle()))
                 .paymentAmount(1L)
                 .minPaymentAmount(0L)
                 .maxPaymentAmount(1000L)
                 .type(BundleType.PUBLIC)
                 .touchpoint(Touchpoint.CHECKOUT)
                 .paymentMethod(PaymentMethod.CP)
-                .transferCategoryList(List.of(getMockTransferCategory()))
-                .build();
-    }
-
-    private static TransferCategory getMockTransferCategory(){
-        return TransferCategory.builder()
-                .id(1L)
-                .name("TAX1")
+                .transferCategoryList(List.of("TAX1"))
+                .ciBundleList(Collections.singletonList(getMockCiBundle()))
                 .build();
     }
 

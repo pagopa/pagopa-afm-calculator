@@ -19,7 +19,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-
       - name: Verify PR Labels
         uses: jesusvasquez333/verify-pr-label-action@v1.4.0
         with:
