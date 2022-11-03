@@ -16,6 +16,7 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
@@ -52,5 +53,16 @@ public class Bundle {
 
     private List<String> transferCategoryList;
 
+    private String idChannel;
+
+    private String idBrokerPsp;
+
+    private Boolean digitalStamp;
+
+    // true if bundle must be used only for digital stamp
+    private Boolean digitalStampRestriction;
+
+    // useful only if paymentMethod = CP
+    private Boolean onUs;
 
 }
