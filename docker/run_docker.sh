@@ -39,7 +39,7 @@ export containerRegistry=${containerRegistry}
 export image=${image}
 
 stack_name=$(cd .. && basename "$PWD")
-docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate
+docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate --build
 
 
 # waiting the containers

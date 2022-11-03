@@ -19,23 +19,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Update Swagger
-        run: |
-          pwd
-          ls
-          cd ./openapi
-          chmod +x ./generate_openapi.sh
-          ./generate_openapi.sh
-          
-          git config --global user.name 'PagoPa Github Bot' 
-          git config --global user.email 'github-bot@pagopa.it'
-          git add -A
-          git commit -m '[skip ci] auto updated swagger'
-          git push
-        shell: bash
-
       - name: Verify PR Labels
         uses: jesusvasquez333/verify-pr-label-action@v1.4.0
         with:

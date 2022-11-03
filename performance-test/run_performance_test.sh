@@ -36,5 +36,5 @@ export db_name=${DB_NAME}
 export sub_key=${API_SUBSCRIPTION_KEY}
 
 stack_name=$(cd .. && basename "$PWD")
-docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate
+docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate --build
 docker logs -f k6
