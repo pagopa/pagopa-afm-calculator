@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.afm.calculator.entity.Bundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundleAttribute;
+import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.TransferCategory;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
-import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import lombok.experimental.UtilityClass;
 
@@ -79,7 +79,7 @@ public class TestUtil {
                 .minPaymentAmount(0L)
                 .maxPaymentAmount(1000L)
                 .type(BundleType.PUBLIC)
-                .touchpoint(Touchpoint.CHECKOUT)
+                .touchpoint(Touchpoint.builder().name("CHECKOUT").build())
                 .paymentMethod(PaymentMethod.CP)
                 .transferCategoryList(List.of(getMockTransferCategory()))
                 .build();

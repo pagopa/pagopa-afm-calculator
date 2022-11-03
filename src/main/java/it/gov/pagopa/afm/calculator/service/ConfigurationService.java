@@ -2,8 +2,8 @@ package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.Bundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
-import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
+import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.configuration.Configuration;
 import it.gov.pagopa.afm.calculator.repository.BundleRepository;
 import it.gov.pagopa.afm.calculator.repository.CiBundleRepository;
@@ -59,7 +59,7 @@ public class ConfigurationService {
         });
 
         // save
-        List<Touchpoint> touchpointList = touchpointRepository.saveAllAndFlush(touchpoints);
+        touchpointRepository.saveAllAndFlush(touchpoints);
         List<Bundle> bundleList = bundleRepository.saveAllAndFlush(bundles);
         List<Bundle> bundleListToSave = new ArrayList<>();
         List<CiBundle> ciBundleList = configuration.getCiBundles().parallelStream().map(ciBundleM -> {

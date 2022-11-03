@@ -15,6 +15,7 @@ import it.gov.pagopa.afm.calculator.util.BundleTransferCategoryListSpecification
 import it.gov.pagopa.afm.calculator.util.SearchCriteria;
 import it.gov.pagopa.afm.calculator.util.SearchOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,6 +36,10 @@ public class CalculatorService {
 
     @Autowired
     UtilityComponent utilityComponent;
+
+    @Autowired
+    ModelMapper modelMapper;
+
 
     @Cacheable(value = "calculate")
     public List<Transfer> calculate(@Valid PaymentOption paymentOption, int limit) {
@@ -170,7 +175,8 @@ public class CalculatorService {
                 .taxPayerFee(taxPayerFee)
                 .primaryCiIncurredFee(primaryCiIncurredFee)
                 .paymentMethod(bundle.getPaymentMethod() == null ? PaymentMethod.ANY : bundle.getPaymentMethod())
-                .touchpoint(bundle.getTouchpoint() == null ? Touchpoint.ANY : bundle.getTouchpoint())
+                .touchpoint(bundle.getTouchpoint() == null ? Touchpoint.builder().name("ANY").build() :
+                        modelMapper.map(bundle.getTouchpoint(), Touchpoint.class))
                 .idBundle(bundle.getId())
                 .bundleName(bundle.getName())
                 .bundleDescription(bundle.getDescription())
