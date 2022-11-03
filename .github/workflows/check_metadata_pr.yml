@@ -33,16 +33,3 @@ jobs:
         with:
           script: |
             core.setFailed('Missing required labels')
-
-      - name: Update Swagger
-        run: |
-          cd ./openapi
-          chmod +x ./generate_openapi.sh
-          ./generate_openapi.sh
-          
-          git config --global user.name 'PagoPa Github Bot' 
-          git config --global user.email 'github-bot@pagopa.it'
-          git add -A
-          git commit -m '[skip ci] auto updated swagger'
-          git push
-        shell: bash

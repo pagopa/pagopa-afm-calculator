@@ -1,0 +1,32 @@
+name: Update Swagger
+
+# Controls when the workflow will run
+on:
+  pull_request_target:
+    branches:
+      - main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    name: Automated Script
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Update Swagger
+        run: |
+          cd ./openapi
+          chmod +x ./generate_openapi.sh
+          ./generate_openapi.sh
+          
+          git config --global user.name 'PagoPa Github Bot' 
+          git config --global user.email 'github-bot@pagopa.it'
+          git add -A
+          git commit -m '[skip ci] auto updated swagger'
+          git push
+        shell: bash
