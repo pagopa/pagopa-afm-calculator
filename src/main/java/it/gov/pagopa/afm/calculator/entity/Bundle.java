@@ -7,11 +7,11 @@ import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -24,7 +24,7 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
+@SuperBuilder(toBuilder = true)
 @Container(containerName = "bundles")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Bundle {

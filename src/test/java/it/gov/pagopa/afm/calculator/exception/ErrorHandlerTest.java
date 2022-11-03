@@ -1,6 +1,5 @@
 package it.gov.pagopa.afm.calculator.exception;
 
-import it.gov.pagopa.afm.calculator.initializer.Initializer;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -9,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -17,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@ContextConfiguration(initializers = {Initializer.class})
 class ErrorHandlerTest {
 
     @Autowired

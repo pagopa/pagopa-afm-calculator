@@ -12,6 +12,7 @@ import com.azure.spring.data.cosmos.core.mapping.EnableCosmosAuditing;
 import com.azure.spring.data.cosmos.repository.config.EnableCosmosRepositories;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ import org.springframework.lang.Nullable;
 @EnableCosmosRepositories("it.gov.pagopa.afm.calculator.repository")
 @EnableConfigurationProperties
 @EnableCosmosAuditing
+@ConditionalOnExpression("'${info.properties.environment}'!='test'")
 @Slf4j
 public class CosmosDBConfig extends AbstractCosmosConfiguration {
 

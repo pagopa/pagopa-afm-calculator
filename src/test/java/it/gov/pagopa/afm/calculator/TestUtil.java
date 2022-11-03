@@ -3,9 +3,9 @@ package it.gov.pagopa.afm.calculator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.gov.pagopa.afm.calculator.entity.Bundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundleAttribute;
+import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.Touchpoint;
@@ -63,13 +63,8 @@ public class TestUtil {
         return new ObjectMapper().readValue(jsonFile, valueType);
     }
 
-
-    public static List<Bundle> getMockBundleList() {
-        return Collections.singletonList(getMockBundle());
-    }
-
-    private static Bundle getMockBundle() {
-        return Bundle.builder()
+    public static ValidBundle getMockValidBundle() {
+        return ValidBundle.builder()
                 .id("1")
                 .name("bundle1")
                 .idPsp("ABC")
@@ -80,6 +75,7 @@ public class TestUtil {
                 .touchpoint(Touchpoint.CHECKOUT)
                 .paymentMethod(PaymentMethod.CP)
                 .transferCategoryList(List.of("TAX1"))
+                .ciBundleList(Collections.singletonList(getMockCiBundle()))
                 .build();
     }
 

@@ -31,8 +31,19 @@ public class CosmosRepository {
     @Autowired
     UtilityComponent utilityComponent;
 
+    /**
+     * @param ciFiscalCode fiscal code of the CI
+     * @param bundle       a valid bundle
+     * @return a list of CI-Bundle filtered by fiscal Code
+     */
+    private static List<CiBundle> filterByCI(String ciFiscalCode, ValidBundle bundle) {
+        return bundle.getCiBundleList().parallelStream()
+                .filter(ciBundle -> ciFiscalCode.equals(ciBundle.getCiFiscalCode()))
+                .collect(Collectors.toList());
+    }
+
     @Cacheable(value = "findValidBundles")
-    public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption){
+    public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption) {
         Iterable<ValidBundle> validBundles = findValidBundles(paymentOption);
 
         // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
@@ -88,12 +99,11 @@ public class CosmosRepository {
         return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
     }
 
-
     /**
      * This filter is made with Java (not with cosmos query)
      *
      * @param ciFiscalCode fiscal code of the primary CI
-     * @param validBundles  a valid bundle
+     * @param validBundles a valid bundle
      * @return the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
      */
     private List<ValidBundle> getFilteredBundles(String ciFiscalCode, Iterable<ValidBundle> validBundles) {
@@ -103,18 +113,6 @@ public class CosmosRepository {
                     bundle.setCiBundleList(filterByCI(ciFiscalCode, bundle));
                     return isGlobal(bundle) || !bundle.getCiBundleList().isEmpty();
                 })
-                .collect(Collectors.toList());
-    }
-
-
-    /**
-     * @param ciFiscalCode fiscal code of the CI
-     * @param bundle       a valid bundle
-     * @return a list of CI-Bundle filtered by fiscal Code
-     */
-    private static List<CiBundle> filterByCI(String ciFiscalCode, ValidBundle bundle) {
-        return bundle.getCiBundleList().parallelStream()
-                .filter(ciBundle -> ciFiscalCode.equals(ciBundle.getCiFiscalCode()))
                 .collect(Collectors.toList());
     }
 
