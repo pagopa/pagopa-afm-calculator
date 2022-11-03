@@ -37,9 +37,10 @@ public class CosmosRepository {
      * @return a list of CI-Bundle filtered by fiscal Code
      */
     private static List<CiBundle> filterByCI(String ciFiscalCode, ValidBundle bundle) {
-        return bundle.getCiBundleList().parallelStream()
+        return bundle.getCiBundleList() != null ? bundle.getCiBundleList().parallelStream()
                 .filter(ciBundle -> ciFiscalCode.equals(ciBundle.getCiFiscalCode()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+                : null;
     }
 
     @Cacheable(value = "findValidBundles")
@@ -111,9 +112,13 @@ public class CosmosRepository {
                 .filter(bundle -> {
                     // filter the ci-bundle list
                     bundle.setCiBundleList(filterByCI(ciFiscalCode, bundle));
-                    return isGlobal(bundle) || !bundle.getCiBundleList().isEmpty();
+                    return isGlobal(bundle) || belongsCI(bundle);
                 })
                 .collect(Collectors.toList());
+    }
+
+    private static boolean belongsCI(ValidBundle bundle) {
+        return bundle != null && bundle.getCiBundleList() != null && !bundle.getCiBundleList().isEmpty();
     }
 
 }

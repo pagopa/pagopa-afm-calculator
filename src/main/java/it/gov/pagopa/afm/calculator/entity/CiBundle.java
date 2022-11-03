@@ -31,9 +31,6 @@ public class CiBundle {
     @NotBlank
     private String ciFiscalCode;
 
-//    @NotNull
-//    private String idBundle;
-
     @Valid
     private List<CiBundleAttribute> attributes;
 

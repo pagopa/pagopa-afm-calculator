@@ -63,6 +63,20 @@ public class TestUtil {
         return new ObjectMapper().readValue(jsonFile, valueType);
     }
 
+    public static ValidBundle getMockGlobalValidBundle() {
+        return ValidBundle.builder()
+                .id("2")
+                .name("bundle2")
+                .idPsp("123")
+                .paymentAmount(2L)
+                .minPaymentAmount(0L)
+                .maxPaymentAmount(1000L)
+                .type(BundleType.GLOBAL)
+                .touchpoint(Touchpoint.CHECKOUT)
+                .paymentMethod(PaymentMethod.CP)
+                .build();
+    }
+
     public static ValidBundle getMockValidBundle() {
         return ValidBundle.builder()
                 .id("1")

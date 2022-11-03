@@ -74,7 +74,7 @@ public class CalculatorService {
      */
     private void analyzeTransferList(List<Transfer> transfers, PaymentOption paymentOption, ValidBundle bundle) {
         List<String> primaryTransferCategoryList = utilityComponent.getPrimaryTransferCategoryList(paymentOption, paymentOption.getPrimaryCreditorInstitution());
-        var ciBundles = bundle.getCiBundleList();
+        var ciBundles = bundle.getCiBundleList() != null ? bundle.getCiBundleList() : new ArrayList<CiBundle>();
 
         // analyze public and private bundles
         for (CiBundle cibundle : ciBundles) {

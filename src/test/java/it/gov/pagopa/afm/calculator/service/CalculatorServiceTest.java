@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +38,22 @@ class CalculatorServiceTest {
 
         String actual = TestUtil.toJson(result);
         String expected = TestUtil.readStringFromFile("responses/getFees.json");
+        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    void calculate_noInTransfer() throws IOException, JSONException {
+        var list = new ArrayList<>();
+        list.add(TestUtil.getMockGlobalValidBundle());
+        list.add(TestUtil.getMockValidBundle());
+
+        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(list);
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFees_noInTransfer.json", PaymentOption.class);
+
+        var result = calculatorService.calculate(paymentOption, 10);
+
+        String actual = TestUtil.toJson(result);
+        String expected = TestUtil.readStringFromFile("responses/getFees_noInTransfer.json");
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
 
