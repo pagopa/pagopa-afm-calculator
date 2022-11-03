@@ -65,6 +65,7 @@ microservice-chart:
     APP_LOGGING_LEVEL: 'DEBUG'
     CACHE_SIZE: '1000'
     CACHE_EXPIRATION_TIME: '3m'
+    CACHE_ENABLED: 'true'
     COSMOS_URI: https://pagopa-u-weu-afm-marketplace-cosmos-account.documents.azure.com:443/
   envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-u-connection-string
