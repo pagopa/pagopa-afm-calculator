@@ -3,6 +3,7 @@ package it.gov.pagopa.afm.calculator.service;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
 import it.gov.pagopa.afm.calculator.TestUtil;
+import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,20 @@ class CalculatorServiceTest {
 
         String actual = TestUtil.toJson(result);
         String expected = TestUtil.readStringFromFile("responses/getFees.json");
+        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    void calculate2() throws IOException, JSONException {
+        ValidBundle validBundle = TestUtil.getMockValidBundle();
+        validBundle.setIdPsp("77777777777");
+        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(Collections.singleton(validBundle));
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+
+        var result = calculatorService.calculate(paymentOption, 10);
+
+        String actual = TestUtil.toJson(result);
+        String expected = TestUtil.readStringFromFile("responses/getFees2.json");
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
 

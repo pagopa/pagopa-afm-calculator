@@ -12,13 +12,6 @@ import java.util.List;
 @UtilityClass
 public class CriteriaBuilder {
 
-    public static <T> Criteria isEqual(String param, T value) {
-        return Criteria.getInstance(CriteriaType.IS_EQUAL,
-                param,
-                Collections.singletonList(value),
-                Part.IgnoreCaseType.ALWAYS);
-    }
-
     public static <T> Criteria isEqualOrNull(String param, T value) {
         var queryEquals = Criteria.getInstance(CriteriaType.IS_EQUAL,
                 param,
