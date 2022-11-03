@@ -29,6 +29,7 @@ class CalculatorControllerTest {
 
     @MockBean
     CalculatorService calculatorService;
+
     @Autowired
     private MockMvc mvc;
 
