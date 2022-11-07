@@ -16,7 +16,6 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
