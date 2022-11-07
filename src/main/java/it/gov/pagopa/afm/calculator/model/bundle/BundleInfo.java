@@ -24,12 +24,17 @@ public class BundleInfo {
     // Bundle Info
     private String bundleId;
     private String idPsp;
+    private String idChannel;
+    private String idBrokerPsp;
     private String name;
     private String description;
+    private Boolean digitalStamp;
+    private Boolean digitalStampRestriction;
     private Long paymentAmount;
     private Long minPaymentAmount;
     private Long maxPaymentAmount;
     private PaymentMethod paymentMethod;
+    private Boolean onUs;
     private Touchpoint touchpoint;
     private BundleType type;
     private List<String> transferCategoryList;
