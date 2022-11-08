@@ -127,7 +127,7 @@ public class CalculatorService {
                 .taxPayerFee(taxPayerFee)
                 .primaryCiIncurredFee(primaryCiIncurredFee)
                 .paymentMethod(bundle.getPaymentMethod() == null ? PaymentMethod.ANY : bundle.getPaymentMethod())
-                .touchpoint(bundle.getTouchpoint() == null ? Touchpoint.ANY : bundle.getTouchpoint())
+                .idTouchpoint(bundle.getIdTouchpoint())
                 .idBundle(bundle.getId())
                 .bundleName(bundle.getName())
                 .bundleDescription(bundle.getDescription())

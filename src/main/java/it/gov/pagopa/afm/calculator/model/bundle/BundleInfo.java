@@ -35,7 +35,7 @@ public class BundleInfo {
     private Long maxPaymentAmount;
     private PaymentMethod paymentMethod;
     private Boolean onUs;
-    private Touchpoint touchpoint;
+    private String idTouchpoint;
     private BundleType type;
     private List<String> transferCategoryList;
     private LocalDate bundleValidityDateFrom;

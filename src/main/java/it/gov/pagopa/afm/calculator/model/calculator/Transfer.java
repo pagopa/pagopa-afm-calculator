@@ -13,7 +13,7 @@ public class Transfer implements Comparable<Transfer> {
     private Long taxPayerFee;
     private long primaryCiIncurredFee;
     private PaymentMethod paymentMethod;
-    private Touchpoint touchpoint;
+    private String idTouchpoint;
     private String idBundle;
     private String bundleName;
     private String bundleDescription;

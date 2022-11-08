@@ -47,7 +47,7 @@ public class CalculatorController {
                 .paymentAmount(paymentOptionByPsp.getPaymentAmount())
                 .primaryCreditorInstitution(paymentOptionByPsp.getPrimaryCreditorInstitution())
                 .paymentMethod(paymentOptionByPsp.getPaymentMethod())
-                .touchpoint(paymentOptionByPsp.getTouchpoint())
+                .touchpointName(paymentOptionByPsp.getTouchpointName())
                 .idPspList(List.of(idPsp))
                 .transferList(paymentOptionByPsp.getTransferList())
                 .build();

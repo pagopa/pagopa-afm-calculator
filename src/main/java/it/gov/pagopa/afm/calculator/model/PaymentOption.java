@@ -22,7 +22,7 @@ public class PaymentOption {
     @NotNull
     private String primaryCreditorInstitution;
     private PaymentMethod paymentMethod;
-    private Touchpoint touchpoint;
+    private String touchpointName;
     private List<String> idPspList;
     @Valid
     private ArrayList<TransferListItem> transferList;
