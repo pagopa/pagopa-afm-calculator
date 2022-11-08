@@ -39,8 +39,7 @@ export containerRegistry=${containerRegistry}
 export image=${image}
 
 stack_name=$(cd .. && basename "$PWD")
-docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate --build
-docker logs -f calculator
+docker-compose -p "${stack_name}" up --remove-orphans --force-recreate --build
 
 # waiting the containers
 printf 'Waiting for the service'
@@ -54,6 +53,6 @@ until $(curl --output /dev/null --silent --head --fail http://localhost:8080/inf
 
     printf '.'
     attempt_counter=$((attempt_counter+1))
-    sleep 10
+    sleep 5
 done
 echo 'Service Started'
