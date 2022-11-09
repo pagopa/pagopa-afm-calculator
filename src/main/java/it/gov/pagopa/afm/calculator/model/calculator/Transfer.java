@@ -1,7 +1,6 @@
 package it.gov.pagopa.afm.calculator.model.calculator;
 
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
-import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;

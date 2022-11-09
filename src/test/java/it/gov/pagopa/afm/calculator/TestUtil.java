@@ -5,16 +5,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundleAttribute;
+import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
-import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import lombok.experimental.UtilityClass;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -90,6 +91,14 @@ public class TestUtil {
                 .paymentMethod(PaymentMethod.CP)
                 .transferCategoryList(List.of("TAX1"))
                 .ciBundleList(Collections.singletonList(getMockCiBundle()))
+                .build();
+    }
+
+    public static Touchpoint getMockTouchpoints() {
+        return Touchpoint.builder()
+                .id("1")
+                .name("CHECKOUT")
+                .creationDate(LocalDateTime.now())
                 .build();
     }
 

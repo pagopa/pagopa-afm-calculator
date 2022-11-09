@@ -4,10 +4,10 @@ import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
+import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,15 +71,15 @@ public class CosmosRepository {
         // add filter by Touch Point: touchpoint=<value> || touchpoint==null
         if (paymentOption.getTouchpointName() != null) {
             var touchpointNameFilter = CriteriaBuilder.isEqualOrNull("name", paymentOption.getTouchpointName());
-            var touchpoint = cosmosTemplate.find(new CosmosQuery(touchpointNameFilter),
+            Iterable<Touchpoint> touchpoint = cosmosTemplate.find(new CosmosQuery(touchpointNameFilter),
                     Touchpoint.class, "touchpoints");
 
             if(Iterables.size(touchpoint) == 0){
                 throw new AppException(HttpStatus.NOT_FOUND,
-                        "Touchpoint not found", "Cannot find touchpont with name: '" + paymentOption.getTouchpointName());
+                        "Touchpoint not found", "Cannot find touchpont with name: '" + paymentOption.getTouchpointName()+"'");
             }
 
-            var touchpointFilter = isEqualOrNull("touchpoint", touchpoint.iterator().next().getId());
+            var touchpointFilter = isEqualOrNull("idTouchpoint", touchpoint.iterator().next().getId());
             queryResult = and(queryResult, touchpointFilter);
         }
 
