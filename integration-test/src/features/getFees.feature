@@ -38,7 +38,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 4",
         "bundleDescription": "pacchetto 4",
         "idCiBundle": "3",
-        "idPsp": "88888888889"
+        "idPsp": "88888888889",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01"
       },
       {
         "taxPayerFee": 90,
@@ -49,7 +51,10 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 3",
         "bundleDescription": "pacchetto 3",
         "idCiBundle": null,
-        "idPsp": "88888888889"
+        "idPsp": "88888888889",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01",
+        "onUS": false
       },
       {
         "taxPayerFee": 130,
@@ -60,7 +65,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 1",
         "bundleDescription": "pacchetto 1",
         "idCiBundle": "1",
-        "idPsp": "88888888888"
+        "idPsp": "88888888888",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01"
       }
     ]
     """
@@ -100,7 +107,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 4",
         "bundleDescription": "pacchetto 4",
         "idCiBundle": "3",
-        "idPsp": "88888888889"
+        "idPsp": "88888888889",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01"
       },
       {
         "taxPayerFee": 60,
@@ -111,7 +120,10 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 5",
         "bundleDescription": "pacchetto 5",
         "idCiBundle": null,
-        "idPsp": "88888888888"
+        "idPsp": "88888888888",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01",
+        "onUS": false
       },
       {
         "taxPayerFee": 90,
@@ -122,7 +134,10 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 3",
         "bundleDescription": "pacchetto 3",
         "idCiBundle": null,
-        "idPsp": "88888888889"
+        "idPsp": "88888888889",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01",
+        "onUS": false
       },
       {
         "taxPayerFee": 100,
@@ -133,7 +148,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 6",
         "bundleDescription": "pacchetto 6",
         "idCiBundle": null,
-        "idPsp": "88888888889"
+        "idPsp": "88888888889",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01"
       },
       {
         "taxPayerFee": 130,
@@ -144,7 +161,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 1",
         "bundleDescription": "pacchetto 1",
         "idCiBundle": "1",
-        "idPsp": "88888888888"
+        "idPsp": "88888888888",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01"
       }
     ]
     """
@@ -184,7 +203,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 4",
         "bundleDescription": "pacchetto 4",
         "idCiBundle": "3",
-        "idPsp": "88888888889"
+        "idPsp": "88888888889",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01"
       },
       {
         "taxPayerFee": 90,
@@ -195,7 +216,10 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 3",
         "bundleDescription": "pacchetto 3",
         "idCiBundle": null,
-        "idPsp": "88888888889"
+        "idPsp": "88888888889",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01",
+        "onUS": false
       },
       {
         "taxPayerFee": 100,
@@ -206,7 +230,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 6",
         "bundleDescription": "pacchetto 6",
         "idCiBundle": null,
-        "idPsp": "88888888889"
+        "idPsp": "88888888889",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01"
       }
     ]
     """
@@ -246,7 +272,10 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 5",
         "bundleDescription": "pacchetto 5",
         "idCiBundle": null,
-        "idPsp": "88888888888"
+        "idPsp": "88888888888",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01",
+        "onUS": false
       },
       {
         "taxPayerFee": 80,
@@ -257,7 +286,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 2",
         "bundleDescription": "pacchetto 2",
         "idCiBundle": null,
-        "idPsp": "88888888888"
+        "idPsp": "88888888888",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01"
       },
       {
         "taxPayerFee": 130,
@@ -268,7 +299,97 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bundleName": "pacchetto 1",
         "bundleDescription": "pacchetto 1",
         "idCiBundle": "1",
-        "idPsp": "88888888888"
+        "idPsp": "88888888888",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01"
+      }
+    ]
+    """
+  Scenario: Get List of fees by CI, amount, touchpoint and single PSP
+    Given initial json
+        """
+    {
+      "paymentAmount": 70,
+      "primaryCreditorInstitution": "77777777777",
+      "paymentMethod": null,
+      "touchpoint": "IO",
+      "idPspList": ["88888888889"],
+      "transferList": [
+        {
+          "creditorInstitution": "77777777777",
+          "transferCategory": "TAX1",
+          "marcaBolloDigitale": true
+        },
+        {
+          "creditorInstitution": "77777777778",
+          "transferCategory": "TAX2",
+          "marcaBolloDigitale": false
+        }
+      ]
+    }
+    """
+    When the client send POST to /fees?maxOccurrences=10
+    Then check statusCode is 200
+    And check response body is
+    """
+    [
+      {
+        "taxPayerFee": 100,
+        "primaryCiIncurredFee": 0,
+        "paymentMethod": "CP",
+        "touchpoint": "IO",
+        "idBundle": "7",
+        "bundleName": "pacchetto 7",
+        "bundleDescription": "pacchetto 7",
+        "idCiBundle": null,
+        "idPsp": "88888888889",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01",
+        "onUS": false
+      }
+    ]
+    """
+  Scenario: Get List of fees by CI, amount, touchpoint and single PSP
+    Given initial json
+    """
+    {
+      "paymentAmount": 70,
+      "primaryCreditorInstitution": "77777777777",
+      "paymentMethod": null,
+      "touchpoint": "IO",
+      "idPspList": ["88888888889"],
+      "transferList": [
+        {
+          "creditorInstitution": "77777777777",
+          "transferCategory": "TAX1",
+          "marcaBolloDigitale": true
+        },
+        {
+          "creditorInstitution": "77777777778",
+          "transferCategory": "TAX2",
+          "marcaBolloDigitale": true
+        }
+      ]
+    }
+    """
+    When the client send POST to /fees?maxOccurrences=10
+    Then check statusCode is 200
+    And check response body is
+    """
+    [
+      {
+        "taxPayerFee": 100,
+        "primaryCiIncurredFee": 0,
+        "paymentMethod": "CP",
+        "touchpoint": "IO",
+        "idBundle": "8",
+        "bundleName": "pacchetto 8",
+        "bundleDescription": "pacchetto 8",
+        "idCiBundle": null,
+        "idPsp": "88888888889",
+        "idBrokerPsp": "88888888899",
+        "idChannel": "88888888899_01",
+        "onUS": false
       }
     ]
     """
