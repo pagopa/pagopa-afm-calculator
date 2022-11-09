@@ -43,7 +43,7 @@ public class Bundle {
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
-    private String idTouchpoint;
+    private String touchpoint;
 
     @Enumerated(EnumType.STRING)
     private BundleType type;

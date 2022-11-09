@@ -2,7 +2,7 @@
   "paymentAmount": 70,
   "primaryCreditorInstitution": "77777777777",
   "paymentMethod": "CP",
-  "touchpointName": "CHECKOUT",
+  "touchpoint": "CHECKOUT",
   "idPspList": [],
   "transferList": [
     {

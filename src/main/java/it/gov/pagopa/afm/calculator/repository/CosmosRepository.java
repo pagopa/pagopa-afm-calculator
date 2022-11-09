@@ -69,14 +69,14 @@ public class CosmosRepository {
         var queryResult = and(minFilter, maxFilter);
 
         // add filter by Touch Point: touchpoint=<value> || touchpoint==null
-        if (paymentOption.getTouchpointName() != null) {
-            var touchpointNameFilter = CriteriaBuilder.isEqualOrNull("name", paymentOption.getTouchpointName());
+        if (paymentOption.getTouchpoint() != null) {
+            var touchpointNameFilter = CriteriaBuilder.isEqualOrNull("name", paymentOption.getTouchpoint());
             Iterable<Touchpoint> touchpoint = cosmosTemplate.find(new CosmosQuery(touchpointNameFilter),
                     Touchpoint.class, "touchpoints");
 
             if(Iterables.size(touchpoint) == 0){
                 throw new AppException(HttpStatus.NOT_FOUND,
-                        "Touchpoint not found", "Cannot find touchpont with name: '" + paymentOption.getTouchpointName()+"'");
+                        "Touchpoint not found", "Cannot find touchpont with name: '" + paymentOption.getTouchpoint()+"'");
             }
 
             var touchpointFilter = isEqualOrNull("idTouchpoint", touchpoint.iterator().next().getId());

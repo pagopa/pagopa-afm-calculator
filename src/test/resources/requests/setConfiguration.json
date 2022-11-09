@@ -33,5 +33,12 @@
         }
       ]
     }
+  ],
+  "touchpoints": [
+    {
+      "id": "test_66fa720c0012",
+      "name": "CHECKOUT",
+      "creationDate": "2007-12-03T10:15:30"
+    }
   ]
 }

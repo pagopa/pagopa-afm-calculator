@@ -73,7 +73,7 @@ public class TestUtil {
                 .minPaymentAmount(0L)
                 .maxPaymentAmount(1000L)
                 .type(BundleType.GLOBAL)
-                .idTouchpoint("1")
+                .touchpoint("1")
                 .paymentMethod(PaymentMethod.CP)
                 .build();
     }
@@ -87,7 +87,7 @@ public class TestUtil {
                 .minPaymentAmount(0L)
                 .maxPaymentAmount(1000L)
                 .type(BundleType.PUBLIC)
-                .idTouchpoint("1")
+                .touchpoint("1")
                 .paymentMethod(PaymentMethod.CP)
                 .transferCategoryList(List.of("TAX1"))
                 .ciBundleList(Collections.singletonList(getMockCiBundle()))
