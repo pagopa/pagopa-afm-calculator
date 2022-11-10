@@ -4,7 +4,6 @@ import it.gov.pagopa.afm.calculator.exception.AppException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
@@ -12,7 +11,6 @@ import java.util.Arrays;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public enum Touchpoint {
     ANY("ANY"),
     IO("IO"),

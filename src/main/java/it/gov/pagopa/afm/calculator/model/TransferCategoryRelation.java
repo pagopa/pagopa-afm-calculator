@@ -2,13 +2,11 @@ package it.gov.pagopa.afm.calculator.model;
 
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import lombok.Getter;
-import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 
 @Getter
-@ToString
 public enum TransferCategoryRelation {
     EQUAL("EQUAL"),
     NOT_EQUAL("NOT_EQUAL");
