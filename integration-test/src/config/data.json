@@ -1,7 +1,7 @@
 {
   "bundles": [
     {
-      "id": "1",
+      "id": "int-test-1",
       "idPsp": "88888888888",
       "idBrokerPsp": "88888888899",
       "idChannel" : "88888888899_01",
@@ -17,7 +17,7 @@
       "validityDateTo": null
     },
     {
-      "id": "2",
+      "id": "int-test-2",
       "idPsp": "88888888888",
       "idBrokerPsp": "88888888899",
       "idChannel" : "88888888899_01",
@@ -34,7 +34,7 @@
       "validityDateTo": null
     },
     {
-      "id": "3",
+      "id": "int-test-3",
       "idPsp": "88888888889",
       "idBrokerPsp": "88888888899",
       "idChannel" : "88888888899_01",
@@ -51,7 +51,7 @@
       "validityDateTo": null
     },
     {
-      "id": "4",
+      "id": "int-test-4",
       "idPsp": "88888888889",
       "idBrokerPsp": "88888888899",
       "idChannel" : "88888888899_01",
@@ -70,7 +70,7 @@
       "validityDateTo": null
     },
     {
-      "id": "5",
+      "id": "int-test-5",
       "idPsp": "88888888888",
       "idBrokerPsp": "88888888899",
       "idChannel" : "88888888899_01",
@@ -92,7 +92,7 @@
       "validityDateTo": null
     },
     {
-      "id": "6",
+      "id": "int-test-6",
       "idPsp": "88888888889",
       "idBrokerPsp": "88888888899",
       "idChannel" : "88888888899_01",
@@ -109,7 +109,7 @@
       "validityDateTo": null
     },
     {
-      "id": "7",
+      "id": "int-test-7",
       "idPsp": "88888888889",
       "idBrokerPsp": "88888888899",
       "idChannel" : "88888888899_01",
@@ -126,7 +126,7 @@
       "validityDateTo": null
     },
     {
-      "id": "8",
+      "id": "int-test-8",
       "idPsp": "88888888889",
       "idBrokerPsp": "88888888899",
       "idChannel" : "88888888899_01",
@@ -145,12 +145,12 @@
   ],
   "ciBundles": [
     {
-      "id": "1",
+      "id": "int-test-1",
       "ciFiscalCode": "77777777777",
-      "idBundle": "1",
+      "idBundle": "int-test-1",
       "attributes": [
         {
-          "id": "1",
+          "id": "int-test-1",
           "maxPaymentAmount": 20,
           "transferCategory": "TAX1",
           "transferCategoryRelation": "EQUAL"
@@ -158,12 +158,12 @@
       ]
     },
     {
-      "id": "2",
+      "id": "int-test-2",
       "ciFiscalCode": "77777777777",
-      "idBundle": "2",
+      "idBundle": "int-test-2",
       "attributes": [
         {
-          "id": "2",
+          "id": "int-test-2",
           "maxPaymentAmount": 20,
           "transferCategory": "TAX1",
           "transferCategoryRelation": "NOT_EQUAL"
@@ -171,12 +171,12 @@
       ]
     },
     {
-      "id": "3",
+      "id": "int-test-3",
       "ciFiscalCode": "77777777777",
-      "idBundle": "4",
+      "idBundle": "int-test-4",
       "attributes": [
         {
-          "id": "3",
+          "id": "int-test-3",
           "maxPaymentAmount": 20
         }
       ]
