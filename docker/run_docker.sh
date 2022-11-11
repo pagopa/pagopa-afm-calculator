@@ -41,7 +41,6 @@ export image=${image}
 stack_name=$(cd .. && basename "$PWD")
 docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate --build
 
-
 # waiting the containers
 printf 'Waiting for the service'
 attempt_counter=0
