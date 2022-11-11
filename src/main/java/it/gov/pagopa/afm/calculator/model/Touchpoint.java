@@ -1,29 +1,19 @@
 package it.gov.pagopa.afm.calculator.model;
 
-import it.gov.pagopa.afm.calculator.exception.AppException;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.ToString;
 
-import java.util.Arrays;
+import java.time.LocalDateTime;
 
-@Getter
 @AllArgsConstructor
-@NoArgsConstructor
-public enum Touchpoint {
-    ANY("ANY"),
-    IO("IO"),
-    WISP("WISP"),
-    CHECKOUT("CHECKOUT"),
-    PSP("PSP");
-
-    private String value;
-
-    public static Touchpoint fromValue(String value) {
-        return Arrays.stream(Touchpoint.values())
-                .filter(elem -> elem.value.equals(value))
-                .findFirst()
-                .orElseThrow(() -> new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "Touchpoint not found", "Cannot convert string '" + value + "' into enum"));
-    }
+@NoArgsConstructor @Data
+@ToString
+@Builder
+public class Touchpoint {
+    private String id;
+    private String name;
+    private LocalDateTime creationDate;
 }

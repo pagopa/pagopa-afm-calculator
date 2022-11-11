@@ -5,7 +5,6 @@ import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
-import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,8 +43,7 @@ public class Bundle {
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
-    @Enumerated(EnumType.STRING)
-    private Touchpoint touchpoint;
+    private String touchpoint;
 
     @Enumerated(EnumType.STRING)
     private BundleType type;

@@ -4,7 +4,6 @@ import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
@@ -127,7 +126,7 @@ public class CalculatorService {
                 .taxPayerFee(taxPayerFee)
                 .primaryCiIncurredFee(primaryCiIncurredFee)
                 .paymentMethod(bundle.getPaymentMethod() == null ? PaymentMethod.ANY : bundle.getPaymentMethod())
-                .touchpoint(bundle.getTouchpoint() == null ? Touchpoint.ANY : bundle.getTouchpoint())
+                .touchpoint(bundle.getTouchpoint())
                 .idBundle(bundle.getId())
                 .bundleName(bundle.getName())
                 .bundleDescription(bundle.getDescription())
