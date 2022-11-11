@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopaucommonacr.azurecr.io/pagopaafmcalculator
-    tag: "2.1.0"
+    tag: "2.2.0"
     pullPolicy: Always
   livenessProbe:
     httpGet:

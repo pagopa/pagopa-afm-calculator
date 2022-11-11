@@ -1,11 +1,15 @@
-const {Given, When, Then} = require('@cucumber/cucumber')
-const {AfterAll, BeforeAll} = require('@cucumber/cucumber');
+const {Given, When, Then, After} = require('@cucumber/cucumber')
 const assert = require("assert");
-const {call, get, post} = require("./common");
+const {call} = require("./common");
 const fs = require("fs");
+const CosmosClient = require('@azure/cosmos').CosmosClient
 
 const afm_host = process.env.AFM_HOST;
-const afm_data_host = process.env.AFM_DATA_HOST;
+const cosmosdb_host = process.env.COSMOSDB_HOST;
+
+const comsosdb_key = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+const client = new CosmosClient({endpoint: cosmosdb_host, key: comsosdb_key})
+
 
 let body;
 let responseToCheck;
@@ -13,8 +17,21 @@ let responseToCheck;
 Given('the configuration {string}', async function (filePath) {
     let file = fs.readFileSync('./config/' + filePath);
     let config = JSON.parse(file);
-    const result = await post(afm_data_host + '/configuration', config);
-    assert.strictEqual(result.status, 201);
+
+    const {database} = await client.databases.createIfNotExists({id: "db"});
+    const {container} = await database.containers.createIfNotExists({id: "validbundles"});
+
+    for (let bundle of config["bundles"]) {
+        let validBundle = bundle;
+        validBundle.ciBundleList = [];
+        for (let cibundle of config["ciBundles"]) {
+            if (cibundle.idBundle === bundle.id) {
+                validBundle.ciBundleList.push(cibundle);
+            }
+        }
+        container.items.create(validBundle);
+    }
+
 });
 
 Given(/^initial json$/, function (payload) {
@@ -31,33 +48,20 @@ Then(/^check statusCode is (\d+)$/, function (status) {
 });
 
 Then(/^check response body is$/, function (payload) {
-    console.log(responseToCheck.data)
-
     assert.deepStrictEqual(responseToCheck.data, JSON.parse(payload));
 });
 
 
-// Synchronous
-BeforeAll(async function () {
-    // perform some shared setup
-    const result = await get(afm_data_host + '/configuration')
-    console.log(result.data);
-    fs.writeFile('./config/saved.json', JSON.stringify(result.data), function (err) {
-        if (err) {
-            return console.log(err);
-        }
-        console.log("The file was saved!");
-    });
-
-});
-
 // Asynchronous Promise
-AfterAll(async function () {
+After(async function () {
     // perform some shared teardown
-    let file = fs.readFileSync('./config/saved.json');
-    let config = JSON.parse(file);
-    await post(afm_data_host + '/configuration', config);
-    fs.unlinkSync('./config/saved.json');
-
+    const {database} = await client.databases.createIfNotExists({id: "db"});
+    const {container} = await database.containers.createIfNotExists({id: "validbundles"});
+    const { resources } = await container.items
+        .query("SELECT * from validbundles WHERE validbundles.id like 'int-test-%'")
+        .fetchAll();
+    for (const bundle of resources) {
+        await container.item(bundle.id).delete();
+    }
     return Promise.resolve()
 });

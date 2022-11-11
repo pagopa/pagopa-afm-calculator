@@ -1,8 +1,12 @@
 {
   "bundles": [
     {
-      "id": "1",
+      "id": "int-test-1",
       "idPsp": "88888888888",
+      "idBrokerPsp": "88888888899",
+      "idChannel" : "88888888899_01",
+      "marcaBolloDigitale": false,
+      "onlyMarcaBolloDigitale": false,
       "name": "pacchetto 1",
       "description": "pacchetto 1",
       "paymentAmount": 150,
@@ -13,8 +17,12 @@
       "validityDateTo": null
     },
     {
-      "id": "2",
+      "id": "int-test-2",
       "idPsp": "88888888888",
+      "idBrokerPsp": "88888888899",
+      "idChannel" : "88888888899_01",
+      "marcaBolloDigitale": false,
+      "onlyMarcaBolloDigitale": false,
       "name": "pacchetto 2",
       "description": "pacchetto 2",
       "paymentAmount": 80,
@@ -26,8 +34,12 @@
       "validityDateTo": null
     },
     {
-      "id": "3",
+      "id": "int-test-3",
       "idPsp": "88888888889",
+      "idBrokerPsp": "88888888899",
+      "idChannel" : "88888888899_01",
+      "marcaBolloDigitale": false,
+      "onlyMarcaBolloDigitale": false,
       "name": "pacchetto 3",
       "description": "pacchetto 3",
       "paymentAmount": 90,
@@ -39,8 +51,12 @@
       "validityDateTo": null
     },
     {
-      "id": "4",
+      "id": "int-test-4",
       "idPsp": "88888888889",
+      "idBrokerPsp": "88888888899",
+      "idChannel" : "88888888899_01",
+      "marcaBolloDigitale": false,
+      "onlyMarcaBolloDigitale": false,
       "name": "pacchetto 4",
       "description": "pacchetto 4",
       "paymentAmount": 50,
@@ -54,8 +70,12 @@
       "validityDateTo": null
     },
     {
-      "id": "5",
+      "id": "int-test-5",
       "idPsp": "88888888888",
+      "idBrokerPsp": "88888888899",
+      "idChannel" : "88888888899_01",
+      "marcaBolloDigitale": false,
+      "onlyMarcaBolloDigitale": false,
       "name": "pacchetto 5",
       "description": "pacchetto 5",
       "paymentAmount": 60,
@@ -72,10 +92,48 @@
       "validityDateTo": null
     },
     {
-      "id": "6",
+      "id": "int-test-6",
       "idPsp": "88888888889",
+      "idBrokerPsp": "88888888899",
+      "idChannel" : "88888888899_01",
+      "marcaBolloDigitale": false,
+      "onlyMarcaBolloDigitale": false,
       "name": "pacchetto 6",
       "description": "pacchetto 6",
+      "paymentAmount": 100,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "touchpoint": "IO",
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null
+    },
+    {
+      "id": "int-test-7",
+      "idPsp": "88888888889",
+      "idBrokerPsp": "88888888899",
+      "idChannel" : "88888888899_01",
+      "marcaBolloDigitale": true,
+      "onlyMarcaBolloDigitale": false,
+      "name": "pacchetto 7",
+      "description": "pacchetto 7",
+      "paymentAmount": 100,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "touchpoint": "IO",
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null
+    },
+    {
+      "id": "int-test-8",
+      "idPsp": "88888888889",
+      "idBrokerPsp": "88888888899",
+      "idChannel" : "88888888899_01",
+      "marcaBolloDigitale": true,
+      "onlyMarcaBolloDigitale": true,
+      "name": "pacchetto 8",
+      "description": "pacchetto 8",
       "paymentAmount": 100,
       "minPaymentAmount": 0,
       "maxPaymentAmount": 10000,
@@ -87,12 +145,12 @@
   ],
   "ciBundles": [
     {
-      "id": "1",
+      "id": "int-test-1",
       "ciFiscalCode": "77777777777",
-      "idBundle": "1",
+      "idBundle": "int-test-1",
       "attributes": [
         {
-          "id": "1",
+          "id": "int-test-1",
           "maxPaymentAmount": 20,
           "transferCategory": "TAX1",
           "transferCategoryRelation": "EQUAL"
@@ -100,12 +158,12 @@
       ]
     },
     {
-      "id": "2",
+      "id": "int-test-2",
       "ciFiscalCode": "77777777777",
-      "idBundle": "2",
+      "idBundle": "int-test-2",
       "attributes": [
         {
-          "id": "2",
+          "id": "int-test-2",
           "maxPaymentAmount": 20,
           "transferCategory": "TAX1",
           "transferCategoryRelation": "NOT_EQUAL"
@@ -113,12 +171,12 @@
       ]
     },
     {
-      "id": "3",
+      "id": "int-test-3",
       "ciFiscalCode": "77777777777",
-      "idBundle": "4",
+      "idBundle": "int-test-4",
       "attributes": [
         {
-          "id": "3",
+          "id": "int-test-3",
           "maxPaymentAmount": 20
         }
       ]
