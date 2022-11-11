@@ -2,23 +2,30 @@ name: Update Openapi
 
 # Controls when the workflow will run
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
+    types: [ opened, reopened, synchronize ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  pull-request:
-    runs-on: ubuntu-18.04 # needed for cosmosdb container
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  build:
+    name: Auto Update OpenApi file
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
 
-      - name: Update OpenApi
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Update OpenApi and Swagger files
         run: |
-          sh ./openapi/generate_openapi.sh local
+          sh ./openapi/generate_openapi_and_swagger.sh
 
       - name: Commit & Push changes
         run: |
