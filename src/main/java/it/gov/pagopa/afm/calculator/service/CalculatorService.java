@@ -132,6 +132,9 @@ public class CalculatorService {
                 .bundleDescription(bundle.getDescription())
                 .idCiBundle(idCiBundle)
                 .idPsp(bundle.getIdPsp())
+                .idBrokerPsp(bundle.getIdBrokerPsp())
+                .idChannel(bundle.getIdChannel())
+                .onUs(PaymentMethod.CP.equals(bundle.getPaymentMethod()) ? true : null)
                 .build();
     }
 
