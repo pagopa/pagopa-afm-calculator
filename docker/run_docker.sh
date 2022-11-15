@@ -1,6 +1,7 @@
-# sh ./run_docker.sh <local|dev|uat|prod>
+# sh ./run_docker.sh <local|dev|uat|prod> --recreate
 
 ENV=$1
+RECREATE=$2
 
 if [ -z "$ENV" ]
 then
@@ -39,7 +40,11 @@ export containerRegistry=${containerRegistry}
 export image=${image}
 
 stack_name=$(cd .. && basename "$PWD")
-docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate --build
+if [ "$RECREATE" = "--recreate" ]; then
+    docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate --build
+  else
+    docker-compose -p "${stack_name}" up -d
+fi
 
 # waiting the containers
 printf 'Waiting for the service'
