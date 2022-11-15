@@ -51,8 +51,7 @@ public class CosmosRepository {
     public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption) {
         Iterable<ValidBundle> validBundles = findValidBundles(paymentOption);
 
-        // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
-        return getFilteredBundles(paymentOption.getPrimaryCreditorInstitution(), validBundles);
+        return getFilteredBundles(paymentOption, validBundles);
     }
 
     /**
@@ -74,9 +73,9 @@ public class CosmosRepository {
             Iterable<Touchpoint> touchpoint = cosmosTemplate.find(new CosmosQuery(touchpointNameFilter),
                     Touchpoint.class, "touchpoints");
 
-            if(Iterables.size(touchpoint) == 0){
+            if (Iterables.size(touchpoint) == 0) {
                 throw new AppException(HttpStatus.NOT_FOUND,
-                        "Touchpoint not found", "Cannot find touchpont with name: '" + paymentOption.getTouchpoint()+"'");
+                        "Touchpoint not found", "Cannot find touchpont with name: '" + paymentOption.getTouchpoint() + "'");
             }
 
             var touchpointFilter = isEqualOrNull("idTouchpoint", touchpoint.iterator().next().getId());
@@ -114,22 +113,65 @@ public class CosmosRepository {
     }
 
     /**
-     * This filter is made with Java (not with cosmos query)
+     * These filters are done with Java (not with cosmos query)
      *
-     * @param ciFiscalCode fiscal code of the primary CI
-     * @param validBundles a valid bundle
+     * @param paymentOption the request
+     * @param validBundles  the valid bundles
      * @return the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
      */
-    private List<ValidBundle> getFilteredBundles(String ciFiscalCode, Iterable<ValidBundle> validBundles) {
-        return StreamSupport.stream(validBundles.spliterator(), true)
-                .filter(bundle -> {
-                    // filter the ci-bundle list
-                    bundle.setCiBundleList(filterByCI(ciFiscalCode, bundle));
-                    return isGlobal(bundle) || belongsCI(bundle);
-                })
-                .collect(Collectors.toList());
+    private List<ValidBundle> getFilteredBundles(PaymentOption paymentOption, Iterable<ValidBundle> validBundles) {
+        if (paymentOption.getTransferList() != null) {
+            var onlyMarcaBolloDigitale = paymentOption.getTransferList().stream()
+                    .filter(Objects::nonNull)
+                    .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
+                    .count();
+            var paymentOptionSize = paymentOption.getTransferList().size();
+
+            return StreamSupport.stream(validBundles.spliterator(), true)
+                    .filter(bundle -> digitalStampFilter(paymentOptionSize, onlyMarcaBolloDigitale, bundle))
+                    // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
+                    .filter(bundle -> globalAndRelatedFilter(paymentOption, bundle))
+                    .collect(Collectors.toList());
+        }
+        return (List<ValidBundle>) validBundles;
     }
 
+    /**
+     * @param paymentOptionCount     the number of paymentOptions in the request
+     * @param onlyMarcaBolloDigitale number of how many paymentOptions in the request has marcaBolloDigitale equals to True
+     * @param bundle                 a valid bundle to filter
+     * @return True if the valid bundle meets the criteria.
+     */
+    private static boolean digitalStampFilter(long paymentOptionCount, long onlyMarcaBolloDigitale, ValidBundle bundle) {
+        if (onlyMarcaBolloDigitale == paymentOptionCount) {
+            // if marcaBolloDigitale is present in all paymentOptions
+            return bundle.getDigitalStamp();
+        } else if (onlyMarcaBolloDigitale >= 1 && onlyMarcaBolloDigitale < paymentOptionCount) {
+            // if some paymentOptions have marcaBolloDigitale but others do not
+            return bundle.getDigitalStamp() && !bundle.getDigitalStampRestriction();
+        } else {
+            // skip this filter
+            return true;
+        }
+    }
+
+    /**
+     * Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
+     *
+     * @param paymentOption the request
+     * @param bundle        a valid bundle
+     * @return True if the valid bundle meets the criteria.
+     */
+    private static boolean globalAndRelatedFilter(PaymentOption paymentOption, ValidBundle bundle) {
+        // filter the ci-bundle list
+        bundle.setCiBundleList(filterByCI(paymentOption.getPrimaryCreditorInstitution(), bundle));
+        return isGlobal(bundle) || belongsCI(bundle);
+    }
+
+    /**
+     * @param bundle a valid bundle
+     * @return True if the bundle is related with the CI
+     */
     private static boolean belongsCI(ValidBundle bundle) {
         return bundle != null && bundle.getCiBundleList() != null && !bundle.getCiBundleList().isEmpty();
     }
