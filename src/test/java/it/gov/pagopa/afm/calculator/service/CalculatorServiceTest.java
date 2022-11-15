@@ -15,13 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.testcontainers.shaded.org.bouncycastle.est.LimitedSource;
-import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -100,56 +97,5 @@ class CalculatorServiceTest {
                 calculatorService.calculate(paymentOption, 10));
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
-    }
-
-    @Test
-    void calculateWithIDpsps() throws IOException, JSONException {
-        String expected = TestUtil.readStringFromFile("responses/getFees.json");
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
-                Collections.singleton(touchpoint), Collections.singleton(TestUtil.getMockValidBundle()));
-
-        var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-        paymentOption.setIdPspList(List.of("PSP"));
-
-        var result = calculatorService.calculate(paymentOption, 10);
-
-        String actual = TestUtil.toJson(result);
-
-        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
-    }
-
-    @Test
-    void calculate_invalidTouchpoint() throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
-                Collections.emptyList(), Collections.singleton(TestUtil.getMockValidBundle()));
-
-        var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-
-        AppException exception = assertThrows(AppException.class, () ->
-                calculatorService.calculate(paymentOption, 10));
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
-    }
-
-    @Test
-    void calculateWithIDpsps() throws IOException, JSONException {
-        String expected = TestUtil.readStringFromFile("responses/getFees.json");
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
-                Collections.singleton(touchpoint), Collections.singleton(TestUtil.getMockValidBundle()));
-
-        var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-        paymentOption.setIdPspList(List.of("PSP"));
-
-        var result = calculatorService.calculate(paymentOption, 10);
-
-        String actual = TestUtil.toJson(result);
-
-        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
 }

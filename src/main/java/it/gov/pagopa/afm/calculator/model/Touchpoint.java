@@ -9,7 +9,8 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
-@NoArgsConstructor @Data
+@NoArgsConstructor
+@Data
 @ToString
 @Builder
 public class Touchpoint {
