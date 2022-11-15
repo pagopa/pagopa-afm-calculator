@@ -37,7 +37,6 @@ class CalculatorServiceTest {
 
     @Test
     void calculate() throws IOException, JSONException {
-        String expected = TestUtil.readStringFromFile("responses/getFees.json");
         Touchpoint touchpoint = TestUtil.getMockTouchpoints();
 
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
@@ -45,8 +44,9 @@ class CalculatorServiceTest {
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10);
-
         String actual = TestUtil.toJson(result);
+
+        String expected = TestUtil.readStringFromFile("responses/getFees.json");
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
 
@@ -59,11 +59,11 @@ class CalculatorServiceTest {
 
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
                 Collections.singleton(touchpoint), Collections.singleton(validBundle));
+
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-
         var result = calculatorService.calculate(paymentOption, 10);
-
         String actual = TestUtil.toJson(result);
+
         String expected = TestUtil.readStringFromFile("responses/getFees2.json");
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
@@ -76,13 +76,12 @@ class CalculatorServiceTest {
 
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
                 Collections.singleton(TestUtil.getMockTouchpoints()), list);
+
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees_noInTransfer.json", PaymentOption.class);
-
         var result = calculatorService.calculate(paymentOption, 10);
-
         String actual = TestUtil.toJson(result);
-        String expected = TestUtil.readStringFromFile("responses/getFees_noInTransfer.json");
 
+        String expected = TestUtil.readStringFromFile("responses/getFees_noInTransfer.json");
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
 
@@ -97,5 +96,40 @@ class CalculatorServiceTest {
                 calculatorService.calculate(paymentOption, 10));
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    }
+
+    @Test
+    void calculate_digitalStamp() throws IOException, JSONException {
+        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+        mockValidBundle.setDigitalStamp(true);
+        mockValidBundle.setDigitalStampRestriction(true);
+
+        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
+                Collections.singleton(touchpoint), Collections.singleton(mockValidBundle));
+
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFees_digitalStamp.json", PaymentOption.class);
+        var result = calculatorService.calculate(paymentOption, 10);
+        String actual = TestUtil.toJson(result);
+
+        String expected = TestUtil.readStringFromFile("responses/getFees.json");
+        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    void calculate_digitalStamp2() throws IOException, JSONException {
+        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+        mockValidBundle.setDigitalStamp(true);
+
+        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
+                Collections.singleton(touchpoint), Collections.singleton(mockValidBundle));
+
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFees_digitalStamp2.json", PaymentOption.class);
+        var result = calculatorService.calculate(paymentOption, 10);
+        String actual = TestUtil.toJson(result);
+
+        String expected = TestUtil.readStringFromFile("responses/getFees.json");
+        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
 }
