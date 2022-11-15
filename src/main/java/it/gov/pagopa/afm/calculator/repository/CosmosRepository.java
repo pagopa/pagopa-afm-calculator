@@ -73,9 +73,9 @@ public class CosmosRepository {
             Iterable<Touchpoint> touchpoint = cosmosTemplate.find(new CosmosQuery(touchpointNameFilter),
                     Touchpoint.class, "touchpoints");
 
-            if (Iterables.size(touchpoint) == 0) {
+            if(Iterables.size(touchpoint) == 0){
                 throw new AppException(HttpStatus.NOT_FOUND,
-                        "Touchpoint not found", "Cannot find touchpont with name: '" + paymentOption.getTouchpoint() + "'");
+                        "Touchpoint not found", "Cannot find touchpont with name: '" + paymentOption.getTouchpoint()+"'");
             }
 
             var touchpointFilter = isEqualOrNull("idTouchpoint", touchpoint.iterator().next().getId());

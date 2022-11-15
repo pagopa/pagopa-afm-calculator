@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.testcontainers.shaded.org.bouncycastle.est.LimitedSource;
+import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +50,6 @@ class CalculatorServiceTest {
         var result = calculatorService.calculate(paymentOption, 10);
 
         String actual = TestUtil.toJson(result);
-        System.out.println(actual);
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
 
@@ -67,8 +68,6 @@ class CalculatorServiceTest {
 
         String actual = TestUtil.toJson(result);
         String expected = TestUtil.readStringFromFile("responses/getFees2.json");
-        System.out.println(actual);
-
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
 
@@ -86,7 +85,6 @@ class CalculatorServiceTest {
 
         String actual = TestUtil.toJson(result);
         String expected = TestUtil.readStringFromFile("responses/getFees_noInTransfer.json");
-        System.out.println(actual);
 
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
@@ -118,7 +116,39 @@ class CalculatorServiceTest {
         var result = calculatorService.calculate(paymentOption, 10);
 
         String actual = TestUtil.toJson(result);
-        System.out.println(actual);
+
+        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    void calculate_invalidTouchpoint() throws IOException, JSONException {
+        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+
+        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
+                Collections.emptyList(), Collections.singleton(TestUtil.getMockValidBundle()));
+
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+
+        AppException exception = assertThrows(AppException.class, () ->
+                calculatorService.calculate(paymentOption, 10));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    }
+
+    @Test
+    void calculateWithIDpsps() throws IOException, JSONException {
+        String expected = TestUtil.readStringFromFile("responses/getFees.json");
+        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+
+        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
+                Collections.singleton(touchpoint), Collections.singleton(TestUtil.getMockValidBundle()));
+
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+        paymentOption.setIdPspList(List.of("PSP"));
+
+        var result = calculatorService.calculate(paymentOption, 10);
+
+        String actual = TestUtil.toJson(result);
 
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
