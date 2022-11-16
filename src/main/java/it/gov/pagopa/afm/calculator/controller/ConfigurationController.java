@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.calculator.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.service.ConfigurationService;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @RestController()
 @RequestMapping(path = "/configuration")
-//@Hidden
+@Hidden
 public class ConfigurationController {
 
     @Autowired
