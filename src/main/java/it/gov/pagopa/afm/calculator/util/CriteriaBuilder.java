@@ -12,15 +12,22 @@ import java.util.List;
 @UtilityClass
 public class CriteriaBuilder {
 
-    public static <T> Criteria isEqualOrNull(String param, T value) {
+    public static Criteria isNull(String param) {
+        return Criteria.getInstance(CriteriaType.IS_NULL,
+                param,
+                Collections.emptyList(),
+                Part.IgnoreCaseType.NEVER);
+    }
+
+    public static <T> Criteria isEqualOrAny(String param, T value) {
         var queryEquals = Criteria.getInstance(CriteriaType.IS_EQUAL,
                 param,
                 Collections.singletonList(value),
                 Part.IgnoreCaseType.ALWAYS);
-        var queryNull = Criteria.getInstance(CriteriaType.IS_NULL,
+        var queryNull = Criteria.getInstance(CriteriaType.IS_EQUAL,
                 param,
-                Collections.emptyList(),
-                Part.IgnoreCaseType.NEVER);
+                Collections.singletonList("ANY"),
+                Part.IgnoreCaseType.ALWAYS);
 
         return or(queryEquals, queryNull);
     }

@@ -24,7 +24,9 @@ import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.and;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.arrayContains;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.in;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqualOrNull;
+import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqualOrAny;
+import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isNull;
+import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.or;
 
 @Repository
 public class CosmosRepository {
@@ -70,7 +72,7 @@ public class CosmosRepository {
 
         // add filter by Touch Point: touchpoint=<value> || touchpoint==null
         if (paymentOption.getTouchpoint() != null) {
-            var touchpointNameFilter = CriteriaBuilder.isEqualOrNull("name", paymentOption.getTouchpoint());
+            var touchpointNameFilter = isEqualOrAny("name", paymentOption.getTouchpoint());
             Iterable<Touchpoint> touchpoint = cosmosTemplate.find(new CosmosQuery(touchpointNameFilter),
                     Touchpoint.class, "touchpoints");
 
@@ -79,13 +81,13 @@ public class CosmosRepository {
                         "Touchpoint not found", "Cannot find touchpont with name: '" + paymentOption.getTouchpoint()+"'");
             }
 
-            var touchpointFilter = isEqualOrNull("idTouchpoint", touchpoint.iterator().next().getId());
+            var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.iterator().next().getName());
             queryResult = and(queryResult, touchpointFilter);
         }
 
         // add filter by Payment Method: paymentMethod=<value> || paymentMethod==null
         if (paymentOption.getPaymentMethod() != null) {
-            var paymentMethodFilter = isEqualOrNull("paymentMethod", paymentOption.getPaymentMethod().getValue());
+            var paymentMethodFilter = isEqualOrAny("paymentMethod", paymentOption.getPaymentMethod().getValue());
             queryResult = and(queryResult, paymentMethodFilter);
         }
 
@@ -105,7 +107,8 @@ public class CosmosRepository {
                     .reduce(CriteriaBuilder::or);
 
             if (taxonomyFilter.isPresent()) {
-                queryResult = and(queryResult, taxonomyFilter.get());
+                var taxonomyOrNull = or(taxonomyFilter.get(), isNull("transferCategoryList"));
+                queryResult = and(queryResult, taxonomyOrNull);
             }
         }
 
