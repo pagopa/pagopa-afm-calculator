@@ -8,6 +8,9 @@
     "bundleName": "bundle2",
     "bundleDescription": null,
     "idCiBundle": null,
-    "idPsp": "123"
+    "idPsp": "123",
+    "idChannel": null,
+    "idBrokerPsp": null,
+    "onUs": true
   }
 ]

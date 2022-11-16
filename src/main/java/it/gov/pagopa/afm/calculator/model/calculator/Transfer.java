@@ -18,6 +18,10 @@ public class Transfer implements Comparable<Transfer> {
     private String bundleDescription;
     private String idCiBundle;
     private String idPsp;
+    private String idChannel;
+    private String idBrokerPsp;
+    private Boolean onUs;
+
 
     @Override
     public int compareTo(Transfer t) {
