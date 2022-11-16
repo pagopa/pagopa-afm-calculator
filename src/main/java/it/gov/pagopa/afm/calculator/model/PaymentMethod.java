@@ -1,10 +1,6 @@
 package it.gov.pagopa.afm.calculator.model;
 
-import it.gov.pagopa.afm.calculator.exception.AppException;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
-
-import java.util.Arrays;
 
 @Getter
 public enum PaymentMethod {
@@ -25,10 +21,4 @@ public enum PaymentMethod {
         this.value = paymentMethod;
     }
 
-    public static PaymentMethod fromValue(String value) {
-        return Arrays.stream(PaymentMethod.values())
-                .filter(elem -> elem.value.equals(value))
-                .findFirst()
-                .orElseThrow(() -> new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "PaymentMethod not found", "Cannot convert string '" + value + "' into enum"));
-    }
 }

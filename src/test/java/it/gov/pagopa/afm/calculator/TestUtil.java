@@ -91,6 +91,9 @@ public class TestUtil {
                 .paymentMethod(PaymentMethod.CP)
                 .transferCategoryList(List.of("TAX1"))
                 .ciBundleList(Collections.singletonList(getMockCiBundle()))
+                .digitalStamp(false)
+                .digitalStampRestriction(false)
+                .onUs(true)
                 .build();
     }
 
