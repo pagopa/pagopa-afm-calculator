@@ -33,7 +33,7 @@ URL="https://localhost:$PORT/_explorer/index.html"
 ipaddr=$(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}' | head -n 1)
 echo "Using ${ipaddr} for CosmosDB configuration..."
 
- docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
 
 docker run \
     --detach \
