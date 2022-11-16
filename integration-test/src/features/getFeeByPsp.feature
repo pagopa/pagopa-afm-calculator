@@ -33,13 +33,14 @@ Feature: GetFeeByPsp
         "primaryCiIncurredFee": 20,
         "paymentMethod": "ANY",
         "touchpoint": "ANY",
-        "idBundle": "1",
+        "idBundle": "int-test-1",
         "bundleName": "pacchetto 1",
         "bundleDescription": "pacchetto 1",
-        "idCiBundle": "1",
+        "idCiBundle": "int-test-1",
         "idPsp": "88888888888",
         "idBrokerPsp": "88888888899",
-        "idChannel": "88888888899_01"
+        "idChannel": "88888888899_01",
+        "onUs": null
       }
     ]
     """
@@ -73,26 +74,28 @@ Feature: GetFeeByPsp
         "primaryCiIncurredFee": 0,
         "paymentMethod": "PO",
         "touchpoint": "ANY",
-        "idBundle": "2",
+        "idBundle": "int-test-2",
         "bundleName": "pacchetto 2",
         "bundleDescription": "pacchetto 2",
         "idCiBundle": null,
         "idPsp": "88888888888",
         "idBrokerPsp": "88888888899",
-        "idChannel": "88888888899_01"
+        "idChannel": "88888888899_01",
+        "onUs": null
       },
       {
         "taxPayerFee": 130,
         "primaryCiIncurredFee": 20,
         "paymentMethod": "ANY",
         "touchpoint": "ANY",
-        "idBundle": "1",
+        "idBundle": "int-test-1",
         "bundleName": "pacchetto 1",
         "bundleDescription": "pacchetto 1",
-        "idCiBundle": "1",
+        "idCiBundle": "int-test-1",
         "idPsp": "88888888888",
         "idBrokerPsp": "88888888899",
-        "idChannel": "88888888899_01"
+        "idChannel": "88888888899_01",
+        "onUs": null
       }
     ]
     """
@@ -125,40 +128,70 @@ Feature: GetFeeByPsp
         "primaryCiIncurredFee": 20,
         "paymentMethod": "ANY",
         "touchpoint": "ANY",
-        "idBundle": "4",
+        "idBundle": "int-test-4",
         "bundleName": "pacchetto 4",
         "bundleDescription": "pacchetto 4",
-        "idCiBundle": "3",
+        "idCiBundle": "int-test-3",
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
-        "idChannel": "88888888899_01"
+        "idChannel": "88888888899_01",
+        "onUs": null
       },
       {
         "taxPayerFee": 90,
         "primaryCiIncurredFee": 0,
         "paymentMethod": "CP",
         "touchpoint": "ANY",
-        "idBundle": "3",
+        "idBundle": "int-test-3",
         "bundleName": "pacchetto 3",
         "bundleDescription": "pacchetto 3",
         "idCiBundle": null,
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUS": false
+        "onUs": false
       },
       {
         "taxPayerFee": 100,
         "primaryCiIncurredFee": 0,
         "paymentMethod": "ANY",
         "touchpoint": "IO",
-        "idBundle": "6",
+        "idBundle": "int-test-6",
         "bundleName": "pacchetto 6",
         "bundleDescription": "pacchetto 6",
         "idCiBundle": null,
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
-        "idChannel": "88888888899_01"
+        "idChannel": "88888888899_01",
+        "onUs": null
+      },
+      {
+          "taxPayerFee": 100,
+          "primaryCiIncurredFee": 0,
+          "paymentMethod": "ANY",
+          "touchpoint": "IO",
+          "idBundle": "int-test-7",
+          "bundleName": "pacchetto 7",
+          "bundleDescription": "pacchetto 7",
+          "idCiBundle": null,
+          "idPsp": "88888888889",
+          "idChannel": "88888888899_01",
+          "idBrokerPsp": "88888888899",
+          "onUs": null
+      },
+      {
+          "taxPayerFee": 100,
+          "primaryCiIncurredFee": 0,
+          "paymentMethod": "ANY",
+          "touchpoint": "IO",
+          "idBundle": "int-test-8",
+          "bundleName": "pacchetto 8",
+          "bundleDescription": "pacchetto 8",
+          "idCiBundle": null,
+          "idPsp": "88888888889",
+          "idChannel": "88888888899_01",
+          "idBrokerPsp": "88888888899",
+          "onUs": null
       }
     ]
     """
@@ -192,40 +225,70 @@ Feature: GetFeeByPsp
         "primaryCiIncurredFee": 20,
         "paymentMethod": "ANY",
         "touchpoint": "ANY",
-        "idBundle": "4",
+        "idBundle": "int-test-4",
         "bundleName": "pacchetto 4",
         "bundleDescription": "pacchetto 4",
-        "idCiBundle": "3",
+        "idCiBundle": "int-test-3",
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
-        "idChannel": "88888888899_01"
+        "idChannel": "88888888899_01",
+        "onUs": null
       },
       {
         "taxPayerFee": 90,
         "primaryCiIncurredFee": 0,
         "paymentMethod": "CP",
         "touchpoint": "ANY",
-        "idBundle": "3",
+        "idBundle": "int-test-3",
         "bundleName": "pacchetto 3",
         "bundleDescription": "pacchetto 3",
         "idCiBundle": null,
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUS": false
+        "onUs": false
       },
       {
         "taxPayerFee": 100,
         "primaryCiIncurredFee": 0,
         "paymentMethod": "ANY",
         "touchpoint": "IO",
-        "idBundle": "6",
+        "idBundle": "int-test-6",
         "bundleName": "pacchetto 6",
         "bundleDescription": "pacchetto 6",
         "idCiBundle": null,
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
-        "idChannel": "88888888899_01"
+        "idChannel": "88888888899_01",
+        "onUs": null
+      },
+      {
+          "taxPayerFee": 100,
+          "primaryCiIncurredFee": 0,
+          "paymentMethod": "ANY",
+          "touchpoint": "IO",
+          "idBundle": "int-test-7",
+          "bundleName": "pacchetto 7",
+          "bundleDescription": "pacchetto 7",
+          "idCiBundle": null,
+          "idPsp": "88888888889",
+          "idChannel": "88888888899_01",
+          "idBrokerPsp": "88888888899",
+          "onUs": null
+      },
+      {
+          "taxPayerFee": 100,
+          "primaryCiIncurredFee": 0,
+          "paymentMethod": "ANY",
+          "touchpoint": "IO",
+          "idBundle": "int-test-8",
+          "bundleName": "pacchetto 8",
+          "bundleDescription": "pacchetto 8",
+          "idCiBundle": null,
+          "idPsp": "88888888889",
+          "idChannel": "88888888899_01",
+          "idBrokerPsp": "88888888899",
+          "onUs": null
       }
     ]
     """
@@ -240,12 +303,12 @@ Feature: GetFeeByPsp
           {
             "creditorInstitution": "77777777777",
             "transferCategory": "TAX1",
-            "marcaBolloDigitale": true
+            "digitalStamp": true
           },
           {
             "creditorInstitution": "77777777778",
             "transferCategory": "TAX2",
-            "marcaBolloDigitale": false
+            "digitalStamp": false
           }
         ]
       }
@@ -258,16 +321,16 @@ Feature: GetFeeByPsp
       {
         "taxPayerFee": 100,
         "primaryCiIncurredFee": 0,
-        "paymentMethod": "CP",
+        "paymentMethod": "ANY",
         "touchpoint": "IO",
-        "idBundle": "7",
+        "idBundle": "int-test-7",
         "bundleName": "pacchetto 7",
         "bundleDescription": "pacchetto 7",
         "idCiBundle": null,
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUS": false
+        "onUs": null
       }
     ]
     """
@@ -282,12 +345,12 @@ Feature: GetFeeByPsp
           {
             "creditorInstitution": "77777777777",
             "transferCategory": "TAX1",
-            "marcaBolloDigitale": true
+            "digitalStamp": true
           },
           {
             "creditorInstitution": "77777777778",
             "transferCategory": "TAX2",
-            "marcaBolloDigitale": true
+            "digitalStamp": true
           }
         ]
       }
@@ -298,18 +361,32 @@ Feature: GetFeeByPsp
     """
     [
       {
-        "taxPayerFee": 100,
-        "primaryCiIncurredFee": 0,
-        "paymentMethod": "CP",
-        "touchpoint": "IO",
-        "idBundle": "8",
-        "bundleName": "pacchetto 8",
-        "bundleDescription": "pacchetto 8",
-        "idCiBundle": null,
-        "idPsp": "88888888889",
-        "idBrokerPsp": "88888888899",
-        "idChannel": "88888888899_01",
-        "onUS": false
+          "taxPayerFee": 100,
+          "primaryCiIncurredFee": 0,
+          "paymentMethod": "ANY",
+          "touchpoint": "IO",
+          "idBundle": "int-test-7",
+          "bundleName": "pacchetto 7",
+          "bundleDescription": "pacchetto 7",
+          "idCiBundle": null,
+          "idPsp": "88888888889",
+          "idChannel": "88888888899_01",
+          "idBrokerPsp": "88888888899",
+          "onUs": null
+      },
+      {
+          "taxPayerFee": 100,
+          "primaryCiIncurredFee": 0,
+          "paymentMethod": "ANY",
+          "touchpoint": "IO",
+          "idBundle": "int-test-8",
+          "bundleName": "pacchetto 8",
+          "bundleDescription": "pacchetto 8",
+          "idCiBundle": null,
+          "idPsp": "88888888889",
+          "idChannel": "88888888899_01",
+          "idBrokerPsp": "88888888899",
+          "onUs": null
       }
     ]
     """

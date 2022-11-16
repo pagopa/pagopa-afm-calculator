@@ -33,9 +33,7 @@ URL="https://localhost:$PORT/_explorer/index.html"
 ipaddr=$(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}' | head -n 1)
 echo "Using ${ipaddr} for CosmosDB configuration..."
 
-#docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
-
-docker build -t fixed-cosmos -f ../docker/CosmosDB.Dockerfile .
+ docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
 
 docker run \
     --detach \
@@ -48,7 +46,7 @@ docker run \
     --env AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE=$ipaddr \
     --interactive \
     --tty \
-    fixed-cosmos
+    mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
 
 echo -n "CosmosDB starting..."
 cosmos_started=$(docker logs azure-cosmosdb-linux-emulator | grep -wc Started)

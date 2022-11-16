@@ -75,9 +75,9 @@ public class CosmosRepository {
             Iterable<Touchpoint> touchpoint = cosmosTemplate.find(new CosmosQuery(touchpointNameFilter),
                     Touchpoint.class, "touchpoints");
 
-            if(Iterables.size(touchpoint) == 0){
+            if (Iterables.size(touchpoint) == 0) {
                 throw new AppException(HttpStatus.NOT_FOUND,
-                        "Touchpoint not found", "Cannot find touchpont with name: '" + paymentOption.getTouchpoint()+"'");
+                        "Touchpoint not found", "Cannot find touchpont with name: '" + paymentOption.getTouchpoint() + "'");
             }
 
             var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.iterator().next().getName());
@@ -123,33 +123,30 @@ public class CosmosRepository {
      * @return the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
      */
     private List<ValidBundle> getFilteredBundles(PaymentOption paymentOption, Iterable<ValidBundle> validBundles) {
-        if (paymentOption.getTransferList() != null) {
-            var onlyMarcaBolloDigitale = paymentOption.getTransferList().stream()
-                    .filter(Objects::nonNull)
-                    .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
-                    .count();
-            var paymentOptionSize = paymentOption.getTransferList().size();
+        var onlyMarcaBolloDigitale = paymentOption.getTransferList().stream()
+                .filter(Objects::nonNull)
+                .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
+                .count();
+        var transferListSize = paymentOption.getTransferList().size();
 
-            return StreamSupport.stream(validBundles.spliterator(), true)
-                    .filter(bundle -> digitalStampFilter(paymentOptionSize, onlyMarcaBolloDigitale, bundle))
-                    // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
-                    .filter(bundle -> globalAndRelatedFilter(paymentOption, bundle))
-                    .collect(Collectors.toList());
-        }
-        return (List<ValidBundle>) validBundles;
+        return StreamSupport.stream(validBundles.spliterator(), true)
+                .filter(bundle -> digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
+                // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
+                .filter(bundle -> globalAndRelatedFilter(paymentOption, bundle))
+                .collect(Collectors.toList());
     }
 
     /**
-     * @param paymentOptionCount     the number of paymentOptions in the request
+     * @param transferListSize     the number of transfer elements in the request
      * @param onlyMarcaBolloDigitale number of how many paymentOptions in the request has marcaBolloDigitale equals to True
      * @param bundle                 a valid bundle to filter
      * @return True if the valid bundle meets the criteria.
      */
-    private static boolean digitalStampFilter(long paymentOptionCount, long onlyMarcaBolloDigitale, ValidBundle bundle) {
-        if (onlyMarcaBolloDigitale == paymentOptionCount) {
+    private static boolean digitalStampFilter(long transferListSize, long onlyMarcaBolloDigitale, ValidBundle bundle) {
+        if (onlyMarcaBolloDigitale == transferListSize) {
             // if marcaBolloDigitale is present in all paymentOptions
             return bundle.getDigitalStamp();
-        } else if (onlyMarcaBolloDigitale >= 1 && onlyMarcaBolloDigitale < paymentOptionCount) {
+        } else if (onlyMarcaBolloDigitale >= 1 && onlyMarcaBolloDigitale < transferListSize) {
             // if some paymentOptions have marcaBolloDigitale but others do not
             return bundle.getDigitalStamp() && !bundle.getDigitalStampRestriction();
         } else {
