@@ -7,10 +7,9 @@
     "test:dev": "dotenv -e ./config/.env.dev yarn cucumber",
     "test:uat": "dotenv -e ./config/.env.uat yarn cucumber",
     "test:prod": "dotenv -e ./config/.env.prod yarn cucumber",
-    "cucumber": "NODE_TLS_REJECT_UNAUTHORIZED=0 npx cucumber-js --publish -r step_definitions"
+    "cucumber": "npx cucumber-js --publish -r step_definitions"
   },
   "dependencies": {
-    "@azure/cosmos": "^3.17.1",
     "@cucumber/cucumber": "^8.4.0",
     "axios": "^0.27.2",
     "dotenv": "^16.0.2",

@@ -634,27 +634,20 @@
           "paymentMethod": {
             "type": "string",
             "enum": [
-              "PaymentMethod.ANY(value=ANY)",
-              "PaymentMethod.PPAL(value=PPAL)",
-              "PaymentMethod.BPAY(value=BPAY)",
-              "PaymentMethod.PAYBP(value=PayBP)",
-              "PaymentMethod.BBT(value=BBT)",
-              "PaymentMethod.AD(value=AD)",
-              "PaymentMethod.CP(value=CP)",
-              "PaymentMethod.PO(value=PO)",
-              "PaymentMethod.JIF(value=JIF)",
-              "PaymentMethod.MYBK(value=MYBK)"
+              "ANY",
+              "PPAL",
+              "BPAY",
+              "PAYBP",
+              "BBT",
+              "AD",
+              "CP",
+              "PO",
+              "JIF",
+              "MYBK"
             ]
           },
           "touchpoint": {
-            "type": "string",
-            "enum": [
-              "Touchpoint.ANY(value=ANY)",
-              "Touchpoint.IO(value=IO)",
-              "Touchpoint.WISP(value=WISP)",
-              "Touchpoint.CHECKOUT(value=CHECKOUT)",
-              "Touchpoint.PSP(value=PSP)"
-            ]
+            "type": "string"
           },
           "transferList": {
             "type": "array",
@@ -672,6 +665,9 @@
           },
           "transferCategory": {
             "type": "string"
+          },
+          "digitalStamp": {
+            "type": "boolean"
           }
         }
       },
@@ -689,27 +685,20 @@
           "paymentMethod": {
             "type": "string",
             "enum": [
-              "PaymentMethod.ANY(value=ANY)",
-              "PaymentMethod.PPAL(value=PPAL)",
-              "PaymentMethod.BPAY(value=BPAY)",
-              "PaymentMethod.PAYBP(value=PayBP)",
-              "PaymentMethod.BBT(value=BBT)",
-              "PaymentMethod.AD(value=AD)",
-              "PaymentMethod.CP(value=CP)",
-              "PaymentMethod.PO(value=PO)",
-              "PaymentMethod.JIF(value=JIF)",
-              "PaymentMethod.MYBK(value=MYBK)"
+              "ANY",
+              "PPAL",
+              "BPAY",
+              "PAYBP",
+              "BBT",
+              "AD",
+              "CP",
+              "PO",
+              "JIF",
+              "MYBK"
             ]
           },
           "touchpoint": {
-            "type": "string",
-            "enum": [
-              "Touchpoint.ANY(value=ANY)",
-              "Touchpoint.IO(value=IO)",
-              "Touchpoint.WISP(value=WISP)",
-              "Touchpoint.CHECKOUT(value=CHECKOUT)",
-              "Touchpoint.PSP(value=PSP)"
-            ]
+            "type": "string"
           },
           "idBundle": {
             "type": "string"
@@ -725,6 +714,15 @@
           },
           "idPsp": {
             "type": "string"
+          },
+          "idChannel": {
+            "type": "string"
+          },
+          "idBrokerPsp": {
+            "type": "string"
+          },
+          "onUs": {
+            "type": "boolean"
           }
         }
       },
@@ -753,7 +751,8 @@
       "PaymentOption": {
         "required": [
           "paymentAmount",
-          "primaryCreditorInstitution"
+          "primaryCreditorInstitution",
+          "transferList"
         ],
         "type": "object",
         "properties": {
@@ -767,27 +766,20 @@
           "paymentMethod": {
             "type": "string",
             "enum": [
-              "PaymentMethod.ANY(value=ANY)",
-              "PaymentMethod.PPAL(value=PPAL)",
-              "PaymentMethod.BPAY(value=BPAY)",
-              "PaymentMethod.PAYBP(value=PayBP)",
-              "PaymentMethod.BBT(value=BBT)",
-              "PaymentMethod.AD(value=AD)",
-              "PaymentMethod.CP(value=CP)",
-              "PaymentMethod.PO(value=PO)",
-              "PaymentMethod.JIF(value=JIF)",
-              "PaymentMethod.MYBK(value=MYBK)"
+              "ANY",
+              "PPAL",
+              "BPAY",
+              "PAYBP",
+              "BBT",
+              "AD",
+              "CP",
+              "PO",
+              "JIF",
+              "MYBK"
             ]
           },
           "touchpoint": {
-            "type": "string",
-            "enum": [
-              "Touchpoint.ANY(value=ANY)",
-              "Touchpoint.IO(value=IO)",
-              "Touchpoint.WISP(value=WISP)",
-              "Touchpoint.CHECKOUT(value=CHECKOUT)",
-              "Touchpoint.PSP(value=PSP)"
-            ]
+            "type": "string"
           },
           "idPspList": {
             "type": "array",
@@ -799,6 +791,153 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TransferListItem"
+            }
+          }
+        }
+      },
+      "Touchpoint": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CiBundle": {
+        "required": [
+          "ciFiscalCode",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "ciFiscalCode": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CiBundleAttribute"
+            }
+          }
+        }
+      },
+      "CiBundleAttribute": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "maxPaymentAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "transferCategory": {
+            "type": "string"
+          },
+          "transferCategoryRelation": {
+            "type": "string",
+            "enum": [
+              "EQUAL",
+              "NOT_EQUAL"
+            ]
+          }
+        }
+      },
+      "ValidBundle": {
+        "required": [
+          "digitalStamp",
+          "digitalStampRestriction"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "idPsp": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "paymentAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "minPaymentAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxPaymentAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "ANY",
+              "PPAL",
+              "BPAY",
+              "PAYBP",
+              "BBT",
+              "AD",
+              "CP",
+              "PO",
+              "JIF",
+              "MYBK"
+            ]
+          },
+          "touchpoint": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "GLOBAL",
+              "PUBLIC",
+              "PRIVATE"
+            ]
+          },
+          "transferCategoryList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "idChannel": {
+            "type": "string"
+          },
+          "idBrokerPsp": {
+            "type": "string"
+          },
+          "digitalStamp": {
+            "type": "boolean"
+          },
+          "digitalStampRestriction": {
+            "type": "boolean"
+          },
+          "onUs": {
+            "type": "boolean"
+          },
+          "ciBundleList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CiBundle"
             }
           }
         }

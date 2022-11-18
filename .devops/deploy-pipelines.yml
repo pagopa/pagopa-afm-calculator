@@ -74,7 +74,7 @@ resources:
     - repository: pagopaCommons
       type: github
       name: pagopa/azure-pipeline-templates
-      ref: refs/tags/v2.10.1
+      ref: refs/tags/v3.1.0
       endpoint: 'io-azure-devops-github-ro'
 
 stages:
@@ -88,7 +88,7 @@ stages:
             clean: true
             persistCredentials: true
 
-          - template: template/maven-github-release.yaml
+          - template: templates/maven-github-release/template.yaml@pagopaCommons
             parameters:
               release_branch: $(sourceBranch)
               gitEmail: $(GIT_EMAIL)

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class PaymentOption {
     private String touchpoint;
     private List<String> idPspList;
     @Valid
+    @NotNull
+    @NotEmpty
     private List<TransferListItem> transferList;
 }
 

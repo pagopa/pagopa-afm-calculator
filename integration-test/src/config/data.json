@@ -4,9 +4,9 @@
       "id": "int-test-1",
       "idPsp": "88888888888",
       "idBrokerPsp": "88888888899",
-      "idChannel" : "88888888899_01",
-      "marcaBolloDigitale": false,
-      "onlyMarcaBolloDigitale": false,
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
       "name": "pacchetto 1",
       "description": "pacchetto 1",
       "paymentAmount": 150,
@@ -14,15 +14,17 @@
       "maxPaymentAmount": 10000,
       "type": "GLOBAL",
       "validityDateFrom": null,
-      "validityDateTo": null
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentMethod": "ANY"
     },
     {
       "id": "int-test-2",
       "idPsp": "88888888888",
       "idBrokerPsp": "88888888899",
-      "idChannel" : "88888888899_01",
-      "marcaBolloDigitale": false,
-      "onlyMarcaBolloDigitale": false,
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
       "name": "pacchetto 2",
       "description": "pacchetto 2",
       "paymentAmount": 80,
@@ -31,15 +33,16 @@
       "paymentMethod": "PO",
       "type": "GLOBAL",
       "validityDateFrom": null,
-      "validityDateTo": null
+      "validityDateTo": null,
+      "touchpoint": "ANY"
     },
     {
       "id": "int-test-3",
       "idPsp": "88888888889",
       "idBrokerPsp": "88888888899",
-      "idChannel" : "88888888899_01",
-      "marcaBolloDigitale": false,
-      "onlyMarcaBolloDigitale": false,
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
       "name": "pacchetto 3",
       "description": "pacchetto 3",
       "paymentAmount": 90,
@@ -48,15 +51,16 @@
       "paymentMethod": "CP",
       "type": "GLOBAL",
       "validityDateFrom": null,
-      "validityDateTo": null
+      "validityDateTo": null,
+      "touchpoint": "ANY"
     },
     {
       "id": "int-test-4",
       "idPsp": "88888888889",
       "idBrokerPsp": "88888888899",
-      "idChannel" : "88888888899_01",
-      "marcaBolloDigitale": false,
-      "onlyMarcaBolloDigitale": false,
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
       "name": "pacchetto 4",
       "description": "pacchetto 4",
       "paymentAmount": 50,
@@ -67,15 +71,17 @@
         "TAX1"
       ],
       "validityDateFrom": null,
-      "validityDateTo": null
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentMethod": "ANY"
     },
     {
       "id": "int-test-5",
       "idPsp": "88888888888",
       "idBrokerPsp": "88888888899",
-      "idChannel" : "88888888899_01",
-      "marcaBolloDigitale": false,
-      "onlyMarcaBolloDigitale": false,
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
       "name": "pacchetto 5",
       "description": "pacchetto 5",
       "paymentAmount": 60,
@@ -95,9 +101,9 @@
       "id": "int-test-6",
       "idPsp": "88888888889",
       "idBrokerPsp": "88888888899",
-      "idChannel" : "88888888899_01",
-      "marcaBolloDigitale": false,
-      "onlyMarcaBolloDigitale": false,
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
       "name": "pacchetto 6",
       "description": "pacchetto 6",
       "paymentAmount": 100,
@@ -106,15 +112,16 @@
       "touchpoint": "IO",
       "type": "GLOBAL",
       "validityDateFrom": null,
-      "validityDateTo": null
+      "validityDateTo": null,
+      "paymentMethod": "ANY"
     },
     {
       "id": "int-test-7",
       "idPsp": "88888888889",
       "idBrokerPsp": "88888888899",
-      "idChannel" : "88888888899_01",
-      "marcaBolloDigitale": true,
-      "onlyMarcaBolloDigitale": false,
+      "idChannel": "88888888899_01",
+      "digitalStamp": true,
+      "digitalStampRestriction": false,
       "name": "pacchetto 7",
       "description": "pacchetto 7",
       "paymentAmount": 100,
@@ -123,15 +130,16 @@
       "touchpoint": "IO",
       "type": "GLOBAL",
       "validityDateFrom": null,
-      "validityDateTo": null
+      "validityDateTo": null,
+      "paymentMethod": "ANY"
     },
     {
       "id": "int-test-8",
       "idPsp": "88888888889",
       "idBrokerPsp": "88888888899",
-      "idChannel" : "88888888899_01",
-      "marcaBolloDigitale": true,
-      "onlyMarcaBolloDigitale": true,
+      "idChannel": "88888888899_01",
+      "digitalStamp": true,
+      "digitalStampRestriction": true,
       "name": "pacchetto 8",
       "description": "pacchetto 8",
       "paymentAmount": 100,
@@ -140,7 +148,8 @@
       "touchpoint": "IO",
       "type": "GLOBAL",
       "validityDateFrom": null,
-      "validityDateTo": null
+      "validityDateTo": null,
+      "paymentMethod": "ANY"
     }
   ],
   "ciBundles": [
@@ -180,6 +189,16 @@
           "maxPaymentAmount": 20
         }
       ]
+    }
+  ],
+  "touchpoints": [
+    {
+      "id": "int-test-1",
+      "name": "CHECKOUT"
+    },
+    {
+      "id": "int-test-2",
+      "name": "IO"
     }
   ]
 }
