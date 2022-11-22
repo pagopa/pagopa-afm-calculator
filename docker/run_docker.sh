@@ -43,7 +43,7 @@ stack_name=$(cd .. && basename "$PWD")
 if [ "$RECREATE" = "--skip-recreate" ]; then
     docker-compose -p "${stack_name}" up -d
   else
-    docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate --build
+    docker-compose -p "${stack_name}" up -d --build
 fi
 
 # waiting the containers
