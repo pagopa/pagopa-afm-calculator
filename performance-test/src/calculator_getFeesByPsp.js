@@ -3,7 +3,7 @@
 
 import { check } from 'k6';
 import { SharedArray } from 'k6/data';
-import { getFeesByPsp, getFees } from './helpers/calculator_helper.js';
+import {getFeesByPsp, getFees, addTouchpoints, deleteTouchpoints} from './helpers/calculator_helper.js';
 
 export let options = JSON.parse(open(__ENV.TEST_TYPE));
 
@@ -15,8 +15,31 @@ const varsArray = new SharedArray('vars', function () {
 });
 // workaround to use shared array (only array should be used)
 const vars = varsArray[0];
-const optsConfiguration = varsArray[1];
 const rootUrl = `${vars.host}`;
+
+
+export function setup() {
+    // 2. setup code (once)
+    // The setup code runs, setting up the test environment (optional) and generating data
+    // used to reuse code for the same VU
+    const params = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Ocp-Apim-Subscription-Key': __ENV.API_SUBSCRIPTION_KEY
+        },
+    };
+    const response = addTouchpoints(rootUrl, [{
+        "id": "perf-test-1",
+        "name": "CHECKOUT"
+    }], params);
+
+    check(response, {
+        'setup': (r) => r.status === 201,
+    });
+
+    // precondition is moved to default fn because in this stage
+    // __VU is always 0 and cannot be used to create env properly
+}
 
 export default function calculator_getFeesByPsp() {
 
@@ -55,4 +78,22 @@ export default function calculator_getFeesByPsp() {
 	check(response, {
 		'getFeesByPsp': (response) => response.status === 200,
 	});
+}
+
+export function teardown() {
+    // After All
+    const params = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Ocp-Apim-Subscription-Key': __ENV.API_SUBSCRIPTION_KEY
+        },
+    };
+    const response = deleteTouchpoints(rootUrl, [{
+        "id": "perf-test-1",
+        "name": "CHECKOUT"
+    }], params);
+
+    check(response, {
+        'teardown': (r) => r.status === 200,
+    });
 }

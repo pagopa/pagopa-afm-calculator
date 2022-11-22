@@ -1,6 +1,6 @@
 import json
 
-f = open('openapi.json')
+f = open('openapi-full.json')
 data = json.load(f)
 
 filteredPath = {}
@@ -14,9 +14,8 @@ for tag in data['tags']:
     if 'Configuration' != tag['name']:
         filteredTags.append(tag)
 data['tags'] = filteredTags
+data['info']['title'] = 'PagoPA API Calculator'
 
-data['info']['title'] = 'PagoPA API Calculator Logic for Node'
-
-with open('openapi-node.json', 'w') as f:
+with open('openapi.json', 'w') as f:
     json.dump(data, f, indent=2)
 f.close()

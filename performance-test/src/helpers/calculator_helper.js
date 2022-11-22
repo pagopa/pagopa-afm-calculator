@@ -11,3 +11,15 @@ export function getFees(rootUrl, payload, params) {
 
     return http.post(url, JSON.stringify(payload), params);
 }
+
+export function addTouchpoints(rootUrl, payload, params) {
+	const url = `${rootUrl}/configuration/touchpoint/add`
+
+    return http.post(url, JSON.stringify(payload), params);
+}
+
+export function deleteTouchpoints(rootUrl, payload, params) {
+	const url = `${rootUrl}/configuration/touchpoint/delete`
+
+    return http.post(url, JSON.stringify(payload), params);
+}
