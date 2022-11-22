@@ -2,6 +2,7 @@
 
 if [[ "$(pwd)" =~ .*"openapi".* ]]; then
     cd ..
+fi
 
 # install api-spec-converter if not present
 if [ $(npm list -g | grep -c api-spec-converter) -eq 0 ]; then
