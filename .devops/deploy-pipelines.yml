@@ -35,6 +35,10 @@ parameters:
     displayName: Run integration/smoke tests
     type: boolean
     default: true
+  - name: "API_SUBSCRIPTION_KEY"
+    displayName: "API_SUBSCRIPTION_KEY"
+    type: string
+    default: ''
 
 variables:
   imageRepository: '$(IMAGE_REPOSITORY_NAME)'
@@ -217,5 +221,6 @@ stages:
               targetType: 'inline'
               script: |
                 cd ./integration-test/src
+                export subkey=${{ parameters.API_SUBSCRIPTION_KEY }}
                 yarn install
                 yarn test:${{ parameters.ENV }}

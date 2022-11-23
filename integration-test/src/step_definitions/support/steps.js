@@ -38,7 +38,6 @@ Then(/^check statusCode is (\d+)$/, function (status) {
 });
 
 Then(/^check response body is$/, function (payload) {
-    console.log(responseToCheck.data)
     assert.deepStrictEqual(responseToCheck.data, JSON.parse(payload));
 });
 
