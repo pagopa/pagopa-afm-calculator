@@ -7,7 +7,7 @@ To run the integration tests on docker, you can run from this directory the scri
 
 
 ``` shell
-sh ./run_integration_test.sh <local|dev|uat|prod>
+sh ./run_integration_test.sh <local|dev|uat|prod> <sub-key>
 ```
 
 
