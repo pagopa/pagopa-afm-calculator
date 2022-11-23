@@ -18,7 +18,7 @@ fi
 
 
 # save openapi
-curl http://localhost:8080/v3/api-docs | python3 -m json.tool > ./openapi-full.json
+curl http://localhost:8080/v3/api-docs> ./openapi-full.json
 python3 generate_openapi.py
 
 # UI mode http://localhost:8080/swagger-ui/index.html

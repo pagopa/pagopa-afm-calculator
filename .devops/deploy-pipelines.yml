@@ -38,7 +38,7 @@ parameters:
   - name: "API_SUBSCRIPTION_KEY"
     displayName: "API_SUBSCRIPTION_KEY"
     type: string
-    default: ''
+    default: ' '
 
 variables:
   imageRepository: '$(IMAGE_REPOSITORY_NAME)'
