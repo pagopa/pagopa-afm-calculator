@@ -149,7 +149,7 @@ Feature: GetFeeByPsp
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": false
+        "onUs": null
       },
       {
         "taxPayerFee": 100,
@@ -246,7 +246,7 @@ Feature: GetFeeByPsp
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": false
+        "onUs": null
       },
       {
         "taxPayerFee": 100,
@@ -292,7 +292,7 @@ Feature: GetFeeByPsp
       }
     ]
     """
-  Scenario: Get List of fees by CI, amount, touchpoint and single PSP
+  Scenario: Get List of fees by CI, amount, touchpoint and single PSP 2
     Given initial json
     """
       {
@@ -334,7 +334,7 @@ Feature: GetFeeByPsp
       }
     ]
     """
-  Scenario: Get List of fees by CI, amount, touchpoint and single PSP
+  Scenario: Get List of fees by CI, amount, touchpoint and single PSP 3
     Given initial json
     """
       {
