@@ -33,7 +33,7 @@ parameters:
 
 steps:
   - script: |
-      cd ./performance-tests/src
+      cd ./performance-test/src
       docker pull grafana/k6
     displayName: Pull k6 image
 
