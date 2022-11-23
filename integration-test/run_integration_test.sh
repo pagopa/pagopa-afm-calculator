@@ -1,4 +1,5 @@
 # example: sh ./run_integration_test.sh <local|dev|uat|prod>
+set -e
 
 # create containers
 cd ../docker || exit

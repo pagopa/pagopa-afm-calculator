@@ -128,6 +128,8 @@ stages:
     condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
     jobs:
       - job: smoke_tests
+        pool:
+          vmImage: 'ubuntu-18.04'
         steps:
           - checkout: self
             persistCredentials: true
