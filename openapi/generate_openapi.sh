@@ -11,14 +11,14 @@ fi
 
 if ! $(curl --output /dev/null --silent --head --fail http://localhost:8080/actuator/info); then
   # create containers
-  cd ../docker || exit
+  cd ./docker || exit
   sh ./run_docker.sh "$1" "$2"
   cd ../openapi || exit
 fi
 
 
 # save openapi
-curl http://localhost:8080/v3/api-docs> ./openapi-full.json
-python3 generate_openapi.py
+curl http://localhost:8080/v3/api-docs> ./openapi.json
+python3 generate_openapi_node.py ./openapi.json
 
 # UI mode http://localhost:8080/swagger-ui/index.html
