@@ -2,7 +2,7 @@
 trigger: none
 
 pool:
-  name: pagopa-dev-loadtest-linux
+  vmImage: 'ubuntu-22.04'
 
 parameters:
   - name: "API_SUBSCRIPTION_KEY"
@@ -14,7 +14,6 @@ parameters:
     values:
       - "dev"
       - "uat"
-      - "prod"
   - name: "TEST_TYPE"
     displayName: "Test type"
     type: string
@@ -31,13 +30,27 @@ parameters:
       - calculator_getFees
       - calculator_getFeesByPsp
 
-steps:
-  - script: |
-      cd ./performance-test/src
-      docker pull grafana/k6
-    displayName: Pull k6 image
 
-  - script: |
-      cd ./performance-test
-      sh ./run_performance_test.sh ${{ parameters.ENVIRONMENT }} ${{ parameters.TEST_TYPE }} ${{ parameters.SCRIPT }} afmcalculatork6 ${{ parameters.API_SUBSCRIPTION_KEY }}
-    displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.ENVIRONMENT }}
+variables:
+  ${{ if eq(parameters['ENV'], 'dev') }}:
+    poolImage: 'pagopa-dev-loadtest-linux'
+  ${{ if eq(parameters['ENV'], 'uat') }}:
+    poolImage: 'pagopa-uat-loadtest-linux'
+
+
+stages:
+  - stage: Performance_Test
+    jobs:
+      - job: run_k6
+        pool:
+          vmImage: $(poolImage)
+        steps:
+          - script: |
+              cd ./performance-test/src
+              docker pull grafana/k6
+            displayName: Pull k6 image
+
+          - script: |
+              cd ./performance-test
+              sh ./run_performance_test.sh ${{ parameters.ENVIRONMENT }} ${{ parameters.TEST_TYPE }} ${{ parameters.SCRIPT }} afmcalculatork6 ${{ parameters.API_SUBSCRIPTION_KEY }}
+            displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.ENVIRONMENT }}
