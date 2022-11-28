@@ -11,6 +11,7 @@ parameters:
     values:
       - "dev"
       - "uat"
+    default: "uat"
   - name: "TEST_TYPE"
     displayName: "Test type"
     type: string
