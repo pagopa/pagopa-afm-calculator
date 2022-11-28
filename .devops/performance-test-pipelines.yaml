@@ -28,9 +28,9 @@ parameters:
       - calculator_getFeesByPsp
 
 variables:
-  ${{ if eq(parameters['ENV'], 'dev') }}:
+  ${{ if eq(parameters['ENVIRONMENT'], 'dev') }}:
     poolImage: 'pagopa-dev-loadtest-linux'
-  ${{ if eq(parameters['ENV'], 'uat') }}:
+  ${{ if eq(parameters['ENVIRONMENT'], 'uat') }}:
     poolImage: 'pagopa-uat-loadtest-linux'
 
 
