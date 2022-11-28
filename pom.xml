@@ -11,7 +11,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>calculator</artifactId>
-    <version>2.4.0-1-PGEC-99-calculator-fix-performance-test</version>
+    <version>2.4.0-2-PGEC-99-calculator-fix-performance-test</version>
     <name>afm-calculator</name>
     <description>Calculator Logic microservice for pagoPA AFM</description>
 
