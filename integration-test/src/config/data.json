@@ -200,5 +200,10 @@
       "id": "int-test-2",
       "name": "IO"
     }
+  ],
+  "paymenttypes": [
+    {
+      "id": "int-test-1",
+      "name": "CP"}
   ]
 }

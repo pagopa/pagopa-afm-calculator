@@ -11,6 +11,6 @@
     "idPsp": "ABC",
     "idChannel": null,
     "idBrokerPsp": null,
-    "onUs": null
+    "onUs": true
   }
 ]

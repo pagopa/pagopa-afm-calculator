@@ -10,6 +10,7 @@ let body;
 let responseToCheck;
 let validBundles = [];
 let touchpoints = [];
+let paymenttypes = [];
 
 Given('the configuration {string}', async function (filePath) {
     let file = fs.readFileSync('./config/' + filePath);
@@ -22,6 +23,10 @@ Given('the configuration {string}', async function (filePath) {
     touchpoints = config["touchpoints"];
     const result2 = await post(afm_host + '/configuration/touchpoint/add', touchpoints);
     assert.strictEqual(result2.status, 201);
+
+    paymenttypes = config["paymenttypes"];
+    const result3 = await post(afm_host + '/configuration/paymenttypes/add', paymenttypes);
+    assert.strictEqual(result3.status, 201);
 });
 
 Given(/^initial json$/, function (payload) {
@@ -66,5 +71,9 @@ AfterAll(async function () {
 
     const result2 = await post(afm_host + '/configuration/touchpoint/delete', touchpoints);
     assert.strictEqual(result2.status, 200);
+
+    const result3 = await post(afm_host + '/configuration/paymenttypes/delete', paymenttypes);
+    assert.strictEqual(result3.status, 200);
+
     return Promise.resolve()
 });

@@ -2,7 +2,6 @@ package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
@@ -134,7 +133,7 @@ public class CalculatorService {
                 .idPsp(bundle.getIdPsp())
                 .idBrokerPsp(bundle.getIdBrokerPsp())
                 .idChannel(bundle.getIdChannel())
-                .onUs(PaymentMethod.CP.equals(bundle.getPaymentMethod()) ? bundle.getOnUs() : null)
+                .onUs(bundle.getPaymentMethod() != null && bundle.getPaymentMethod().equalsIgnoreCase("cp") ? bundle.getOnUs() : null)
                 .build();
     }
 
