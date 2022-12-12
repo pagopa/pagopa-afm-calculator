@@ -21,7 +21,7 @@ public class PaymentOption {
     private Long paymentAmount;
     @NotNull
     private String primaryCreditorInstitution;
-    private PaymentMethod paymentMethod;
+    private String paymentMethod;
     private String touchpoint;
     private List<String> idPspList;
     @Valid

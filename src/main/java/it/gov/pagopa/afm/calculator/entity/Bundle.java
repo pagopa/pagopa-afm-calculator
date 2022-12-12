@@ -41,8 +41,7 @@ public class Bundle {
     private Long minPaymentAmount;
     private Long maxPaymentAmount;
 
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
+    private String paymentMethod;
 
     private String touchpoint;
 

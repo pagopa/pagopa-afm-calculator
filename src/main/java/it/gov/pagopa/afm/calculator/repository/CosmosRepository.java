@@ -4,6 +4,7 @@ import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
+import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppException;
@@ -70,7 +71,7 @@ public class CosmosRepository {
         var queryResult = and(minFilter, maxFilter);
 
         // add filter by Touch Point: touchpoint=<value> || touchpoint==null
-        if (paymentOption.getTouchpoint() != null) {
+        if (paymentOption.getTouchpoint() != null && !paymentOption.getTouchpoint().equalsIgnoreCase("any")) {
             var touchpointNameFilter = isEqualOrAny("name", paymentOption.getTouchpoint());
             Iterable<Touchpoint> touchpoint = cosmosTemplate.find(new CosmosQuery(touchpointNameFilter),
                     Touchpoint.class, "touchpoints");
@@ -85,8 +86,17 @@ public class CosmosRepository {
         }
 
         // add filter by Payment Method: paymentMethod=<value> || paymentMethod==null
-        if (paymentOption.getPaymentMethod() != null) {
-            var paymentMethodFilter = isEqualOrAny("paymentMethod", paymentOption.getPaymentMethod().getValue());
+        if (paymentOption.getPaymentMethod() != null && !paymentOption.getPaymentMethod().equalsIgnoreCase("any")) {
+            var paymentTypeNameFilter = isEqualOrAny("name", paymentOption.getPaymentMethod());
+            Iterable<PaymentType> paymentType = cosmosTemplate.find(new CosmosQuery(paymentTypeNameFilter),
+                    PaymentType.class, "paymenttypes");
+
+            if (Iterables.size(paymentType) == 0) {
+                throw new AppException(HttpStatus.NOT_FOUND,
+                        "PaymentType not found", "Cannot find payment type with name: '" + paymentOption.getPaymentMethod() + "'");
+            }
+
+            var paymentMethodFilter = isEqualOrAny("paymentMethod", paymentType.iterator().next().getName());
             queryResult = and(queryResult, paymentMethodFilter);
         }
 

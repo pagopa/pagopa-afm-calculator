@@ -1,6 +1,5 @@
 package it.gov.pagopa.afm.calculator.model.calculator;
 
-import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
@@ -11,7 +10,7 @@ import lombok.ToString;
 public class Transfer implements Comparable<Transfer> {
     private Long taxPayerFee;
     private long primaryCiIncurredFee;
-    private PaymentMethod paymentMethod;
+    private String paymentMethod;
     private String touchpoint;
     private String idBundle;
     private String bundleName;

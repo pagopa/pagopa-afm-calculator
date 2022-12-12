@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class PaymentOptionByPsp {
     private Long paymentAmount;
     private String primaryCreditorInstitution;
-    private PaymentMethod paymentMethod;
+    private String paymentMethod;
     private String touchpoint;
     @Valid
     private ArrayList<TransferListItem> transferList;
