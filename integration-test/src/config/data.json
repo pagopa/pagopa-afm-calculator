@@ -204,6 +204,11 @@
   "paymenttypes": [
     {
       "id": "int-test-1",
-      "name": "CP"}
+      "name": "CP"
+    },
+    {
+      "id": "int-test-2",
+      "name": "PO"
+    }
   ]
 }

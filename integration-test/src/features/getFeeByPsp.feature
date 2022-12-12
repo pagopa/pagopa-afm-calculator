@@ -292,6 +292,7 @@ Feature: GetFeeByPsp
       }
     ]
     """
+
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP 2
     Given initial json
     """
@@ -334,6 +335,7 @@ Feature: GetFeeByPsp
       }
     ]
     """
+
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP 3
     Given initial json
     """

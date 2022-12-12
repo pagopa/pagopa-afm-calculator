@@ -133,7 +133,7 @@ public class CalculatorService {
                 .idPsp(bundle.getIdPsp())
                 .idBrokerPsp(bundle.getIdBrokerPsp())
                 .idChannel(bundle.getIdChannel())
-                .onUs(bundle.getPaymentMethod() != null && bundle.getPaymentMethod().equalsIgnoreCase("cp") ? bundle.getOnUs() : null)
+                .onUs(bundle.getPaymentMethod() != null && bundle.getPaymentMethod().equalsIgnoreCase("cp") ? false : null)
                 .build();
     }
 
