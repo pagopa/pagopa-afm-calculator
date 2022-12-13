@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,33 +48,32 @@ class ConfigurationServiceTest {
 
     @Test
     void addValidBundles()  {
-        configurationService.addValidBundles(new ArrayList<>());
+        assertDoesNotThrow(() -> configurationService.addValidBundles(new ArrayList<>()));
     }
 
     @Test
     void deleteValidBundles()  {
-        configurationService.deleteValidBundles(new ArrayList<>());
+        assertDoesNotThrow(() -> configurationService.deleteValidBundles(new ArrayList<>()));
     }
 
     @Test
     void addTouchpoints()  {
-        configurationService.addTouchpoints(new ArrayList<>());
+        assertDoesNotThrow(() -> configurationService.addTouchpoints(new ArrayList<>()));
     }
 
     @Test
     void deleteTouchpoints()  {
-        configurationService.deleteTouchpoints(new ArrayList<>());
+        assertDoesNotThrow(() -> configurationService.deleteTouchpoints(new ArrayList<>()));
     }
 
     @Test
     void addPaymentTypes()  {
-        configurationService.addPaymentTypes(new ArrayList<>());
+        assertDoesNotThrow(() -> configurationService.addPaymentTypes(new ArrayList<>()));
     }
 
     @Test
     void deletePaymentTypes()  {
-        configurationService.deletePaymentTypes(new ArrayList<>());
+        assertDoesNotThrow(() -> configurationService.deletePaymentTypes(new ArrayList<>()));
     }
-
 
 }

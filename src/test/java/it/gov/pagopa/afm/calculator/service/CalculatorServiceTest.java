@@ -123,9 +123,22 @@ class CalculatorServiceTest {
     }
 
     @Test
-    void calculate_invalidTouchpoint() throws IOException, JSONException {
+    void calculate_invalidTouchpoint() throws IOException {
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
                 Collections.emptyList(), Collections.singleton(TestUtil.getMockValidBundle()));
+
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+
+        AppException exception = assertThrows(AppException.class, () ->
+                calculatorService.calculate(paymentOption, 10));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    }
+
+    @Test
+    void calculate_invalidPaymentMethod() throws IOException {
+        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
+                Collections.singleton(TestUtil.getMockTouchpoints()), Collections.emptyList(), Collections.singleton(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
