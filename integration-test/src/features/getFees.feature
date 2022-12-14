@@ -56,7 +56,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": false
+        "onUs": null
       },
       {
         "taxPayerFee": 130,
@@ -127,7 +127,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888888",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": false
+        "onUs": null
       },
       {
         "taxPayerFee": 90,
@@ -141,7 +141,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": false
+        "onUs": null
       },
       {
         "taxPayerFee": 100,
@@ -254,7 +254,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": false
+        "onUs": null
       },
       {
         "taxPayerFee": 100,
@@ -339,7 +339,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888888",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": false
+        "onUs": null
       },
       {
         "taxPayerFee": 80,
@@ -372,7 +372,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     ]
     """
 
-  Scenario: Get List of fees by CI, amount, touchpoint and single PSP
+  Scenario: Get List of fees by CI, amount, touchpoint and single PSP 2
     Given initial json
         """
     {
@@ -417,7 +417,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     ]
     """
 
-  Scenario: Get List of fees by CI, amount, touchpoint and single PSP
+  Scenario: Get List of fees by CI, amount, touchpoint and single PSP 3
     Given initial json
     """
     {

@@ -2,7 +2,7 @@
   "environment": [
     {
       "env": "local",
-      "host": "http://localhost:8586"
+      "host": "http://localhost:8080"
     }
   ]
 }

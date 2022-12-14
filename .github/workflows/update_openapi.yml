@@ -26,7 +26,8 @@ jobs:
 
       - name: Update OpenApi and Swagger files
         run: |
-          sh ./openapi/generate_openapi.sh
+          cd ./openapi
+          sh ./generate_openapi.sh
 
       - name: Commit & Push changes
         run: |

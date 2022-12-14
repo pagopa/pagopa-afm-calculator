@@ -11,27 +11,24 @@
   ],
   "stages": [
     {
-      "duration": "1s",
-      "target": 5
+      "duration": "5m",
+      "target": 100
     },
     {
-      "duration": "2s",
-      "target": 5
+      "duration": "10m",
+      "target": 100
     },
     {
-      "duration": "1s",
+      "duration": "5m",
       "target": 0
     }
   ],
   "thresholds": {
     "http_req_failed": [
-      "rate<0.1"
+      "rate<0.001"
     ],
     "http_req_duration": [
-      "p(99)<3000"
-    ],
-    "http_req_duration{gpsMethod:CreateSpontaneousPayment}": [
-      "p(95)<1000"
+      "p(99)<1500"
     ]
   }
 }

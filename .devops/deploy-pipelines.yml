@@ -35,6 +35,10 @@ parameters:
     displayName: Run integration/smoke tests
     type: boolean
     default: true
+  - name: "API_SUBSCRIPTION_KEY"
+    displayName: "API_SUBSCRIPTION_KEY"
+    type: string
+    default: ' '
 
 variables:
   imageRepository: '$(IMAGE_REPOSITORY_NAME)'
@@ -128,6 +132,8 @@ stages:
     condition: and(succeeded(), eq('${{ parameters.TEST }}', 'true'))
     jobs:
       - job: smoke_tests
+        pool:
+          vmImage: 'ubuntu-18.04'
         steps:
           - checkout: self
             persistCredentials: true
@@ -215,5 +221,6 @@ stages:
               targetType: 'inline'
               script: |
                 cd ./integration-test/src
+                export subkey=${{ parameters.API_SUBSCRIPTION_KEY }}
                 yarn install
                 yarn test:${{ parameters.ENV }}

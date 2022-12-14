@@ -1,20 +1,14 @@
 # azure-pipelines.yml
 trigger: none
 
-pool:
-  name: pagopa-dev-loadtest-linux
-
 parameters:
-  - name: "API_SUBSCRIPTION_KEY"
-    displayName: "API_SUBSCRIPTION_KEY"
-    type: string
   - name: "ENVIRONMENT"
     displayName: "Environment"
     type: string
     values:
       - "dev"
       - "uat"
-      - "prod"
+    default: "uat"
   - name: "TEST_TYPE"
     displayName: "Test type"
     type: string
@@ -31,13 +25,25 @@ parameters:
       - calculator_getFees
       - calculator_getFeesByPsp
 
+variables:
+  ${{ if eq(parameters['ENVIRONMENT'], 'dev') }}:
+    poolImage: 'pagopa-dev-loadtest-linux'
+    API_SUBSCRIPTION_KEY: $(DEV_API_SUBSCRIPTION_KEY)
+  ${{ if eq(parameters['ENVIRONMENT'], 'uat') }}:
+    poolImage: 'pagopa-uat-loadtest-linux'
+    API_SUBSCRIPTION_KEY: $(UAT_API_SUBSCRIPTION_KEY)
+
+
+pool:
+  name: $(poolImage)
+
 steps:
   - script: |
-      cd ./performance-tests/src
+      cd ./performance-test/src
       docker pull grafana/k6
     displayName: Pull k6 image
 
   - script: |
       cd ./performance-test
-      sh ./run_performance_test.sh ${{ parameters.ENVIRONMENT }} ${{ parameters.TEST_TYPE }} ${{ parameters.SCRIPT }} afmcalculatork6 ${{ parameters.API_SUBSCRIPTION_KEY }}
+      sh ./run_performance_test.sh ${{ parameters.ENVIRONMENT }} ${{ parameters.TEST_TYPE }} ${{ parameters.SCRIPT }} afmcalculatork6 $(API_SUBSCRIPTION_KEY)
     displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.ENVIRONMENT }}

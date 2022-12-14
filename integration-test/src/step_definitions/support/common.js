@@ -1,6 +1,6 @@
 const axios = require("axios");
-const fs = require('fs');
 
+axios.defaults.headers.common['Ocp-Apim-Subscription-Key'] = process.env.subkey // for all requests
 
 
 function get(url) {

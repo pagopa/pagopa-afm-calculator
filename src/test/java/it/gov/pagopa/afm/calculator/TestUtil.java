@@ -75,6 +75,7 @@ public class TestUtil {
                 .type(BundleType.GLOBAL)
                 .touchpoint("1")
                 .paymentMethod(PaymentMethod.CP)
+                .onUs(true)
                 .build();
     }
 
