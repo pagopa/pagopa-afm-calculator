@@ -74,24 +74,6 @@ class CalculatorServiceTest {
     void calculate3() throws IOException, JSONException {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         validBundle.setIdPsp("77777777777");
-        validBundle.setOnUs(null);
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
-                Collections.singleton(touchpoint), Collections.singleton(validBundle));
-
-        var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-        var result = calculatorService.calculate(paymentOption, 10);
-        String actual = TestUtil.toJson(result);
-
-        String expected = TestUtil.readStringFromFile("responses/getFees3.json");
-        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
-    }
-
-    @Test
-    void calculate4() throws IOException, JSONException {
-        ValidBundle validBundle = TestUtil.getMockValidBundle();
-        validBundle.setIdPsp("77777777777");
 
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
                 Collections.singleton(validBundle)
