@@ -1,4 +1,5 @@
 Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
+Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
 
   Background:
     Given the configuration "data.json"
@@ -56,7 +57,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": null
+        "onUs": false
       },
       {
         "taxPayerFee": 130,
@@ -127,7 +128,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888888",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": null
+        "onUs": false
       },
       {
         "taxPayerFee": 90,
@@ -141,7 +142,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": null
+        "onUs": false
       },
       {
         "taxPayerFee": 100,
@@ -254,7 +255,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": null
+        "onUs": false
       },
       {
         "taxPayerFee": 100,
@@ -339,7 +340,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "idPsp": "88888888888",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": null
+        "onUs": false
       },
       {
         "taxPayerFee": 80,

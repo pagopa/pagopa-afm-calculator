@@ -40,7 +40,7 @@ public class Bundle {
     private Long minPaymentAmount;
     private Long maxPaymentAmount;
 
-    private String paymentMethod;
+    private String paymentType;
 
     private String touchpoint;
 
@@ -60,7 +60,7 @@ public class Bundle {
     @NotNull
     private Boolean digitalStampRestriction;
 
-    // useful only if paymentMethod = CP
+    // useful only if paymentType = CP
     private Boolean onUs;
 
 }

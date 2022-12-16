@@ -124,7 +124,7 @@ public class CalculatorService {
         return Transfer.builder()
                 .taxPayerFee(taxPayerFee)
                 .primaryCiIncurredFee(primaryCiIncurredFee)
-                .paymentMethod(bundle.getPaymentMethod())
+                .paymentMethod(bundle.getPaymentType() == null ? "ANY" : bundle.getPaymentType())
                 .touchpoint(bundle.getTouchpoint())
                 .idBundle(bundle.getId())
                 .bundleName(bundle.getName())
@@ -133,7 +133,7 @@ public class CalculatorService {
                 .idPsp(bundle.getIdPsp())
                 .idBrokerPsp(bundle.getIdBrokerPsp())
                 .idChannel(bundle.getIdChannel())
-                .onUs(bundle.getPaymentMethod() != null && bundle.getPaymentMethod().equalsIgnoreCase("cp") ? false : null)
+                .onUs(bundle.getPaymentType() != null && bundle.getPaymentType().equalsIgnoreCase("cp") ? false : null)
                 .build();
     }
 

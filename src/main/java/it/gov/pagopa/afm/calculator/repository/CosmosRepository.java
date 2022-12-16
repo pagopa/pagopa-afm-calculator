@@ -26,6 +26,7 @@ import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.and;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.arrayContains;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.in;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqualOrAny;
+import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqualOrNull;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isNull;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.or;
 
@@ -87,7 +88,7 @@ public class CosmosRepository {
 
         // add filter by Payment Method: paymentMethod=<value> || paymentMethod==null
         if (paymentOption.getPaymentMethod() != null && !paymentOption.getPaymentMethod().equalsIgnoreCase("any")) {
-            var paymentTypeNameFilter = isEqualOrAny("name", paymentOption.getPaymentMethod());
+            var paymentTypeNameFilter = isEqualOrNull("name", paymentOption.getPaymentMethod());
             Iterable<PaymentType> paymentType = cosmosTemplate.find(new CosmosQuery(paymentTypeNameFilter),
                     PaymentType.class, "paymenttypes");
 
@@ -96,8 +97,8 @@ public class CosmosRepository {
                         "PaymentType not found", "Cannot find payment type with name: '" + paymentOption.getPaymentMethod() + "'");
             }
 
-            var paymentMethodFilter = isEqualOrAny("paymentMethod", paymentType.iterator().next().getName());
-            queryResult = and(queryResult, paymentMethodFilter);
+            var paymentTypeFilter = isEqualOrNull("paymentType", paymentType.iterator().next().getName());
+            queryResult = and(queryResult, paymentTypeFilter);
         }
 
         // add filter by PSP: psp in list

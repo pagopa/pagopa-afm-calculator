@@ -149,7 +149,7 @@ Feature: GetFeeByPsp
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": null
+        "onUs": false
       },
       {
         "taxPayerFee": 100,
@@ -246,7 +246,7 @@ Feature: GetFeeByPsp
         "idPsp": "88888888889",
         "idBrokerPsp": "88888888899",
         "idChannel": "88888888899_01",
-        "onUs": null
+        "onUs": false
       },
       {
         "taxPayerFee": 100,
