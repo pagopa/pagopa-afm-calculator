@@ -74,7 +74,7 @@ public class TestUtil {
                 .maxPaymentAmount(1000L)
                 .type(BundleType.GLOBAL)
                 .touchpoint("1")
-                .paymentMethod("CP")
+                .paymentType("CP")
                 .build();
     }
 
@@ -88,7 +88,7 @@ public class TestUtil {
                 .maxPaymentAmount(1000L)
                 .type(BundleType.PUBLIC)
                 .touchpoint("1")
-                .paymentMethod("CP")
+                .paymentType("CP")
                 .transferCategoryList(List.of("TAX1"))
                 .ciBundleList(Collections.singletonList(getMockCiBundle()))
                 .digitalStamp(false)
