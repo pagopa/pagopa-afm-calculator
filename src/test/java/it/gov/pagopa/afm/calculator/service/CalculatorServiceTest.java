@@ -3,6 +3,7 @@ package it.gov.pagopa.afm.calculator.service;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
 import it.gov.pagopa.afm.calculator.TestUtil;
+import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppException;
@@ -38,9 +39,10 @@ class CalculatorServiceTest {
     @Test
     void calculate() throws IOException, JSONException {
         Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        PaymentType paymentType = TestUtil.getMockPaymentType();
 
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
-                Collections.singleton(touchpoint), Collections.singleton(TestUtil.getMockValidBundle()));
+                Collections.singleton(touchpoint), Collections.singleton(paymentType), Collections.singleton(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10);
@@ -50,15 +52,15 @@ class CalculatorServiceTest {
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
 
-
     @Test
     void calculate2() throws IOException, JSONException {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         validBundle.setIdPsp("77777777777");
         Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        PaymentType paymentType = TestUtil.getMockPaymentType();
 
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
-                Collections.singleton(touchpoint), Collections.singleton(validBundle));
+                Collections.singleton(touchpoint), Collections.singleton(paymentType), Collections.singleton(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10);
@@ -72,13 +74,12 @@ class CalculatorServiceTest {
     void calculate3() throws IOException, JSONException {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         validBundle.setIdPsp("77777777777");
-        validBundle.setOnUs(null);
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
 
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
-                Collections.singleton(touchpoint), Collections.singleton(validBundle));
+                Collections.singleton(validBundle)
+        );
 
-        var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFees2.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10);
         String actual = TestUtil.toJson(result);
 
@@ -93,7 +94,7 @@ class CalculatorServiceTest {
         list.add(TestUtil.getMockValidBundle());
 
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
-                Collections.singleton(TestUtil.getMockTouchpoints()), list);
+                Collections.singleton(TestUtil.getMockTouchpoints()), Collections.singleton(TestUtil.getMockPaymentType()), list);
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees_noInTransfer.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10);
@@ -104,7 +105,7 @@ class CalculatorServiceTest {
     }
 
     @Test
-    void calculate_invalidTouchpoint() throws IOException, JSONException {
+    void calculate_invalidTouchpoint() throws IOException {
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
                 Collections.emptyList(), Collections.singleton(TestUtil.getMockValidBundle()));
 
@@ -117,14 +118,28 @@ class CalculatorServiceTest {
     }
 
     @Test
+    void calculate_invalidPaymentMethod() throws IOException {
+        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
+                Collections.singleton(TestUtil.getMockTouchpoints()), Collections.emptyList(), Collections.singleton(TestUtil.getMockValidBundle()));
+
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+
+        AppException exception = assertThrows(AppException.class, () ->
+                calculatorService.calculate(paymentOption, 10));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    }
+
+    @Test
     void calculate_digitalStamp() throws IOException, JSONException {
         Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setDigitalStamp(true);
         mockValidBundle.setDigitalStampRestriction(true);
 
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
-                Collections.singleton(touchpoint), Collections.singleton(mockValidBundle));
+                Collections.singleton(touchpoint), Collections.singleton(paymentType), Collections.singleton(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees_digitalStamp.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10);
@@ -137,11 +152,12 @@ class CalculatorServiceTest {
     @Test
     void calculate_digitalStamp2() throws IOException, JSONException {
         Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setDigitalStamp(true);
 
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
-                Collections.singleton(touchpoint), Collections.singleton(mockValidBundle));
+                Collections.singleton(touchpoint), Collections.singleton(paymentType), Collections.singleton(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees_digitalStamp2.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10);

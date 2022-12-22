@@ -4,7 +4,6 @@ import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.gov.pagopa.afm.calculator.model.BundleType;
-import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,8 +40,7 @@ public class Bundle {
     private Long minPaymentAmount;
     private Long maxPaymentAmount;
 
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
+    private String paymentType;
 
     private String touchpoint;
 
@@ -62,7 +60,7 @@ public class Bundle {
     @NotNull
     private Boolean digitalStampRestriction;
 
-    // useful only if paymentMethod = CP
+    // useful only if paymentType = CP
     private Boolean onUs;
 
 }

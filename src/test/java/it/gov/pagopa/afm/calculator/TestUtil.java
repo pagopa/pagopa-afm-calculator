@@ -5,10 +5,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundleAttribute;
+import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.BundleType;
-import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import lombok.experimental.UtilityClass;
 
@@ -74,8 +74,7 @@ public class TestUtil {
                 .maxPaymentAmount(1000L)
                 .type(BundleType.GLOBAL)
                 .touchpoint("1")
-                .paymentMethod(PaymentMethod.CP)
-                .onUs(true)
+                .paymentType("CP")
                 .build();
     }
 
@@ -89,7 +88,7 @@ public class TestUtil {
                 .maxPaymentAmount(1000L)
                 .type(BundleType.PUBLIC)
                 .touchpoint("1")
-                .paymentMethod(PaymentMethod.CP)
+                .paymentType("CP")
                 .transferCategoryList(List.of("TAX1"))
                 .ciBundleList(Collections.singletonList(getMockCiBundle()))
                 .digitalStamp(false)
@@ -103,6 +102,13 @@ public class TestUtil {
                 .id("1")
                 .name("CHECKOUT")
                 .creationDate(LocalDateTime.now())
+                .build();
+    }
+
+    public static PaymentType getMockPaymentType() {
+        return PaymentType.builder()
+                .id("1")
+                .name("CP")
                 .build();
     }
 

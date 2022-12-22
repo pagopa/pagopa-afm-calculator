@@ -16,7 +16,7 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "paymentMethod": "ANY"
+      "paymentType": null
     },
     {
       "id": "int-test-2",
@@ -30,7 +30,7 @@
       "paymentAmount": 80,
       "minPaymentAmount": 0,
       "maxPaymentAmount": 10000,
-      "paymentMethod": "PO",
+      "paymentType": "PO",
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
@@ -48,7 +48,8 @@
       "paymentAmount": 90,
       "minPaymentAmount": 0,
       "maxPaymentAmount": 10000,
-      "paymentMethod": "CP",
+      "paymentType": "CP",
+      "onUs": "false",
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
@@ -73,7 +74,7 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "paymentMethod": "ANY"
+      "paymentType": null
     },
     {
       "id": "int-test-5",
@@ -87,7 +88,8 @@
       "paymentAmount": 60,
       "minPaymentAmount": 0,
       "maxPaymentAmount": 10000,
-      "paymentMethod": "CP",
+      "paymentType": "CP",
+      "onUs": false,
       "touchpoint": "IO",
       "type": "GLOBAL",
       "transferCategoryList": [
@@ -113,7 +115,7 @@
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
-      "paymentMethod": "ANY"
+      "paymentType": null
     },
     {
       "id": "int-test-7",
@@ -131,7 +133,7 @@
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
-      "paymentMethod": "ANY"
+      "paymentType": null
     },
     {
       "id": "int-test-8",
@@ -149,7 +151,7 @@
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
-      "paymentMethod": "ANY"
+      "paymentType": null
     }
   ],
   "ciBundles": [
@@ -199,6 +201,16 @@
     {
       "id": "int-test-2",
       "name": "IO"
+    }
+  ],
+  "paymenttypes": [
+    {
+      "id": "int-test-1",
+      "name": "CP"
+    },
+    {
+      "id": "int-test-2",
+      "name": "PO"
     }
   ]
 }

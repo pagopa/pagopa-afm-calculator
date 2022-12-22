@@ -1,7 +1,9 @@
 package it.gov.pagopa.afm.calculator.service;
 
+import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
+import it.gov.pagopa.afm.calculator.repository.PaymentTypeRepository;
 import it.gov.pagopa.afm.calculator.repository.TouchpointRepository;
 import it.gov.pagopa.afm.calculator.repository.ValidBundleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class ConfigurationService {
 
     @Autowired
     TouchpointRepository touchpointRepository;
+
+    @Autowired
+    PaymentTypeRepository paymentTypeRepository;
 
     public void addValidBundles(List<ValidBundle> validBundles) {
         validBundleRepository.saveAll(validBundles);
@@ -36,5 +41,16 @@ public class ConfigurationService {
 
     public void deleteTouchpoints(List<Touchpoint> touchpoints) {
         touchpointRepository.deleteAll(touchpoints);
+    }
+
+    public void addPaymentTypes(List<PaymentType> paymentTypes) {
+        var filtered = paymentTypes.stream()
+                .filter(elem -> paymentTypeRepository.findByName(elem.getName()).isEmpty())
+                .collect(Collectors.toList());
+        paymentTypeRepository.saveAll(filtered);
+    }
+
+    public void deletePaymentTypes(List<PaymentType> paymentTypes) {
+        paymentTypeRepository.deleteAll(paymentTypes);
     }
 }

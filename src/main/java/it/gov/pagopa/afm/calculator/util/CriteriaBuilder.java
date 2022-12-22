@@ -32,6 +32,19 @@ public class CriteriaBuilder {
         return or(queryEquals, queryNull);
     }
 
+    public static <T> Criteria isEqualOrNull(String param, T value) {
+        var queryEquals = Criteria.getInstance(CriteriaType.IS_EQUAL,
+                param,
+                Collections.singletonList(value),
+                Part.IgnoreCaseType.ALWAYS);
+        var queryNull = Criteria.getInstance(CriteriaType.IS_NULL,
+                param,
+                Collections.emptyList(),
+                Part.IgnoreCaseType.NEVER);
+
+        return or(queryEquals, queryNull);
+    }
+
     public static <T> Criteria in(String param, List<T> values) {
         return Criteria.getInstance(CriteriaType.IN,
                 param,

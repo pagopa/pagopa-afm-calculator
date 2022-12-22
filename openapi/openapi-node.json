@@ -413,52 +413,6 @@
           }
         }
       },
-      "CiBundle": {
-        "type": "object",
-        "properties": {
-          "attributes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CiBundleAttribute"
-            }
-          },
-          "ciFiscalCode": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "ciFiscalCode",
-          "id"
-        ]
-      },
-      "CiBundleAttribute": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "maxPaymentAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "transferCategory": {
-            "type": "string"
-          },
-          "transferCategoryRelation": {
-            "type": "string",
-            "enum": [
-              "EQUAL",
-              "NOT_EQUAL"
-            ]
-          }
-        },
-        "required": [
-          "id"
-        ]
-      },
       "PaymentOption": {
         "type": "object",
         "properties": {
@@ -473,19 +427,7 @@
             "format": "int64"
           },
           "paymentMethod": {
-            "type": "string",
-            "enum": [
-              "ANY",
-              "PPAL",
-              "BPAY",
-              "PAYBP",
-              "BBT",
-              "AD",
-              "CP",
-              "PO",
-              "JIF",
-              "MYBK"
-            ]
+            "type": "string"
           },
           "primaryCreditorInstitution": {
             "type": "string"
@@ -514,19 +456,7 @@
             "format": "int64"
           },
           "paymentMethod": {
-            "type": "string",
-            "enum": [
-              "ANY",
-              "PPAL",
-              "BPAY",
-              "PAYBP",
-              "BBT",
-              "AD",
-              "CP",
-              "PO",
-              "JIF",
-              "MYBK"
-            ]
+            "type": "string"
           },
           "primaryCreditorInstitution": {
             "type": "string"
@@ -564,21 +494,6 @@
           }
         }
       },
-      "Touchpoint": {
-        "type": "object",
-        "properties": {
-          "creationDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
       "Transfer": {
         "type": "object",
         "properties": {
@@ -607,19 +522,7 @@
             "type": "boolean"
           },
           "paymentMethod": {
-            "type": "string",
-            "enum": [
-              "ANY",
-              "PPAL",
-              "BPAY",
-              "PAYBP",
-              "BBT",
-              "AD",
-              "CP",
-              "PO",
-              "JIF",
-              "MYBK"
-            ]
+            "type": "string"
           },
           "primaryCiIncurredFee": {
             "type": "integer",
@@ -647,92 +550,6 @@
             "type": "string"
           }
         }
-      },
-      "ValidBundle": {
-        "type": "object",
-        "properties": {
-          "ciBundleList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CiBundle"
-            }
-          },
-          "description": {
-            "type": "string"
-          },
-          "digitalStamp": {
-            "type": "boolean"
-          },
-          "digitalStampRestriction": {
-            "type": "boolean"
-          },
-          "id": {
-            "type": "string"
-          },
-          "idBrokerPsp": {
-            "type": "string"
-          },
-          "idChannel": {
-            "type": "string"
-          },
-          "idPsp": {
-            "type": "string"
-          },
-          "maxPaymentAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "minPaymentAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "name": {
-            "type": "string"
-          },
-          "onUs": {
-            "type": "boolean"
-          },
-          "paymentAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "paymentMethod": {
-            "type": "string",
-            "enum": [
-              "ANY",
-              "PPAL",
-              "BPAY",
-              "PAYBP",
-              "BBT",
-              "AD",
-              "CP",
-              "PO",
-              "JIF",
-              "MYBK"
-            ]
-          },
-          "touchpoint": {
-            "type": "string"
-          },
-          "transferCategoryList": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "GLOBAL",
-              "PUBLIC",
-              "PRIVATE"
-            ]
-          }
-        },
-        "required": [
-          "digitalStamp",
-          "digitalStampRestriction"
-        ]
       }
     },
     "securitySchemes": {
