@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic for Node",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.4.0-2-PGEC-99-calculator-fix-performance-test"
+    "version": "2.4.1"
   },
   "servers": [
     {
