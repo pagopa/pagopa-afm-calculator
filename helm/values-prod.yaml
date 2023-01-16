@@ -83,4 +83,4 @@ microservice-chart:
               - key: node_type
                 operator: In
                 values:
-                  - "user"
+                  - user
