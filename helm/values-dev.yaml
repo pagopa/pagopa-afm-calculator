@@ -49,7 +49,7 @@ microservice-chart:
       cpu: "0.5"
   autoscaling:
     enable: true
-    minReplica: 5
+    minReplica: 1
     maxReplica: 10
     pollingInterval: 30 # seconds
     cooldownPeriod: 60 # seconds
@@ -84,4 +84,4 @@ microservice-chart:
               - key: node_type
                 operator: In
                 values:
-                  - "user"
+                  - user
