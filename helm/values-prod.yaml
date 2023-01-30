@@ -70,6 +70,7 @@ microservice-chart:
   envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-p-connection-string
     COSMOS_KEY: afm-marketplace-p-cosmos-pkey
+    AFM_SA_CONNECTION_STRING: afm-p-sa-connection-string
   keyvault:
     name: "pagopa-p-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"

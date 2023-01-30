@@ -71,6 +71,7 @@ microservice-chart:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'ai-d-connection-string'
     COSMOS_KEY: afm-marketplace-d-cosmos-pkey
+    AFM_SA_CONNECTION_STRING: afm-d-sa-connection-string
   keyvault:
     name: "pagopa-d-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
