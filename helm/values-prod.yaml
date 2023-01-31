@@ -67,6 +67,7 @@ microservice-chart:
     CACHE_EXPIRATION_TIME: '3m'
     CACHE_ENABLED: 'true'
     COSMOS_URI: https://pagopa-p-weu-afm-marketplace-cosmos-account.documents.azure.com:443/
+    ISSUER_RANGE_TABLE: 'pagopapweuafmsaissuerrangetable'
   envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-p-connection-string
     COSMOS_KEY: afm-marketplace-p-cosmos-pkey
