@@ -21,6 +21,8 @@ public class PaymentOption {
     private Long paymentAmount;
     @NotNull
     private String primaryCreditorInstitution;
+    @NotNull
+    private String bin;
     private String paymentMethod;
     private String touchpoint;
     private List<String> idPspList;

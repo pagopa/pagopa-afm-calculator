@@ -32,6 +32,8 @@ public class Bundle {
     private String id;
     @PartitionKey
     private String idPsp;
+    
+    private String abi;
 
     private String name;
     private String description;

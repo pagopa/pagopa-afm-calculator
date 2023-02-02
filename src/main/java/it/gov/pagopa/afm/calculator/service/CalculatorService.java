@@ -1,34 +1,42 @@
 package it.gov.pagopa.afm.calculator.service;
 
-import it.gov.pagopa.afm.calculator.entity.CiBundle;
-import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
-import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
-import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import static it.gov.pagopa.afm.calculator.service.UtilityComponent.inTransferList;
+import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static it.gov.pagopa.afm.calculator.service.UtilityComponent.inTransferList;
-import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import it.gov.pagopa.afm.calculator.entity.CiBundle;
+import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
+import it.gov.pagopa.afm.calculator.entity.ValidBundle;
+import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
+import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
+import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 
 @Service
-@Slf4j
 public class CalculatorService {
+	
+	@Value("${payment.amount.threshold}")
+	private String amountThreshold;
 
     @Autowired
     CosmosRepository cosmosRepository;
 
     @Autowired
     UtilityComponent utilityComponent;
+    
+    @Autowired
+    IssuersService issuersService;
 
 
     @Cacheable(value = "calculate")
@@ -50,12 +58,12 @@ public class CalculatorService {
                 // add in transfers!
                 analyzeTransferList(transfers, paymentOption, bundle);
             } else {
-                Transfer transfer = createTransfer(bundle.getPaymentAmount(), 0, bundle, null);
+                Transfer transfer = createTransfer(bundle.getPaymentAmount(), 0, bundle, null, paymentOption);
                 transfers.add(transfer);
             }
         }
 
-        // sort according taxpayer fee
+        // sort according onus and taxpayer fee
         Collections.sort(transfers);
 
         return transfers.stream()
@@ -81,7 +89,7 @@ public class CalculatorService {
                         .filter(attribute -> (attribute.getTransferCategory() != null &&
                                 (TransferCategoryRelation.NOT_EQUAL.equals(attribute.getTransferCategoryRelation()) && primaryTransferCategoryList.contains(attribute.getTransferCategory())
                                 )))
-                        .map(attribute -> createTransfer(bundle.getPaymentAmount(), 0, bundle, null)
+                        .map(attribute -> createTransfer(bundle.getPaymentAmount(), 0, bundle, null, paymentOption)
                         )
                         .collect(Collectors.toList())
                 );
@@ -96,19 +104,19 @@ public class CalculatorService {
                             // Note: this check should be done on Marketplace.
                             long primaryCiIncurredFee = Math.min(paymentOption.getPaymentAmount(), Math.min(bundle.getPaymentAmount(), attribute.getMaxPaymentAmount()));
                             return createTransfer(Math.max(0, bundle.getPaymentAmount() - primaryCiIncurredFee),
-                                    primaryCiIncurredFee, bundle, cibundle.getId());
+                                    primaryCiIncurredFee, bundle, cibundle.getId(), paymentOption);
                         })
                         .collect(Collectors.toList())
                 );
             } else {
-                transfers.add(createTransfer(bundle.getPaymentAmount(), 0, bundle, cibundle.getId()));
+                transfers.add(createTransfer(bundle.getPaymentAmount(), 0, bundle, cibundle.getId(), paymentOption));
             }
         }
 
         // analyze global bundles
         if (isGlobal(bundle) && ciBundles.isEmpty()) {
             // no incurred fee is present
-            Transfer transfer = createTransfer(bundle.getPaymentAmount(), 0, bundle, null);
+            Transfer transfer = createTransfer(bundle.getPaymentAmount(), 0, bundle, null, paymentOption);
             transfers.add(transfer);
         }
     }
@@ -120,7 +128,7 @@ public class CalculatorService {
      * @param idCiBundle           ID of CI-Bundle relation
      * @return Create transfer item
      */
-    private Transfer createTransfer(long taxPayerFee, long primaryCiIncurredFee, ValidBundle bundle, String idCiBundle) {
+    private Transfer createTransfer(long taxPayerFee, long primaryCiIncurredFee, ValidBundle bundle, String idCiBundle, PaymentOption paymentOption) {
         return Transfer.builder()
                 .taxPayerFee(taxPayerFee)
                 .primaryCiIncurredFee(primaryCiIncurredFee)
@@ -133,8 +141,27 @@ public class CalculatorService {
                 .idPsp(bundle.getIdPsp())
                 .idBrokerPsp(bundle.getIdBrokerPsp())
                 .idChannel(bundle.getIdChannel())
-                .onUs(bundle.getPaymentType() != null && bundle.getPaymentType().equalsIgnoreCase("cp") ? false : null)
+                //.onUs(bundle.getPaymentType() != null && bundle.getPaymentType().equalsIgnoreCase("cp") ? false : null)
+                .onUs(this.getOnUsValue(taxPayerFee, bundle, paymentOption))
                 .build();
+    }
+    
+    private Boolean getOnUsValue (long taxPayerFee, ValidBundle bundle, PaymentOption paymentOption) {
+    	boolean onusValue = false;
+    	// if PaymentType is CP and amount > threshold ---> calculate onus value
+    	if (bundle.getPaymentType().equalsIgnoreCase("cp") && taxPayerFee >= Long.parseLong(amountThreshold)) {
+    		// get issuers by BIN
+    		List<IssuerRangeEntity> issuers = issuersService.getIssuersByBIN(paymentOption.getBin());
+    		// TODO check if the BIN falls into one of the issuer ranges (waiting for confirmation if needed)
+    		
+    		// check if the ABI of the bundle is the same as all issuers pulled via BIN
+    		if (issuers.stream().allMatch(x -> x.getAbi().equals(bundle.getAbi()))) {
+    			onusValue = true;
+    		}
+    		
+    	} 
+    		
+    	return onusValue;
     }
 
 }
