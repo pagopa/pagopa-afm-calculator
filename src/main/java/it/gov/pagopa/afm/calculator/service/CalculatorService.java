@@ -55,7 +55,7 @@ public class CalculatorService {
             }
         }
 
-        // sort according taxpayer fee
+        // sort according onus and taxpayer fee
         Collections.sort(transfers);
 
         return transfers.stream()
@@ -135,6 +135,12 @@ public class CalculatorService {
                 .idChannel(bundle.getIdChannel())
                 .onUs(bundle.getPaymentType() != null && bundle.getPaymentType().equalsIgnoreCase("cp") ? false : null)
                 .build();
+    }
+    
+    private Boolean getOnUsValue () {
+    	// check threshold
+    	// if amount > threshold -> read on issuerTable by BIN else return false
+		return null;
     }
 
 }

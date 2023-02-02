@@ -1,5 +1,7 @@
 package it.gov.pagopa.afm.calculator.model.calculator;
 
+import java.util.Comparator;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
@@ -24,7 +26,10 @@ public class Transfer implements Comparable<Transfer> {
 
     @Override
     public int compareTo(Transfer t) {
-        return this.getTaxPayerFee().compareTo(t.getTaxPayerFee());
+        //return this.getTaxPayerFee().compareTo(t.getTaxPayerFee());
+    	// order by onUs and taxPayerFee
+    	return Comparator.comparing((Transfer tr)->tr.onUs).thenComparingLong(tr->tr.taxPayerFee).compare(this, t);
+        
     }
 }
 
