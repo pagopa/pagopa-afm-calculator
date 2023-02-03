@@ -3,6 +3,7 @@ package it.gov.pagopa.afm.calculator.service;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -54,7 +55,9 @@ public class IssuersService {
 			throw new AppException(AppError.INTERNAL_SERVER_ERROR);
 		} 
 		
-		return StreamSupport.stream(resultIssuerRangeEntityList, false).collect(Collectors.toList());
+		return Optional.of(StreamSupport.stream(resultIssuerRangeEntityList, false).collect(Collectors.toList())).
+				filter(l -> !l.isEmpty()).
+				orElseThrow(() -> new AppException(AppError.ISSUERS_NOT_FOUND, bin));
     }
 
 }

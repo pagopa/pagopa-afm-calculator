@@ -1,6 +1,7 @@
 {
   "paymentAmount": 70,
   "primaryCreditorInstitution": "11111111",
+  "bin": "1005066",
   "paymentMethod": "CP",
   "touchpoint": "CHECKOUT",
   "idPspList": [],

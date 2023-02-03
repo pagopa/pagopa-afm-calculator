@@ -19,6 +19,7 @@
         <java.version>11</java.version>
         <hibernate-version>6.1.1.Final</hibernate-version>
         <azure.storage.table.version>8.6.6</azure.storage.table.version>
+        <testcontainers.version>1.17.2</testcontainers.version>
     </properties>
 
     <dependencies>
@@ -126,17 +127,16 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        
 
         <!-- fix log4j vulnerability-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.17.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-to-slf4j</artifactId>
-            <version>2.16.0</version>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
@@ -144,6 +144,12 @@
             <version>1.17.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+       
         <!-- workaround for Cosmos DB Emulator bug, see: https://github.com/testcontainers/testcontainers-java/issues/5518 -->
         <dependency>
             <groupId>com.github.terma</groupId>
@@ -151,6 +157,18 @@
             <version>1.6</version>
         </dependency>
     </dependencies>
+    
+    <dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>testcontainers-bom</artifactId>
+				<version>${testcontainers.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
     <build>
         <plugins>

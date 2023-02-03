@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum AppError {
+	ISSUERS_NOT_FOUND(HttpStatus.NOT_FOUND, "Issuers not found", "Not found any issuer for the bin %s"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", "Something was wrong");
 
     public final HttpStatus httpStatus;

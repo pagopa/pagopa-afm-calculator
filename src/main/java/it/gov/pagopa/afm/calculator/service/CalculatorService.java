@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -149,7 +150,7 @@ public class CalculatorService {
     private Boolean getOnUsValue (long taxPayerFee, ValidBundle bundle, PaymentOption paymentOption) {
     	boolean onusValue = false;
     	// if PaymentType is CP and amount > threshold ---> calculate onus value
-    	if (bundle.getPaymentType().equalsIgnoreCase("cp") && taxPayerFee >= Long.parseLong(amountThreshold)) {
+    	if (bundle.getPaymentType().equalsIgnoreCase("cp") && taxPayerFee >= Long.parseLong(StringUtils.trim(amountThreshold))) {
     		// get issuers by BIN
     		List<IssuerRangeEntity> issuers = issuersService.getIssuersByBIN(paymentOption.getBin());
     		// TODO check if the BIN falls into one of the issuer ranges (waiting for confirmation if needed)

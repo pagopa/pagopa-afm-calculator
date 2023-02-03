@@ -1,33 +1,46 @@
 package it.gov.pagopa.afm.calculator.service;
 
-import com.azure.spring.data.cosmos.core.CosmosTemplate;
-import com.azure.spring.data.cosmos.core.query.CosmosQuery;
-import it.gov.pagopa.afm.calculator.TestUtil;
-import it.gov.pagopa.afm.calculator.entity.PaymentType;
-import it.gov.pagopa.afm.calculator.entity.Touchpoint;
-import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.exception.AppException;
-import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import org.json.JSONException;
-import org.junit.jupiter.api.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import org.json.JSONException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import com.azure.spring.data.cosmos.core.CosmosTemplate;
+import com.azure.spring.data.cosmos.core.query.CosmosQuery;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.table.TableOperation;
+
+import it.gov.pagopa.afm.calculator.TestUtil;
+import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
+import it.gov.pagopa.afm.calculator.entity.PaymentType;
+import it.gov.pagopa.afm.calculator.entity.Touchpoint;
+import it.gov.pagopa.afm.calculator.entity.ValidBundle;
+import it.gov.pagopa.afm.calculator.exception.AppException;
+import it.gov.pagopa.afm.calculator.initializer.Initializer;
+import it.gov.pagopa.afm.calculator.model.PaymentOption;
+
 @SpringBootTest
+@Testcontainers
+@ContextConfiguration(initializers = {Initializer.class})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CalculatorServiceTest {
 
     @Autowired
@@ -35,6 +48,42 @@ class CalculatorServiceTest {
 
     @MockBean
     CosmosTemplate cosmosTemplate;
+    
+    @BeforeAll
+	void setup() throws StorageException { 	
+    	IssuerRangeEntity e = new IssuerRangeEntity("403027", "335106");
+    	e.setLowRange("4030270000000000000");
+    	e.setHighRange("4030279999999999999");
+    	e.setCircuit("VISA");
+    	e.setProductCode("L");
+    	e.setProductType("1");
+    	e.setProductCategory("P");
+    	e.setIssuerId("453997");
+    	e.setAbi("1030");
+    	Initializer.table.execute(TableOperation.insert(e));
+    	
+    	e = new IssuerRangeEntity("504317", "321133");
+    	e.setLowRange("5043170000000000000");
+    	e.setHighRange("5043179999999999999");
+    	e.setCircuit("MAST");
+    	e.setProductCode("CIR");
+    	e.setProductType("1");
+    	e.setProductCategory("D");
+    	e.setIssuerId("329");
+    	e.setAbi("80006");
+		Initializer.table.execute(TableOperation.insert(e));	
+		
+		e = new IssuerRangeEntity("1005066", "300000");
+		e.setLowRange("3000000000000000000");
+    	e.setHighRange("3059999999999999999");
+    	e.setCircuit("DINERS");
+    	e.setProductCode("N");
+    	e.setProductType("2");
+    	e.setProductCategory("C");
+    	e.setIssuerId("100");
+    	e.setAbi("14156");
+		Initializer.table.execute(TableOperation.insert(e));	
+	}
 
     @Test
     void calculate() throws IOException, JSONException {
