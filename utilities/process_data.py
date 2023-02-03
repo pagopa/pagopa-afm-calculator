@@ -5,6 +5,8 @@
 #   input: file path, partition key name, row key name
 #   output: processed file
 #
+#   Usage: python3 process_data.py <file-path> <partition-key> <row-key>
+#
 
 import sys
 import pandas as pd
