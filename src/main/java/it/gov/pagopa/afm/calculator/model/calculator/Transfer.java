@@ -22,6 +22,7 @@ public class Transfer implements Comparable<Transfer> {
     private String idChannel;
     private String idBrokerPsp;
     private Boolean onUs;
+    private String abi;
 
 
     @Override

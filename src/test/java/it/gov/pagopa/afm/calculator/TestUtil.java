@@ -83,6 +83,7 @@ public class TestUtil {
                 .id("1")
                 .name("bundle1")
                 .idPsp("ABC")
+                .abi("14156")
                 .paymentAmount(1L)
                 .minPaymentAmount(0L)
                 .maxPaymentAmount(1000L)
