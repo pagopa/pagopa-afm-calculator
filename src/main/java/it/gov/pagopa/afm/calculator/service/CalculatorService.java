@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
+import it.gov.pagopa.afm.calculator.exception.AppError;
+import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
@@ -154,10 +156,15 @@ public class CalculatorService {
     	if (bundle.getPaymentType().equalsIgnoreCase("cp") && taxPayerFee >= Long.parseLong(StringUtils.trim(amountThreshold))) {
     		// get issuers by BIN
     		List<IssuerRangeEntity> issuers = issuersService.getIssuersByBIN(paymentOption.getBin());
-    		// TODO check if the BIN falls into one of the issuer ranges (waiting for confirmation if needed)
     		
-    		// check if the ABI of the bundle is the same as all issuers pulled via BIN
-    		if (issuers.stream().allMatch(x -> x.getAbi().equals(bundle.getAbi()))) {
+    		// all extracted record must have the same ABI otherwise expetion raised
+    		// - the limit(2) operation is used to terminate as soon as two distinct ABI objects are found
+    		if (issuers.stream().map(IssuerRangeEntity::getAbi).distinct().limit(2).count() > 1) {
+    			throw new AppException(AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
+    		}
+    		
+    		// check if the ABI of the bundle is the same as issuers pulled via BIN
+    		if (issuers.get(0).getAbi().equalsIgnoreCase(bundle.getAbi())) {
     			onusValue = true;
     		}
     		

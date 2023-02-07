@@ -29,7 +29,7 @@ public class Transfer implements Comparable<Transfer> {
     public int compareTo(Transfer t) {
         //return this.getTaxPayerFee().compareTo(t.getTaxPayerFee());
     	// order by onUs and taxPayerFee
-    	return Comparator.comparing((Transfer tr)->tr.onUs).thenComparingLong(tr->tr.taxPayerFee).compare(this, t);
+    	return Comparator.comparing((Transfer tr)->tr.onUs).reversed().thenComparingLong(tr->tr.taxPayerFee).compare(this, t);
         
     }
 }

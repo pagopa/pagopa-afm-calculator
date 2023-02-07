@@ -1,8 +1,18 @@
 package it.gov.pagopa.afm.calculator;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundleAttribute;
 import it.gov.pagopa.afm.calculator.entity.PaymentType;
@@ -11,14 +21,6 @@ import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import lombok.experimental.UtilityClass;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 @UtilityClass
 public class TestUtil {
@@ -96,6 +98,96 @@ public class TestUtil {
                 .digitalStampRestriction(false)
                 .onUs(true)
                 .build();
+    }
+    
+    public static List<ValidBundle> getMockMultipleValidBundle() {
+    	List<ValidBundle> bundles = new ArrayList<>();
+    	bundles.add(ValidBundle.builder()
+                .id("1")
+                .name("bundle1")
+                .idPsp("ABC")
+                .abi("14156")
+                .paymentAmount(1L)
+                .minPaymentAmount(0L)
+                .maxPaymentAmount(1000L)
+                .type(BundleType.PUBLIC)
+                .touchpoint("1")
+                .paymentType("CP")
+                .transferCategoryList(List.of("TAX1"))
+                .ciBundleList(Collections.singletonList(getMockCiBundle()))
+                .digitalStamp(false)
+                .digitalStampRestriction(false)
+                .onUs(true)
+                .build());
+    	bundles.add(ValidBundle.builder()
+                .id("2")
+                .name("bundle2")
+                .idPsp("DEF")
+                .abi("14156")
+                .paymentAmount(2L)
+                .minPaymentAmount(0L)
+                .maxPaymentAmount(1000L)
+                .type(BundleType.PUBLIC)
+                .touchpoint("1")
+                .paymentType("CP")
+                .transferCategoryList(List.of("TAX2"))
+                .ciBundleList(Collections.singletonList(getMockCiBundle()))
+                .digitalStamp(false)
+                .digitalStampRestriction(false)
+                .onUs(true)
+                .build());
+    	bundles.add(ValidBundle.builder()
+                .id("3")
+                .name("bundle3")
+                .idPsp("GHI")
+                .abi("14157")
+                .paymentAmount(3L)
+                .minPaymentAmount(0L)
+                .maxPaymentAmount(1000L)
+                .type(BundleType.PUBLIC)
+                .touchpoint("1")
+                .paymentType("CP")
+                .transferCategoryList(List.of("TAX3"))
+                .ciBundleList(Collections.singletonList(getMockCiBundle()))
+                .digitalStamp(false)
+                .digitalStampRestriction(false)
+                .onUs(true)
+                .build());
+    	bundles.add(ValidBundle.builder()
+                .id("4")
+                .name("bundle4")
+                .idPsp("LMN")
+                .abi("14158")
+                .paymentAmount(4L)
+                .minPaymentAmount(0L)
+                .maxPaymentAmount(1000L)
+                .type(BundleType.PUBLIC)
+                .touchpoint("1")
+                .paymentType("CP")
+                .transferCategoryList(List.of("TAX4"))
+                .ciBundleList(Collections.singletonList(getMockCiBundle()))
+                .digitalStamp(false)
+                .digitalStampRestriction(false)
+                .onUs(true)
+                .build());
+    	bundles.add(ValidBundle.builder()
+                .id("5")
+                .name("bundle5")
+                .idPsp("OPQ")
+                .abi("14156")
+                .paymentAmount(5L)
+                .minPaymentAmount(0L)
+                .maxPaymentAmount(1000L)
+                .type(BundleType.PUBLIC)
+                .touchpoint("1")
+                .paymentType("CP")
+                .transferCategoryList(List.of("TAX5"))
+                .ciBundleList(Collections.singletonList(getMockCiBundle()))
+                .digitalStamp(false)
+                .digitalStampRestriction(false)
+                .onUs(true)
+                .build());
+        return bundles;
     }
 
     public static Touchpoint getMockTouchpoints() {
