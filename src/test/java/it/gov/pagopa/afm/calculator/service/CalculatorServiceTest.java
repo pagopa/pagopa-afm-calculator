@@ -275,10 +275,25 @@ class CalculatorServiceTest {
         assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getHttpStatus());
     }
     
+    @Test
+    @Order(10)
+    void calculate_BinNotFound() throws IOException, JSONException {
+        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        PaymentType paymentType = TestUtil.getMockPaymentType();
+
+        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
+                Collections.singleton(touchpoint), Collections.singleton(paymentType), Collections.singleton(TestUtil.getMockValidBundle()));
+
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFeesBinNotFound.json", PaymentOption.class);
+        AppException exception = assertThrows(AppException.class, () ->
+        calculatorService.calculate(paymentOption, 10));
+        
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    }
     
     // This must be the last test to run - it needs to mock the cosmosRepository in the service
     @Test
-    @Order(10)
+    @Order(Integer.MAX_VALUE)
     void calculate_multipleTransferCreation() throws IOException, JSONException {
     	
     	CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
