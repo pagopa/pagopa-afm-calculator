@@ -26,9 +26,11 @@ import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Service
-@Data
+@Setter
 public class CalculatorService {
 	
 	@Value("${payment.amount.threshold}")
