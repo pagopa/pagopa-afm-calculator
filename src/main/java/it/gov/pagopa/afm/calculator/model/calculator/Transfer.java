@@ -27,7 +27,6 @@ public class Transfer implements Comparable<Transfer> {
 
     @Override
     public int compareTo(Transfer t) {
-        //return this.getTaxPayerFee().compareTo(t.getTaxPayerFee());
     	// order by onUs and taxPayerFee
     	return Comparator.comparing((Transfer tr)->tr.onUs).reversed().thenComparingLong(tr->tr.taxPayerFee).compare(this, t);
         
