@@ -13,8 +13,12 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,7 @@ import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 @Testcontainers
 @ContextConfiguration(initializers = {Initializer.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(OrderAnnotation.class)
 class CalculatorServiceTest {
 
     @Autowired
@@ -51,8 +56,6 @@ class CalculatorServiceTest {
     @MockBean
     CosmosTemplate cosmosTemplate;
     
-    @MockBean
-    CosmosRepository cosmosRepository;
     
     @BeforeAll
 	void setup() throws StorageException { 	
@@ -116,6 +119,7 @@ class CalculatorServiceTest {
 	}
 
     @Test
+    @Order(1)
     void calculate() throws IOException, JSONException {
         Touchpoint touchpoint = TestUtil.getMockTouchpoints();
         PaymentType paymentType = TestUtil.getMockPaymentType();
@@ -132,6 +136,7 @@ class CalculatorServiceTest {
     }
 
     @Test
+    @Order(2)
     void calculate2() throws IOException, JSONException {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         validBundle.setIdPsp("77777777777");
@@ -150,6 +155,7 @@ class CalculatorServiceTest {
     }
 
     @Test
+    @Order(3)
     void calculate3() throws IOException, JSONException {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         validBundle.setIdPsp("77777777777");
@@ -167,6 +173,7 @@ class CalculatorServiceTest {
     }
 
     @Test
+    @Order(4)
     void calculate_noInTransfer() throws IOException, JSONException {
         var list = new ArrayList<>();
         list.add(TestUtil.getMockGlobalValidBundle());
@@ -184,6 +191,7 @@ class CalculatorServiceTest {
     }
 
     @Test
+    @Order(5)
     void calculate_invalidTouchpoint() throws IOException {
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
                 Collections.emptyList(), Collections.singleton(TestUtil.getMockValidBundle()));
@@ -197,6 +205,7 @@ class CalculatorServiceTest {
     }
 
     @Test
+    @Order(6)
     void calculate_invalidPaymentMethod() throws IOException {
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString())).thenReturn(
                 Collections.singleton(TestUtil.getMockTouchpoints()), Collections.emptyList(), Collections.singleton(TestUtil.getMockValidBundle()));
@@ -210,6 +219,7 @@ class CalculatorServiceTest {
     }
 
     @Test
+    @Order(7)
     void calculate_digitalStamp() throws IOException, JSONException {
         Touchpoint touchpoint = TestUtil.getMockTouchpoints();
         PaymentType paymentType = TestUtil.getMockPaymentType();
@@ -229,6 +239,7 @@ class CalculatorServiceTest {
     }
 
     @Test
+    @Order(8)
     void calculate_digitalStamp2() throws IOException, JSONException {
         Touchpoint touchpoint = TestUtil.getMockTouchpoints();
         PaymentType paymentType = TestUtil.getMockPaymentType();
@@ -247,6 +258,7 @@ class CalculatorServiceTest {
     }
     
     @Test
+    @Order(9)
     void calculate_BIN_with_different_ABI_error() throws IOException, JSONException {
         Touchpoint touchpoint = TestUtil.getMockTouchpoints();
         PaymentType paymentType = TestUtil.getMockPaymentType();
@@ -263,12 +275,19 @@ class CalculatorServiceTest {
         assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getHttpStatus());
     }
     
+    
+    // This must be the last test to run - it needs to mock the cosmosRepository in the service
     @Test
+    @Order(10)
     void calculate_multipleTransferCreation() throws IOException, JSONException {
-        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundle();
-
-        org.mockito.Mockito.when(cosmosRepository.findByPaymentOption(any())).thenReturn(bundles);
+    	
+    	CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
+    	
+    	calculatorService.setCosmosRepository(cosmosRepository);
+    	
+    	List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundle();
         
+        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any());
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMultipleTransfer.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10);
