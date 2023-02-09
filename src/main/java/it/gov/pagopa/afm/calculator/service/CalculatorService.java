@@ -28,7 +28,6 @@ import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import lombok.Setter;
 
 @Service
-@Setter
 public class CalculatorService {
 	
 	@Value("${payment.amount.threshold}")
