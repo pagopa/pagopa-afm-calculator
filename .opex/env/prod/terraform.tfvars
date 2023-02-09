@@ -1,7 +1,6 @@
 prefix    = "pagopa"
 env_short = "p"
 
-
 tags = {
   CreatedBy   = "Terraform"
   Environment = "Prod"
