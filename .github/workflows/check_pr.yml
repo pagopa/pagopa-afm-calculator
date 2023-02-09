@@ -114,13 +114,14 @@ jobs:
       - name: Check Size
         uses: actions/github-script@v6.3.3
         env:
-          IGNORED_FILES: openapi.json
+          IGNORED_FILES: openapi.json, openapi-node.json
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const additions = context.payload.pull_request.additions || 0
             const deletions = context.payload.pull_request.deletions || 0
             var changes = additions + deletions
+            console.log('additions: '+additions+'+ deletions: '+deletions+ ' = total changes: ' + changes);
 
             const { IGNORED_FILES } = process.env
             const ignored_files = IGNORED_FILES.trim().split(',').filter(word => word.length > 0);
@@ -135,6 +136,7 @@ jobs:
                 ignored += (parseInt(ignored_additions || 0) + parseInt(ignored_deletions || 0))
               }
               changes -= ignored
+              console.log('ignored lines: ' + ignored + ' changes: ' + changes);
             }
             
             if (changes < 200){
