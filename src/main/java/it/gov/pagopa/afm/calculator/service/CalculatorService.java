@@ -146,7 +146,6 @@ public class CalculatorService {
                 .idPsp(bundle.getIdPsp())
                 .idBrokerPsp(bundle.getIdBrokerPsp())
                 .idChannel(bundle.getIdChannel())
-                //.onUs(bundle.getPaymentType() != null && bundle.getPaymentType().equalsIgnoreCase("cp") ? false : null)
                 .onUs(this.getOnUsValue(taxPayerFee, bundle, paymentOption))
                 .abi(bundle.getAbi())
                 .build();
