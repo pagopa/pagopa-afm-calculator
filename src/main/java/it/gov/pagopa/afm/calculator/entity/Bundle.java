@@ -4,19 +4,17 @@ import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.gov.pagopa.afm.calculator.model.BundleType;
+import java.util.List;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
 
 @Getter
 @Setter
@@ -28,39 +26,36 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Bundle {
 
-    @Id
-    private String id;
-    @PartitionKey
-    private String idPsp;
+  @Id private String id;
+  @PartitionKey private String idPsp;
 
-    private String name;
-    private String description;
+  private String abi;
 
-    private Long paymentAmount;
-    private Long minPaymentAmount;
-    private Long maxPaymentAmount;
+  private String name;
+  private String description;
 
-    private String paymentType;
+  private Long paymentAmount;
+  private Long minPaymentAmount;
+  private Long maxPaymentAmount;
 
-    private String touchpoint;
+  private String paymentType;
 
-    @Enumerated(EnumType.STRING)
-    private BundleType type;
+  private String touchpoint;
 
-    private List<String> transferCategoryList;
+  @Enumerated(EnumType.STRING)
+  private BundleType type;
 
-    private String idChannel;
+  private List<String> transferCategoryList;
 
-    private String idBrokerPsp;
+  private String idChannel;
 
-    @NotNull
-    private Boolean digitalStamp;
+  private String idBrokerPsp;
 
-    // true if bundle must be used only for digital stamp
-    @NotNull
-    private Boolean digitalStampRestriction;
+  @NotNull private Boolean digitalStamp;
 
-    // useful only if paymentType = CP
-    private Boolean onUs;
+  // true if bundle must be used only for digital stamp
+  @NotNull private Boolean digitalStampRestriction;
 
+  // useful only if paymentType = CP
+  private Boolean onUs;
 }

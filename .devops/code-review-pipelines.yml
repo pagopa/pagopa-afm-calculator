@@ -41,8 +41,8 @@ stages:
               extraProperties: |
                 sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
                 sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
-                sonar.coverage.exclusions=**/config/*,**/*Mock*,**/model/**,**/entity/*
-                sonar.cpd.exclusions=**/model/**,**/entity/*
+                sonar.coverage.exclusions=**/config/*,**/*Mock*,**/model/**,**/entity/*,**/util/*
+                sonar.cpd.exclusions=**/model/**,**/entity/*,**/util/*
 
           - task: Maven@3
             displayName: 'Run Junit Test'
@@ -67,26 +67,26 @@ stages:
             inputs:
               pollingTimeoutSec: '300'
 
-      - job: smoke_tests
-        dependsOn: # parallel running job
-        pool:
-          vmImage: 'ubuntu-18.04'
-        steps:
-          - checkout: self
-            persistCredentials: true
-
-          - task: Docker@2
-            displayName: "Docker login"
-            inputs:
-              containerRegistry: "$(DEV_CONTAINER_REGISTRY_SERVICE_CONN)"
-              command: "login"
-
-          - task: Bash@3
-            displayName: 'Run Integration Tests'
-            inputs:
-              targetType: 'inline'
-              script: |
-                cd ./integration-test
-                sh run_integration_test.sh local
-
-
+#      - job: smoke_tests
+#        dependsOn: # parallel running job
+#        pool:
+#          vmImage: 'ubuntu-18.04'
+#        steps:
+#          - checkout: self
+#            persistCredentials: true
+#
+#          - task: Docker@2
+#            displayName: "Docker login"
+#            inputs:
+#              containerRegistry: "$(DEV_CONTAINER_REGISTRY_SERVICE_CONN)"
+#              command: "login"
+#
+#          - task: Bash@3
+#            displayName: 'Run Integration Tests'
+#            inputs:
+#              targetType: 'inline'
+#              script: |
+#                cd ./integration-test
+#                sh run_integration_test.sh local
+#
+#

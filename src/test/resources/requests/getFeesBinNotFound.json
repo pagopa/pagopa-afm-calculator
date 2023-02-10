@@ -1,7 +1,7 @@
 {
   "paymentAmount": 70,
   "primaryCreditorInstitution": "77777777777",
-  "bin": "1005066",
+  "bin": "xxxxxxx",
   "paymentMethod": "CP",
   "touchpoint": "CHECKOUT",
   "idPspList": [],
@@ -9,13 +9,11 @@
     {
 
       "creditorInstitution": "77777777777",
-      "transferCategory": "TAX1",
-      "digitalStamp": true
+      "transferCategory": "TAX1"
     },
     {
       "creditorInstitution": "77777777778",
-      "transferCategory": "TAX2",
-      "digitalStamp": true
+      "transferCategory": "TAX2"
     }
   ]
 }

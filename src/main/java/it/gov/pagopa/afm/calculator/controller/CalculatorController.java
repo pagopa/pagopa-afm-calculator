@@ -14,6 +14,8 @@ import it.gov.pagopa.afm.calculator.model.PaymentOptionByPsp;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
+import java.util.List;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,48 +24,138 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.List;
-
 @RestController()
 @Tag(name = "Calculator", description = "Everything about Calculator business logic")
 public class CalculatorController {
 
-    @Autowired
-    CalculatorService calculatorService;
+  @Autowired CalculatorService calculatorService;
 
-    @Operation(summary = "Get taxpayer fees of the specified idPSP", security = {@SecurityRequirement(name = "ApiKey")}, tags = {"Calculator"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = Transfer.class)))),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema())),
-            @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema())),
-            @ApiResponse(responseCode = "500", description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
-    @PostMapping(value = "/psps/{idPsp}/fees", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public List<Transfer> getFeesByPsp(
-            @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp") String idPsp,
-            @RequestBody @Valid PaymentOptionByPsp paymentOptionByPsp, @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
-        PaymentOption paymentOption = PaymentOption.builder()
-                .paymentAmount(paymentOptionByPsp.getPaymentAmount())
-                .primaryCreditorInstitution(paymentOptionByPsp.getPrimaryCreditorInstitution())
-                .paymentMethod(paymentOptionByPsp.getPaymentMethod())
-                .touchpoint(paymentOptionByPsp.getTouchpoint())
-                .idPspList(List.of(idPsp))
-                .transferList(paymentOptionByPsp.getTransferList())
-                .build();
-        return calculatorService.calculate(paymentOption, maxOccurrences);
-    }
+  @Operation(
+      summary = "Get taxpayer fees of the specified idPSP",
+      security = {@SecurityRequirement(name = "ApiKey")},
+      tags = {"Calculator"})
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Ok",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    array = @ArraySchema(schema = @Schema(implementation = Transfer.class)))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Bad Request",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized",
+            content = @Content(schema = @Schema())),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Not Found",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+        @ApiResponse(
+            responseCode = "422",
+            description = "Unable to process the request",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+        @ApiResponse(
+            responseCode = "429",
+            description = "Too many requests",
+            content = @Content(schema = @Schema())),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Service unavailable",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class)))
+      })
+  @PostMapping(
+      value = "/psps/{idPsp}/fees",
+      produces = {MediaType.APPLICATION_JSON_VALUE})
+  public List<Transfer> getFeesByPsp(
+      @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp")
+          String idPsp,
+      @RequestBody @Valid PaymentOptionByPsp paymentOptionByPsp,
+      @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
+    PaymentOption paymentOption =
+        PaymentOption.builder()
+            .paymentAmount(paymentOptionByPsp.getPaymentAmount())
+            .primaryCreditorInstitution(paymentOptionByPsp.getPrimaryCreditorInstitution())
+            .paymentMethod(paymentOptionByPsp.getPaymentMethod())
+            .touchpoint(paymentOptionByPsp.getTouchpoint())
+            .idPspList(List.of(idPsp))
+            .transferList(paymentOptionByPsp.getTransferList())
+            .build();
+    return calculatorService.calculate(paymentOption, maxOccurrences);
+  }
 
-    @Operation(summary = "Get taxpayer fees of all or specified idPSP", security = {@SecurityRequirement(name = "ApiKey")}, tags = {"Calculator"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = Transfer.class)))),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema())),
-            @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema())),
-            @ApiResponse(responseCode = "500", description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
-    @PostMapping(value = "/fees", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public List<Transfer> getFees(
-            @RequestBody @Valid PaymentOption paymentOption, @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
-        return calculatorService.calculate(paymentOption, maxOccurrences);
-    }
+  @Operation(
+      summary = "Get taxpayer fees of all or specified idPSP",
+      security = {@SecurityRequirement(name = "ApiKey")},
+      tags = {"Calculator"})
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Ok",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    array = @ArraySchema(schema = @Schema(implementation = Transfer.class)))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Bad Request",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized",
+            content = @Content(schema = @Schema())),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Not Found",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+        @ApiResponse(
+            responseCode = "422",
+            description = "Unable to process the request",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+        @ApiResponse(
+            responseCode = "429",
+            description = "Too many requests",
+            content = @Content(schema = @Schema())),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Service unavailable",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class)))
+      })
+  @PostMapping(
+      value = "/fees",
+      produces = {MediaType.APPLICATION_JSON_VALUE})
+  public List<Transfer> getFees(
+      @RequestBody @Valid PaymentOption paymentOption,
+      @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
+    return calculatorService.calculate(paymentOption, maxOccurrences);
+  }
 }
