@@ -89,9 +89,7 @@ public class CalculatorService {
     for (CiBundle cibundle : ciBundles) {
       if (cibundle.getAttributes() != null && !cibundle.getAttributes().isEmpty()) {
         transfers.addAll(
-            cibundle
-                .getAttributes()
-                .parallelStream()
+            cibundle.getAttributes().parallelStream()
                 .filter(
                     attribute ->
                         (attribute.getTransferCategory() != null
@@ -104,9 +102,7 @@ public class CalculatorService {
                         createTransfer(bundle.getPaymentAmount(), 0, bundle, null, paymentOption))
                 .collect(Collectors.toList()));
         transfers.addAll(
-            cibundle
-                .getAttributes()
-                .parallelStream()
+            cibundle.getAttributes().parallelStream()
                 .filter(
                     attribute ->
                         (attribute.getTransferCategory() == null

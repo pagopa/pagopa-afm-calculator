@@ -99,6 +99,42 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unable to process the request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Too many requests",
             "headers": {
@@ -349,6 +385,42 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unable to process the request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Too many requests",
             "headers": {
@@ -416,6 +488,9 @@
       "PaymentOption": {
         "type": "object",
         "properties": {
+          "bin": {
+            "type": "string"
+          },
           "idPspList": {
             "type": "array",
             "items": {
@@ -443,6 +518,7 @@
           }
         },
         "required": [
+          "bin",
           "paymentAmount",
           "primaryCreditorInstitution",
           "transferList"
@@ -497,6 +573,9 @@
       "Transfer": {
         "type": "object",
         "properties": {
+          "abi": {
+            "type": "string"
+          },
           "bundleDescription": {
             "type": "string"
           },
