@@ -199,8 +199,8 @@ public class CalculatorService {
 
     return onusValue;
   }
-  
-  private boolean isSubThreshold (long taxPayerFee) {
-	  return taxPayerFee < Long.parseLong(StringUtils.trim(amountThreshold));
+
+  private boolean isSubThreshold(long taxPayerFee) {
+    return taxPayerFee < Long.parseLong(StringUtils.trim(amountThreshold));
   }
 }
