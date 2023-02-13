@@ -12,6 +12,7 @@
     "idChannel": null,
     "idBrokerPsp": null,
     "onUs": false,
-    "abi": null
+    "abi": null,
+    "subThreshold": false
   }
 ]

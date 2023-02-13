@@ -575,6 +575,9 @@
             "type" : "integer",
             "format" : "int64"
           },
+          "subThreshold" : {
+            "type" : "boolean"
+          },
           "taxPayerFee" : {
             "type" : "integer",
             "format" : "int64"
