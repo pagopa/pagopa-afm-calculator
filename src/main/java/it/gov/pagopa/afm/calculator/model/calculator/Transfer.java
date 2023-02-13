@@ -22,6 +22,7 @@ public class Transfer implements Comparable<Transfer> {
   private String idBrokerPsp;
   private Boolean onUs;
   private String abi;
+  private Boolean subThreshold;
 
   @Override
   public int compareTo(Transfer t) {

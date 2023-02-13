@@ -173,14 +173,14 @@ public class CalculatorService {
         .idChannel(bundle.getIdChannel())
         .onUs(this.getOnUsValue(taxPayerFee, bundle, paymentOption))
         .abi(bundle.getAbi())
+        .subThreshold(isSubThreshold(taxPayerFee))
         .build();
   }
 
   private Boolean getOnUsValue(long taxPayerFee, ValidBundle bundle, PaymentOption paymentOption) {
     boolean onusValue = false;
     // if PaymentType is CP and amount > threshold ---> calculate onus value
-    if (bundle.getPaymentType().equalsIgnoreCase("cp")
-        && taxPayerFee >= Long.parseLong(StringUtils.trim(amountThreshold))) {
+    if (bundle.getPaymentType().equalsIgnoreCase("cp") && !isSubThreshold(taxPayerFee)) {
       // get issuers by BIN
       List<IssuerRangeEntity> issuers = issuersService.getIssuersByBIN(paymentOption.getBin());
 
@@ -198,5 +198,9 @@ public class CalculatorService {
     }
 
     return onusValue;
+  }
+  
+  private boolean isSubThreshold (long taxPayerFee) {
+	  return taxPayerFee < Long.parseLong(StringUtils.trim(amountThreshold));
   }
 }
