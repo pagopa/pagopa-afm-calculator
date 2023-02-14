@@ -41,13 +41,12 @@ public class CalculatorService {
   @Cacheable(value = "calculate")
   public BundleOption calculate(@Valid PaymentOption paymentOption, int limit) {
     List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption);
-      
-    return BundleOption.builder()
-    .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
-    // calculate the taxPayerFee
-    .bundleOptions(calculateTaxPayerFee(paymentOption, limit, filteredBundles))
-    .build();
 
+    return BundleOption.builder()
+        .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
+        // calculate the taxPayerFee
+        .bundleOptions(calculateTaxPayerFee(paymentOption, limit, filteredBundles))
+        .build();
   }
 
   private List<Transfer> calculateTaxPayerFee(
@@ -184,7 +183,8 @@ public class CalculatorService {
   private Boolean getOnUsValue(ValidBundle bundle, PaymentOption paymentOption) {
     boolean onusValue = false;
     // if PaymentType is CP and amount > threshold ---> calculate onus value
-    if (bundle.getPaymentType().equalsIgnoreCase("cp") && !isBelowThreshold(paymentOption.getPaymentAmount())) {
+    if (bundle.getPaymentType().equalsIgnoreCase("cp")
+        && !isBelowThreshold(paymentOption.getPaymentAmount())) {
       // get issuers by BIN
       List<IssuerRangeEntity> issuers = issuersService.getIssuersByBIN(paymentOption.getBin());
 
