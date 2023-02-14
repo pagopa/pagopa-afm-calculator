@@ -72,12 +72,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Formatting
+        id: format
+        continue-on-error: true
         uses: axel-op/googlejavaformat-action@v3
         with:
           args: "--set-exit-if-changed"
 
       - uses: actions/github-script@v6.3.3
-        if: always()
+        if: steps.format.outcome != 'success'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -102,14 +104,22 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: 'Comment this PR with *update_code* to update `openapi.json` and format the code. Consider to use pre-commit to format the code.'
+                body: 'Comment this PR with *update_code* to format the code. Consider to use pre-commit to format the code.'
             })
+            core.setFailed('Format your code.')
 
   check_size:
     runs-on: ubuntu-latest
     name: Check Size
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Dump GitHub context
+        run: echo $JSON
+        env:
+          JSON: ${{ toJSON(github) }}
 
       - name: Check Size
         uses: actions/github-script@v6.3.3
@@ -121,7 +131,7 @@ jobs:
             const additions = context.payload.pull_request.additions || 0
             const deletions = context.payload.pull_request.deletions || 0
             var changes = additions + deletions
-            console.log('additions: '+additions+'+ deletions: '+deletions+ ' = total changes: ' + changes);
+            console.log('additions: '+additions+' + deletions: '+deletions+ ' = total changes: ' + changes);
 
             const { IGNORED_FILES } = process.env
             const ignored_files = IGNORED_FILES.trim().split(',').filter(word => word.length > 0);
@@ -130,8 +140,8 @@ jobs:
               const execSync = require('child_process').execSync;
               for (const file of IGNORED_FILES.trim().split(',')) {
             
-                const ignored_additions_str = execSync('git --no-pager  diff --numstat main..${{ github.ref_name}} | grep ' + file + ' | cut -f 1', { encoding: 'utf-8' })
-                const ignored_deletions_str = execSync('git --no-pager  diff --numstat main..${{ github.ref_name}} | grep ' + file + ' | cut -f 2', { encoding: 'utf-8' })
+                const ignored_additions_str = execSync('git --no-pager  diff --numstat origin/main..origin/${{ github.head_ref}} | grep ' + file + ' | cut -f 1', { encoding: 'utf-8' })
+                const ignored_deletions_str = execSync('git --no-pager  diff --numstat origin/main..origin/${{ github.head_ref}} | grep ' + file + ' | cut -f 2', { encoding: 'utf-8' })
               
                 const ignored_additions = ignored_additions_str.split('\n').map(elem=> parseInt(elem || 0)).reduce(
                 (accumulator, currentValue) => accumulator + currentValue,
