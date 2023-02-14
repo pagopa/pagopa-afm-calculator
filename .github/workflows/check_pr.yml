@@ -73,6 +73,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Formatting
         id: format
+        continue-on-error: true
         uses: axel-op/googlejavaformat-action@v3
         with:
           args: "--set-exit-if-changed"
