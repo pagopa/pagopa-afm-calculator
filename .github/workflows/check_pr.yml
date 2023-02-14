@@ -73,7 +73,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Formatting
         id: format
-        continue-on-error: true
         uses: axel-op/googlejavaformat-action@v3
         with:
           args: "--set-exit-if-changed"
@@ -106,6 +105,7 @@ jobs:
                 repo: context.repo.repo,
                 body: 'Comment this PR with *update_code* to update `openapi.json` and format the code. Consider to use pre-commit to format the code.'
             })
+            core.setFailed('Format your code.')
 
   check_size:
     runs-on: ubuntu-latest
