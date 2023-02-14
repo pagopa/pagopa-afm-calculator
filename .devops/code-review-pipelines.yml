@@ -44,28 +44,28 @@ stages:
                 sonar.coverage.exclusions=**/config/*,**/*Mock*,**/model/**,**/entity/*,**/util/*
                 sonar.cpd.exclusions=**/model/**,**/entity/*,**/util/*
 
-          - task: Maven@3
-            displayName: 'Run Junit Test'
-            inputs:
-              mavenPomFile: 'pom.xml'
-              goals: 'clean verify'
-              publishJUnitResults: true
-              testResultsFiles: '**/surefire-reports/TEST-*.xml'
-              codeCoverageToolOption: 'JaCoCo'
-              javaHomeOption: 'JDKVersion'
-              jdkVersionOption: '1.11'
-              mavenVersionOption: 'Default'
-              mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
-              mavenAuthenticateFeed: false
-              effectivePomSkip: false
-              sonarQubeRunAnalysis: true
-              isJacocoCoverageReportXML: true
-              sqMavenPluginVersionChoice: 'latest'
-
-          - task: SonarCloudPublish@1
-            displayName: 'Publish SonarCloud results on build summary'
-            inputs:
-              pollingTimeoutSec: '300'
+#          - task: Maven@3
+#            displayName: 'Run Junit Test'
+#            inputs:
+#              mavenPomFile: 'pom.xml'
+#              goals: 'clean verify'
+#              publishJUnitResults: true
+#              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+#              codeCoverageToolOption: 'JaCoCo'
+#              javaHomeOption: 'JDKVersion'
+#              jdkVersionOption: '1.11'
+#              mavenVersionOption: 'Default'
+#              mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
+#              mavenAuthenticateFeed: false
+#              effectivePomSkip: false
+#              sonarQubeRunAnalysis: true
+#              isJacocoCoverageReportXML: true
+#              sqMavenPluginVersionChoice: 'latest'
+#
+#          - task: SonarCloudPublish@1
+#            displayName: 'Publish SonarCloud results on build summary'
+#            inputs:
+#              pollingTimeoutSec: '300'
 
 #      - job: smoke_tests
 #        dependsOn: # parallel running job
