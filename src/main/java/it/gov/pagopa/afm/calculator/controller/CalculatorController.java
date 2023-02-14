@@ -1,8 +1,19 @@
 package it.gov.pagopa.afm.calculator.controller;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,17 +23,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionByPsp;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
-import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
+import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
-import java.util.List;
-import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController()
 @Tag(name = "Calculator", description = "Everything about Calculator business logic")
@@ -42,7 +44,7 @@ public class CalculatorController {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    array = @ArraySchema(schema = @Schema(implementation = Transfer.class)))),
+                    schema = @Schema(implementation = BundleOption.class))),
         @ApiResponse(
             responseCode = "400",
             description = "Bad Request",
@@ -83,7 +85,7 @@ public class CalculatorController {
   @PostMapping(
       value = "/psps/{idPsp}/fees",
       produces = {MediaType.APPLICATION_JSON_VALUE})
-  public List<Transfer> getFeesByPsp(
+  public BundleOption getFeesByPsp(
       @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp")
           String idPsp,
       @RequestBody @Valid PaymentOptionByPsp paymentOptionByPsp,
@@ -112,7 +114,7 @@ public class CalculatorController {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    array = @ArraySchema(schema = @Schema(implementation = Transfer.class)))),
+                    schema = @Schema(implementation = BundleOption.class))),
         @ApiResponse(
             responseCode = "400",
             description = "Bad Request",
@@ -153,7 +155,7 @@ public class CalculatorController {
   @PostMapping(
       value = "/fees",
       produces = {MediaType.APPLICATION_JSON_VALUE})
-  public List<Transfer> getFees(
+  public BundleOption getFees(
       @RequestBody @Valid PaymentOption paymentOption,
       @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
     return calculatorService.calculate(paymentOption, maxOccurrences);

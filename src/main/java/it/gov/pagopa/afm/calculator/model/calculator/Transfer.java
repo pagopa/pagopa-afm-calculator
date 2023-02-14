@@ -1,14 +1,25 @@
 package it.gov.pagopa.afm.calculator.model.calculator;
 
+import java.io.Serializable;
 import java.util.Comparator;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Builder
 @Data
 @ToString
-public class Transfer implements Comparable<Transfer> {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Transfer implements Comparable<Transfer>, Serializable {
+  /**
+   * generated serialVersionUID
+   */
+  private static final long serialVersionUID = 1287710978645388173L;
+  
   private Long taxPayerFee;
   private long primaryCiIncurredFee;
   private String paymentMethod;
@@ -22,7 +33,6 @@ public class Transfer implements Comparable<Transfer> {
   private String idBrokerPsp;
   private Boolean onUs;
   private String abi;
-  private Boolean subThreshold;
 
   @Override
   public int compareTo(Transfer t) {

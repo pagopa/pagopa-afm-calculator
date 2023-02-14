@@ -1,5 +1,7 @@
-[
-  {
+{
+  "belowThreshold": false,
+  "bundleOptions": [
+    {
     "taxPayerFee": 2,
     "primaryCiIncurredFee": 0,
     "paymentMethod": "CP",
@@ -12,7 +14,7 @@
     "idChannel": null,
     "idBrokerPsp": null,
     "onUs": false,
-    "abi": null,
-    "subThreshold": false
-  }
-]
+    "abi": null
+    }
+  ]
+}

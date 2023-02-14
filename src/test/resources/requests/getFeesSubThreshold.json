@@ -1,5 +1,5 @@
 {
-  "paymentAmount": 70,
+  "paymentAmount": -5,
   "primaryCreditorInstitution": "111111111111",
   "bin": "1005066",
   "paymentMethod": "CP",

@@ -54,10 +54,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/Transfer"
-                  }
+                  "$ref" : "#/components/schemas/BundleOption"
                 }
               }
             }
@@ -325,10 +322,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/Transfer"
-                  }
+                  "$ref" : "#/components/schemas/BundleOption"
                 }
               }
             }
@@ -458,6 +452,20 @@
           }
         }
       },
+      "BundleOption" : {
+        "type" : "object",
+        "properties" : {
+          "belowThreshold" : {
+            "type" : "boolean"
+          },
+          "bundleOptions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Transfer"
+            }
+          }
+        }
+      },
       "PaymentOption" : {
         "type" : "object",
         "properties" : {
@@ -574,9 +582,6 @@
           "primaryCiIncurredFee" : {
             "type" : "integer",
             "format" : "int64"
-          },
-          "subThreshold" : {
-            "type" : "boolean"
           },
           "taxPayerFee" : {
             "type" : "integer",
