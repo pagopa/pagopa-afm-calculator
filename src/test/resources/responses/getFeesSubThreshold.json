@@ -1,19 +1,19 @@
 {
-  "belowThreshold": false,
+  "belowThreshold": true,
   "bundleOptions": [
     {
-    "taxPayerFee": 0,
-    "primaryCiIncurredFee": 1,
+    "taxPayerFee": -5,
+    "primaryCiIncurredFee": 0,
     "paymentMethod": "CP",
     "touchpoint": "1",
     "idBundle": "1",
     "bundleName": "bundle1",
     "bundleDescription": null,
-    "idCiBundle": "1",
-    "idPsp": "77777777777",
+    "idCiBundle": null,
+    "idPsp": "111111111111",
     "idChannel": null,
     "idBrokerPsp": null,
-    "onUs": true,
+    "onUs": false,
     "abi": "14156"
     }
   ]

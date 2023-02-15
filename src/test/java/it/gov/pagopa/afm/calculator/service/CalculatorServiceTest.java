@@ -17,6 +17,7 @@ import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.initializer.Initializer;
+import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import java.io.IOException;
@@ -311,6 +312,32 @@ class CalculatorServiceTest {
     assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
   }
 
+  @Test
+  @Order(11)
+  void calculate_SubThreshold() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setMinPaymentAmount(-10L);
+    mockValidBundle.setPaymentAmount(-5L);
+    mockValidBundle.setIdPsp("111111111111");
+    mockValidBundle.setType(BundleType.GLOBAL);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(mockValidBundle));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesSubThreshold.json", PaymentOption.class);
+    var result = calculatorService.calculate(paymentOption, 10);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesSubThreshold.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
   // This must be the last test to run - it needs to mock the cosmosRepository in the service
   @Test
   @Order(Integer.MAX_VALUE)
@@ -327,12 +354,12 @@ class CalculatorServiceTest {
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFeesMultipleTransfer.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10);
-    assertEquals(5, result.size());
+    assertEquals(5, result.getBundleOptions().size());
     // check order
-    assertEquals("1", result.get(0).getIdBundle());
-    assertEquals("2", result.get(1).getIdBundle());
-    assertEquals("5", result.get(2).getIdBundle());
-    assertEquals("3", result.get(3).getIdBundle());
-    assertEquals("4", result.get(4).getIdBundle());
+    assertEquals("1", result.getBundleOptions().get(0).getIdBundle());
+    assertEquals("2", result.getBundleOptions().get(1).getIdBundle());
+    assertEquals("5", result.getBundleOptions().get(2).getIdBundle());
+    assertEquals("3", result.getBundleOptions().get(3).getIdBundle());
+    assertEquals("4", result.getBundleOptions().get(4).getIdBundle());
   }
 }

@@ -10,6 +10,7 @@ import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
+import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import java.util.ArrayList;
@@ -38,11 +39,14 @@ public class CalculatorService {
   @Autowired IssuersService issuersService;
 
   @Cacheable(value = "calculate")
-  public List<Transfer> calculate(@Valid PaymentOption paymentOption, int limit) {
+  public BundleOption calculate(@Valid PaymentOption paymentOption, int limit) {
     List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption);
 
-    // calculate the taxPayerFee
-    return calculateTaxPayerFee(paymentOption, limit, filteredBundles);
+    return BundleOption.builder()
+        .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
+        // calculate the taxPayerFee
+        .bundleOptions(calculateTaxPayerFee(paymentOption, limit, filteredBundles))
+        .build();
   }
 
   private List<Transfer> calculateTaxPayerFee(
@@ -171,16 +175,16 @@ public class CalculatorService {
         .idPsp(bundle.getIdPsp())
         .idBrokerPsp(bundle.getIdBrokerPsp())
         .idChannel(bundle.getIdChannel())
-        .onUs(this.getOnUsValue(taxPayerFee, bundle, paymentOption))
+        .onUs(this.getOnUsValue(bundle, paymentOption))
         .abi(bundle.getAbi())
         .build();
   }
 
-  private Boolean getOnUsValue(long taxPayerFee, ValidBundle bundle, PaymentOption paymentOption) {
+  private Boolean getOnUsValue(ValidBundle bundle, PaymentOption paymentOption) {
     boolean onusValue = false;
     // if PaymentType is CP and amount > threshold ---> calculate onus value
     if (bundle.getPaymentType().equalsIgnoreCase("cp")
-        && taxPayerFee >= Long.parseLong(StringUtils.trim(amountThreshold))) {
+        && !isBelowThreshold(paymentOption.getPaymentAmount())) {
       // get issuers by BIN
       List<IssuerRangeEntity> issuers = issuersService.getIssuersByBIN(paymentOption.getBin());
 
@@ -196,7 +200,10 @@ public class CalculatorService {
         onusValue = true;
       }
     }
-
     return onusValue;
+  }
+
+  private boolean isBelowThreshold(long paymentAmount) {
+    return paymentAmount < Long.parseLong(StringUtils.trim(amountThreshold));
   }
 }
