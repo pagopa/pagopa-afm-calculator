@@ -456,7 +456,8 @@
         "type" : "object",
         "properties" : {
           "belowThreshold" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "if true (the payment amount is lower than the threshold value) the bundles onus is not calculated (always false)"
           },
           "bundleOptions" : {
             "type" : "array",
