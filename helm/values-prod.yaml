@@ -3,7 +3,7 @@ microservice-chart:
   nameOverride: ""
   fullnameOverride: ""
   image:
-    repository: ghcr.io/pagopa/pagopa-afm-calculator
+    repository: pagopapcommonacr.azurecr.io/pagopaafmcalculator
     tag: "2.5.0"
     pullPolicy: Always
   livenessProbe:
