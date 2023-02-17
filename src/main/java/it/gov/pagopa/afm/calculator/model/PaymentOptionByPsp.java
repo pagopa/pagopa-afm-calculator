@@ -14,5 +14,6 @@ public class PaymentOptionByPsp {
   private String primaryCreditorInstitution;
   private String paymentMethod;
   private String touchpoint;
+  private String bin;
   @Valid private ArrayList<TransferListItem> transferList;
 }
