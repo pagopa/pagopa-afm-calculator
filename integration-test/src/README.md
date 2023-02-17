@@ -13,8 +13,8 @@
 if all right you should see something like that :
 
 ```sh
-15 scenarios (15 passed)
-65 steps (65 passed)
+16 scenarios (16 passed)
+78 steps (78 passed)
 0m09.409s (executing steps: 0m09.349s)
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ View your Cucumber Report at:                                            │
@@ -43,7 +43,11 @@ npx cucumber-js -r step_definitions features/<filename>.feature:46
 
 ### Note
 
-Remember to start the Backend before start the tests.
+Please, before starting the tests, remember to:
+1. if you are in local environment then create the issuerrange table;
+2. if you are in local environment then import test data from `./config/ISSUER_RANGE_for_test.csv` file into the issuerrange table;
+3. configure the subkey environment variable (for the local environment it can take on any value);
+4. start the Backend.
 
-You can configure the host in `./config/.env.local` file.
+You can configure the host in `./config/.env.*` file.
 

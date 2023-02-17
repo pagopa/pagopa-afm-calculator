@@ -11,12 +11,13 @@
       "description": "pacchetto 1",
       "paymentAmount": 150,
       "minPaymentAmount": 0,
-      "maxPaymentAmount": 10000,
+      "maxPaymentAmount": 99000,
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "paymentType": null
+      "paymentType": null,
+      "abi": 14156
     },
     {
       "id": "int-test-2",
@@ -34,7 +35,8 @@
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
-      "touchpoint": "ANY"
+      "touchpoint": "ANY",
+      "abi": 14156
     },
     {
       "id": "int-test-3",
@@ -47,13 +49,14 @@
       "description": "pacchetto 3",
       "paymentAmount": 90,
       "minPaymentAmount": 0,
-      "maxPaymentAmount": 10000,
+      "maxPaymentAmount": 99000,
       "paymentType": "CP",
       "onUs": "false",
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
-      "touchpoint": "ANY"
+      "touchpoint": "ANY",
+      "abi": 14156
     },
     {
       "id": "int-test-4",
@@ -66,8 +69,9 @@
       "description": "pacchetto 4",
       "paymentAmount": 50,
       "minPaymentAmount": 0,
-      "maxPaymentAmount": 10000,
+      "maxPaymentAmount": 99000,
       "type": "GLOBAL",
+      "abi": 14156,
       "transferCategoryList": [
         "TAX1"
       ],
@@ -87,7 +91,7 @@
       "description": "pacchetto 5",
       "paymentAmount": 60,
       "minPaymentAmount": 0,
-      "maxPaymentAmount": 10000,
+      "maxPaymentAmount": 99000,
       "paymentType": "CP",
       "onUs": false,
       "touchpoint": "IO",
@@ -97,7 +101,8 @@
         "TAX2"
       ],
       "validityDateFrom": null,
-      "validityDateTo": null
+      "validityDateTo": null,
+      "abi": 14156
     },
     {
       "id": "int-test-6",
@@ -110,12 +115,13 @@
       "description": "pacchetto 6",
       "paymentAmount": 100,
       "minPaymentAmount": 0,
-      "maxPaymentAmount": 10000,
+      "maxPaymentAmount": 99000,
       "touchpoint": "IO",
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
-      "paymentType": null
+      "paymentType": null,
+      "abi": 14156
     },
     {
       "id": "int-test-7",
@@ -128,12 +134,13 @@
       "description": "pacchetto 7",
       "paymentAmount": 100,
       "minPaymentAmount": 0,
-      "maxPaymentAmount": 10000,
+      "maxPaymentAmount": 99000,
       "touchpoint": "IO",
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
-      "paymentType": null
+      "paymentType": null,
+      "abi": 14156
     },
     {
       "id": "int-test-8",
@@ -146,12 +153,13 @@
       "description": "pacchetto 8",
       "paymentAmount": 100,
       "minPaymentAmount": 0,
-      "maxPaymentAmount": 10000,
+      "maxPaymentAmount": 99000,
       "touchpoint": "IO",
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
-      "paymentType": null
+      "paymentType": null,
+      "abi": 14156
     }
   ],
   "ciBundles": [
