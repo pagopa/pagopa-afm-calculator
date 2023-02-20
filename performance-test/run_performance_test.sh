@@ -35,6 +35,12 @@ export script=${SCRIPT}
 export db_name=${DB_NAME}
 export sub_key=${API_SUBSCRIPTION_KEY}
 
+echo $env
+echo $type
+echo $db_name
+
+docker rm nginx
+docker rm k6
 stack_name=$(cd .. && basename "$PWD")
 docker compose -p "${stack_name}-k6" up -d --remove-orphans --force-recreate --build
 docker logs -f k6
