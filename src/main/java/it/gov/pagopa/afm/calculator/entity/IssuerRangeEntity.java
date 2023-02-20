@@ -1,11 +1,9 @@
 package it.gov.pagopa.afm.calculator.entity;
 
-import java.util.HashMap;
-
 import com.microsoft.azure.storage.OperationContext;
 import com.microsoft.azure.storage.table.EntityProperty;
 import com.microsoft.azure.storage.table.TableServiceEntity;
-
+import java.util.HashMap;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -23,9 +21,10 @@ public class IssuerRangeEntity extends TableServiceEntity {
   private String productCategory;
   private String issuerId;
   private String abi;
-  
+
   @Override
-  public void readEntity(final HashMap<String, EntityProperty> properties, final OperationContext opContext) {
+  public void readEntity(
+      final HashMap<String, EntityProperty> properties, final OperationContext opContext) {
     this.lowRange = properties.get("LOW_RANGE").getValueAsString();
     this.highRange = properties.get("HIGH_RANGE").getValueAsString();
     this.circuit = properties.get("CIRCUIT").getValueAsString();
