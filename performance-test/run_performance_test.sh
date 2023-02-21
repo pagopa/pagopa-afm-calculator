@@ -5,6 +5,7 @@ TYPE=$2
 SCRIPT=$3
 DB_NAME=$4
 API_SUBSCRIPTION_KEY=$5
+COSMOS_SUBSCRIPTION_KEY=$6
 
 if [ -z "$ENVIRONMENT" ]
 then
@@ -34,6 +35,7 @@ export type=${TYPE}
 export script=${SCRIPT}
 export db_name=${DB_NAME}
 export sub_key=${API_SUBSCRIPTION_KEY}
+export cosmos_key=${COSMOS_SUBSCRIPTION_KEY}
 
 echo $env
 echo $type

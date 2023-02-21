@@ -1,0 +1,216 @@
+{
+  "bundles": [
+    {
+      "id": "int-test-1",
+      "idPsp": "88888888888",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 1",
+      "description": "pacchetto 1",
+      "paymentAmount": 150,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": null
+    },
+    {
+      "id": "int-test-2",
+      "idPsp": "88888888888",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 2",
+      "description": "pacchetto 2",
+      "paymentAmount": 80,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "paymentType": "PO",
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY"
+    },
+    {
+      "id": "int-test-3",
+      "idPsp": "88888888889",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 3",
+      "description": "pacchetto 3",
+      "paymentAmount": 90,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "paymentType": "CP",
+      "onUs": "false",
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY"
+    },
+    {
+      "id": "int-test-4",
+      "idPsp": "88888888889",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 4",
+      "description": "pacchetto 4",
+      "paymentAmount": 50,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "type": "GLOBAL",
+      "transferCategoryList": [
+        "TAX1"
+      ],
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": null
+    },
+    {
+      "id": "int-test-5",
+      "idPsp": "88888888888",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 5",
+      "description": "pacchetto 5",
+      "paymentAmount": 60,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "paymentType": "CP",
+      "onUs": false,
+      "touchpoint": "IO",
+      "type": "GLOBAL",
+      "transferCategoryList": [
+        "TAX1",
+        "TAX2"
+      ],
+      "validityDateFrom": null,
+      "validityDateTo": null
+    },
+    {
+      "id": "int-test-6",
+      "idPsp": "88888888889",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 6",
+      "description": "pacchetto 6",
+      "paymentAmount": 100,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "touchpoint": "IO",
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "paymentType": null
+    },
+    {
+      "id": "int-test-7",
+      "idPsp": "88888888889",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01",
+      "digitalStamp": true,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 7",
+      "description": "pacchetto 7",
+      "paymentAmount": 100,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "touchpoint": "IO",
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "paymentType": null
+    },
+    {
+      "id": "int-test-8",
+      "idPsp": "88888888889",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01",
+      "digitalStamp": true,
+      "digitalStampRestriction": true,
+      "name": "pacchetto 8",
+      "description": "pacchetto 8",
+      "paymentAmount": 100,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 10000,
+      "touchpoint": "IO",
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "paymentType": null
+    }
+  ],
+  "ciBundles": [
+    {
+      "id": "int-test-1",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "int-test-1",
+      "attributes": [
+        {
+          "id": "int-test-1",
+          "maxPaymentAmount": 20,
+          "transferCategory": "TAX1",
+          "transferCategoryRelation": "EQUAL"
+        }
+      ]
+    },
+    {
+      "id": "int-test-2",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "int-test-2",
+      "attributes": [
+        {
+          "id": "int-test-2",
+          "maxPaymentAmount": 20,
+          "transferCategory": "TAX1",
+          "transferCategoryRelation": "NOT_EQUAL"
+        }
+      ]
+    },
+    {
+      "id": "int-test-3",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "int-test-4",
+      "attributes": [
+        {
+          "id": "int-test-3",
+          "maxPaymentAmount": 20
+        }
+      ]
+    }
+  ],
+  "touchpoints": [
+    {
+      "id": "int-test-1",
+      "name": "CHECKOUT"
+    },
+    {
+      "id": "int-test-2",
+      "name": "IO"
+    }
+  ],
+  "paymenttypes": [
+    {
+      "id": "int-test-1",
+      "name": "CP"
+    },
+    {
+      "id": "int-test-2",
+      "name": "PO"
+    }
+  ]
+}

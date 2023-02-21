@@ -2,7 +2,9 @@
   "environment": [
     {
       "env": "local",
-      "host": "http://localhost:8080"
+      "host": "http://localhost:8080",
+      "cosmosDBURI": "https://localhost:8081",
+      "databaseID":"db"
     }
   ]
 }
