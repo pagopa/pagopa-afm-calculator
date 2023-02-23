@@ -14,7 +14,7 @@ on:
 
 
 env:
-  CLIENT_ID: a5bed6b1-2d05-4b68-967f-25f96862e627
+  CLIENT_ID: a5bed6b1-2d05-4b68-967f-25f96862e626
   TENANT_ID: 7788edaf-0346-4068-9d79-c868aed15b3d
   SUBSCRIPTION_ID: b9fc9419-6097-45fe-9f74-ba0641c91912
   API_NAME: product
@@ -45,7 +45,7 @@ jobs:
           fetch-depth: 0
 
       # from https://github.com/pagopa/opex-dashboard-azure-action/
-      - uses: pagopa/opex-dashboard-azure-action@v1.0.3
+      - uses: pagopa/opex-dashboard-azure-action@v1.0.4
         with:
           environment: ${{ matrix.environment }}
           api-name: ${{ env.API_NAME }}
@@ -54,4 +54,4 @@ jobs:
           tenant-id: ${{ env.TENANT_ID }}
           subscription-id: ${{ env.SUBSCRIPTION_ID }}
           # from https://github.com/pagopa/opex-dashboard-azure-action/pkgs/container/opex-dashboard-azure-action
-          docker-version: sha256:d9465f04e469c8f65bb1fb21cb9688508c64fda75495f552e858fb5a9580be90
+          docker-version: sha256:0325a741969c4a2dda30bb72767df1f939120cdbc934f3a7c4ee4334a6da701f
