@@ -12,7 +12,7 @@ export let options = JSON.parse(open(__ENV.TEST_TYPE));
 // note: SharedArray can currently only be constructed inside init code
 // according to https://k6.io/docs/javascript-api/k6-data/sharedarray
 const varsArray = new SharedArray('vars', function () {
-	return JSON.parse(open(`./${__ENV.VARS}`)).environment;
+    return JSON.parse(open(`${__ENV.VARS}`)).environment;
 });
 const data = JSON.parse(open('./helpers/data.json'));
 const touchpoints = data["touchpoints"];
