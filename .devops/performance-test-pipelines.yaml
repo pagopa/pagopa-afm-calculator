@@ -18,6 +18,7 @@ parameters:
       - "stress"
       - "rampingVU"
       - "rampingVULessRequests"
+      - "smoke"
   - name: "SCRIPT"
     displayName: "Script name"
     type: string
