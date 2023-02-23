@@ -7,7 +7,7 @@ on:
       - main
     paths:
       - 'openapi/openapi.json'
-      - '.github/workflows/opex_api_backend.yml'
+      - '.github/workflows/create_dashboard.yaml'
       - '.opex/product/**'
 
   workflow_dispatch:
