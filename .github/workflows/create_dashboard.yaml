@@ -4,11 +4,11 @@ name: Opex Dashboard api_backend
 on:
   push:
     branches:
-      - master
+      - main
     paths:
-      - 'api_backend.yaml'
+      - 'openapi/openapi.json'
       - '.github/workflows/opex_api_backend.yml'
-      - '.opex/api_backend/**'
+      - '.opex/product/**'
 
   workflow_dispatch:
 
