@@ -1,4 +1,4 @@
-name: Opex Dashboard api_backend
+name: Opex Dashboard
 
 # Controls when the workflow will run
 on:
@@ -32,7 +32,8 @@ jobs:
     strategy:
       matrix:
         environment: [prod]
-
+    environment:
+      name: ${{ matrix.environment }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout
