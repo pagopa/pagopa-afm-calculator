@@ -10,6 +10,9 @@ on:
       - '.github/workflows/opex_api_backend.yml'
       - '.opex/api_backend/**'
 
+  workflow_dispatch:
+
+
 env:
   CLIENT_ID: a5bed6b1-2d05-4b68-967f-25f96862e626
   TENANT_ID: 7788edaf-0346-4068-9d79-c868aed15b3d
