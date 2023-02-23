@@ -1,6 +1,6 @@
 data "azurerm_storage_account" "tfstate_app" {
-  name                = "pagopainfraterraform${var.env}"
-  resource_group_name = "io-infra-rg"
+  name                = "tfapp${lower(replace(data.azurerm_subscription.current.display_name, "-", ""))}"
+  resource_group_name = "terraform-state-rg"
 }
 
 data "azurerm_resource_group" "dashboards" {
