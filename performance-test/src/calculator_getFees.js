@@ -3,7 +3,7 @@
 
 import {check} from 'k6';
 import {SharedArray} from 'k6/data';
-import {addTouchpoints, deleteTouchpoints, getFees} from './helpers/calculator_helper.js';
+import {addTouchpoints, deleteTouchpoints, getFees, mapToValidBundles} from './helpers/calculator_helper.js';
 import { createDocument, deleteDocument } from "./helpers/cosmosdb_client.js";
 
 export let options = JSON.parse(open(__ENV.TEST_TYPE));
@@ -40,6 +40,12 @@ export function setup() {
 
     for (let i = 0; i < paymenttypes.length; i++) {
         let response = createDocument(cosmosDBURI, databaseID, "paymenttypes", cosmosPrimaryKey, paymenttypes[i], paymenttypes[i]['name']);
+        check(response, { "status is 201": (res) => (res.status === 201) });
+    }
+
+    let validBundles = mapToValidBundles(data);
+    for (let i = 0; i < paymenttypes.length; i++) {
+        let response = createDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundles[i], validBundles[i]['idPsp']);
         check(response, { "status is 201": (res) => (res.status === 201) });
     }
 

@@ -23,3 +23,20 @@ export function deleteTouchpoints(rootUrl, payload, params) {
 
     return http.post(url, JSON.stringify(payload), params);
 }
+
+export function mapToValidBundles(config) {
+
+    let validbundles = [];
+
+    for (let bundle of config["bundles"]) {
+        let validBundle = bundle;
+        validBundle.ciBundleList = [];
+        for (let cibundle of config["ciBundles"]) {
+            if (cibundle.idBundle === bundle.id) {
+                validBundle.ciBundleList.push(cibundle);
+            }
+        }
+        validbundles.push(validBundle);
+    }
+    return validbundles;
+}
