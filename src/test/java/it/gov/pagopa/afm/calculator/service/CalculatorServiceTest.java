@@ -185,11 +185,11 @@ class CalculatorServiceTest {
             list);
 
     var paymentOption =
-        TestUtil.readObjectFromFile("requests/getFees_noInTransfer.json", PaymentOption.class);
+        TestUtil.readObjectFromFile("requests/getFeesNoInTransfer.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10);
     String actual = TestUtil.toJson(result);
 
-    String expected = TestUtil.readStringFromFile("responses/getFees_noInTransfer.json");
+    String expected = TestUtil.readStringFromFile("responses/getFeesNoInTransfer.json");
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
 
@@ -240,7 +240,7 @@ class CalculatorServiceTest {
             Collections.singleton(mockValidBundle));
 
     var paymentOption =
-        TestUtil.readObjectFromFile("requests/getFees_digitalStamp.json", PaymentOption.class);
+        TestUtil.readObjectFromFile("requests/getFeesDigitalStamp.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10);
     String actual = TestUtil.toJson(result);
 
@@ -263,7 +263,7 @@ class CalculatorServiceTest {
             Collections.singleton(mockValidBundle));
 
     var paymentOption =
-        TestUtil.readObjectFromFile("requests/getFees_digitalStamp2.json", PaymentOption.class);
+        TestUtil.readObjectFromFile("requests/getFeesDigitalStamp2.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10);
     String actual = TestUtil.toJson(result);
 
@@ -335,6 +335,72 @@ class CalculatorServiceTest {
     String actual = TestUtil.toJson(result);
 
     String expected = TestUtil.readStringFromFile("responses/getFeesSubThreshold.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
+  @Test
+  @Order(12)
+  void calculate_paymentType_Null() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setPaymentType(null);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(mockValidBundle));
+
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+    var result = calculatorService.calculate(paymentOption, 10);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesPaymentTypeNull.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+  
+  @Test
+  @Order(13)
+  void calculate_BinNull() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(TestUtil.getMockValidBundle()));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesBinNull.json", PaymentOption.class);
+    var result = calculatorService.calculate(paymentOption, 10);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesBinNull.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+  
+  @Test
+  @Order(14)
+  void calculate_digitalStamp3() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setDigitalStamp(true);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(mockValidBundle));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesDigitalStamp3.json", PaymentOption.class);
+    var result = calculatorService.calculate(paymentOption, 10);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFees.json");
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
 
