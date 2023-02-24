@@ -81,7 +81,7 @@ export default function calculator() {
     }
 
     let response = getFees(rootUrl, payload, params);
-    console.log(response);
+
     check(response, {
         'getFees': (r) => r.status === 200,
     });
