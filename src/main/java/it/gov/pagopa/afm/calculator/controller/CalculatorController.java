@@ -95,6 +95,7 @@ public class CalculatorController {
             .touchpoint(paymentOptionByPsp.getTouchpoint())
             .idPspList(List.of(idPsp))
             .transferList(paymentOptionByPsp.getTransferList())
+            .bin(paymentOptionByPsp.getBin())
             .build();
     return calculatorService.calculate(paymentOption, maxOccurrences);
   }

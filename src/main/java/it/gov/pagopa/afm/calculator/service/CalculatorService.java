@@ -183,7 +183,7 @@ public class CalculatorService {
   private Boolean getOnUsValue(ValidBundle bundle, PaymentOption paymentOption) {
     boolean onusValue = false;
     // if PaymentType is CP and amount > threshold ---> calculate onus value
-    if (bundle.getPaymentType().equalsIgnoreCase("cp")
+    if (StringUtils.equalsIgnoreCase(bundle.getPaymentType(), "cp")
         && !isBelowThreshold(paymentOption.getPaymentAmount())) {
       // get issuers by BIN
       List<IssuerRangeEntity> issuers = issuersService.getIssuersByBIN(paymentOption.getBin());
