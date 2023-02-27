@@ -15,6 +15,8 @@
       "target": 500
     }
   ],
-  "gracefulRampDown": "30s"
+  "gracefulRampDown": "30s",
+  "setupTimeout": "360s",
+  "teardownTimeout": "360s"
 }
 
