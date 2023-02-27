@@ -110,6 +110,6 @@ export function teardown() {
     for (let i = 0; i < validBundlesNum; i++) {
         let validBundle = getValidBundle("int-test-"+i);
         let response = deleteDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundle['id'], validBundle['idPsp']);
-        check(response, { "status is 201": (res) => (res.status === 201) });
+        check(response, { "status is 204": (res) => (res.status === 204) });
     }
 }
