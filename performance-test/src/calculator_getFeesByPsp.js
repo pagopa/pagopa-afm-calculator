@@ -3,7 +3,7 @@
 
 import { check } from 'k6';
 import { SharedArray } from 'k6/data';
-import {getFeesByPsp, getFees, addTouchpoints, deleteTouchpoints, mapToValidBundles} from './helpers/calculator_helper.js';
+import {getFeesByPsp, getFees, addTouchpoints, deleteTouchpoints, mapToValidBundles, getValidBundle} from './helpers/calculator_helper.js';
 import { createDocument, deleteDocument } from "./helpers/cosmosdb_client.js";
 
 export let options = JSON.parse(open(__ENV.TEST_TYPE));
@@ -23,6 +23,7 @@ const vars = varsArray[0];
 const rootUrl = `${vars.host}`;
 const cosmosDBURI = `${vars.cosmosDBURI}`;
 const databaseID = `${vars.databaseID}`;
+const validBundlesNum = `${vars.validBundlesNum}`;
 
 const cosmosPrimaryKey = `${__ENV.COSMOS_SUBSCRIPTION_KEY}`;
 
@@ -41,9 +42,9 @@ export function setup() {
         check(response, { "status is 201": (res) => (res.status === 201) });
     }
 
-    let validBundles = mapToValidBundles(data);
-    for (let i = 0; i < paymenttypes.length; i++) {
-        let response = createDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundles[i], validBundles[i]['idPsp']);
+    for (let i = 0; i < validBundlesNum; i++) {
+        let validBundle = getValidBundle("int-test-"+i);
+        let response = createDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundle, validBundle['idPsp']);
         check(response, { "status is 201": (res) => (res.status === 201) });
     }
 
@@ -97,8 +98,15 @@ export function teardown() {
         let response = deleteDocument(cosmosDBURI, databaseID, "touchpoints", cosmosPrimaryKey, touchpoints[i]['id'], touchpoints[i]["name"]);
 	      check(response, { "status is 204": (res) => (res.status === 204) });
     }
+
     for (let i = 0; i < paymenttypes.length; i++) {
         let response = deleteDocument(cosmosDBURI, databaseID, "paymenttypes", cosmosPrimaryKey, paymenttypes[i]['id'], paymenttypes[i]["name"]);
         check(response, { "status is 204": (res) => (res.status === 204) });
+    }
+
+    for (let i = 0; i < validBundlesNum; i++) {
+        let validBundle = getValidBundle("int-test-"+i);
+        let response = deleteDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundle['id'], validBundle['idPsp']);
+        check(response, { "status is 201": (res) => (res.status === 201) });
     }
 }
