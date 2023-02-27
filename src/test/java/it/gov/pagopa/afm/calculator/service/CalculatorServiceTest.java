@@ -359,7 +359,7 @@ class CalculatorServiceTest {
     String expected = TestUtil.readStringFromFile("responses/getFeesPaymentTypeNull.json");
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
-  
+
   @Test
   @Order(13)
   void calculate_BinNull() throws IOException, JSONException {
@@ -380,7 +380,7 @@ class CalculatorServiceTest {
     String expected = TestUtil.readStringFromFile("responses/getFeesBinNull.json");
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
-  
+
   @Test
   @Order(14)
   void calculate_digitalStamp3() throws IOException, JSONException {
