@@ -5,7 +5,7 @@
       "host": "https://api.uat.platform.pagopa.it/afm/calculator-service/v1",
       "cosmosDBURI": "https://pagopa-u-weu-afm-marketplace-cosmos-account.documents.azure.com:443/",
       "databaseID":"db",
-      "validBundlesNum":"1000"
+      "validBundlesNum":"10000"
     }
   ]
 }
