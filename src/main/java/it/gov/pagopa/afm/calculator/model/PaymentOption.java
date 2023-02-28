@@ -18,7 +18,7 @@ import lombok.ToString;
 public class PaymentOption {
   @NotNull private Long paymentAmount;
   @NotNull private String primaryCreditorInstitution;
-  @NotNull private String bin;
+  private String bin;
   private String paymentMethod;
   private String touchpoint;
   private List<String> idPspList;

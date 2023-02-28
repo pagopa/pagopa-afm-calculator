@@ -360,6 +360,50 @@ class CalculatorServiceTest {
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
 
+  @Test
+  @Order(13)
+  void calculate_BinNull() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(TestUtil.getMockValidBundle()));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesBinNull.json", PaymentOption.class);
+    var result = calculatorService.calculate(paymentOption, 10);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesBinNull.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
+  @Test
+  @Order(14)
+  void calculate_digitalStamp3() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setDigitalStamp(true);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(mockValidBundle));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesDigitalStamp3.json", PaymentOption.class);
+    var result = calculatorService.calculate(paymentOption, 10);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFees.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
   // This must be the last test to run - it needs to mock the cosmosRepository in the service
   @Test
   @Order(Integer.MAX_VALUE)
