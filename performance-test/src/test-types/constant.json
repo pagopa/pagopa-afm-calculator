@@ -9,5 +9,7 @@
       "preAllocatedVUs": 100,
       "maxVUs": 10000
     }
-  }
+  },
+  "setupTimeout": "360s",
+  "teardownTimeout": "360s"
 }
