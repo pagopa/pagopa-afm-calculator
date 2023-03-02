@@ -93,7 +93,9 @@ public class CalculatorService {
     for (CiBundle cibundle : ciBundles) {
       if (cibundle.getAttributes() != null && !cibundle.getAttributes().isEmpty()) {
         transfers.addAll(
-            cibundle.getAttributes().parallelStream()
+            cibundle
+                .getAttributes()
+                .parallelStream()
                 .filter(
                     attribute ->
                         (attribute.getTransferCategory() != null
@@ -106,7 +108,9 @@ public class CalculatorService {
                         createTransfer(bundle.getPaymentAmount(), 0, bundle, null, paymentOption))
                 .collect(Collectors.toList()));
         transfers.addAll(
-            cibundle.getAttributes().parallelStream()
+            cibundle
+                .getAttributes()
+                .parallelStream()
                 .filter(
                     attribute ->
                         (attribute.getTransferCategory() == null
@@ -182,8 +186,12 @@ public class CalculatorService {
 
   private Boolean getOnUsValue(ValidBundle bundle, PaymentOption paymentOption) {
     boolean onusValue = false;
-    // if PaymentType is CP and amount > threshold and bin is valued ---> calculate onus value
-    if (StringUtils.equalsIgnoreCase(bundle.getPaymentType(), "cp")
+    if (bundle.getPaymentType() != null) {
+      onusValue = false;
+    }
+    // if PaymentType is CP and amount > threshold and bin is evaluated ---> calculate onus value
+    if (bundle.getPaymentType() != null
+        && StringUtils.equalsIgnoreCase(bundle.getPaymentType(), "cp")
         && !isBelowThreshold(paymentOption.getPaymentAmount())
         && StringUtils.isNotBlank(paymentOption.getBin())) {
       // get issuers by BIN
