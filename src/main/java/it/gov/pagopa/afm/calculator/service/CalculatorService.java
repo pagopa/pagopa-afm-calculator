@@ -186,9 +186,7 @@ public class CalculatorService {
 
   private Boolean getOnUsValue(ValidBundle bundle, PaymentOption paymentOption) {
     boolean onusValue = false;
-    if (bundle.getPaymentType() != null) {
-      onusValue = false;
-    }
+
     // if PaymentType is CP and amount > threshold and bin is evaluated ---> calculate onus value
     if (bundle.getPaymentType() != null
         && StringUtils.equalsIgnoreCase(bundle.getPaymentType(), "cp")
