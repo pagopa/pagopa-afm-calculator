@@ -5,6 +5,7 @@ TYPE=$2
 SCRIPT=$3
 DB_NAME=$4
 API_SUBSCRIPTION_KEY=$5
+COSMOS_SUBSCRIPTION_KEY=$6
 
 if [ -z "$ENVIRONMENT" ]
 then
@@ -34,7 +35,10 @@ export type=${TYPE}
 export script=${SCRIPT}
 export db_name=${DB_NAME}
 export sub_key=${API_SUBSCRIPTION_KEY}
+export cosmos_key=${COSMOS_SUBSCRIPTION_KEY}
 
+docker rm nginx
+docker rm k6
 stack_name=$(cd .. && basename "$PWD")
 docker compose -p "${stack_name}-k6" up -d --remove-orphans --force-recreate --build
 docker logs -f k6
