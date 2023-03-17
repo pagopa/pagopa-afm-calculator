@@ -9,25 +9,10 @@ import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqualOrNull;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isNull;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.or;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Repository;
-
 import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
 import com.azure.spring.data.cosmos.core.query.Criteria;
-
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
@@ -37,6 +22,18 @@ import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class CosmosRepository {
@@ -55,7 +52,7 @@ public class CosmosRepository {
         ? bundle.getCiBundleList().parallelStream()
             .filter(ciBundle -> ciFiscalCode.equals(ciBundle.getCiFiscalCode()))
             .collect(Collectors.toList())
-            : null;
+        : null;
   }
 
   @Cacheable(value = "findValidBundles")
@@ -118,8 +115,11 @@ public class CosmosRepository {
     }
 
     // add filter by PSP: psp in list
-    Iterator<PspSearchCriteria> iterator = Optional.ofNullable(paymentOption.getIdPspList()).orElse(Collections.<PspSearchCriteria>emptyList()).iterator();
-    if(iterator.hasNext()){
+    Iterator<PspSearchCriteria> iterator =
+        Optional.ofNullable(paymentOption.getIdPspList())
+            .orElse(Collections.<PspSearchCriteria>emptyList())
+            .iterator();
+    if (iterator.hasNext()) {
       queryResult = and(queryResult, this.getPspFilterCriteria(iterator));
     }
 
@@ -208,23 +208,37 @@ public class CosmosRepository {
         && bundle.getCiBundleList() != null
         && !bundle.getCiBundleList().isEmpty();
   }
-  
+
   /**
-   * @param iterator an iterator of PspSearchCriteria objects to generate filter criteria for the psp
+   * @param iterator an iterator of PspSearchCriteria objects to generate filter criteria for the
+   *     psp
    * @return Criteria an AND/OR concatenation of the global psp filter criteria
    */
   private Criteria getPspFilterCriteria(Iterator<PspSearchCriteria> iterator) {
     PspSearchCriteria pspSearch = iterator.next();
-    var idPspFilter =  isEqual("idPsp", pspSearch.getIdPsp());
-    var idChannelFilter = StringUtils.isNotEmpty(pspSearch.getIdChannel()) ? isEqual("idChannel", pspSearch.getIdChannel()):idPspFilter;
-    var idBrokerPspFilter = StringUtils.isNotEmpty(pspSearch.getIdBrokerPsp()) ? isEqual("idBrokerPsp", pspSearch.getIdBrokerPsp()):idPspFilter;
+    var idPspFilter = isEqual("idPsp", pspSearch.getIdPsp());
+    var idChannelFilter =
+        StringUtils.isNotEmpty(pspSearch.getIdChannel())
+            ? isEqual("idChannel", pspSearch.getIdChannel())
+            : idPspFilter;
+    var idBrokerPspFilter =
+        StringUtils.isNotEmpty(pspSearch.getIdBrokerPsp())
+            ? isEqual("idBrokerPsp", pspSearch.getIdBrokerPsp())
+            : idPspFilter;
     Criteria pspFilterCriteria = and(idPspFilter, and(idChannelFilter, idBrokerPspFilter));
-    while(iterator.hasNext()){
+    while (iterator.hasNext()) {
       pspSearch = iterator.next();
-      idPspFilter =  isEqual("idPsp", pspSearch.getIdPsp());
-      idChannelFilter = StringUtils.isNotEmpty(pspSearch.getIdChannel()) ? isEqual("idChannel", pspSearch.getIdChannel()):idPspFilter;
-      idBrokerPspFilter = StringUtils.isNotEmpty(pspSearch.getIdBrokerPsp()) ? isEqual("idBrokerPsp", pspSearch.getIdBrokerPsp()):idPspFilter;
-      pspFilterCriteria = or(pspFilterCriteria, and(idPspFilter, and(idChannelFilter, idBrokerPspFilter)));
+      idPspFilter = isEqual("idPsp", pspSearch.getIdPsp());
+      idChannelFilter =
+          StringUtils.isNotEmpty(pspSearch.getIdChannel())
+              ? isEqual("idChannel", pspSearch.getIdChannel())
+              : idPspFilter;
+      idBrokerPspFilter =
+          StringUtils.isNotEmpty(pspSearch.getIdBrokerPsp())
+              ? isEqual("idBrokerPsp", pspSearch.getIdBrokerPsp())
+              : idPspFilter;
+      pspFilterCriteria =
+          or(pspFilterCriteria, and(idPspFilter, and(idChannelFilter, idBrokerPspFilter)));
     }
     return pspFilterCriteria;
   }
