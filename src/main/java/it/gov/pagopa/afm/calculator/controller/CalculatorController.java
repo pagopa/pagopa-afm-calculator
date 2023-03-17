@@ -1,5 +1,17 @@
 package it.gov.pagopa.afm.calculator.controller;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,17 +23,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionByPsp;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
+import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
-import java.util.List;
-import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController()
 @Tag(name = "Calculator", description = "Everything about Calculator business logic")
@@ -87,13 +91,18 @@ public class CalculatorController {
           String idPsp,
       @RequestBody @Valid PaymentOptionByPsp paymentOptionByPsp,
       @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
+    
     PaymentOption paymentOption =
         PaymentOption.builder()
             .paymentAmount(paymentOptionByPsp.getPaymentAmount())
             .primaryCreditorInstitution(paymentOptionByPsp.getPrimaryCreditorInstitution())
             .paymentMethod(paymentOptionByPsp.getPaymentMethod())
             .touchpoint(paymentOptionByPsp.getTouchpoint())
-            .idPspList(List.of(idPsp))
+            .idPspList(List.of(PspSearchCriteria.builder()
+                .idPsp(idPsp)
+                .idChannel(paymentOptionByPsp.getIdChannel())
+                .idBrokerPsp(paymentOptionByPsp.getIdBrokerPsp())
+                .build()))
             .transferList(paymentOptionByPsp.getTransferList())
             .bin(paymentOptionByPsp.getBin())
             .build();

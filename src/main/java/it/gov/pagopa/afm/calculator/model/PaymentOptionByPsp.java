@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class PaymentOptionByPsp {
+  private String idChannel;
+  private String idBrokerPsp;
   private Long paymentAmount;
   private String primaryCreditorInstitution;
   private String paymentMethod;
