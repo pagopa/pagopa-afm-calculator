@@ -15,6 +15,11 @@ public class CriteriaBuilder {
     return Criteria.getInstance(
         CriteriaType.IS_NULL, param, Collections.emptyList(), Part.IgnoreCaseType.NEVER);
   }
+  
+  public static <T> Criteria isEqual(String param, T value) {
+    return Criteria.getInstance(
+        CriteriaType.IS_EQUAL, param, Collections.singletonList(value), Part.IgnoreCaseType.ALWAYS);
+  }
 
   public static <T> Criteria isEqualOrAny(String param, T value) {
     var queryEquals =

@@ -1,0 +1,39 @@
+{
+  "paymentAmount": 70,
+  "primaryCreditorInstitution": "77777777777",
+  "bin": "1005066",
+  "paymentMethod": "CP",
+  "touchpoint": "CHECKOUT",
+  "idPspList": [
+    {
+      "idPsp": "ABC",
+      "idChannel": "123_01",
+      "idBrokerPsp": "123"
+    },
+    {
+      "idPsp": "ABC",
+      "idChannel": "123_02",
+      "idBrokerPsp": "123"
+    },
+    {
+      "idPsp": "ABC ",
+      "idChannel": "",
+      "idBrokerPsp": ""
+    },
+    {
+      "idPsp": "ABC ",
+      "idChannel": "123_03"
+    }
+  ],
+  "transferList": [
+    {
+
+      "creditorInstitution": "77777777777",
+      "transferCategory": "TAX1"
+    },
+    {
+      "creditorInstitution": "77777777778",
+      "transferCategory": "TAX2"
+    }
+  ]
+}

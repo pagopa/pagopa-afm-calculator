@@ -403,6 +403,26 @@ class CalculatorServiceTest {
     String expected = TestUtil.readStringFromFile("responses/getFees.json");
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
+  
+  @Test
+  @Order(15)
+  void calculatePspList() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(TestUtil.getMockValidBundle()));
+
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFeesPspList.json", PaymentOption.class);
+    var result = calculatorService.calculate(paymentOption, 10);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFees.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
 
   // This must be the last test to run - it needs to mock the cosmosRepository in the service
   @Test
