@@ -28,8 +28,19 @@ jobs:
         uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
 
       - name: Run Integration Tests
+        if: ${{ github.event.inputs != null }}
+        environment: ${{ inputs.environment }}
         run: |
           cd ./integration-test/src
           export subkey=${{ secrets.SUBKEY }}
           yarn install
-          yarn test${{( github.event.inputs == null && ':dev') || ':${{inputs.environment}}' }}
+          yarn test:${{ inputs.environment }}
+
+      - name: Run Integration Tests
+        if: ${{ github.event.inputs == null }}
+        environment: dev
+        run: |
+          cd ./integration-test/src
+          export subkey=${{ secrets.SUBKEY }}
+          yarn install
+          yarn test:dev
