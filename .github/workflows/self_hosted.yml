@@ -18,8 +18,8 @@ on:
         default: false
 
 env:
-  NAMESPACE: apiconfig
-  APP_NAME: pagopaapiconfig
+  NAMESPACE: afm
+  APP_NAME: pagopaafmcalculator
 
 
 permissions:
