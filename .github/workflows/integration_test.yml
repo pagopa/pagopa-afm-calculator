@@ -31,5 +31,6 @@ jobs:
         run: |
           cd ./integration-test/src
           export subkey=${{ secrets.SUBKEY }}
+          export AFM_HOST=https://api.dev.platform.pagopa.it/afm/calculator-service/v1
           yarn install
           yarn test
