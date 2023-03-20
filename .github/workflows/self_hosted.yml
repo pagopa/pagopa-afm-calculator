@@ -73,12 +73,6 @@ jobs:
         with:
           ref: ${{ github.ref_name}}
 
-      - run: echo "STABLE_VERSION=$(curl https://api.${inputs.target}.platform.pagopa.it//shared/statuspage/v1/info?product=${github.repo_name}) >> $GITHUB_ENV
-        if: ${{ inputs.target != 'prod' }}
-
-      - run: echo "STABLE_VERSION=$(curl https://api.platform.pagopa.it//shared/statuspage/v1/info?product=${github.repo_name}) >> $GITHUB_ENV
-        if: ${{ inputs.target == 'prod' }}
-
       - name: Azure Login
         uses: azure/login@89d153571fe9a34ed70fcf9f1d95ab8debea7a73
         with:
@@ -103,7 +97,6 @@ jobs:
       - name: Helm Deploy
         run: helm upgrade --namespace ${{ env.NAMESPACE }}
           --install --values ./helm/values-${{ inputs.environment }}.yaml
-          ${{( inputs.beta && '--set microservice-chart.canaryDelivery.deployment.image.tag=${{ env.stable_version }}') || '' }}
           --wait --timeout 5m0s
           ${{ env.APP_NAME }} ./helm
 
