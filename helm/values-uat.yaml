@@ -90,4 +90,4 @@ microservice-chart:
   canaryDelivery:
     deployment:
       image:
-        tag: 2.5.3-5-beta
+        tag: 2.5.3-6-beta
