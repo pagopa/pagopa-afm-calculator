@@ -43,6 +43,37 @@ resource "github_actions_environment_secret" "azure_client_id" {
   plaintext_value = azuread_service_principal.action.application_id
 }
 
+#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
+resource "github_actions_environment_secret" "azure_container_app_environment_name" {
+  repository      = local.github.repository
+  environment     = var.env
+  secret_name     = "CONTAINER_APP_ENVIRONMENT_NAME"
+  plaintext_value = "${local.project}-github-runner-cae"
+}
+
+#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
+resource "github_actions_environment_secret" "azure_resource_group_name" {
+  repository      = local.github.repository
+  environment     = var.env
+  secret_name     = "RUNNER_RESOURCE_GROUP_NAME"
+  plaintext_value = "${local.project}-github-runner-rg"
+}
+
+#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
+resource "github_actions_environment_secret" "cluster_resource_group_name" {
+  repository      = local.github.repository
+  environment     = var.env
+  secret_name     = "CLUSTER_RESOURCE_GROUP_NAME"
+  plaintext_value = local.aks_resource_group_name
+}
+
+#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
+resource "github_actions_environment_secret" "cluster_name" {
+  repository      = local.github.repository
+  environment     = var.env
+  secret_name     = "CLUSTER_NAME"
+  plaintext_value = local.aks_name
+}
 
 #tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
 resource "github_actions_secret" "secret_sonar_token" {
