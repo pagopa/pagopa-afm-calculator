@@ -32,4 +32,4 @@ jobs:
           cd ./integration-test/src
           export subkey=${{ secrets.SUBKEY }}
           yarn install
-          yarn test${{( github.event.inputs == null && 'dev') || inputs.environment }}
+          yarn test${{( github.event.inputs == null && ':dev') || ':${{inputs.environment}}' }}
