@@ -6,6 +6,7 @@ locals {
   prefix = "pagopa"
   product = "${local.prefix}-${var.env_short}"
   project = "${local.prefix}-${var.env_short}-${local.location_short}-${local.domain}"
+  runner = "${local.prefix}-${var.env_short}-${local.location_short}"
 
   domain = "afm"
   location_short  = "weu"
