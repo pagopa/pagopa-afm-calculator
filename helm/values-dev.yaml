@@ -15,13 +15,13 @@ microservice-chart:
     deployment:
       create: true
       image:
-        repository: ghcr.io/pagopa-afm-calculator
+        repository: ghcr.io/pagopa/pagopa-afm-calculator
         tag: "2.5.3"
         pullPolicy: Always
       envConfig: { }
       envSecret: { }
   image:
-    repository: ghcr.io/pagopa-afm-calculator
+    repository: ghcr.io/pagopa/pagopa-afm-calculator
     tag: "2.5.3"
     pullPolicy: Always
   livenessProbe:
