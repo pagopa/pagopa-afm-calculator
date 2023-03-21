@@ -1,4 +1,4 @@
-name: Update Code
+name: Test Branch
 
 on:
   issue_comment:
