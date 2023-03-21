@@ -8,7 +8,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8080",
+      "url": "http://localhost:8586",
       "description": "Generated server url"
     }
   ],
@@ -527,7 +527,6 @@
           }
         },
         "required": [
-          "bin",
           "paymentAmount",
           "primaryCreditorInstitution",
           "transferList"
@@ -536,6 +535,9 @@
       "PaymentOptionByPsp": {
         "type": "object",
         "properties": {
+          "bin": {
+            "type": "string"
+          },
           "paymentAmount": {
             "type": "integer",
             "format": "int64"
