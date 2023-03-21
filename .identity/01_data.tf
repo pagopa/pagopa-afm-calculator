@@ -33,6 +33,12 @@ data "azurerm_key_vault_secret" "key_vault_bot_token" {
   name = "bot-token-github"
   key_vault_id = data.azurerm_key_vault.key_vault[0].id
 }
+data "azurerm_key_vault_secret" "key_vault_cucumber_token" {
+  count  = var.env_short == "d" ? 1 : 0
+
+  name = "cucumber-token"
+  key_vault_id = data.azurerm_key_vault.key_vault[0].id
+}
 
 data "azurerm_kubernetes_cluster" "aks" {
   name                = local.aks_name
