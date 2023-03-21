@@ -6,11 +6,9 @@ axios.defaults.headers.common['X-Pod-Version'] = 'canary' // for all requests
 function get(url) {
   return axios.get(url)
   .then(res => {
-    console.log(res);
     return res;
   })
   .catch(error => {
-    console.log(error);
     return error.response;
   });
 }
@@ -18,11 +16,9 @@ function get(url) {
 function post(url, body) {
   return axios.post(url, body)
   .then(res => {
-    console.log(res);
     return res;
   })
   .catch(error => {
-    console.log(error);
     return error.response;
   });
 }
@@ -30,11 +26,9 @@ function post(url, body) {
 function put(url, body) {
   return axios.put(url, body)
   .then(res => {
-    console.log(res);
     return res;
   })
   .catch(error => {
-    console.log(error);
     return error.response;
   });
 }
@@ -42,11 +36,9 @@ function put(url, body) {
 function del(url) {
   return axios.delete(url)
   .then(res => {
-    console.log(res);
     return res;
   })
   .catch(error => {
-    console.log(error);
     return error.response;
   });
 }

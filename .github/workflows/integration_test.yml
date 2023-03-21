@@ -37,5 +37,6 @@ jobs:
         run: |
           cd ./integration-test/src
           export subkey=${{ secrets.SUBKEY }}
+          export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
           yarn install
           yarn test:${{( github.event.inputs == null && 'dev') || inputs.environment }}
