@@ -18,7 +18,7 @@ public class Detail {
   private String idChannel;
   private String name;
   private String description;
-  private String paymentMethod;
+  private String paymentType;
   private Boolean channelApp;
   private Boolean channelCardsCart;
   private List<ServiceAmount> serviceAmount;

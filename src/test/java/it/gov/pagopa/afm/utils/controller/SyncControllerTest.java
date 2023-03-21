@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ImportCDIControllerTest {
+class SyncControllerTest {
 
   @Autowired private MockMvc mvc;
 

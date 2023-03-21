@@ -26,7 +26,7 @@ public class CDI {
   private String validityDateFrom;
   private List<Detail> details;
 
-  // // internal management field
+  // internal management field
   private StatusType cdiStatus;
   private String cdiErrorDesc;
 }
