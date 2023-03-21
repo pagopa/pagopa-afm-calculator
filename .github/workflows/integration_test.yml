@@ -16,6 +16,11 @@ on:
           - dev
           - uat
           - prod
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
 
 
 jobs:

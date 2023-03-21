@@ -1,6 +1,5 @@
 package it.gov.pagopa.afm.calculator.controller;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 /** These APIs are useful for test purposes. They are not shown to other microservices. */
 @RestController()
 @RequestMapping(path = "/configuration")
-@Hidden
 @Tag(name = "Configuration", description = "Utility Services")
 public class ConfigurationController {
 

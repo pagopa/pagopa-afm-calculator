@@ -7,7 +7,6 @@ on:
       - main
     types: [ closed ]
 
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
@@ -30,6 +29,20 @@ on:
           - patch
           - buildNumber
           - skip
+        default: skip
+      beta:
+        required: false
+        type: boolean
+        description: deploy beta version on AKS
+        default: false
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      semver:
+        required: true
+        type: string
         default: skip
       beta:
         required: false
