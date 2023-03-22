@@ -39,7 +39,7 @@ jobs:
         uses: axel-op/googlejavaformat-action@v3
         with:
           args: "--replace"
-          commit-message: "Google Java format [skip ci]"
+          commit-message: "Google Java format"
 
   notify:
     needs: [ update ]
