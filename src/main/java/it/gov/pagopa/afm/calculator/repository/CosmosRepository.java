@@ -49,7 +49,9 @@ public class CosmosRepository {
    */
   private static List<CiBundle> filterByCI(String ciFiscalCode, ValidBundle bundle) {
     return bundle.getCiBundleList() != null
-        ? bundle.getCiBundleList().parallelStream()
+        ? bundle
+            .getCiBundleList()
+            .parallelStream()
             .filter(ciBundle -> ciFiscalCode.equals(ciBundle.getCiFiscalCode()))
             .collect(Collectors.toList())
         : null;
@@ -120,14 +122,15 @@ public class CosmosRepository {
             .orElse(Collections.<PspSearchCriteria>emptyList())
             .iterator();
     if (iterator.hasNext()) {
-      queryResult = and(queryResult, this.getPspFilterCriteria(iterator));
+      this.getPspFilterCriteria(queryResult, iterator);
     }
 
     // add filter by Transfer Category: transferCategory[] contains one of paymentOption
     List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
     if (categoryList != null) {
       var taxonomyFilter =
-          categoryList.parallelStream()
+          categoryList
+              .parallelStream()
               .filter(Objects::nonNull)
               .filter(elem -> !elem.isEmpty())
               .map(elem -> arrayContains("transferCategoryList", elem))
@@ -152,7 +155,9 @@ public class CosmosRepository {
   private List<ValidBundle> getFilteredBundles(
       PaymentOption paymentOption, Iterable<ValidBundle> validBundles) {
     var onlyMarcaBolloDigitale =
-        paymentOption.getTransferList().stream()
+        paymentOption
+            .getTransferList()
+            .stream()
             .filter(Objects::nonNull)
             .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
             .count();
@@ -210,36 +215,23 @@ public class CosmosRepository {
   }
 
   /**
+   * Criteria an AND/OR concatenation of the global psp filter criteria
+   *
+   * @param queryResult query to modify
    * @param iterator an iterator of PspSearchCriteria objects to generate filter criteria for the
    *     psp
-   * @return Criteria an AND/OR concatenation of the global psp filter criteria
    */
-  private Criteria getPspFilterCriteria(Iterator<PspSearchCriteria> iterator) {
-    PspSearchCriteria pspSearch = iterator.next();
-    var idPspFilter = isEqual("idPsp", pspSearch.getIdPsp());
-    var idChannelFilter =
-        StringUtils.isNotEmpty(pspSearch.getIdChannel())
-            ? isEqual("idChannel", pspSearch.getIdChannel())
-            : idPspFilter;
-    var idBrokerPspFilter =
-        StringUtils.isNotEmpty(pspSearch.getIdBrokerPsp())
-            ? isEqual("idBrokerPsp", pspSearch.getIdBrokerPsp())
-            : idPspFilter;
-    Criteria pspFilterCriteria = and(idPspFilter, and(idChannelFilter, idBrokerPspFilter));
+  private void getPspFilterCriteria(Criteria queryResult, Iterator<PspSearchCriteria> iterator) {
     while (iterator.hasNext()) {
-      pspSearch = iterator.next();
-      idPspFilter = isEqual("idPsp", pspSearch.getIdPsp());
-      idChannelFilter =
-          StringUtils.isNotEmpty(pspSearch.getIdChannel())
-              ? isEqual("idChannel", pspSearch.getIdChannel())
-              : idPspFilter;
-      idBrokerPspFilter =
-          StringUtils.isNotEmpty(pspSearch.getIdBrokerPsp())
-              ? isEqual("idBrokerPsp", pspSearch.getIdBrokerPsp())
-              : idPspFilter;
-      pspFilterCriteria =
-          or(pspFilterCriteria, and(idPspFilter, and(idChannelFilter, idBrokerPspFilter)));
+      var pspSearch = iterator.next();
+      var queryItem = isEqual("idPsp", pspSearch.getIdPsp());
+      if (StringUtils.isNotEmpty(pspSearch.getIdChannel())) {
+        queryItem = and(queryItem, isEqual("idChannel", pspSearch.getIdChannel()));
+      }
+      if (StringUtils.isNotEmpty(pspSearch.getIdBrokerPsp())) {
+        queryItem = and(queryItem, isEqual("idBrokerPsp", pspSearch.getIdBrokerPsp()));
+      }
+      queryResult = or(queryResult, queryItem);
     }
-    return pspFilterCriteria;
   }
 }
