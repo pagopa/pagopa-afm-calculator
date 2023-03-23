@@ -21,6 +21,6 @@ public class PaymentOption {
   private String bin;
   private String paymentMethod;
   private String touchpoint;
-  private List<String> idPspList;
+  private List<PspSearchCriteria> idPspList;
   @Valid @NotNull @NotEmpty private List<TransferListItem> transferList;
 }
