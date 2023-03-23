@@ -110,7 +110,7 @@ public class CDIService {
   public List<BundleRequest> createBundlesByCDI(CDI cdi) {
     List<BundleRequest> bundleRequestList = new ArrayList<>();
     if (!CollectionUtils.isEmpty(cdi.getDetails())) {
-      DateTimeFormatter dfDate = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+      DateTimeFormatter dfDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
       BundleRequest bundleRequest = new BundleRequest();
       bundleRequest.setIdCdi(cdi.getIdCdi());
       bundleRequest.setAbi(cdi.getAbi());

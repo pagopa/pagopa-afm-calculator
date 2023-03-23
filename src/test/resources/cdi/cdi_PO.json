@@ -10,7 +10,7 @@
 			"idChannel": "string",
 			"name": "string",
 			"description": "string",
-			"paymentMethod": "PO",
+			"paymentType": "PO",
 			"channelApp": false,
 			"channelCardsCart": false,
 			"serviceAmount": [

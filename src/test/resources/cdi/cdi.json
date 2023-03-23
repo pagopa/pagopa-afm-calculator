@@ -10,7 +10,7 @@
 			"idChannel": "string",
 			"name": "string",
 			"description": "string",
-			"paymentMethod": "string",
+			"paymentType": "string",
 			"channelApp": false,
 			"channelCardsCart": false,
 			"serviceAmount": [
