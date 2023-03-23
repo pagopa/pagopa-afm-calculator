@@ -87,3 +87,7 @@ microservice-chart:
                 operator: In
                 values:
                   - user
+  canaryDelivery:
+    deployment:
+      image:
+        tag: 2.5.3-2-PAGOPA-749-psp-channel-broker

@@ -3,7 +3,7 @@ package it.gov.pagopa.afm.calculator.repository;
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.and;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.arrayContains;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.in;
+import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqual;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqualOrAny;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqualOrNull;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isNull;
@@ -12,18 +12,24 @@ import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.or;
 import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
+import com.azure.spring.data.cosmos.core.query.Criteria;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -52,7 +58,6 @@ public class CosmosRepository {
   @Cacheable(value = "findValidBundles")
   public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption) {
     Iterable<ValidBundle> validBundles = findValidBundles(paymentOption);
-
     return getFilteredBundles(paymentOption, validBundles);
   }
 
@@ -110,9 +115,12 @@ public class CosmosRepository {
     }
 
     // add filter by PSP: psp in list
-    if (paymentOption.getIdPspList() != null && !paymentOption.getIdPspList().isEmpty()) {
-      var pspFilter = in("idPsp", paymentOption.getIdPspList());
-      queryResult = and(queryResult, pspFilter);
+    Iterator<PspSearchCriteria> iterator =
+        Optional.ofNullable(paymentOption.getIdPspList())
+            .orElse(Collections.<PspSearchCriteria>emptyList())
+            .iterator();
+    if (iterator.hasNext()) {
+      this.getPspFilterCriteria(queryResult, iterator);
     }
 
     // add filter by Transfer Category: transferCategory[] contains one of paymentOption
@@ -130,7 +138,6 @@ public class CosmosRepository {
         queryResult = and(queryResult, taxonomyOrNull);
       }
     }
-
     // execute the query
     return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
   }
@@ -200,5 +207,26 @@ public class CosmosRepository {
     return bundle != null
         && bundle.getCiBundleList() != null
         && !bundle.getCiBundleList().isEmpty();
+  }
+
+  /**
+   * Criteria an AND/OR concatenation of the global psp filter criteria
+   *
+   * @param queryResult query to modify
+   * @param iterator an iterator of PspSearchCriteria objects to generate filter criteria for the
+   *     psp
+   */
+  private void getPspFilterCriteria(Criteria queryResult, Iterator<PspSearchCriteria> iterator) {
+    while (iterator.hasNext()) {
+      var pspSearch = iterator.next();
+      var queryItem = isEqual("idPsp", pspSearch.getIdPsp());
+      if (StringUtils.isNotEmpty(pspSearch.getIdChannel())) {
+        queryItem = and(queryItem, isEqual("idChannel", pspSearch.getIdChannel()));
+      }
+      if (StringUtils.isNotEmpty(pspSearch.getIdBrokerPsp())) {
+        queryItem = and(queryItem, isEqual("idBrokerPsp", pspSearch.getIdBrokerPsp()));
+      }
+      queryResult = or(queryResult, queryItem);
+    }
   }
 }

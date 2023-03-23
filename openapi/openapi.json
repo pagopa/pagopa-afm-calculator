@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.5.3"
+    "version": "2.5.3-2-PAGOPA-749-psp-channel-broker"
   },
   "servers": [
     {
@@ -503,7 +503,7 @@
           "idPspList": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/PspSearchCriteria"
             }
           },
           "paymentAmount": {
@@ -527,7 +527,6 @@
           }
         },
         "required": [
-          "bin",
           "paymentAmount",
           "primaryCreditorInstitution",
           "transferList"
@@ -536,6 +535,15 @@
       "PaymentOptionByPsp": {
         "type": "object",
         "properties": {
+          "bin": {
+            "type": "string"
+          },
+          "idBrokerPsp": {
+            "type": "string"
+          },
+          "idChannel": {
+            "type": "string"
+          },
           "paymentAmount": {
             "type": "integer",
             "format": "int64"
@@ -578,6 +586,23 @@
             "description": "A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized); example: Service Unavailable"
           }
         }
+      },
+      "PspSearchCriteria": {
+        "type": "object",
+        "properties": {
+          "idBrokerPsp": {
+            "type": "string"
+          },
+          "idChannel": {
+            "type": "string"
+          },
+          "idPsp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "idPsp"
+        ]
       },
       "Transfer": {
         "type": "object",
