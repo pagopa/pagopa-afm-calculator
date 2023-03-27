@@ -1,7 +1,9 @@
 const axios = require("axios");
 
 axios.defaults.headers.common['Ocp-Apim-Subscription-Key'] = process.env.subkey // for all requests
-axios.defaults.headers.common['X-Pod-Version'] = 'canary' // for all requests
+if (process.env.canary) {
+  axios.defaults.headers.common['X-Pod-Version'] = 'canary' // for all requests
+}
 
 function get(url) {
   return axios.get(url)

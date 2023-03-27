@@ -37,3 +37,17 @@ jobs:
           project_key: ${{env.PROJECT_KEY}}
           coverage_exclusions: "**/config/*,**/*Mock*,**/model/**,**/entity/*"
           cpd_exclusions: "**/model/**,**/entity/*"
+
+  smoke-test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run tests
+        shell: bash
+        run: |
+          cd ./integration-test
+          export subkey=${{ secrets.SUBKEY }}
+          export canary=false
+          export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+          sh ./run_integration_tests.sh local
+    
