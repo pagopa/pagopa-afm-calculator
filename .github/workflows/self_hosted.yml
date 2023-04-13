@@ -19,7 +19,7 @@ on:
 
 env:
   NAMESPACE: afm
-  APP_NAME: pagopaafmcalculator
+  APP_NAME: calculator
 
 
 permissions:
