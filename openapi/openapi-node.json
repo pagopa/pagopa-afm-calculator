@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic for Node",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.5.4"
+    "version": "2.5.4-1-PAGOPA-866-problema-di-traduzione-cdi-bundle"
   },
   "servers": [
     {
