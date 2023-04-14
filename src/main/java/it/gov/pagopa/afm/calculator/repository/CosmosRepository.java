@@ -49,7 +49,9 @@ public class CosmosRepository {
    */
   private static List<CiBundle> filterByCI(String ciFiscalCode, ValidBundle bundle) {
     return bundle.getCiBundleList() != null
-        ? bundle.getCiBundleList().parallelStream()
+        ? bundle
+            .getCiBundleList()
+            .parallelStream()
             .filter(ciBundle -> ciFiscalCode.equals(ciBundle.getCiFiscalCode()))
             .collect(Collectors.toList())
         : null;
@@ -120,14 +122,15 @@ public class CosmosRepository {
             .orElse(Collections.<PspSearchCriteria>emptyList())
             .iterator();
     if (iterator.hasNext()) {
-      this.getPspFilterCriteria(queryResult, iterator);
+      queryResult = this.getPspFilterCriteria(queryResult, iterator);
     }
 
     // add filter by Transfer Category: transferCategory[] contains one of paymentOption
     List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
     if (categoryList != null) {
       var taxonomyFilter =
-          categoryList.parallelStream()
+          categoryList
+              .parallelStream()
               .filter(Objects::nonNull)
               .filter(elem -> !elem.isEmpty())
               .map(elem -> arrayContains("transferCategoryList", elem))
@@ -152,7 +155,9 @@ public class CosmosRepository {
   private List<ValidBundle> getFilteredBundles(
       PaymentOption paymentOption, Iterable<ValidBundle> validBundles) {
     var onlyMarcaBolloDigitale =
-        paymentOption.getTransferList().stream()
+        paymentOption
+            .getTransferList()
+            .stream()
             .filter(Objects::nonNull)
             .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
             .count();
@@ -215,8 +220,11 @@ public class CosmosRepository {
    * @param queryResult query to modify
    * @param iterator an iterator of PspSearchCriteria objects to generate filter criteria for the
    *     psp
+   * @return the actual query
    */
-  private void getPspFilterCriteria(Criteria queryResult, Iterator<PspSearchCriteria> iterator) {
+  private Criteria getPspFilterCriteria(
+      Criteria queryResult, Iterator<PspSearchCriteria> iterator) {
+    Criteria queryTmp = null;
     while (iterator.hasNext()) {
       var pspSearch = iterator.next();
       var queryItem = isEqual("idPsp", pspSearch.getIdPsp());
@@ -226,7 +234,12 @@ public class CosmosRepository {
       if (StringUtils.isNotEmpty(pspSearch.getIdBrokerPsp())) {
         queryItem = and(queryItem, isEqual("idBrokerPsp", pspSearch.getIdBrokerPsp()));
       }
-      queryResult = or(queryResult, queryItem);
+      if (queryTmp == null) {
+        queryTmp = queryItem;
+      } else {
+        queryTmp = or(queryTmp, queryItem);
+      }
     }
+    return queryTmp != null ? and(queryResult, queryTmp) : queryResult;
   }
 }
