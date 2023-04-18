@@ -98,7 +98,7 @@ jobs:
     steps:
       - name: Make Release
         id: release
-        uses: pagopa/github-actions-template/maven-release@v1.4.1
+        uses: pagopa/github-actions-template/maven-release@main
         with:
           semver: ${{ needs.setup.outputs.semver }}
           github_token: ${{ secrets.BOT_TOKEN_GITHUB }}
@@ -116,7 +116,6 @@ jobs:
         uses: pagopa/github-actions-template/ghcr-build-push@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref_name}}
           tag: ${{ needs.release.outputs.version }}
 
   deploy_aks:
