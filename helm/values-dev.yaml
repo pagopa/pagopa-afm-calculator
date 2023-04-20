@@ -72,6 +72,7 @@ microservice-chart:
     ELASTIC_APM_SERVICE_NAME: pagopa-afm-calculator
     ELASTIC_APM_APPLICATION_PACKAGES: it.gov.pagopa.afm.calculator
     ELASTIC_APM_SERVER_URL: http://quickstart-apm-http.elastic-system.svc:8200
+    ELASTIC_APM_LOG_SENDING: true
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'ai-d-connection-string'
