@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopadcommonacr.azurecr.io/pagopaafmcalculator
-    tag: "2.5.4-1-kibana"
+    tag: "2.5.4-3-kibana"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -96,4 +96,4 @@ microservice-chart:
   canaryDelivery:
     deployment:
       image:
-        tag: 2.5.4-1-kibana
+        tag: 2.5.4-2-kibana
