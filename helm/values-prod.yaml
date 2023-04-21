@@ -90,4 +90,4 @@ microservice-chart:
   canaryDelivery:
     deployment:
       image:
-        tag: 2.5.4-2-kibana
+        tag: 2.5.4-5-kibana
