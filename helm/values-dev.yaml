@@ -69,11 +69,16 @@ microservice-chart:
     COSMOS_URI: https://pagopa-d-weu-afm-marketplace-cosmos-account.documents.azure.com:443/
     ISSUER_RANGE_TABLE: 'pagopadweuafmsaissuerrangetable'
     AMOUNT_THRESHOLD: '0'
+    ELASTIC_APM_SERVICE_NAME: pagopa-afm-calculator
+    ELASTIC_APM_APPLICATION_PACKAGES: it.gov.pagopa.afm.calculator
+    ELASTIC_APM_SERVER_URL: http://quickstart-apm-http.elastic-system.svc:8200
+    ELASTIC_APM_LOG_SENDING: 'true'
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'ai-d-connection-string'
     COSMOS_KEY: afm-marketplace-d-cosmos-pkey
     AFM_SA_CONNECTION_STRING: afm-d-sa-connection-string
+    ELASTIC_APM_SECRET_TOKEN: elastic-apm-secret-token
   keyvault:
     name: "pagopa-d-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
@@ -91,4 +96,4 @@ microservice-chart:
   canaryDelivery:
     deployment:
       image:
-        tag: 2.5.3-2-PAGOPA-749-psp-channel-broker
+        tag: 2.5.4-5-kibana
