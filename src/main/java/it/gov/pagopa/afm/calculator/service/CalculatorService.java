@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Setter
@@ -190,16 +191,18 @@ public class CalculatorService {
         && StringUtils.isNotBlank(paymentOption.getBin())) {
       // get issuers by BIN
       List<IssuerRangeEntity> issuers = issuersService.getIssuersByBIN(paymentOption.getBin());
-
+     
       // all extracted record must have the same ABI otherwise expetion raised
       // - the limit(2) operation is used to terminate as soon as two distinct ABI objects are found
-      if (issuers.stream().map(IssuerRangeEntity::getAbi).distinct().limit(2).count() > 1) {
+      if (!CollectionUtils.isEmpty(issuers) && issuers.stream().map(IssuerRangeEntity::getAbi).distinct().limit(2).count() > 1) {
         throw new AppException(
             AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
       }
 
-      // check if the ABI of the bundle is the same as issuers pulled via BIN
-      if (issuers.get(0).getAbi().equalsIgnoreCase(bundle.getAbi())) {
+      // check if the ABI of the bundle is the same as issuers pulled via BIN and that idChannel ends with the suffix _ONUS
+      if (!CollectionUtils.isEmpty(issuers) 
+          && issuers.get(0).getAbi().equalsIgnoreCase(bundle.getAbi())
+          && StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), "_ONUS")) {
         onusValue = true;
       }
     }

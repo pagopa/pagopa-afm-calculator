@@ -6,24 +6,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import com.azure.spring.data.cosmos.core.CosmosTemplate;
-import com.azure.spring.data.cosmos.core.query.CosmosQuery;
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.table.TableOperation;
-import it.gov.pagopa.afm.calculator.TestUtil;
-import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
-import it.gov.pagopa.afm.calculator.entity.PaymentType;
-import it.gov.pagopa.afm.calculator.entity.Touchpoint;
-import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.exception.AppException;
-import it.gov.pagopa.afm.calculator.initializer.Initializer;
-import it.gov.pagopa.afm.calculator.model.BundleType;
-import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -42,6 +29,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import com.azure.spring.data.cosmos.core.CosmosTemplate;
+import com.azure.spring.data.cosmos.core.query.CosmosQuery;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.table.TableOperation;
+
+import it.gov.pagopa.afm.calculator.TestUtil;
+import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
+import it.gov.pagopa.afm.calculator.entity.PaymentType;
+import it.gov.pagopa.afm.calculator.entity.Touchpoint;
+import it.gov.pagopa.afm.calculator.entity.ValidBundle;
+import it.gov.pagopa.afm.calculator.exception.AppException;
+import it.gov.pagopa.afm.calculator.initializer.Initializer;
+import it.gov.pagopa.afm.calculator.model.BundleType;
+import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 
 @SpringBootTest
 @Testcontainers
@@ -118,7 +121,8 @@ class CalculatorServiceTest {
   @CsvSource({
     "requests/getFees.json, responses/getFees.json",
     "requests/getFeesBinNull.json, responses/getFeesBinNull.json",
-    "requests/getFeesPspList.json, responses/getFees.json"
+    "requests/getFeesPspList.json, responses/getFees.json",
+    "requests/getFeesBinNotFound.json, responses/getFeesBinNotFound.json"
   })
   @Order(1)
   void calculate(String input, String output) throws IOException, JSONException {
@@ -301,26 +305,6 @@ class CalculatorServiceTest {
 
   @Test
   @Order(10)
-  void calculate_BinNotFound() throws IOException, JSONException {
-    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-    PaymentType paymentType = TestUtil.getMockPaymentType();
-
-    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-        .thenReturn(
-            Collections.singleton(touchpoint),
-            Collections.singleton(paymentType),
-            Collections.singleton(TestUtil.getMockValidBundle()));
-
-    var paymentOption =
-        TestUtil.readObjectFromFile("requests/getFeesBinNotFound.json", PaymentOption.class);
-    AppException exception =
-        assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10));
-
-    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
-  }
-
-  @Test
-  @Order(11)
   void calculate_SubThreshold() throws IOException, JSONException {
     Touchpoint touchpoint = TestUtil.getMockTouchpoints();
     PaymentType paymentType = TestUtil.getMockPaymentType();
@@ -346,7 +330,7 @@ class CalculatorServiceTest {
   }
 
   @Test
-  @Order(12)
+  @Order(11)
   void calculate_paymentType_Null() throws IOException, JSONException {
     Touchpoint touchpoint = TestUtil.getMockTouchpoints();
     PaymentType paymentType = TestUtil.getMockPaymentType();
@@ -368,7 +352,7 @@ class CalculatorServiceTest {
   }
 
   @Test
-  @Order(13)
+  @Order(12)
   void calculate_digitalStamp3() throws IOException, JSONException {
     Touchpoint touchpoint = TestUtil.getMockTouchpoints();
     PaymentType paymentType = TestUtil.getMockPaymentType();
@@ -406,12 +390,13 @@ class CalculatorServiceTest {
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFeesMultipleTransfer.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10);
-    assertEquals(5, result.getBundleOptions().size());
+    assertEquals(6, result.getBundleOptions().size());
     // check order
     assertEquals("1", result.getBundleOptions().get(0).getIdBundle());
     assertEquals("2", result.getBundleOptions().get(1).getIdBundle());
     assertEquals("5", result.getBundleOptions().get(2).getIdBundle());
     assertEquals("3", result.getBundleOptions().get(3).getIdBundle());
     assertEquals("4", result.getBundleOptions().get(4).getIdBundle());
+    assertEquals("6", result.getBundleOptions().get(5).getIdBundle());
   }
 }
