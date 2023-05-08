@@ -1,23 +1,25 @@
 package it.gov.pagopa.afm.calculator.service;
 
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.table.CloudTable;
 import com.microsoft.azure.storage.table.TableQuery;
+
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.util.AzuriteStorageUtil;
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-import java.util.List;
-import java.util.Optional;
-import java.util.Spliterator;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -62,9 +64,10 @@ public class IssuersService {
       throw new AppException(AppError.INTERNAL_SERVER_ERROR);
     }
 
-    return Optional.of(
+    /*return Optional.of(
             StreamSupport.stream(resultIssuerRangeEntityList, false).collect(Collectors.toList()))
         .filter(l -> !l.isEmpty())
-        .orElseThrow(() -> new AppException(AppError.ISSUERS_NOT_FOUND, bin));
+        .orElseThrow(() -> new AppException(AppError.ISSUERS_NOT_FOUND, bin));*/
+    return StreamSupport.stream(resultIssuerRangeEntityList, false).collect(Collectors.toList());
   }
 }
