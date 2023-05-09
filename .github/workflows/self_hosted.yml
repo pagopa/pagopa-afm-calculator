@@ -65,9 +65,10 @@ jobs:
           subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
           env: ${{ inputs.environment }}
           namespace: ${{ env.NAMESPACE }}
+          app_name: ${{ env.APP_NAME }}
           cluster_name: ${{ vars.CLUSTER_NAME }}
           resource_group: ${{ vars.CLUSTER_RESOURCE_GROUP }}
-          app_name: ${{ env.APP_NAME }}
+          helm-upgrade-options: "--debug"
 
   cleanup_runner:
     name: Cleanup Runner
