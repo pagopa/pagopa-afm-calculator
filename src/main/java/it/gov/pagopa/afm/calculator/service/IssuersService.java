@@ -63,11 +63,6 @@ public class IssuersService {
       log.error("Error in processing get issuers by BIN [bin = " + bin + "]", e);
       throw new AppException(AppError.INTERNAL_SERVER_ERROR);
     }
-
-    /*return Optional.of(
-            StreamSupport.stream(resultIssuerRangeEntityList, false).collect(Collectors.toList()))
-        .filter(l -> !l.isEmpty())
-        .orElseThrow(() -> new AppException(AppError.ISSUERS_NOT_FOUND, bin));*/
     return StreamSupport.stream(resultIssuerRangeEntityList, false).collect(Collectors.toList());
   }
 }
