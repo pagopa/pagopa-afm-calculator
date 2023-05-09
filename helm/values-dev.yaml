@@ -96,4 +96,4 @@ microservice-chart:
   canaryDelivery:
     deployment:
       image:
-        tag: 2.5.5-1-deploy-aks
+        tag: 2.5.5-2-deploy-aks
