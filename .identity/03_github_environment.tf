@@ -27,9 +27,9 @@ locals {
   }
   env_variables = {
     "CONTAINER_APP_ENVIRONMENT_NAME" : local.container_app_environment.name,
-    "RUNNER_RESOURCE_GROUP_NAME" : local.container_app_environment.resource_group,
-    "CLUSTER_RESOURCE_GROUP_NAME" : local.aks_cluster.resource_group,
+    "CONTAINER_APP_ENVIRONMENT_RESOURCE_GROUP_NAME" : local.container_app_environment.resource_group,
     "CLUSTER_NAME" : local.aks_cluster.name,
+    "CLUSTER_RESOURCE_GROUP" : local.aks_cluster.resource_group,
   }
 }
 
