@@ -57,7 +57,7 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
       - name: Deploy
-        uses: pagopa/github-actions-template/aks-deploy@main
+        uses: pagopa/github-actions-template/aks-deploy@v1.4.2
         with:
           branch: ${{ github.ref_name }}
           client_id: ${{ secrets.CLIENT_ID }}
