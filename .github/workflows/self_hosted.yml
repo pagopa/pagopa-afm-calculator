@@ -65,8 +65,8 @@ jobs:
           subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
           env: ${{ inputs.environment }}
           namespace: ${{ env.NAMESPACE }}
-          cluster_name: ${{ secrets.CLUSTER_NAME }}
-          resource_group: ${{ secrets.CLUSTER_RESOURCE_GROUP }}
+          cluster_name: ${{ vars.CLUSTER_NAME }}
+          resource_group: ${{ vars.CLUSTER_RESOURCE_GROUP }}
           app_name: ${{ env.APP_NAME }}
 
   cleanup_runner:
