@@ -10,7 +10,7 @@ module "github_runner_aks" {
   github_repository       = local.github.repository
   github_environment_name = var.env
 
-  container_app_github_runner_env_rg = local.aks_cluster.resource_group
+  container_app_github_runner_env_rg = local.container_app_environment.resource_group
 }
 
 resource "azurerm_role_assignment" "environment_terraform_storage_account_tfstate_app" {
