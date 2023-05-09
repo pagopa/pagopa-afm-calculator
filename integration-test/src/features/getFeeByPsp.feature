@@ -9,7 +9,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 70,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "1005066",
+          "bin": "300000",
           "paymentMethod": "CP",
           "touchpoint": "CHECKOUT",
           "transferList": [
@@ -42,7 +42,7 @@ Feature: GetFeeByPsp
           "idCiBundle": "int-test-1",
           "idPsp": "88888888888",
           "idBrokerPsp": "88888888899",
-          "idChannel": "88888888899_01",
+          "idChannel": "88888888899_01_ONUS",
           "onUs": false,
           "abi": "14156"
          }
@@ -56,7 +56,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 70,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "1005066",
+          "bin": "300000",
           "paymentMethod": "PO",
           "transferList": [
             {
@@ -88,7 +88,7 @@ Feature: GetFeeByPsp
           "idCiBundle": null,
           "idPsp": "88888888888",
           "idBrokerPsp": "88888888899",
-          "idChannel": "88888888899_01",
+          "idChannel": "88888888899_01_ONUS",
           "onUs": false,
           "abi": "14156"
         },
@@ -103,7 +103,7 @@ Feature: GetFeeByPsp
           "idCiBundle": "int-test-1",
           "idPsp": "88888888888",
           "idBrokerPsp": "88888888899",
-          "idChannel": "88888888899_01",
+          "idChannel": "88888888899_01_ONUS",
           "onUs": false,
           "abi": "14156"
         }
@@ -117,7 +117,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 70,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "1005066",
+          "bin": "300000",
           "transferList": [
             {
               "creditorInstitution": "77777777777",
@@ -135,8 +135,8 @@ Feature: GetFeeByPsp
     And check response body is
       """
       {
-    "belowThreshold": false,
-    "bundleOptions": [
+      "belowThreshold": false,
+      "bundleOptions": [
         {
             "taxPayerFee": 90,
             "primaryCiIncurredFee": 0,
@@ -147,7 +147,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 3",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": true,
             "abi": "14156"
@@ -162,7 +162,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 4",
             "idCiBundle": "int-test-3",
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
@@ -177,7 +177,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 6",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
@@ -192,7 +192,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 7",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
@@ -207,13 +207,13 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 8",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
         }
-    ]
-}
+      ]
+      }
       """
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP
@@ -222,7 +222,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 70,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "1005066",
+          "bin": "300000",
           "touchpoint": "IO",
           "transferList": [
             {
@@ -241,8 +241,8 @@ Feature: GetFeeByPsp
     And check response body is
       """
       {
-    "belowThreshold": false,
-    "bundleOptions": [
+      "belowThreshold": false,
+      "bundleOptions": [
         {
             "taxPayerFee": 90,
             "primaryCiIncurredFee": 0,
@@ -253,7 +253,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 3",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": true,
             "abi": "14156"
@@ -268,7 +268,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 4",
             "idCiBundle": "int-test-3",
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
@@ -283,7 +283,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 6",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
@@ -298,7 +298,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 7",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
@@ -313,13 +313,13 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 8",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
         }
-    ]
-}
+      ]
+      }
       """
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP 2
@@ -328,7 +328,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 70,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "1005066",
+          "bin": "300000",
           "touchpoint": "IO",
           "transferList": [
             {
@@ -362,7 +362,7 @@ Feature: GetFeeByPsp
           "idCiBundle": null,
           "idPsp": "88888888889",
           "idBrokerPsp": "88888888899",
-          "idChannel": "88888888899_01",
+          "idChannel": "88888888899_01_ONUS",
           "onUs": false,
           "abi": "14156"
         }
@@ -376,7 +376,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 70,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "1005066",
+          "bin": "300000",
           "touchpoint": "IO",
           "transferList": [
             {
@@ -409,7 +409,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 7",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
@@ -424,7 +424,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 8",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
@@ -471,7 +471,7 @@ Feature: GetFeeByPsp
           "idCiBundle": null,
           "idPsp": "88888888889",
           "idBrokerPsp": "88888888899",
-          "idChannel": "88888888899_01",
+          "idChannel": "88888888899_01_ONUS",
           "onUs": true,
           "abi": "14156"
         },
@@ -486,7 +486,7 @@ Feature: GetFeeByPsp
           "idCiBundle": "int-test-3",
           "idPsp": "88888888889",
           "idBrokerPsp": "88888888899",
-          "idChannel": "88888888899_01",
+          "idChannel": "88888888899_01_ONUS",
           "onUs": false,
           "abi": "14156"
         },
@@ -501,7 +501,7 @@ Feature: GetFeeByPsp
           "idCiBundle": null,
           "idPsp": "88888888889",
           "idBrokerPsp": "88888888899",
-          "idChannel": "88888888899_01",
+          "idChannel": "88888888899_01_ONUS",
           "onUs": false,
           "abi": "14156"
         },
@@ -515,7 +515,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 7",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
@@ -530,7 +530,7 @@ Feature: GetFeeByPsp
             "bundleDescription": "pacchetto 8",
             "idCiBundle": null,
             "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
+            "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
@@ -560,4 +560,87 @@ Feature: GetFeeByPsp
         }
       """
     When the client send POST to /psps/88888888889/fees
-    Then check statusCode is 404
+    Then check statusCode is 200
+    And check response body is
+      """
+      {
+        "belowThreshold": false,
+        "bundleOptions":[
+         {
+          "taxPayerFee": 30,
+          "primaryCiIncurredFee": 20,
+          "paymentMethod": "ANY",
+          "touchpoint": "ANY",
+          "idBundle": "int-test-4",
+          "bundleName": "pacchetto 4",
+          "bundleDescription": "pacchetto 4",
+          "idCiBundle": "int-test-3",
+          "idPsp": "88888888889",
+          "idBrokerPsp": "88888888899",
+          "idChannel": "88888888899_01_ONUS",
+          "onUs": false,
+          "abi": "14156"
+        },
+        {
+          "taxPayerFee": 90,
+          "primaryCiIncurredFee": 0,
+          "paymentMethod": "CP",
+          "touchpoint": "ANY",
+          "idBundle": "int-test-3",
+          "bundleName": "pacchetto 3",
+          "bundleDescription": "pacchetto 3",
+          "idCiBundle": null,
+          "idPsp": "88888888889",
+          "idBrokerPsp": "88888888899",
+          "idChannel": "88888888899_01_ONUS",
+          "onUs": false,
+          "abi": "14156"
+        },
+        {
+          "taxPayerFee": 100,
+          "primaryCiIncurredFee": 0,
+          "paymentMethod": "ANY",
+          "touchpoint": "IO",
+          "idBundle": "int-test-6",
+          "bundleName": "pacchetto 6",
+          "bundleDescription": "pacchetto 6",
+          "idCiBundle": null,
+          "idPsp": "88888888889",
+          "idBrokerPsp": "88888888899",
+          "idChannel": "88888888899_01_ONUS",
+          "onUs": false,
+          "abi": "14156"
+        },
+        {
+            "taxPayerFee": 100,
+            "primaryCiIncurredFee": 0,
+            "paymentMethod": "ANY",
+            "touchpoint": "IO",
+            "idBundle": "int-test-7",
+            "bundleName": "pacchetto 7",
+            "bundleDescription": "pacchetto 7",
+            "idCiBundle": null,
+            "idPsp": "88888888889",
+            "idChannel": "88888888899_01_ONUS",
+            "idBrokerPsp": "88888888899",
+            "onUs": false,
+            "abi": "14156"
+        },
+        {
+            "taxPayerFee": 100,
+            "primaryCiIncurredFee": 0,
+            "paymentMethod": "ANY",
+            "touchpoint": "IO",
+            "idBundle": "int-test-8",
+            "bundleName": "pacchetto 8",
+            "bundleDescription": "pacchetto 8",
+            "idCiBundle": null,
+            "idPsp": "88888888889",
+            "idChannel": "88888888899_01_ONUS",
+            "idBrokerPsp": "88888888899",
+            "onUs": false,
+            "abi": "14156"
+        }
+      ]
+      }
+      """
