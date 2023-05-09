@@ -34,15 +34,6 @@ data "azurerm_key_vault_secret" "key_vault_cucumber_token" {
   key_vault_id = data.azurerm_key_vault.key_vault[0].id
 }
 
-data "azurerm_kubernetes_cluster" "aks" {
-  name                = local.aks_name
-  resource_group_name = local.aks_resource_group_name
-}
-
-#data "azurerm_resource_group" "github_runner_rg" {
-#  name = "${local.runner}-github-runner-rg"
-#}
-
 data "github_organization_teams" "all" {
   root_teams_only = true
   summary_only    = true
