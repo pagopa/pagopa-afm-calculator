@@ -1,7 +1,8 @@
-const {Given, When, Then, Before, AfterAll} = require('@cucumber/cucumber')
+const {Given, When, Then, BeforeAll, AfterAll} = require('@cucumber/cucumber')
 const assert = require("assert");
 const {call, post} = require("./common");
 const fs = require("fs");
+const tableStorageClient = require("./table_storage_client");
 
 const afm_host = process.env.AFM_HOST;
 
@@ -11,14 +12,44 @@ let validBundles = [];
 let touchpoints = [];
 let paymenttypes = [];
 
+let partitionKey1 = "300000";
+let partitionKey2 = "309500";
+let isseuerEntity1 = {
+    partitionKey: partitionKey1,
+    rowKey: "1005066",
+    LOW_RANGE: "3095000000000000000",
+    HIGH_RANGE: "3095999999999999999",
+    CIRCUIT: "DINERS",
+    PRODUCT_CODE: "N",
+    PRODUCT_TYPE: "2",
+    PRODUCT_CATEGORY: "C",
+    ISSUER_ID: "100",
+    ABI: "14156"
+  };
+let isseuerEntity2 = {
+    partitionKey: partitionKey2,
+    rowKey: "1005067",
+    LOW_RANGE: "3095000000000000000",
+    HIGH_RANGE: "3095999999999999999",
+    CIRCUIT: "DINERS",
+    PRODUCT_CODE: "N",
+    PRODUCT_TYPE: "2",
+    PRODUCT_CATEGORY: "C",
+    ISSUER_ID: "100",
+    ABI: "14156"
+  };
+
+// Synchronous
+BeforeAll(function () {
+  tableStorageClient.deleteByPK(partitionKey1);
+  tableStorageClient.deleteByPK(partitionKey2);
+  tableStorageClient.createEntity(isseuerEntity1);
+  tableStorageClient.createEntity(isseuerEntity2);
+});
+
 Given('the configuration {string}', async function (filePath) {
   let file = fs.readFileSync('./config/' + filePath);
   let config = JSON.parse(file);
-  validBundles = mapToValidBundles(config);
-  const result = await post(afm_host + '/configuration/bundles/add',
-      validBundles);
-  assert.strictEqual(result.status, 201);
-
   touchpoints = config["touchpoints"];
   const result2 = await post(afm_host + '/configuration/touchpoint/add',
       touchpoints);
@@ -28,6 +59,12 @@ Given('the configuration {string}', async function (filePath) {
   const result3 = await post(afm_host + '/configuration/paymenttypes/add',
       paymenttypes);
   assert.strictEqual(result3.status, 201);
+  
+  validBundles = mapToValidBundles(config);
+  const result = await post(afm_host + '/configuration/bundles/add',
+      validBundles);
+  //console.log (afm_host + '/configuration/bundles/add', JSON.stringify(validBundles));
+  assert.strictEqual(result.status, 201);
 });
 
 Given(/^initial json$/, function (payload) {
@@ -65,6 +102,7 @@ function mapToValidBundles(config) {
   return validbundles;
 }
 
+/*
 // Asynchronous Promise
 AfterAll(async function () {
   const result = await post(afm_host + '/configuration/bundles/delete',
@@ -81,3 +119,4 @@ AfterAll(async function () {
 
   return Promise.resolve()
 });
+*/
