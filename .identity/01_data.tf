@@ -47,3 +47,11 @@ data "github_organization_teams" "all" {
   root_teams_only = true
   summary_only    = true
 }
+
+
+data "azurerm_key_vault" "domain_key_vault" {
+  count  = var.env_short != "p" ? 1 : 0
+
+  name = "pagopa-${var.env_short}-${local.domain}-kv"
+  resource_group_name = "pagopa-${var.env_short}-${local.domain}-sec-rg"
+}
