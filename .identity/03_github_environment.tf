@@ -88,3 +88,12 @@ resource "github_actions_secret" "secret_cucumber_token" {
   secret_name      = "CUCUMBER_PUBLISH_TOKEN"
   plaintext_value  = data.azurerm_key_vault_secret.key_vault_cucumber_token[0].value
 }
+
+#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
+resource "github_actions_environment_secret" "secret_integration_test_subkey" {
+  count  = var.env_short != "p" ? 1 : 0
+  repository       = local.github.repository
+  environment      = var.env
+  secret_name      = "SUBKEY"
+  plaintext_value  = data.azurerm_key_vault_secret.key_vault_integration_test_subkey[0].value
+}

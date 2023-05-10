@@ -14,6 +14,13 @@ data "azurerm_key_vault" "key_vault" {
   resource_group_name = "pagopa-${var.env_short}-sec-rg"
 }
 
+data "azurerm_key_vault" "domain_key_vault" {
+  count  = var.env_short != "p" ? 1 : 0
+
+  name = "pagopa-${var.env_short}-${local.domain}-kv"
+  resource_group_name = "pagopa-${var.env_short}-${local.domain}-sec-rg"
+}
+
 data "azurerm_key_vault_secret" "key_vault_sonar" {
   count  = var.env_short == "d" ? 1 : 0
 
@@ -34,15 +41,13 @@ data "azurerm_key_vault_secret" "key_vault_cucumber_token" {
   key_vault_id = data.azurerm_key_vault.key_vault[0].id
 }
 
+data "azurerm_key_vault_secret" "key_vault_integration_test_subkey" {
+  count  = var.env_short != "p" ? 1 : 0
+  name = "integration-test-subkey"
+  key_vault_id = data.azurerm_key_vault.key_vault[0].id
+}
+
 data "github_organization_teams" "all" {
   root_teams_only = true
   summary_only    = true
-}
-
-
-data "azurerm_key_vault" "domain_key_vault" {
-  count  = var.env_short != "p" ? 1 : 0
-
-  name = "pagopa-${var.env_short}-${local.domain}-kv"
-  resource_group_name = "pagopa-${var.env_short}-${local.domain}-sec-rg"
 }
