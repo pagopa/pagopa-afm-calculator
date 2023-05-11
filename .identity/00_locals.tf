@@ -3,17 +3,21 @@ locals {
     org        = "pagopa"
     repository = "pagopa-afm-calculator"
   }
-  prefix = "pagopa"
-  product = "${local.prefix}-${var.env_short}"
-  project = "${local.prefix}-${var.env_short}-${local.location_short}-${local.domain}"
-  runner = "${local.prefix}-${var.env_short}-${local.location_short}"
 
+  prefix  = "pagopa"
+  location_short = "weu"
   domain = "afm"
-  location_short  = "weu"
+  product = "${local.prefix}-${var.env_short}"
 
-  aks_name                = "${local.product}-${local.location_short}-${var.env}-aks"
-  aks_resource_group_name = "${local.product}-${local.location_short}-${var.env}-aks-rg"
+  app_name = "github-${local.github.org}-${local.github.repository}-${var.env}"
 
-  pagopa_apim_name = "${local.product}-apim"
-  pagopa_apim_rg   = "${local.product}-api-rg"
+  aks_cluster = {
+    name           = "${local.product}-${local.location_short}-${var.env}-aks"
+    resource_group = "${local.product}-${local.location_short}-${var.env}-aks-rg"
+  }
+
+  container_app_environment = {
+    name           = "${local.prefix}-${var.env_short}-${local.location_short}-github-runner-cae",
+    resource_group = "${local.prefix}-${var.env_short}-${local.location_short}-github-runner-rg",
+  }
 }
