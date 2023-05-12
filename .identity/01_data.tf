@@ -51,3 +51,10 @@ data "github_organization_teams" "all" {
   root_teams_only = true
   summary_only    = true
 }
+
+data "azurerm_key_vault_secret" "key_vault_connection_string" {
+  count  = var.env_short != "p" ? 1 : 0
+
+  name = "afm-d-sa-connection-string"
+  key_vault_id = data.azurerm_key_vault.domain_key_vault[0].id
+}

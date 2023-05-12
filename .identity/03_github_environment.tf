@@ -58,6 +58,14 @@ resource "github_actions_environment_variable" "github_environment_runner_variab
   value         = each.value
 }
 
+resource "github_actions_environment_variable" "github_environment_issuer_table_variable" {
+  count  = var.env_short != "p" ? 1 : 0
+  repository    = local.github.repository
+  environment   = var.env
+  variable_name = ISSUER_RANGE_TABLE
+  value         = "pagopa${var.env_short}weuafmsaissuerrangetable"
+}
+
 #############################
 # Secrets of the Repository #
 #############################
@@ -96,4 +104,13 @@ resource "github_actions_environment_secret" "secret_integration_test_subkey" {
   environment      = var.env
   secret_name      = "SUBKEY"
   plaintext_value  = data.azurerm_key_vault_secret.key_vault_integration_test_subkey[0].value
+}
+
+#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
+resource "github_actions_environment_secret" "secret_integration_test_connection_string" {
+  count  = var.env_short != "p" ? 1 : 0
+  repository       = local.github.repository
+  environment      = var.env
+  secret_name      = "AFM_SA_CONNECTION_STRING"
+  plaintext_value  = data.azurerm_key_vault_secret.key_vault_connection_string[0].value
 }
