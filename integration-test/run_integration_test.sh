@@ -6,4 +6,5 @@ set -e
 # run integration tests
 cd ./src || exit
 yarn install
+yarn add @azure/data-tables
 yarn test:"$1"
