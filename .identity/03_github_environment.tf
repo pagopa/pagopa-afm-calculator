@@ -62,7 +62,7 @@ resource "github_actions_environment_variable" "github_environment_issuer_table_
   count  = var.env_short != "p" ? 1 : 0
   repository    = local.github.repository
   environment   = var.env
-  variable_name = ISSUER_RANGE_TABLE
+  variable_name = "ISSUER_RANGE_TABLE"
   value         = "pagopa${var.env_short}weuafmsaissuerrangetable"
 }
 

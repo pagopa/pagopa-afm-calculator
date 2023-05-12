@@ -28,7 +28,6 @@ fi
 config=$(yq  -r '."microservice-chart".envConfig' ../helm/values-$ENV.yaml)
 for line in $(echo $config | jq -r '. | to_entries[] | select(.key) | "\(.key)=\(.value)"'); do
     echo $line >> .env
-    echo $line >> "$GITHUB_ENV"
 done
 
 keyvault=$(yq  -r '."microservice-chart".keyvault.name' ../helm/values-$ENV.yaml)
@@ -38,7 +37,6 @@ for line in $(echo $secret | jq -r '. | to_entries[] | select(.key) | "\(.key)=\
   response=$(az keyvault secret show --vault-name $keyvault --name "${array[1]}")
   value=$(echo $response | jq -r '.value')
   echo "${array[0]}=$value" >> .env
-  echo "${array[0]}=$value" >> "$GITHUB_ENV"
 done
 
 
