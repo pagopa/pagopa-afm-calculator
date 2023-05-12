@@ -77,6 +77,8 @@ jobs:
           export SUBKEY=${{ secrets.SUBKEY }}      
           export CANARY=${{ inputs.canary }}      
           export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+          export ISSUER_RANGE_TABLE=${{ vars.ISSUER_RANGE_TABLE }}
+          export AFM_SA_CONNECTION_STRING=${{ secrets.AFM_SA_CONNECTION_STRING }}
           
           cd ./integration-test
           chmod +x ./run_integration_test.sh
