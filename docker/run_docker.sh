@@ -38,8 +38,7 @@ for line in $(echo $secret | jq -r '. | to_entries[] | select(.key) | "\(.key)=\
   value=$(echo $response | jq -r '.value')
   echo "${array[0]}=$value" >> .env
   
-  export ${array[0]}=$value
-  echo "******************************* ${array[0]}"
+  export ${array[0]}=$value >> "$GITHUB_ENV"
 done
 
 
