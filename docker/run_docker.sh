@@ -37,6 +37,8 @@ for line in $(echo $secret | jq -r '. | to_entries[] | select(.key) | "\(.key)=\
   response=$(az keyvault secret show --vault-name $keyvault --name "${array[1]}")
   value=$(echo $response | jq -r '.value')
   echo "${array[0]}=$value" >> .env
+  echo "::add-mask::$value"
+  echo AFM_SA_CONNECTION_STRING=$value >> $GITHUB_ENV
 done
 
 
