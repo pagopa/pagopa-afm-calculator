@@ -39,6 +39,7 @@ for line in $(echo $secret | jq -r '. | to_entries[] | select(.key) | "\(.key)=\
   echo "${array[0]}=$value" >> .env
   
   export ${array[0]}=$value
+  echo "******************************* ${array[0]}"
 done
 
 
