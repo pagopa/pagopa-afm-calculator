@@ -77,7 +77,6 @@ jobs:
           export SUBKEY=${{ secrets.SUBKEY }}      
           export CANARY=${{ inputs.canary }}      
           export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
-          export AFM_SA_CONNECTION_STRING=${{ steps.run_service_docker.outputs.AFM_SA_CONNECTION_STRING }}
           
           cd ./integration-test
           chmod +x ./run_integration_test.sh

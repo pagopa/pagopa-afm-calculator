@@ -38,7 +38,7 @@ for line in $(echo $secret | jq -r '. | to_entries[] | select(.key) | "\(.key)=\
   response=$(az keyvault secret show --vault-name $keyvault --name "${array[1]}")
   value=$(echo $response | jq -r '.value')
   echo "${array[0]}=$value" >> .env
-  echo "${array[0]}=$value" >> "$GITHUB_OUTPUT"
+  echo "${array[0]}=$value" >> "$GITHUB_ENV"
 done
 
 
