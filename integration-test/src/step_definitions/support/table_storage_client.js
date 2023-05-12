@@ -12,7 +12,6 @@ const { odata, TableClient, AzureNamedKeyCredential } = require("@azure/data-tab
 // storage account connection
 const tableName = process.env.ISSUER_RANGE_TABLE; // es. "issuerrangetable";
 const connectionString = process.env.AFM_SA_CONNECTION_STRING;
-console.log("connectionString", connectionString);
 const tableClient = TableClient.fromConnectionString(connectionString, tableName);
 
 async function setup (entity){
