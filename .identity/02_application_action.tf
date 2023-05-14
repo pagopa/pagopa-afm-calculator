@@ -16,8 +16,8 @@ resource "null_resource" "github_runner_app_permissions_to_namespace" {
   triggers = {
     aks_id               = data.azurerm_kubernetes_cluster.aks.id
     service_principal_id = module.github_runner_app.client_id
-    namespace            = var.domain
-    version = "v1"
+    namespace            = local.domain
+    version              = "v1"
   }
 
   provisioner "local-exec" {
