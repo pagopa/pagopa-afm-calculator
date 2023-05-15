@@ -46,8 +46,10 @@ BeforeAll(function() {
 Given('the configuration {string}', async function(filePath) {
   let file = fs.readFileSync('./config/' + filePath);
   let config = JSON.parse(file);
-
+  
   validBundles = mapToValidBundles(config);
+  
+  console.log("****** validBundles", JSON.stringify(validBundles));
 
   let result = await post(afm_host + '/configuration/bundles/add',
     validBundles);
@@ -103,6 +105,8 @@ function mapToValidBundles(config) {
 
 // Asynchronous Promise
 AfterAll(async function() {
+  
+  console.log("************ delete")
 
   let result = await post(afm_host + '/configuration/bundles/delete',
     validBundles);
