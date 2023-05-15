@@ -13,13 +13,8 @@ on:
     inputs:
       environment:
         required: true
-        type: choice
         description: Select the Environment
-        options:
-          - dev
-          - uat
-          - prod
-          - all
+        type: environment
       semver:
         required: true
         type: choice
@@ -32,7 +27,7 @@ on:
           - skip
 
 env:
-  NAMESPACE: afm
+  NAMESPACE: ${{ vars.DOMAIN }}
   APP_NAME: pagopaafmcalculator
   TARGET: apim_api_afm_calculator_api_v1
 
@@ -164,7 +159,6 @@ jobs:
           name: Release ${{ steps.get_version.outputs.version }}
           makeLatest: latest
           generateReleaseNotes: true
-
 
   build:
     needs: release
