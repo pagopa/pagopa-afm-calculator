@@ -49,7 +49,7 @@ resource "azurerm_role_assignment" "environment_terraform_storage_account_tfstat
 
 resource "azurerm_role_assignment" "environment_terraform_storage_account_afm" {
   scope                = data.azurerm_storage_account.storage_account_afm.id
-  role_definition_name = "Contributor"
+  role_definition_name = "Storage Account Contributor"
   principal_id         = module.github_runner_app.object_id
 }
 
