@@ -3,6 +3,11 @@ data "azurerm_storage_account" "tfstate_app" {
   resource_group_name = "io-infra-rg"
 }
 
+data "azurerm_storage_account" "storage_account_afm" {
+  name                = "pagopa${var.env_short}weuafmsa"
+  resource_group_name = "pagopa-${var.env_short}-weu-${local.domain}-rg"
+}
+
 data "azurerm_resource_group" "dashboards" {
   name = "dashboards"
 }

@@ -47,6 +47,12 @@ resource "azurerm_role_assignment" "environment_terraform_storage_account_tfstat
   principal_id         = module.github_runner_app.object_id
 }
 
+resource "azurerm_role_assignment" "environment_terraform_storage_account_afm" {
+  scope                = data.azurerm_storage_account.storage_account_afm.id
+  role_definition_name = "Contributor"
+  principal_id         = module.github_runner_app.object_id
+}
+
 resource "azurerm_role_assignment" "environment_terraform_resource_group_dashboards" {
   scope                = data.azurerm_resource_group.dashboards.id
   role_definition_name = "Contributor"
