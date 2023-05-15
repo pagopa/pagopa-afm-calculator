@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-axios.defaults.headers.common['Ocp-Apim-Subscription-Key'] = process.env.SUBKEY // for all requests
+axios.defaults.headers.common['Ocp-Apim-Subscription-Key'] = 'subkey' //process.env.SUBKEY // for all requests
 if (process.env.canary) {
   axios.defaults.headers.common['X-CANARY'] = 'canary' // for all requests
 }
@@ -21,6 +21,7 @@ function post(url, body) {
     return res;
   })
   .catch(error => {
+    console.log(error);
     return error.response;
   });
 }
