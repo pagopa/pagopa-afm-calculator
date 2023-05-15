@@ -3,14 +3,57 @@
 # 3. set GITGUARDIAN_API_KEY in your develop environment (get an api key here: https://dashboard.gitguardian.com/workspace/230910/settings/personal/personal-access-tokens)
 # more info https://docs.gitguardian.com/internal-repositories-monitoring/integrations/git_hooks/pre_commit
 repos:
-  - repo: https://github.com/gitguardian/ggshield
-    rev: v1.11.0
-    hooks:
-      - id: ggshield
-        language_version: python3
-        stages: [ commit ]
+  # - repo: https://github.com/gitguardian/ggshield
+  #   rev: v1.11.0
+  #   hooks:
+  #     - id: ggshield
+  #       language_version: python3
+  #       stages: [ commit ]
 
-  - repo: https://github.com/maltzj/google-style-precommit-hook
-    rev: b7e9e7fcba4a5aea463e72fe9964c14877bd8130
+  # - repo: https://github.com/maltzj/google-style-precommit-hook
+  #   rev: b7e9e7fcba4a5aea463e72fe9964c14877bd8130
+  #   hooks:
+  #     - id: google-style-java
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
     hooks:
-      - id: google-style-java
+      # Common errors
+      - id: end-of-file-fixer
+        exclude_types: [sql]
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+        exclude_types: [sql]
+      - id: check-yaml
+      - id: check-executables-have-shebangs
+      # Cross platform
+      - id: check-case-conflict
+      - id: mixed-line-ending
+        args: [--fix=lf]
+        exclude_types: [sql]
+      # Security
+      - id: detect-aws-credentials
+        args: ['--allow-missing-credentials']
+      - id: detect-private-key
+  ## terraform
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.77.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_docs
+        args:
+          - --hook-config=--path-to-file=README.md        # Valid UNIX path. I.e. ../TFDOC.md or docs/README.md etc.
+          - --hook-config=--add-to-existing-file=true     # Boolean. true or false
+          - --hook-config=--create-file-if-not-exist=true # Boolean. true or false
+          - --args=--hide providers
+      # - id: terraform_tfsec
+      - id: terraform_validate
+        args:
+          - --args=-json
+          - --args=-no-color
+          - --args=-compact-warnings
+      - id: terraform_providers_lock
+        args:
+          - --args=-platform=windows_amd64
+          - --args=-platform=darwin_amd64
+          - --args=-platform=darwin_arm64
+          - --args=-platform=linux_amd64

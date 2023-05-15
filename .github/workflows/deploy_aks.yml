@@ -13,13 +13,8 @@ on:
     inputs:
       environment:
         required: true
-        type: choice
         description: Select the Environment
-        options:
-          - dev
-          - uat
-          - prod
-          - all
+        type: environment
       semver:
         required: true
         type: choice
@@ -32,7 +27,7 @@ on:
           - skip
 
 env:
-  NAMESPACE: afm
+  NAMESPACE: ${{ vars.DOMAIN }}
   APP_NAME: pagopaafmcalculator
   TARGET: apim_api_afm_calculator_api_v1
 
@@ -165,7 +160,6 @@ jobs:
           makeLatest: latest
           generateReleaseNotes: true
 
-
   build:
     needs: release
     runs-on: ubuntu-latest
@@ -252,7 +246,7 @@ jobs:
         if: ${{ (github.event.inputs.environment == null && matrix.environment == 'dev' ) || matrix.environment == github.event.inputs.environment || github.event.inputs.environment == 'all' }}
         run: |
           helm repo add microservice-chart https://pagopa.github.io/aks-microservice-chart-blueprint
-          helm dep build helm  
+          helm dep build helm
 
       - name: Helm Deploy
         if: ${{ (github.event.inputs.environment == null && matrix.environment == 'dev' ) || matrix.environment == github.event.inputs.environment || github.event.inputs.environment == 'all' }}

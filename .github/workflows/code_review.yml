@@ -20,11 +20,6 @@ on:
 env:
   PROJECT_KEY: pagopa_pagopa-afm-calculator
 
-
-permissions:
-  id-token: write
-  contents: read
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   code-review:
@@ -35,7 +30,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Code Review
-        uses: pagopa/github-actions-template/maven-code-review@v1.4.1
+        uses: pagopa/github-actions-template/maven-code-review@v1.4.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
@@ -74,13 +69,12 @@ jobs:
         shell: bash
         id: run_integration_test
         run: |
-          export SUBKEY=${{ secrets.SUBKEY }}      
-          export CANARY=${{ inputs.canary }}      
+          export SUBKEY=${{ secrets.SUBKEY }}
+          export CANARY=${{ inputs.canary }}
           export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
           export ISSUER_RANGE_TABLE=${{ vars.ISSUER_RANGE_TABLE }}
           export AFM_SA_CONNECTION_STRING='${{ secrets.AFM_SA_CONNECTION_STRING }}'
-          
+
           cd ./integration-test
           chmod +x ./run_integration_test.sh
           ./run_integration_test.sh local
-

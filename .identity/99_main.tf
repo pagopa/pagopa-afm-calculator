@@ -24,7 +24,7 @@ provider "azurerm" {
 }
 
 provider "github" {
-  owner          = "pagopa"
+  owner = "pagopa"
 }
 
 data "azurerm_subscription" "current" {}
