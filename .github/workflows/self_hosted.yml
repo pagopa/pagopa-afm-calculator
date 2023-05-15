@@ -11,15 +11,10 @@ on:
         required: true
         description: The environment target of the job
         type: string
-      beta:
-        required: false
-        type: boolean
-        description: deploy beta version on AKS
-        default: false
 
 env:
   NAMESPACE: afm
-  APP_NAME: pagopaafmcalculator
+  APP_NAME: afm-calculator
 
 
 permissions:
