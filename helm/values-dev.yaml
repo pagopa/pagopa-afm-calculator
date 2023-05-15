@@ -96,4 +96,4 @@ microservice-chart:
   canaryDelivery:
     deployment:
       image:
-        tag: 2.5.4-5-kibana
+        tag: 2.5.5-3-PAGOPA-923-update-onus-logic-integration-test
