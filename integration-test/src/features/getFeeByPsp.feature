@@ -1,7 +1,7 @@
 Feature: GetFeeByPsp
 
-  Background: 
-    Given the configuration "data.json"
+ # Background: 
+ #   Given the configuration "data.json"
 
 #  Scenario: Get List of fees by CI, amount, method, touchpoint and single PSP
 #    Given initial json
