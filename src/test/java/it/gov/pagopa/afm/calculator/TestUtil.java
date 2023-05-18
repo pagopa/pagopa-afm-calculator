@@ -81,6 +81,7 @@ public class TestUtil {
   public static ValidBundle getMockValidBundle() {
     return ValidBundle.builder()
         .id("1")
+        .idChannel("13212880150_07_ONUS")
         .name("bundle1")
         .idPsp("ABC")
         .abi("14156")
@@ -103,6 +104,7 @@ public class TestUtil {
     bundles.add(
         ValidBundle.builder()
             .id("1")
+            .idChannel("13212880150_01_ONUS")
             .name("bundle1")
             .idPsp("ABC")
             .abi("14156")
@@ -121,6 +123,7 @@ public class TestUtil {
     bundles.add(
         ValidBundle.builder()
             .id("2")
+            .idChannel("13212880150_02_ONUS")
             .name("bundle2")
             .idPsp("DEF")
             .abi("14156")
@@ -139,6 +142,7 @@ public class TestUtil {
     bundles.add(
         ValidBundle.builder()
             .id("3")
+            .idChannel("13212880150_03_ONUS")
             .name("bundle3")
             .idPsp("GHI")
             .abi("14157")
@@ -157,6 +161,7 @@ public class TestUtil {
     bundles.add(
         ValidBundle.builder()
             .id("4")
+            .idChannel("13212880150_04_ONUS")
             .name("bundle4")
             .idPsp("LMN")
             .abi("14158")
@@ -175,6 +180,7 @@ public class TestUtil {
     bundles.add(
         ValidBundle.builder()
             .id("5")
+            .idChannel("13212880150_05_ONUS")
             .name("bundle5")
             .idPsp("OPQ")
             .abi("14156")
@@ -185,6 +191,25 @@ public class TestUtil {
             .touchpoint("1")
             .paymentType("CP")
             .transferCategoryList(List.of("TAX5"))
+            .ciBundleList(Collections.singletonList(getMockCiBundle()))
+            .digitalStamp(false)
+            .digitalStampRestriction(false)
+            .onUs(true)
+            .build());
+    bundles.add(
+        ValidBundle.builder()
+            .id("6")
+            .idChannel("13212880150_06")
+            .name("bundle6")
+            .idPsp("RST")
+            .abi("14156")
+            .paymentAmount(6L)
+            .minPaymentAmount(0L)
+            .maxPaymentAmount(1000L)
+            .type(BundleType.PUBLIC)
+            .touchpoint("1")
+            .paymentType("CP")
+            .transferCategoryList(List.of("TAX6"))
             .ciBundleList(Collections.singletonList(getMockCiBundle()))
             .digitalStamp(false)
             .digitalStampRestriction(false)
