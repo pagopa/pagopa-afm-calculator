@@ -52,6 +52,11 @@ public class CriteriaBuilder {
         CriteriaType.IN, param, Collections.singletonList(values), Part.IgnoreCaseType.ALWAYS);
   }
 
+  public static <T> Criteria notIn(String param, List<T> values) {
+    return Criteria.getInstance(
+        CriteriaType.NOT_IN, param, Collections.singletonList(values), Part.IgnoreCaseType.ALWAYS);
+  }
+
   public static <T> Criteria arrayContains(String param, T value) {
     return Criteria.getInstance(
         CriteriaType.ARRAY_CONTAINS,

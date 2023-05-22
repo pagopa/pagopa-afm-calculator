@@ -1,14 +1,7 @@
 package it.gov.pagopa.afm.calculator.repository;
 
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.and;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.arrayContains;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.in;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqualOrAny;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqualOrNull;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isNull;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.or;
-
+import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
 import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
@@ -20,6 +13,7 @@ import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -113,6 +107,14 @@ public class CosmosRepository {
     if (paymentOption.getIdPspList() != null && !paymentOption.getIdPspList().isEmpty()) {
       var pspFilter = in("idPsp", paymentOption.getIdPspList());
       queryResult = and(queryResult, pspFilter);
+    }
+
+    boolean allCcp = true;
+
+    if(allCcp) {
+      List<String> posteBundles = Arrays.asList("bundlePoste1", "bundlePoste2");
+      var allCcpFilter = notIn("idBundle", posteBundles);
+      queryResult = and(queryResult, allCcpFilter);
     }
 
     // add filter by Transfer Category: transferCategory[] contains one of paymentOption
