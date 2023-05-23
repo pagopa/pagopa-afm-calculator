@@ -18,6 +18,7 @@ import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.initializer.Initializer;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -309,6 +310,24 @@ class CalculatorServiceTest {
         assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10, true));
 
     assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+  }
+
+  @Test
+  @Order(11)
+  void calculate_allCcpFlagDown() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(TestUtil.getMockMultipleValidBundlesPoste()));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+    List<Transfer> result = calculatorService.calculate(paymentOption, 10, false);
+    assertEquals(1, result.size());
   }
 
   // This must be the last test to run - it needs to mock the cosmosRepository in the service

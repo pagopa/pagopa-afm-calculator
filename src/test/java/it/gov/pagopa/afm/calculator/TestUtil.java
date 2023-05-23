@@ -98,6 +98,47 @@ public class TestUtil {
         .build();
   }
 
+  public static List<ValidBundle> getMockMultipleValidBundlesPoste() {
+    List<ValidBundle> bundles = new ArrayList<>();
+    bundles.add(
+        ValidBundle.builder()
+            .id("1")
+            .name("bundle1")
+            .idPsp("ABC")
+            .abi("14156")
+            .paymentAmount(1L)
+            .minPaymentAmount(0L)
+            .maxPaymentAmount(1000L)
+            .type(BundleType.PUBLIC)
+            .touchpoint("1")
+            .paymentType("CP")
+            .transferCategoryList(List.of("TAX1"))
+            .ciBundleList(Collections.singletonList(getMockCiBundle()))
+            .digitalStamp(false)
+            .digitalStampRestriction(false)
+            .onUs(true)
+            .build());
+    bundles.add(
+        ValidBundle.builder()
+            .id("2")
+            .name("bundle2")
+            .idPsp("testIdPspPoste")
+            .abi("14156")
+            .paymentAmount(2L)
+            .minPaymentAmount(0L)
+            .maxPaymentAmount(1000L)
+            .type(BundleType.PUBLIC)
+            .touchpoint("1")
+            .paymentType("CP")
+            .transferCategoryList(List.of("TAX2"))
+            .ciBundleList(Collections.singletonList(getMockCiBundle()))
+            .digitalStamp(false)
+            .digitalStampRestriction(false)
+            .onUs(true)
+            .build());
+    return bundles;
+  }
+
   public static List<ValidBundle> getMockMultipleValidBundle() {
     List<ValidBundle> bundles = new ArrayList<>();
     bundles.add(
