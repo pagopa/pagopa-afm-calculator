@@ -33,7 +33,7 @@ class CalculatorControllerTest {
   @BeforeEach
   void setup() throws IOException {
     List<Transfer> result = TestUtil.readObjectFromFile("responses/getFees.json", List.class);
-    when(calculatorService.calculate(any(), anyInt())).thenReturn(result);
+    when(calculatorService.calculate(any(), anyInt(), any())).thenReturn(result);
   }
 
   @Test

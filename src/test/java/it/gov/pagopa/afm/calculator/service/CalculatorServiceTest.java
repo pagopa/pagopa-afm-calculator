@@ -124,7 +124,7 @@ class CalculatorServiceTest {
             Collections.singleton(TestUtil.getMockValidBundle()));
 
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-    var result = calculatorService.calculate(paymentOption, 10);
+    var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
     String expected = TestUtil.readStringFromFile("responses/getFees.json");
@@ -146,7 +146,7 @@ class CalculatorServiceTest {
             Collections.singleton(validBundle));
 
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-    var result = calculatorService.calculate(paymentOption, 10);
+    var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
     String expected = TestUtil.readStringFromFile("responses/getFees2.json");
@@ -163,7 +163,7 @@ class CalculatorServiceTest {
         .thenReturn(Collections.singleton(validBundle));
 
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees2.json", PaymentOption.class);
-    var result = calculatorService.calculate(paymentOption, 10);
+    var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
     String expected = TestUtil.readStringFromFile("responses/getFees3.json");
@@ -185,7 +185,7 @@ class CalculatorServiceTest {
 
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFees_noInTransfer.json", PaymentOption.class);
-    var result = calculatorService.calculate(paymentOption, 10);
+    var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
     String expected = TestUtil.readStringFromFile("responses/getFees_noInTransfer.json");
@@ -201,7 +201,7 @@ class CalculatorServiceTest {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
     AppException exception =
-        assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10));
+        assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10, true));
 
     assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
   }
@@ -218,7 +218,7 @@ class CalculatorServiceTest {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
     AppException exception =
-        assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10));
+        assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10, true));
 
     assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
   }
@@ -240,7 +240,7 @@ class CalculatorServiceTest {
 
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFees_digitalStamp.json", PaymentOption.class);
-    var result = calculatorService.calculate(paymentOption, 10);
+    var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
     String expected = TestUtil.readStringFromFile("responses/getFees.json");
@@ -263,7 +263,7 @@ class CalculatorServiceTest {
 
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFees_digitalStamp2.json", PaymentOption.class);
-    var result = calculatorService.calculate(paymentOption, 10);
+    var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
     String expected = TestUtil.readStringFromFile("responses/getFees.json");
@@ -286,7 +286,7 @@ class CalculatorServiceTest {
         TestUtil.readObjectFromFile("requests/getFeesBINwithMultipleABI.json", PaymentOption.class);
 
     AppException exception =
-        assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10));
+        assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10, true));
 
     assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getHttpStatus());
   }
@@ -306,7 +306,7 @@ class CalculatorServiceTest {
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFeesBinNotFound.json", PaymentOption.class);
     AppException exception =
-        assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10));
+        assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10, true));
 
     assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
   }
@@ -322,11 +322,11 @@ class CalculatorServiceTest {
 
     List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundle();
 
-    Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any());
+    Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(), any());
 
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFeesMultipleTransfer.json", PaymentOption.class);
-    var result = calculatorService.calculate(paymentOption, 10);
+    var result = calculatorService.calculate(paymentOption, 10, true);
     assertEquals(5, result.size());
     // check order
     assertEquals("1", result.get(0).getIdBundle());
