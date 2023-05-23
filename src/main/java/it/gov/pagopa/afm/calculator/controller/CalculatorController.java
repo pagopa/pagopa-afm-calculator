@@ -87,7 +87,8 @@ public class CalculatorController {
       @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp")
           String idPsp,
       @RequestBody @Valid PaymentOptionByPsp paymentOptionByPsp,
-      @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
+      @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
+      @RequestParam(required = false, defaultValue = "true") Boolean allCcp) {
     PaymentOption paymentOption =
         PaymentOption.builder()
             .paymentAmount(paymentOptionByPsp.getPaymentAmount())
@@ -97,7 +98,7 @@ public class CalculatorController {
             .idPspList(List.of(idPsp))
             .transferList(paymentOptionByPsp.getTransferList())
             .build();
-    return calculatorService.calculate(paymentOption, maxOccurrences);
+    return calculatorService.calculate(paymentOption, maxOccurrences, allCcp);
   }
 
   @Operation(
@@ -155,7 +156,8 @@ public class CalculatorController {
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public List<Transfer> getFees(
       @RequestBody @Valid PaymentOption paymentOption,
-      @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
-    return calculatorService.calculate(paymentOption, maxOccurrences);
+      @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
+      @RequestParam(required = false, defaultValue = "true") Boolean allCcp) {
+    return calculatorService.calculate(paymentOption, maxOccurrences, allCcp);
   }
 }

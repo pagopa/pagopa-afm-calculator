@@ -13,12 +13,12 @@ import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -29,6 +29,9 @@ public class CosmosRepository {
   @Autowired CosmosTemplate cosmosTemplate;
 
   @Autowired UtilityComponent utilityComponent;
+
+  @Value("#{'${bundles.poste}'.split(',')}")
+  private List<String> bundlesPoste;
 
   /**
    * @param ciFiscalCode fiscal code of the CI
@@ -44,8 +47,8 @@ public class CosmosRepository {
   }
 
   @Cacheable(value = "findValidBundles")
-  public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption) {
-    Iterable<ValidBundle> validBundles = findValidBundles(paymentOption);
+  public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption, boolean allCcp) {
+    Iterable<ValidBundle> validBundles = findValidBundles(paymentOption, allCcp);
 
     return getFilteredBundles(paymentOption, validBundles);
   }
@@ -56,7 +59,7 @@ public class CosmosRepository {
    * @param paymentOption Get the Body of the Request
    * @return the filtered bundles
    */
-  private Iterable<ValidBundle> findValidBundles(PaymentOption paymentOption) {
+  private Iterable<ValidBundle> findValidBundles(PaymentOption paymentOption, boolean allCcp) {
 
     // add filter by Payment Amount: minPaymentAmount <= paymentAmount < maxPaymentAmount
     var minFilter =
@@ -109,14 +112,6 @@ public class CosmosRepository {
       queryResult = and(queryResult, pspFilter);
     }
 
-    boolean allCcp = true;
-
-    if(allCcp) {
-      List<String> posteBundles = Arrays.asList("bundlePoste1", "bundlePoste2");
-      var allCcpFilter = notIn("idBundle", posteBundles);
-      queryResult = and(queryResult, allCcpFilter);
-    }
-
     // add filter by Transfer Category: transferCategory[] contains one of paymentOption
     List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
     if (categoryList != null) {
@@ -131,6 +126,12 @@ public class CosmosRepository {
         var taxonomyOrNull = or(taxonomyFilter.get(), isNull("transferCategoryList"));
         queryResult = and(queryResult, taxonomyOrNull);
       }
+    }
+
+    // add filter for Poste bundles
+    if(allCcp) {
+      var allCcpFilter = notIn("id", bundlesPoste);
+      queryResult = and(queryResult, allCcpFilter);
     }
 
     // execute the query
