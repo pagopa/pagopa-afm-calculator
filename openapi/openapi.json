@@ -1,13 +1,13 @@
 {
-  "openapi": "3.0.1",
-  "info": {
-    "title": "PagoPA API Calculator Logic",
-    "description": "Calculator Logic microservice for pagoPA AFM",
-    "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.5.6-1-main"
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "PagoPA API Calculator Logic",
+    "description" : "Calculator Logic microservice for pagoPA AFM",
+    "termsOfService" : "https://www.pagopa.gov.it/",
+    "version" : "2.5.6-1-main"
   },
   "servers" : [ {
-    "url" : "http://localhost:8080",
+    "url" : "http://localhost:8586",
     "description" : "Generated server url"
   } ],
   "tags" : [ {
@@ -59,10 +59,10 @@
                 }
               }
             },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BundleOption"
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BundleOption"
                 }
               }
             }
@@ -335,10 +335,10 @@
                 }
               }
             },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BundleOption"
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BundleOption"
                 }
               }
             }
@@ -468,31 +468,31 @@
           }
         }
       },
-      "BundleOption": {
-        "type": "object",
-        "properties": {
-          "belowThreshold": {
-            "type": "boolean",
-            "description": "if true (the payment amount is lower than the threshold value) the bundles onus is not calculated (always false)"
+      "BundleOption" : {
+        "type" : "object",
+        "properties" : {
+          "belowThreshold" : {
+            "type" : "boolean",
+            "description" : "if true (the payment amount is lower than the threshold value) the bundles onus is not calculated (always false)"
           },
-          "bundleOptions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Transfer"
+          "bundleOptions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Transfer"
             }
           }
         }
       },
-      "PaymentOption": {
-        "type": "object",
-        "properties": {
-          "bin": {
-            "type": "string"
+      "PaymentOption" : {
+        "type" : "object",
+        "properties" : {
+          "bin" : {
+            "type" : "string"
           },
-          "idPspList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PspSearchCriteria"
+          "idPspList" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PspSearchCriteria"
             }
           },
           "paymentAmount" : {
@@ -515,41 +515,37 @@
             }
           }
         },
-        "required": [
-          "paymentAmount",
-          "primaryCreditorInstitution",
-          "transferList"
-        ]
+        "required" : [ "paymentAmount", "primaryCreditorInstitution", "transferList" ]
       },
-      "PaymentOptionByPsp": {
-        "type": "object",
-        "properties": {
-          "bin": {
-            "type": "string"
+      "PaymentOptionByPsp" : {
+        "type" : "object",
+        "properties" : {
+          "bin" : {
+            "type" : "string"
           },
-          "idBrokerPsp": {
-            "type": "string"
+          "idBrokerPsp" : {
+            "type" : "string"
           },
-          "idChannel": {
-            "type": "string"
+          "idChannel" : {
+            "type" : "string"
           },
-          "paymentAmount": {
-            "type": "integer",
-            "format": "int64"
+          "paymentAmount" : {
+            "type" : "integer",
+            "format" : "int64"
           },
-          "paymentMethod": {
-            "type": "string"
+          "paymentMethod" : {
+            "type" : "string"
           },
-          "primaryCreditorInstitution": {
-            "type": "string"
+          "primaryCreditorInstitution" : {
+            "type" : "string"
           },
-          "touchpoint": {
-            "type": "string"
+          "touchpoint" : {
+            "type" : "string"
           },
-          "transferList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TransferListItem"
+          "transferList" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TransferListItem"
             }
           }
         }
@@ -576,28 +572,26 @@
           }
         }
       },
-      "PspSearchCriteria": {
-        "type": "object",
-        "properties": {
-          "idBrokerPsp": {
-            "type": "string"
+      "PspSearchCriteria" : {
+        "type" : "object",
+        "properties" : {
+          "idBrokerPsp" : {
+            "type" : "string"
           },
-          "idChannel": {
-            "type": "string"
+          "idChannel" : {
+            "type" : "string"
           },
-          "idPsp": {
-            "type": "string"
+          "idPsp" : {
+            "type" : "string"
           }
         },
-        "required": [
-          "idPsp"
-        ]
+        "required" : [ "idPsp" ]
       },
-      "Transfer": {
-        "type": "object",
-        "properties": {
-          "abi": {
-            "type": "string"
+      "Transfer" : {
+        "type" : "object",
+        "properties" : {
+          "abi" : {
+            "type" : "string"
           },
           "bundleDescription" : {
             "type" : "string"
