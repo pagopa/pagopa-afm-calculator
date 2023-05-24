@@ -317,12 +317,11 @@ class CalculatorServiceTest {
   void calculate_allCcpFlagDown() throws IOException, JSONException {
     Touchpoint touchpoint = TestUtil.getMockTouchpoints();
     PaymentType paymentType = TestUtil.getMockPaymentType();
-
     when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
         .thenReturn(
             Collections.singleton(touchpoint),
             Collections.singleton(paymentType),
-            Collections.singleton(TestUtil.getMockMultipleValidBundlesPoste()));
+            Collections.singleton(TestUtil.getMockValidBundle()));
 
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
