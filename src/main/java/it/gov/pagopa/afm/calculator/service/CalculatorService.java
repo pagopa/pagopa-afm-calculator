@@ -40,7 +40,7 @@ public class CalculatorService {
   @Autowired IssuersService issuersService;
 
   @Cacheable(value = "calculate")
-  public List<Transfer> calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
+  public BundleOption calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
     List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
 
     return BundleOption.builder()

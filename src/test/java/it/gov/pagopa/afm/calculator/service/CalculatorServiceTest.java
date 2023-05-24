@@ -18,6 +18,7 @@ import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.initializer.Initializer;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import java.io.IOException;
@@ -133,10 +134,10 @@ class CalculatorServiceTest {
 
   @ParameterizedTest
   @CsvSource({
-    "requests/getFees.json, responses/getFees.json",
-    "requests/getFeesBinNull.json, responses/getFeesBinNull.json",
-    "requests/getFeesPspList.json, responses/getFees.json",
-    "requests/getFeesBinNotFound.json, responses/getFeesBinNotFound.json"
+      "requests/getFees.json, responses/getFees.json",
+      "requests/getFeesBinNull.json, responses/getFeesBinNull.json",
+      "requests/getFeesPspList.json, responses/getFees.json",
+      "requests/getFeesBinNotFound.json, responses/getFeesBinNotFound.json"
   })
   @Order(1)
   void calculate(String input, String output) throws IOException, JSONException {
@@ -149,7 +150,7 @@ class CalculatorServiceTest {
             Collections.singleton(paymentType),
             Collections.singleton(TestUtil.getMockValidBundle()));
 
-    var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+    var paymentOption = TestUtil.readObjectFromFile(input, PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
@@ -210,7 +211,7 @@ class CalculatorServiceTest {
             list);
 
     var paymentOption =
-        TestUtil.readObjectFromFile("requests/getFees_noInTransfer.json", PaymentOption.class);
+        TestUtil.readObjectFromFile("requests/getFeesNoInTransfer.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
@@ -265,7 +266,7 @@ class CalculatorServiceTest {
             Collections.singleton(mockValidBundle));
 
     var paymentOption =
-        TestUtil.readObjectFromFile("requests/getFees_digitalStamp.json", PaymentOption.class);
+        TestUtil.readObjectFromFile("requests/getFeesDigitalStamp.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
@@ -288,7 +289,7 @@ class CalculatorServiceTest {
             Collections.singleton(mockValidBundle));
 
     var paymentOption =
-        TestUtil.readObjectFromFile("requests/getFees_digitalStamp2.json", PaymentOption.class);
+        TestUtil.readObjectFromFile("requests/getFeesDigitalStamp2.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
@@ -335,9 +336,9 @@ class CalculatorServiceTest {
             Collections.singleton(mockValidBundle));
 
     var paymentOption =
-        TestUtil.readObjectFromFile("requests/getFeesBinNotFound.json", PaymentOption.class);
-    AppException exception =
-        assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10, true));
+        TestUtil.readObjectFromFile("requests/getFeesSubThreshold.json", PaymentOption.class);
+    var result = calculatorService.calculate(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
 
     String expected = TestUtil.readStringFromFile("responses/getFeesSubThreshold.json");
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
@@ -358,7 +359,7 @@ class CalculatorServiceTest {
             Collections.singleton(mockValidBundle));
 
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-    var result = calculatorService.calculate(paymentOption, 10);
+    var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
     String expected = TestUtil.readStringFromFile("responses/getFeesPaymentTypeNull.json");
@@ -381,7 +382,7 @@ class CalculatorServiceTest {
 
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFeesDigitalStamp3.json", PaymentOption.class);
-    var result = calculatorService.calculate(paymentOption, 10);
+    var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
     String expected = TestUtil.readStringFromFile("responses/getFees.json");
@@ -401,8 +402,8 @@ class CalculatorServiceTest {
 
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-    List<Transfer> result = calculatorService.calculate(paymentOption, 10, false);
-    assertEquals(1, result.size());
+    BundleOption result = calculatorService.calculate(paymentOption, 10, false);
+    assertEquals(1, result.getBundleOptions().size());
   }
 
   // This must be the last test to run - it needs to mock the cosmosRepository in the service
@@ -421,7 +422,7 @@ class CalculatorServiceTest {
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFeesMultipleTransfer.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10, true);
-    assertEquals(5, result.size());
+    assertEquals(6, result.getBundleOptions().size());
     // check order
     assertEquals("1", result.getBundleOptions().get(0).getIdBundle());
     assertEquals("2", result.getBundleOptions().get(1).getIdBundle());

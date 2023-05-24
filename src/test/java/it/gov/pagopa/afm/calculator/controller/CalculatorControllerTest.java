@@ -31,7 +31,7 @@ class CalculatorControllerTest {
 
   @BeforeEach
   void setup() throws IOException {
-    List<Transfer> result = TestUtil.readObjectFromFile("responses/getFees.json", List.class);
+    BundleOption result = TestUtil.readObjectFromFile("responses/getFees.json", BundleOption.class);
     when(calculatorService.calculate(any(), anyInt(), any(Boolean.class))).thenReturn(result);
   }
 
