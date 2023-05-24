@@ -30,8 +30,8 @@ public class CosmosRepository {
 
   @Autowired UtilityComponent utilityComponent;
 
-  @Value("${pspPoste.id}")
-  private String pspPosteId;
+  @Value("#{'${pspPoste.id}'.split(',')}")
+  private List<String> pspPosteId;
 
   /**
    * @param ciFiscalCode fiscal code of the CI

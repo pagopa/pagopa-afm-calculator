@@ -157,7 +157,7 @@ public class CalculatorController {
   public List<Transfer> getFees(
       @RequestBody @Valid PaymentOption paymentOption,
       @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
-      @RequestParam(required = false, defaultValue = "true") Boolean allCcp) {
-    return calculatorService.calculate(paymentOption, maxOccurrences, allCcp);
+      @RequestParam(required = false, defaultValue = "true") String allCcp) {
+    return calculatorService.calculate(paymentOption, maxOccurrences, Boolean.valueOf(allCcp));
   }
 }
