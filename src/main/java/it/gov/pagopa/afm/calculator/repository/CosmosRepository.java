@@ -5,18 +5,24 @@ import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
 import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
+import com.azure.spring.data.cosmos.core.query.Criteria;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -40,7 +46,9 @@ public class CosmosRepository {
    */
   private static List<CiBundle> filterByCI(String ciFiscalCode, ValidBundle bundle) {
     return bundle.getCiBundleList() != null
-        ? bundle.getCiBundleList().parallelStream()
+        ? bundle
+            .getCiBundleList()
+            .parallelStream()
             .filter(ciBundle -> ciFiscalCode.equals(ciBundle.getCiFiscalCode()))
             .collect(Collectors.toList())
         : null;
@@ -107,16 +115,20 @@ public class CosmosRepository {
     }
 
     // add filter by PSP: psp in list
-    if (paymentOption.getIdPspList() != null && !paymentOption.getIdPspList().isEmpty()) {
-      var pspFilter = in("idPsp", paymentOption.getIdPspList());
-      queryResult = and(queryResult, pspFilter);
+    Iterator<PspSearchCriteria> iterator =
+        Optional.ofNullable(paymentOption.getIdPspList())
+            .orElse(Collections.<PspSearchCriteria>emptyList())
+            .iterator();
+    if (iterator.hasNext()) {
+      queryResult = this.getPspFilterCriteria(queryResult, iterator);
     }
 
     // add filter by Transfer Category: transferCategory[] contains one of paymentOption
     List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
     if (categoryList != null) {
       var taxonomyFilter =
-          categoryList.parallelStream()
+          categoryList
+              .parallelStream()
               .filter(Objects::nonNull)
               .filter(elem -> !elem.isEmpty())
               .map(elem -> arrayContains("transferCategoryList", elem))
@@ -148,7 +160,9 @@ public class CosmosRepository {
   private List<ValidBundle> getFilteredBundles(
       PaymentOption paymentOption, Iterable<ValidBundle> validBundles) {
     var onlyMarcaBolloDigitale =
-        paymentOption.getTransferList().stream()
+        paymentOption
+            .getTransferList()
+            .stream()
             .filter(Objects::nonNull)
             .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
             .count();
@@ -203,5 +217,34 @@ public class CosmosRepository {
     return bundle != null
         && bundle.getCiBundleList() != null
         && !bundle.getCiBundleList().isEmpty();
+  }
+
+  /**
+   * Criteria an AND/OR concatenation of the global psp filter criteria
+   *
+   * @param queryResult query to modify
+   * @param iterator an iterator of PspSearchCriteria objects to generate filter criteria for the
+   *     psp
+   * @return the actual query
+   */
+  private Criteria getPspFilterCriteria(
+      Criteria queryResult, Iterator<PspSearchCriteria> iterator) {
+    Criteria queryTmp = null;
+    while (iterator.hasNext()) {
+      var pspSearch = iterator.next();
+      var queryItem = isEqual("idPsp", pspSearch.getIdPsp());
+      if (StringUtils.isNotEmpty(pspSearch.getIdChannel())) {
+        queryItem = and(queryItem, isEqual("idChannel", pspSearch.getIdChannel()));
+      }
+      if (StringUtils.isNotEmpty(pspSearch.getIdBrokerPsp())) {
+        queryItem = and(queryItem, isEqual("idBrokerPsp", pspSearch.getIdBrokerPsp()));
+      }
+      if (queryTmp == null) {
+        queryTmp = queryItem;
+      } else {
+        queryTmp = or(queryTmp, queryItem);
+      }
+    }
+    return queryTmp != null ? and(queryResult, queryTmp) : queryResult;
   }
 }

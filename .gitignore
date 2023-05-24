@@ -5,3 +5,5 @@ target/**/*
 *.iml
 **/emulatorcert.crt
 **/.DS_Store
+**/.terraform
+/helm/charts/

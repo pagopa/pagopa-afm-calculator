@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopadcommonacr.azurecr.io/pagopaafmcalculator
-    tag: "2.4.1-1-main"
+    tag: "2.5.6-1-main"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -70,11 +70,16 @@ microservice-chart:
     ISSUER_RANGE_TABLE: 'pagopadweuafmsaissuerrangetable'
     AMOUNT_THRESHOLD: '0'
     ID_PSP_POSTE: 'BPPIITRRZZZ'
+    ELASTIC_APM_SERVICE_NAME: pagopa-afm-calculator
+    ELASTIC_APM_APPLICATION_PACKAGES: it.gov.pagopa.afm.calculator
+    ELASTIC_APM_SERVER_URL: http://quickstart-apm-http.elastic-system.svc:8200
+    ELASTIC_APM_LOG_SENDING: 'true'
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'ai-d-connection-string'
     COSMOS_KEY: afm-marketplace-d-cosmos-pkey
     AFM_SA_CONNECTION_STRING: afm-d-sa-connection-string
+    ELASTIC_APM_SECRET_TOKEN: elastic-apm-secret-token
   keyvault:
     name: "pagopa-d-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
@@ -89,3 +94,7 @@ microservice-chart:
                 operator: In
                 values:
                   - user
+  canaryDelivery:
+    deployment:
+      image:
+        tag: 2.5.4-5-kibana

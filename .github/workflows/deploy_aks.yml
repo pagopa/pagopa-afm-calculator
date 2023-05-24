@@ -80,24 +80,29 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Set branch
+        run: |
+          echo "BRANCH=-${{github.ref_name}}" >> $GITHUB_ENV
+        if: ${{ github.ref_name != 'main' }}
+
       - name: Set build-number
         run: |
-          mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-${parsedVersion.nextBuildNumber}'
+          mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-${parsedVersion.nextBuildNumber}${{env.BRANCH}}'
         if: ${{ github.event.inputs.semver == 'buildNumber' }}
 
       - name: Set major
         run: |
-          mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.nextMajorVersion}.0.0'
+          mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.nextMajorVersion}.0.0${{env.BRANCH}}'
         if: ${{ contains(github.event.pull_request.labels.*.name, 'breaking-change') || github.event.inputs.semver == 'major' }}
 
       - name: Set minor
         run: |
-          mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.nextMinorVersion}.0'
+          mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.nextMinorVersion}.0${{env.BRANCH}}'
         if: ${{ contains(github.event.pull_request.labels.*.name, 'enhancement') || github.event.inputs.semver == 'minor' }}
 
       - name: Set patch
         run: |
-          mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}'
+          mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}${{env.BRANCH}}'
         if: ${{ contains(github.event.pull_request.labels.*.name, 'bug') || github.event.inputs.semver == 'patch' }}
 
       - id: get_version
@@ -235,10 +240,13 @@ jobs:
       - name: Gets K8s context
         id: login
         if: ${{ (github.event.inputs.environment == null && matrix.environment == 'dev' ) || matrix.environment == github.event.inputs.environment || github.event.inputs.environment == 'all' }}
-        uses: azure/aks-set-context@v3
+        uses: azure/aks-set-context@4e5aec273183a197b181314721843e047123d9fa
         with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
           resource-group: pagopa-${{matrix.short}}-weu-dev-aks-rg
           cluster-name: pagopa-${{matrix.short}}-weu-dev-aks
+          cluster-type: arc
+          method: service-principal
 
       - name: Helm Setup
         if: ${{ (github.event.inputs.environment == null && matrix.environment == 'dev' ) || matrix.environment == github.event.inputs.environment || github.event.inputs.environment == 'all' }}

@@ -1,10 +1,10 @@
 {
-  "openapi" : "3.0.1",
-  "info" : {
-    "title" : "PagoPA API Calculator Logic",
-    "description" : "Calculator Logic microservice for pagoPA AFM",
-    "termsOfService" : "https://www.pagopa.gov.it/",
-    "version" : "2.4.1-1-main"
+  "openapi": "3.0.1",
+  "info": {
+    "title": "PagoPA API Calculator Logic",
+    "description": "Calculator Logic microservice for pagoPA AFM",
+    "termsOfService": "https://www.pagopa.gov.it/",
+    "version": "2.5.6-1-main"
   },
   "servers" : [ {
     "url" : "http://localhost:8080",
@@ -59,13 +59,10 @@
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/Transfer"
-                  }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BundleOption"
                 }
               }
             }
@@ -338,13 +335,10 @@
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/Transfer"
-                  }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BundleOption"
                 }
               }
             }
@@ -474,16 +468,31 @@
           }
         }
       },
-      "PaymentOption" : {
-        "type" : "object",
-        "properties" : {
-          "bin" : {
-            "type" : "string"
+      "BundleOption": {
+        "type": "object",
+        "properties": {
+          "belowThreshold": {
+            "type": "boolean",
+            "description": "if true (the payment amount is lower than the threshold value) the bundles onus is not calculated (always false)"
           },
-          "idPspList" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
+          "bundleOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Transfer"
+            }
+          }
+        }
+      },
+      "PaymentOption": {
+        "type": "object",
+        "properties": {
+          "bin": {
+            "type": "string"
+          },
+          "idPspList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PspSearchCriteria"
             }
           },
           "paymentAmount" : {
@@ -506,28 +515,41 @@
             }
           }
         },
-        "required" : [ "bin", "paymentAmount", "primaryCreditorInstitution", "transferList" ]
+        "required": [
+          "paymentAmount",
+          "primaryCreditorInstitution",
+          "transferList"
+        ]
       },
-      "PaymentOptionByPsp" : {
-        "type" : "object",
-        "properties" : {
-          "paymentAmount" : {
-            "type" : "integer",
-            "format" : "int64"
+      "PaymentOptionByPsp": {
+        "type": "object",
+        "properties": {
+          "bin": {
+            "type": "string"
           },
-          "paymentMethod" : {
-            "type" : "string"
+          "idBrokerPsp": {
+            "type": "string"
           },
-          "primaryCreditorInstitution" : {
-            "type" : "string"
+          "idChannel": {
+            "type": "string"
           },
-          "touchpoint" : {
-            "type" : "string"
+          "paymentAmount": {
+            "type": "integer",
+            "format": "int64"
           },
-          "transferList" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/TransferListItem"
+          "paymentMethod": {
+            "type": "string"
+          },
+          "primaryCreditorInstitution": {
+            "type": "string"
+          },
+          "touchpoint": {
+            "type": "string"
+          },
+          "transferList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransferListItem"
             }
           }
         }
@@ -554,11 +576,28 @@
           }
         }
       },
-      "Transfer" : {
-        "type" : "object",
-        "properties" : {
-          "abi" : {
-            "type" : "string"
+      "PspSearchCriteria": {
+        "type": "object",
+        "properties": {
+          "idBrokerPsp": {
+            "type": "string"
+          },
+          "idChannel": {
+            "type": "string"
+          },
+          "idPsp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "idPsp"
+        ]
+      },
+      "Transfer": {
+        "type": "object",
+        "properties": {
+          "abi": {
+            "type": "string"
           },
           "bundleDescription" : {
             "type" : "string"

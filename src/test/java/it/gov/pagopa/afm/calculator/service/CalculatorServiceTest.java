@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -31,6 +32,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -40,6 +43,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import com.azure.spring.data.cosmos.core.CosmosTemplate;
+import com.azure.spring.data.cosmos.core.query.CosmosQuery;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.table.TableOperation;
+
+import it.gov.pagopa.afm.calculator.TestUtil;
+import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
+import it.gov.pagopa.afm.calculator.entity.PaymentType;
+import it.gov.pagopa.afm.calculator.entity.Touchpoint;
+import it.gov.pagopa.afm.calculator.entity.ValidBundle;
+import it.gov.pagopa.afm.calculator.exception.AppException;
+import it.gov.pagopa.afm.calculator.initializer.Initializer;
+import it.gov.pagopa.afm.calculator.model.BundleType;
+import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 
 @SpringBootTest
 @Testcontainers
@@ -112,9 +131,15 @@ class CalculatorServiceTest {
     Initializer.table.execute(TableOperation.insert(e));
   }
 
-  @Test
+  @ParameterizedTest
+  @CsvSource({
+    "requests/getFees.json, responses/getFees.json",
+    "requests/getFeesBinNull.json, responses/getFeesBinNull.json",
+    "requests/getFeesPspList.json, responses/getFees.json",
+    "requests/getFeesBinNotFound.json, responses/getFeesBinNotFound.json"
+  })
   @Order(1)
-  void calculate() throws IOException, JSONException {
+  void calculate(String input, String output) throws IOException, JSONException {
     Touchpoint touchpoint = TestUtil.getMockTouchpoints();
     PaymentType paymentType = TestUtil.getMockPaymentType();
 
@@ -128,7 +153,7 @@ class CalculatorServiceTest {
     var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
-    String expected = TestUtil.readStringFromFile("responses/getFees.json");
+    String expected = TestUtil.readStringFromFile(output);
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
 
@@ -189,7 +214,7 @@ class CalculatorServiceTest {
     var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
-    String expected = TestUtil.readStringFromFile("responses/getFees_noInTransfer.json");
+    String expected = TestUtil.readStringFromFile("responses/getFeesNoInTransfer.json");
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
 
@@ -294,22 +319,73 @@ class CalculatorServiceTest {
 
   @Test
   @Order(10)
-  void calculate_BinNotFound() throws IOException, JSONException {
+  void calculate_SubThreshold() throws IOException, JSONException {
     Touchpoint touchpoint = TestUtil.getMockTouchpoints();
     PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setMinPaymentAmount(-10L);
+    mockValidBundle.setPaymentAmount(-5L);
+    mockValidBundle.setIdPsp("111111111111");
+    mockValidBundle.setType(BundleType.GLOBAL);
 
     when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
         .thenReturn(
             Collections.singleton(touchpoint),
             Collections.singleton(paymentType),
-            Collections.singleton(TestUtil.getMockValidBundle()));
+            Collections.singleton(mockValidBundle));
 
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFeesBinNotFound.json", PaymentOption.class);
     AppException exception =
         assertThrows(AppException.class, () -> calculatorService.calculate(paymentOption, 10, true));
 
-    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    String expected = TestUtil.readStringFromFile("responses/getFeesSubThreshold.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
+  @Test
+  @Order(11)
+  void calculate_paymentType_Null() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setPaymentType(null);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(mockValidBundle));
+
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+    var result = calculatorService.calculate(paymentOption, 10);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesPaymentTypeNull.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
+  @Test
+  @Order(12)
+  void calculate_digitalStamp3() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setDigitalStamp(true);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(mockValidBundle));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesDigitalStamp3.json", PaymentOption.class);
+    var result = calculatorService.calculate(paymentOption, 10);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFees.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
 
   @Test
@@ -347,10 +423,11 @@ class CalculatorServiceTest {
     var result = calculatorService.calculate(paymentOption, 10, true);
     assertEquals(5, result.size());
     // check order
-    assertEquals("1", result.get(0).getIdBundle());
-    assertEquals("2", result.get(1).getIdBundle());
-    assertEquals("5", result.get(2).getIdBundle());
-    assertEquals("3", result.get(3).getIdBundle());
-    assertEquals("4", result.get(4).getIdBundle());
+    assertEquals("1", result.getBundleOptions().get(0).getIdBundle());
+    assertEquals("2", result.getBundleOptions().get(1).getIdBundle());
+    assertEquals("5", result.getBundleOptions().get(2).getIdBundle());
+    assertEquals("3", result.getBundleOptions().get(3).getIdBundle());
+    assertEquals("4", result.getBundleOptions().get(4).getIdBundle());
+    assertEquals("6", result.getBundleOptions().get(5).getIdBundle());
   }
 }

@@ -18,6 +18,8 @@ parameters:
       - "stress"
       - "rampingVU"
       - "rampingVULessRequests"
+      - "constant"
+      - "smoke"
   - name: "SCRIPT"
     displayName: "Script name"
     type: string
@@ -29,9 +31,11 @@ variables:
   ${{ if eq(parameters['ENVIRONMENT'], 'dev') }}:
     poolImage: 'pagopa-dev-loadtest-linux'
     API_SUBSCRIPTION_KEY: $(DEV_API_SUBSCRIPTION_KEY)
+    COSMOS_SUBSCRIPTION_KEY: $(DEV_COSMOS_SUBSCRIPTION_KEY)
   ${{ if eq(parameters['ENVIRONMENT'], 'uat') }}:
     poolImage: 'pagopa-uat-loadtest-linux'
     API_SUBSCRIPTION_KEY: $(UAT_API_SUBSCRIPTION_KEY)
+    COSMOS_SUBSCRIPTION_KEY: $(UAT_COSMOS_SUBSCRIPTION_KEY)
 
 
 pool:
@@ -45,5 +49,5 @@ steps:
 
   - script: |
       cd ./performance-test
-      sh ./run_performance_test.sh ${{ parameters.ENVIRONMENT }} ${{ parameters.TEST_TYPE }} ${{ parameters.SCRIPT }} afmcalculatork6 $(API_SUBSCRIPTION_KEY)
+      sh ./run_performance_test.sh ${{ parameters.ENVIRONMENT }} ${{ parameters.TEST_TYPE }} ${{ parameters.SCRIPT }} afmcalculatork6 $(API_SUBSCRIPTION_KEY) $(COSMOS_SUBSCRIPTION_KEY)
     displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.ENVIRONMENT }}

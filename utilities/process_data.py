@@ -6,6 +6,7 @@
 #   output: processed file
 #
 #   Usage: python3 process_data.py <file-path> <partition-key> <row-key>
+#   Example: python3 process_data.py ISSUER_RANGE_AL2022.csv BIN ID
 #
 
 import sys

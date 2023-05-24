@@ -10,6 +10,7 @@ import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
+import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Setter
@@ -41,8 +43,11 @@ public class CalculatorService {
   public List<Transfer> calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
     List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
 
-    // calculate the taxPayerFee
-    return calculateTaxPayerFee(paymentOption, limit, filteredBundles);
+    return BundleOption.builder()
+        .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
+        // calculate the taxPayerFee
+        .bundleOptions(calculateTaxPayerFee(paymentOption, limit, filteredBundles))
+        .build();
   }
 
   private List<Transfer> calculateTaxPayerFee(
@@ -171,32 +176,40 @@ public class CalculatorService {
         .idPsp(bundle.getIdPsp())
         .idBrokerPsp(bundle.getIdBrokerPsp())
         .idChannel(bundle.getIdChannel())
-        .onUs(this.getOnUsValue(taxPayerFee, bundle, paymentOption))
+        .onUs(this.getOnUsValue(bundle, paymentOption))
         .abi(bundle.getAbi())
         .build();
   }
 
-  private Boolean getOnUsValue(long taxPayerFee, ValidBundle bundle, PaymentOption paymentOption) {
+  private Boolean getOnUsValue(ValidBundle bundle, PaymentOption paymentOption) {
     boolean onusValue = false;
-    // if PaymentType is CP and amount > threshold ---> calculate onus value
-    if (bundle.getPaymentType().equalsIgnoreCase("cp")
-        && taxPayerFee >= Long.parseLong(StringUtils.trim(amountThreshold))) {
+
+    // if PaymentType is CP and amount > threshold and bin is evaluated ---> calculate onus value
+    if (bundle.getPaymentType() != null
+        && StringUtils.equalsIgnoreCase(bundle.getPaymentType(), "cp")
+        && !isBelowThreshold(paymentOption.getPaymentAmount())
+        && StringUtils.isNotBlank(paymentOption.getBin())) {
       // get issuers by BIN
       List<IssuerRangeEntity> issuers = issuersService.getIssuersByBIN(paymentOption.getBin());
-
+     
       // all extracted record must have the same ABI otherwise expetion raised
       // - the limit(2) operation is used to terminate as soon as two distinct ABI objects are found
-      if (issuers.stream().map(IssuerRangeEntity::getAbi).distinct().limit(2).count() > 1) {
+      if (!CollectionUtils.isEmpty(issuers) && issuers.stream().map(IssuerRangeEntity::getAbi).distinct().limit(2).count() > 1) {
         throw new AppException(
             AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
       }
 
-      // check if the ABI of the bundle is the same as issuers pulled via BIN
-      if (issuers.get(0).getAbi().equalsIgnoreCase(bundle.getAbi())) {
+      // check if the ABI of the bundle is the same as issuers pulled via BIN and that idChannel ends with the suffix _ONUS
+      if (!CollectionUtils.isEmpty(issuers) 
+          && issuers.get(0).getAbi().equalsIgnoreCase(bundle.getAbi())
+          && StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), "_ONUS")) {
         onusValue = true;
       }
     }
-
     return onusValue;
+  }
+
+  private boolean isBelowThreshold(long paymentAmount) {
+    return paymentAmount < Long.parseLong(StringUtils.trim(amountThreshold));
   }
 }

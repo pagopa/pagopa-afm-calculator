@@ -1,5 +1,7 @@
-[
-  {
+{
+  "belowThreshold": false,
+  "bundleOptions": [
+    {
   "taxPayerFee": 0,
   "primaryCiIncurredFee": 1,
   "paymentMethod": "CP",
@@ -9,9 +11,10 @@
   "bundleDescription": null,
   "idCiBundle": "1",
   "idPsp": "77777777777",
-  "idChannel": null,
+  "idChannel": "13212880150_07_ONUS",
   "idBrokerPsp": null,
   "onUs": true,
   "abi": "14156"
-  }
-]
+    }
+  ]
+}

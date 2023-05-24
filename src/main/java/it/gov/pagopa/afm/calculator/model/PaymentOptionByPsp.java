@@ -10,9 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class PaymentOptionByPsp {
+  private String idChannel;
+  private String idBrokerPsp;
   private Long paymentAmount;
   private String primaryCreditorInstitution;
   private String paymentMethod;
   private String touchpoint;
+  private String bin;
   @Valid private ArrayList<TransferListItem> transferList;
 }
