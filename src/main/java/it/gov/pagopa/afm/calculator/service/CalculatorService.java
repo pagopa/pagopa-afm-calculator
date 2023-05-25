@@ -33,6 +33,8 @@ import lombok.Setter;
 @Setter
 public class CalculatorService {
 
+  private static final String ONUS_BUNDLE_SUFFIX = "_ONUS";
+
   @Value("${payment.amount.threshold}")
   private String amountThreshold;
 
@@ -86,12 +88,12 @@ public class CalculatorService {
       boolean onusPaymentType = !CollectionUtils.isEmpty(issuers) && issuers.get(0).getAbi().equalsIgnoreCase(bundle.getAbi());
       
       // 2.a: if ONUS payment -> return the transfer list only for bundles with the idChannel attribute ending in '_ONUS'
-      if (onusPaymentType && StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), "_ONUS")) {
-        transfers = this.getTransferList(paymentOption, primaryCiInTransferList, bundle);
+      if (onusPaymentType && StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), ONUS_BUNDLE_SUFFIX)) {
+        transfers.addAll(this.getTransferList(paymentOption, primaryCiInTransferList, bundle));
       }
       // 2.b: if not ONUS payment -> return the transfer list only for bundles with the idChannel attribute NOT ending in '_ONUS'
-      if (!onusPaymentType && !StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), "_ONUS")) {
-        transfers = this.getTransferList(paymentOption, primaryCiInTransferList, bundle);
+      if (!onusPaymentType && !StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), ONUS_BUNDLE_SUFFIX)) {
+        transfers.addAll(this.getTransferList(paymentOption, primaryCiInTransferList, bundle));
       }
 
     }
@@ -226,28 +228,11 @@ public class CalculatorService {
   private Boolean getOnUsValue(ValidBundle bundle, PaymentOption paymentOption) {
     boolean onusValue = false;
 
-    // if PaymentType is CP and amount > threshold and bin is evaluated ---> calculate onus value
+    // if PaymentType is CP and amount > threshold and idChannel endsWith '_ONUS' ---> onus value true
     if (bundle.getPaymentType() != null
         && StringUtils.equalsIgnoreCase(bundle.getPaymentType(), "cp")
-        && !isBelowThreshold(paymentOption.getPaymentAmount())
-        && StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), "_ONUS")) {
-      //  && StringUtils.isNotBlank(paymentOption.getBin())) {
-      // get issuers by BIN
-      //List<IssuerRangeEntity> issuers = issuersService.getIssuersByBIN(paymentOption.getBin());
-     
-      // all extracted record must have the same ABI otherwise expetion raised
-      // - the limit(2) operation is used to terminate as soon as two distinct ABI objects are found
-      //if (!CollectionUtils.isEmpty(issuers) && issuers.stream().map(IssuerRangeEntity::getAbi).distinct().limit(2).count() > 1) {
-      //  throw new AppException(
-      //      AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
-      //}
-
-      // check if the ABI of the bundle is the same as issuers pulled via BIN and that idChannel ends with the suffix _ONUS
-      //if (!CollectionUtils.isEmpty(issuers) 
-      //    && issuers.get(0).getAbi().equalsIgnoreCase(bundle.getAbi())
-      //    && StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), "_ONUS")) {
-      //  onusValue = true;
-      //}
+        && !isBelowThreshold(paymentOption.getPaymentAmount()) 
+        && StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), ONUS_BUNDLE_SUFFIX)) {
       
       onusValue = true;
     }
