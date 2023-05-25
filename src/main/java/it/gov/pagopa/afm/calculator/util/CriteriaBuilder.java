@@ -21,6 +21,11 @@ public class CriteriaBuilder {
         CriteriaType.IS_EQUAL, param, Collections.singletonList(value), Part.IgnoreCaseType.ALWAYS);
   }
 
+  public static <T> Criteria isNotEqual(String param, T value) {
+    return Criteria.getInstance(
+        CriteriaType.NOT, param, Collections.singletonList(value), Part.IgnoreCaseType.ALWAYS);
+  }
+
   public static <T> Criteria isEqualOrAny(String param, T value) {
     var queryEquals =
         Criteria.getInstance(
@@ -55,11 +60,6 @@ public class CriteriaBuilder {
   public static <T> Criteria in(String param, List<T> values) {
     return Criteria.getInstance(
         CriteriaType.IN, param, Collections.singletonList(values), Part.IgnoreCaseType.ALWAYS);
-  }
-
-  public static <T> Criteria notIn(String param, List<T> values) {
-    return Criteria.getInstance(
-        CriteriaType.NOT_IN, param, Collections.singletonList(values), Part.IgnoreCaseType.ALWAYS);
   }
 
   public static <T> Criteria arrayContains(String param, T value) {

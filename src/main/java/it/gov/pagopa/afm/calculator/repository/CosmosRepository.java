@@ -36,8 +36,8 @@ public class CosmosRepository {
 
   @Autowired UtilityComponent utilityComponent;
 
-  @Value("#{'${pspPoste.id}'.split(',')}")
-  private List<String> pspPosteId;
+  @Value("${pspPoste.id}")
+  private String pspPosteId;
 
   /**
    * @param ciFiscalCode fiscal code of the CI
@@ -142,7 +142,7 @@ public class CosmosRepository {
 
     // add filter for Poste bundles
     if(!allCcp) {
-      var allCcpFilter = notIn("idPsp", pspPosteId);
+      var allCcpFilter = isNotEqual("idPsp", pspPosteId);
       queryResult = and(queryResult, allCcpFilter);
     }
 
