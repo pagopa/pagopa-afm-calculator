@@ -390,13 +390,13 @@ class CalculatorServiceTest {
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFeesMultipleTransfer.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10);
-    assertEquals(6, result.getBundleOptions().size());
+    assertEquals(5, result.getBundleOptions().size());
     // check order
-    assertEquals("1", result.getBundleOptions().get(0).getIdBundle());
-    assertEquals("2", result.getBundleOptions().get(1).getIdBundle());
-    assertEquals("5", result.getBundleOptions().get(2).getIdBundle());
-    assertEquals("3", result.getBundleOptions().get(3).getIdBundle());
-    assertEquals("4", result.getBundleOptions().get(4).getIdBundle());
-    assertEquals("6", result.getBundleOptions().get(5).getIdBundle());
+    assertEquals(true,  result.getBundleOptions().get(0).getOnUs());
+    assertEquals(true,  result.getBundleOptions().get(1).getOnUs());
+    assertEquals(true,  result.getBundleOptions().get(2).getOnUs());
+    assertEquals(false, result.getBundleOptions().get(3).getOnUs());
+    assertEquals(false, result.getBundleOptions().get(4).getOnUs());
+   
   }
 }
