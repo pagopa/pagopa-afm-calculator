@@ -3,9 +3,9 @@ const { odata, TableClient, AzureNamedKeyCredential } = require("@azure/data-tab
 
 // azurite storage connection
 /* const account = "devstoreaccount1";   
-   const accountKey = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="; 
+   const accountKeyAzurite = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="; 
    const tableName = "issuerrangetable";
-   const credential = new AzureNamedKeyCredential(account, accountKey);
+   const credential = new AzureNamedKeyCredential(account, accountKeyAzurite);
    const tableClient = new TableClient(connectionString, tableName, credential, { allowInsecureConnection: true });
 */
 
