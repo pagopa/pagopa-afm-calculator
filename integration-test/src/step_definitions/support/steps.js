@@ -7,7 +7,7 @@ const tableStorageClient = require("./table_storage_client");
 
 const afm_host = process.env.AFM_HOST;
 
-setDefaultTimeout(30000);
+setDefaultTimeout(15000);
 
 let body;
 let responseToCheck;
