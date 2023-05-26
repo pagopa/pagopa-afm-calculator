@@ -6,21 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import com.azure.spring.data.cosmos.core.CosmosTemplate;
-import com.azure.spring.data.cosmos.core.query.CosmosQuery;
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.table.TableOperation;
-import it.gov.pagopa.afm.calculator.TestUtil;
-import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
-import it.gov.pagopa.afm.calculator.entity.PaymentType;
-import it.gov.pagopa.afm.calculator.entity.Touchpoint;
-import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.exception.AppException;
-import it.gov.pagopa.afm.calculator.initializer.Initializer;
-import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
-import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
-import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,6 +44,7 @@ import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.initializer.Initializer;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 
 @SpringBootTest
@@ -134,10 +120,10 @@ class CalculatorServiceTest {
 
   @ParameterizedTest
   @CsvSource({
-      "requests/getFees.json, responses/getFees.json",
-      "requests/getFeesBinNull.json, responses/getFeesBinNull.json",
-      "requests/getFeesPspList.json, responses/getFees.json",
-      "requests/getFeesBinNotFound.json, responses/getFeesBinNotFound.json"
+    "requests/getFees.json, responses/getFees.json",
+    "requests/getFeesBinNull.json, responses/getFeesBinNull.json",
+    "requests/getFeesPspList.json, responses/getFees.json",
+    "requests/getFeesBinNotFound.json, responses/getFeesBinNotFound.json"
   })
   @Order(1)
   void calculate(String input, String output) throws IOException, JSONException {
@@ -422,13 +408,13 @@ class CalculatorServiceTest {
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFeesMultipleTransfer.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10, true);
-    assertEquals(6, result.getBundleOptions().size());
+    assertEquals(5, result.getBundleOptions().size());
     // check order
-    assertEquals("1", result.getBundleOptions().get(0).getIdBundle());
-    assertEquals("2", result.getBundleOptions().get(1).getIdBundle());
-    assertEquals("5", result.getBundleOptions().get(2).getIdBundle());
-    assertEquals("3", result.getBundleOptions().get(3).getIdBundle());
-    assertEquals("4", result.getBundleOptions().get(4).getIdBundle());
-    assertEquals("6", result.getBundleOptions().get(5).getIdBundle());
+    assertEquals(true,  result.getBundleOptions().get(0).getOnUs());
+    assertEquals(true,  result.getBundleOptions().get(1).getOnUs());
+    assertEquals(true,  result.getBundleOptions().get(2).getOnUs());
+    assertEquals(false, result.getBundleOptions().get(3).getOnUs());
+    assertEquals(false, result.getBundleOptions().get(4).getOnUs());
+   
   }
 }

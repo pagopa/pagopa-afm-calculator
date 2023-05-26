@@ -33,10 +33,9 @@ public class Transfer implements Comparable<Transfer>, Serializable {
 
   @Override
   public int compareTo(Transfer t) {
-    // order by onUs and taxPayerFee
+    // order by onUs
     return Comparator.comparing((Transfer tr) -> tr.onUs)
         .reversed()
-        .thenComparingLong(tr -> tr.taxPayerFee)
         .compare(this, t);
   }
 }

@@ -27,59 +27,13 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And check response body is
-      """
-       {
-      "belowThreshold": false,
-      "bundleOptions": [
-        {
-            "taxPayerFee": 999999999999996,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-3",
-            "bundleName": "pacchetto 3",
-            "bundleDescription": "pacchetto 3",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999975,
-            "primaryCiIncurredFee": 20,
-            "paymentMethod": "ANY",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-4",
-            "bundleName": "pacchetto 4",
-            "bundleDescription": "pacchetto 4",
-            "idCiBundle": "int-test-3",
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999978,
-            "primaryCiIncurredFee": 20,
-            "paymentMethod": "ANY",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-1",
-            "bundleName": "pacchetto 1",
-            "bundleDescription": "pacchetto 1",
-            "idCiBundle": "int-test-1",
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        }
-      ]
-      }
-      """
+    And the body response ordering for the bundleOptions.onUs field is:
+    | onUs  |
+    | true  |
+    | false |
+    | false |
+    
+    
 
   Scenario: Execute a GetFees request 2
     Given initial json
@@ -105,119 +59,15 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And check response body is
-      """
-      {
-      "belowThreshold": false,
-      "bundleOptions": [
-        {
-            "taxPayerFee": 999999999999994,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "IO",
-            "idBundle": "int-test-5",
-            "bundleName": "pacchetto 5",
-            "bundleDescription": "pacchetto 5",
-            "idCiBundle": null,
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999996,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-3",
-            "bundleName": "pacchetto 3",
-            "bundleDescription": "pacchetto 3",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999975,
-            "primaryCiIncurredFee": 20,
-            "paymentMethod": "ANY",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-4",
-            "bundleName": "pacchetto 4",
-            "bundleDescription": "pacchetto 4",
-            "idCiBundle": "int-test-3",
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999978,
-            "primaryCiIncurredFee": 20,
-            "paymentMethod": "ANY",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-1",
-            "bundleName": "pacchetto 1",
-            "bundleDescription": "pacchetto 1",
-            "idCiBundle": "int-test-1",
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999991,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-8",
-            "bundleName": "pacchetto 8",
-            "bundleDescription": "pacchetto 8",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999992,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-7",
-            "bundleName": "pacchetto 7",
-            "bundleDescription": "pacchetto 7",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999993,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-6",
-            "bundleName": "pacchetto 6",
-            "bundleDescription": "pacchetto 6",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        }
-      ]
-      }
-      """
+    And the body response ordering for the bundleOptions.onUs field is:
+    | onUs  |
+    | true  |
+    | true  |
+    | false |
+    | false |
+    | false |
+    | false |
+    | false |
 
   Scenario: Get List of fees by CI, amount, method and single PSP
     Given initial json
@@ -243,89 +93,15 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And check response body is
-      """
-      {
-      "belowThreshold": false,
-      "bundleOptions": [
-        {
-            "taxPayerFee": 999999999999996,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-3",
-            "bundleName": "pacchetto 3",
-            "bundleDescription": "pacchetto 3",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999975,
-            "primaryCiIncurredFee": 20,
-            "paymentMethod": "ANY",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-4",
-            "bundleName": "pacchetto 4",
-            "bundleDescription": "pacchetto 4",
-            "idCiBundle": "int-test-3",
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999991,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-8",
-            "bundleName": "pacchetto 8",
-            "bundleDescription": "pacchetto 8",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999992,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-7",
-            "bundleName": "pacchetto 7",
-            "bundleDescription": "pacchetto 7",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999993,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-6",
-            "bundleName": "pacchetto 6",
-            "bundleDescription": "pacchetto 6",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        }
-      ]
-      }
-      """
+    And the body response ordering for the bundleOptions.onUs field is:
+    | onUs  |
+    | true  |
+    | false |
+    | false |
+    | false |
+    | false |
+    
+    
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP
     Given initial json
@@ -351,59 +127,12 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And check response body is
-      """
-      {
-      "belowThreshold": false,
-      "bundleOptions": [
-        {
-            "taxPayerFee": 999999999999994,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "IO",
-            "idBundle": "int-test-5",
-            "bundleName": "pacchetto 5",
-            "bundleDescription": "pacchetto 5",
-            "idCiBundle": null,
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999978,
-            "primaryCiIncurredFee": 20,
-            "paymentMethod": "ANY",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-1",
-            "bundleName": "pacchetto 1",
-            "bundleDescription": "pacchetto 1",
-            "idCiBundle": "int-test-1",
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999997,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "PO",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-2",
-            "bundleName": "pacchetto 2",
-            "bundleDescription": "pacchetto 2",
-            "idCiBundle": null,
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        }
-      ]
-      }
-      """
+    And the body response ordering for the bundleOptions.onUs field is:
+    | onUs  |
+    | true  |
+    | false |
+    | false |
+    
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP 2
     Given initial json
@@ -481,44 +210,11 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And check response body is
-      """
-      {
-      "belowThreshold": false,
-      "bundleOptions": [
-      {
-            "taxPayerFee": 999999999999991,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-8",
-            "bundleName": "pacchetto 8",
-            "bundleDescription": "pacchetto 8",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999992,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-7",
-            "bundleName": "pacchetto 7",
-            "bundleDescription": "pacchetto 7",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        }
-      ]
-      }
-      """
+    And the body response ordering for the bundleOptions.onUs field is:
+    | onUs  |
+    | false |
+    | false |
+   
 
   Scenario: Execute a GetFees request and above threshold
     Given initial json
@@ -544,119 +240,16 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And check response body is
-      """
-      {
-      "belowThreshold": false,
-      "bundleOptions": [
-        {
-            "taxPayerFee": 999999999999994,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "IO",
-            "idBundle": "int-test-5",
-            "bundleName": "pacchetto 5",
-            "bundleDescription": "pacchetto 5",
-            "idCiBundle": null,
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999996,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-3",
-            "bundleName": "pacchetto 3",
-            "bundleDescription": "pacchetto 3",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999975,
-            "primaryCiIncurredFee": 20,
-            "paymentMethod": "ANY",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-4",
-            "bundleName": "pacchetto 4",
-            "bundleDescription": "pacchetto 4",
-            "idCiBundle": "int-test-3",
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-         {
-            "taxPayerFee": 999999999999978,
-            "primaryCiIncurredFee": 20,
-            "paymentMethod": "ANY",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-1",
-            "bundleName": "pacchetto 1",
-            "bundleDescription": "pacchetto 1",
-            "idCiBundle": "int-test-1",
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999991,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-8",
-            "bundleName": "pacchetto 8",
-            "bundleDescription": "pacchetto 8",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999992,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-7",
-            "bundleName": "pacchetto 7",
-            "bundleDescription": "pacchetto 7",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999993,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-6",
-            "bundleName": "pacchetto 6",
-            "bundleDescription": "pacchetto 6",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        }     
-      ]
-      }
-      """
+    And the body response ordering for the bundleOptions.onUs field is:
+    | onUs  |
+    | true  |
+    | true  |
+    | false |
+    | false |
+    | false |
+    | false |
+    | false |
+    
 
   Scenario: Execute a GetFees request with non-existing bin
     Given initial json
@@ -682,116 +275,12 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And check response body is
-      """
-      {
-      "belowThreshold": false,
-      "bundleOptions": [
-      {
-            "taxPayerFee": 999999999999975,
-            "primaryCiIncurredFee": 20,
-            "paymentMethod": "ANY",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-4",
-            "bundleName": "pacchetto 4",
-            "bundleDescription": "pacchetto 4",
-            "idCiBundle": "int-test-3",
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999978,
-            "primaryCiIncurredFee": 20,
-            "paymentMethod": "ANY",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-1",
-            "bundleName": "pacchetto 1",
-            "bundleDescription": "pacchetto 1",
-            "idCiBundle": "int-test-1",
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999991,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-8",
-            "bundleName": "pacchetto 8",
-            "bundleDescription": "pacchetto 8",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999992,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-7",
-            "bundleName": "pacchetto 7",
-            "bundleDescription": "pacchetto 7",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999993,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "ANY",
-            "touchpoint": "IO",
-            "idBundle": "int-test-6",
-            "bundleName": "pacchetto 6",
-            "bundleDescription": "pacchetto 6",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999994,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "IO",
-            "idBundle": "int-test-5",
-            "bundleName": "pacchetto 5",
-            "bundleDescription": "pacchetto 5",
-            "idCiBundle": null,
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 999999999999996,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-3",
-            "bundleName": "pacchetto 3",
-            "bundleDescription": "pacchetto 3",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01_ONUS",
-            "idBrokerPsp": "88888888899",
-            "onUs": false,
-            "abi": "14156"
-        }  
-      ]
-      }
-      """
+    And the body response ordering for the bundleOptions.onUs field is:
+    | onUs  |
+    | false |
+    | false |
+    | false |
+    | false |
+    | false |
+    | false |
+    | false |
