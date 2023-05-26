@@ -215,6 +215,21 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "idBrokerPsp": "88888888899",
             "onUs": false,
             "abi": "14156"
+        },
+        {
+            "taxPayerFee": 150,
+            "primaryCiIncurredFee": 0,
+            "paymentMethod": "ANY",
+            "touchpoint": "IO-test-2",
+            "idBundle": "int-test-9",
+            "bundleName": "pacchetto 9",
+            "bundleDescription": "pacchetto 9",
+            "idCiBundle": null,
+            "idPsp": "BPPIITRRZZZ",
+            "idChannel": "14847241008_f03",
+            "idBrokerPsp": "14847241008",
+            "onUs": false,
+            "abi": "14156"
         }
     ]
 }
@@ -652,6 +667,21 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "idPsp": "88888888888",
             "idChannel": "88888888899_01",
             "idBrokerPsp": "88888888899",
+            "onUs": false,
+            "abi": "14156"
+        },
+        {
+            "taxPayerFee": 150,
+            "primaryCiIncurredFee": 0,
+            "paymentMethod": "ANY",
+            "touchpoint": "IO-test-2",
+            "idBundle": "int-test-9",
+            "bundleName": "pacchetto 9",
+            "bundleDescription": "pacchetto 9",
+            "idCiBundle": null,
+            "idPsp": "BPPIITRRZZZ",
+            "idChannel": "14847241008_f03",
+            "idBrokerPsp": "14847241008",
             "onUs": false,
             "abi": "14156"
         }
