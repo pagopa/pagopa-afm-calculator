@@ -1,10 +1,13 @@
-const { Given, When, Then, BeforeAll, AfterAll } = require('@cucumber/cucumber')
+const { Given, When, Then, BeforeAll, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber')
+ 
 const assert = require("assert");
 const { call, post } = require("./common");
 const fs = require("fs");
 const tableStorageClient = require("./table_storage_client");
 
 const afm_host = process.env.AFM_HOST;
+
+setDefaultTimeout(30000);
 
 let body;
 let responseToCheck;

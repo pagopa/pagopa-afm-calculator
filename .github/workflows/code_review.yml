@@ -68,6 +68,7 @@ jobs:
           cd ./docker
           chmod +x ./run_docker.sh
           ./run_docker.sh local
+          cd ..
 
           export SUBKEY=${{ secrets.SUBKEY }}
           export CANARY=${{ inputs.canary }}
