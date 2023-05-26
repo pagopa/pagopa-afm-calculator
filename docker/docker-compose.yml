@@ -1,60 +1,14 @@
 version: '3.8'
 
 services:
-  calculator:
+  app:
     container_name: 'calculator'
     image: ${image}
-    user: root
-    volumes:
-      - ./config/cosmosdb.sh:/cosmosdb.sh
-    entrypoint: sh /cosmosdb.sh
+    platform: linux/amd64
     build:
       dockerfile: Dockerfile
       context: ../
     env_file:
-      - ./config/.env
+      - ./.env
     ports:
       - "8080:8080"
-    depends_on:
-      - cosmosdb
-    networks:
-      app_net:
-
-  cosmosdb:
-    container_name: 'cosmosdb'
-    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
-    ports:
-      - '8081:8081'
-      - '10251-10254:10251-10254'
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 3g
-    environment:
-      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=10
-      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
-      - AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE=10.20.0.2
-    networks:
-      app_net:
-        ipv4_address: 10.20.0.2
-
-  azure-storage:
-    container_name: 'azure-storage'
-    image: mcr.microsoft.com/azure-storage/azurite
-    ports:
-      - '10000:10000'
-      - '10001:10001'
-      - '10002:10002'
-    networks:
-      app_net:
-        ipv4_address: 10.20.0.3
-
-
-networks:
-  app_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.20.0.0/16
-          gateway: 10.20.0.1

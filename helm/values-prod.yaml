@@ -3,8 +3,8 @@ microservice-chart:
   nameOverride: ""
   fullnameOverride: ""
   image:
-    repository: pagopapcommonacr.azurecr.io/pagopaafmcalculator
-    tag: "2.5.6-1-main"
+    repository: ghcr.io/pagopa/pagopa-afm-calculator
+    tag: "2.5.5"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -96,4 +96,4 @@ microservice-chart:
   canaryDelivery:
     deployment:
       image:
-        tag: 2.5.3-2-PAGOPA-749-psp-channel-broker
+        tag: 2.5.5-4-PAGOPA-923-update-onus-logic-integration-test
