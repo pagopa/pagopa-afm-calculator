@@ -7,6 +7,8 @@ const tableStorageClient = require("./table_storage_client");
 
 const afm_host = process.env.AFM_HOST;
 
+/*increased the default timeout of the promise to allow 
+the correct execution of the smoke tests*/
 setDefaultTimeout(15000);
 
 let body;

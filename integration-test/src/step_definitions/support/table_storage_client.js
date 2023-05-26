@@ -12,14 +12,11 @@ const { odata, TableClient, AzureNamedKeyCredential } = require("@azure/data-tab
 // storage account connection
 const tableName = process.env.ISSUER_RANGE_TABLE // es. "issuerrangetable";
 const connectionString = process.env.AFM_SA_CONNECTION_STRING
-console.log("********* connectionString:" + connectionString);
 const tableClient = TableClient.fromConnectionString(connectionString, tableName);
 
 async function setup (entity){
-  console.log("*** start setup: " + entity.partitionKey + "***")
   await deleteByPK (entity.partitionKey);
   await createEntity (entity);
-  console.log("*** end setup ***")
 } 
 
 async function deleteByPK(partitionKey) {
@@ -32,14 +29,12 @@ async function deleteByPK(partitionKey) {
     });
 
     for await (const entity of entities) {
-      console.log("*** found entity to delete ["+entity.partitionKey+","+entity.rowKey+"] ***")
       await tableClient.deleteEntity(entity.partitionKey, entity.rowKey);
     }
   }
 }
 
 async function createEntity(entity) {
-  console.log("*** entity to create ["+entity.partitionKey+","+entity.rowKey+"] ***")
   await tableClient.createEntity(entity);
 }
 
