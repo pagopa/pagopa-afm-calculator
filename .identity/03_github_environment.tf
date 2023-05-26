@@ -60,6 +60,14 @@ resource "github_actions_environment_variable" "github_environment_runner_variab
   value         = each.value
 }
 
+
+resource "github_actions_environment_variable" "github_environment_issuer_table" {
+  repository    = local.github.repository
+  environment   = var.env
+  variable_name = "ISSUER_RANGE_TABLE"
+  value         = "${local.prefix}${var.env_short}${local.location_short}${local.domain}saissuerrangetable"
+}
+
 #############################
 # Secrets of the Repository #
 #############################
