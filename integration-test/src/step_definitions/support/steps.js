@@ -1,4 +1,4 @@
-const {Given, When, Then, Before, AfterAll} = require('@cucumber/cucumber')
+const {Given, When, Then, After} = require('@cucumber/cucumber')
 const assert = require("assert");
 const {call, post} = require("./common");
 const fs = require("fs");
@@ -66,7 +66,7 @@ function mapToValidBundles(config) {
 }
 
 // Asynchronous Promise
-AfterAll(async function () {
+After(async function () {
   const result = await post(afm_host + '/configuration/bundles/delete',
       validBundles);
   assert.strictEqual(result.status, 200);

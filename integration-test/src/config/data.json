@@ -31,7 +31,7 @@
       "paymentAmount": 80,
       "minPaymentAmount": 0,
       "maxPaymentAmount": 10000,
-      "paymentType": "PO",
+      "paymentType": "PO-test-2",
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
@@ -50,7 +50,7 @@
       "paymentAmount": 90,
       "minPaymentAmount": 0,
       "maxPaymentAmount": 99000,
-      "paymentType": "CP",
+      "paymentType": "CP-test-1",
       "onUs": "false",
       "type": "GLOBAL",
       "validityDateFrom": null,
@@ -92,9 +92,9 @@
       "paymentAmount": 60,
       "minPaymentAmount": 0,
       "maxPaymentAmount": 99000,
-      "paymentType": "CP",
+      "paymentType": "CP-test-1",
       "onUs": false,
-      "touchpoint": "IO",
+      "touchpoint": "IO-test-2",
       "type": "GLOBAL",
       "transferCategoryList": [
         "TAX1",
@@ -116,7 +116,7 @@
       "paymentAmount": 100,
       "minPaymentAmount": 0,
       "maxPaymentAmount": 99000,
-      "touchpoint": "IO",
+      "touchpoint": "IO-test-2",
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
@@ -135,7 +135,7 @@
       "paymentAmount": 100,
       "minPaymentAmount": 0,
       "maxPaymentAmount": 99000,
-      "touchpoint": "IO",
+      "touchpoint": "IO-test-2",
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
@@ -154,7 +154,7 @@
       "paymentAmount": 100,
       "minPaymentAmount": 0,
       "maxPaymentAmount": 99000,
-      "touchpoint": "IO",
+      "touchpoint": "IO-test-2",
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
@@ -204,21 +204,21 @@
   "touchpoints": [
     {
       "id": "int-test-1",
-      "name": "CHECKOUT"
+      "name": "CHECKOUT-test-1"
     },
     {
       "id": "int-test-2",
-      "name": "IO"
+      "name": "IO-test-2"
     }
   ],
   "paymenttypes": [
     {
       "id": "int-test-1",
-      "name": "CP"
+      "name": "CP-test-1"
     },
     {
       "id": "int-test-2",
-      "name": "PO"
+      "name": "PO-test-2"
     }
   ]
 }

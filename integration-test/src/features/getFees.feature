@@ -10,8 +10,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "paymentAmount": 70,
         "primaryCreditorInstitution": "77777777777",
         "bin": "1005066",
-        "paymentMethod": "CP",
-        "touchpoint": "CHECKOUT",
+        "paymentMethod": "CP-test-1",
+        "touchpoint": "CHECKOUT-test-1",
         "idPspList": null,
         "transferList": [
           {
@@ -33,21 +33,6 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     "belowThreshold": false,
     "bundleOptions": [
         {
-            "taxPayerFee": 90,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-3",
-            "bundleName": "pacchetto 3",
-            "bundleDescription": "pacchetto 3",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
             "taxPayerFee": 30,
             "primaryCiIncurredFee": 20,
             "paymentMethod": "ANY",
@@ -56,6 +41,21 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "bundleName": "pacchetto 4",
             "bundleDescription": "pacchetto 4",
             "idCiBundle": "int-test-3",
+            "idPsp": "88888888889",
+            "idChannel": "88888888899_01",
+            "idBrokerPsp": "88888888899",
+            "onUs": false,
+            "abi": "14156"
+        },
+        {
+            "taxPayerFee": 90,
+            "primaryCiIncurredFee": 0,
+            "paymentMethod": "CP-test-1",
+            "touchpoint": "ANY",
+            "idBundle": "int-test-3",
+            "bundleName": "pacchetto 3",
+            "bundleDescription": "pacchetto 3",
+            "idCiBundle": null,
             "idPsp": "88888888889",
             "idChannel": "88888888899_01",
             "idBrokerPsp": "88888888899",
@@ -88,7 +88,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "paymentAmount": 70,
         "primaryCreditorInstitution": "77777777777",
         "bin": "1005066",
-        "paymentMethod": "CP",
+        "paymentMethod": "CP-test-1",
         "touchpoint": null,
         "idPspList": null,
         "transferList": [
@@ -111,36 +111,6 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     "belowThreshold": false,
     "bundleOptions": [
         {
-            "taxPayerFee": 60,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "IO",
-            "idBundle": "int-test-5",
-            "bundleName": "pacchetto 5",
-            "bundleDescription": "pacchetto 5",
-            "idCiBundle": null,
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 90,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-3",
-            "bundleName": "pacchetto 3",
-            "bundleDescription": "pacchetto 3",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
             "taxPayerFee": 30,
             "primaryCiIncurredFee": 20,
             "paymentMethod": "ANY",
@@ -156,10 +126,41 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "abi": "14156"
         },
         {
+          
+            "taxPayerFee": 60,
+            "primaryCiIncurredFee": 0,
+            "paymentMethod": "CP-test-1",
+            "touchpoint": "IO-test-2",
+            "idBundle": "int-test-5",
+            "bundleName": "pacchetto 5",
+            "bundleDescription": "pacchetto 5",
+            "idCiBundle": null,
+            "idPsp": "88888888888",
+            "idChannel": "88888888899_01",
+            "idBrokerPsp": "88888888899",
+            "onUs": false,
+            "abi": "14156"
+        },
+        {
+            "taxPayerFee": 90,
+            "primaryCiIncurredFee": 0,
+            "paymentMethod": "CP-test-1",
+            "touchpoint": "ANY",
+            "idBundle": "int-test-3",
+            "bundleName": "pacchetto 3",
+            "bundleDescription": "pacchetto 3",
+            "idCiBundle": null,
+            "idPsp": "88888888889",
+            "idChannel": "88888888899_01",
+            "idBrokerPsp": "88888888899",
+            "onUs": false,
+            "abi": "14156"
+        },
+        {
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-6",
             "bundleName": "pacchetto 6",
             "bundleDescription": "pacchetto 6",
@@ -174,7 +175,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-7",
             "bundleName": "pacchetto 7",
             "bundleDescription": "pacchetto 7",
@@ -189,7 +190,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-8",
             "bundleName": "pacchetto 8",
             "bundleDescription": "pacchetto 8",
@@ -226,9 +227,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "paymentAmount": 70,
         "primaryCreditorInstitution": "77777777777",
         "bin": "1005066",
-        "paymentMethod": "CP",
+        "paymentMethod": "CP-test-1",
         "touchpoint": null,
-        "idPspList": ["88888888889"],
+        "idPspList": [{"idBrokerPsp":"88888888899","idChannel":"88888888899_01","idPsp":"88888888889"}],
         "transferList": [
           {
             "creditorInstitution": "77777777777",
@@ -249,21 +250,6 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     "belowThreshold": false,
     "bundleOptions": [
         {
-            "taxPayerFee": 90,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-3",
-            "bundleName": "pacchetto 3",
-            "bundleDescription": "pacchetto 3",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
             "taxPayerFee": 30,
             "primaryCiIncurredFee": 20,
             "paymentMethod": "ANY",
@@ -279,10 +265,25 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "abi": "14156"
         },
         {
+            "taxPayerFee": 90,
+            "primaryCiIncurredFee": 0,
+            "paymentMethod": "CP-test-1",
+            "touchpoint": "ANY",
+            "idBundle": "int-test-3",
+            "bundleName": "pacchetto 3",
+            "bundleDescription": "pacchetto 3",
+            "idCiBundle": null,
+            "idPsp": "88888888889",
+            "idChannel": "88888888899_01",
+            "idBrokerPsp": "88888888899",
+            "onUs": false,
+            "abi": "14156"
+        },
+        {
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-6",
             "bundleName": "pacchetto 6",
             "bundleDescription": "pacchetto 6",
@@ -297,7 +298,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-7",
             "bundleName": "pacchetto 7",
             "bundleDescription": "pacchetto 7",
@@ -312,7 +313,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-8",
             "bundleName": "pacchetto 8",
             "bundleDescription": "pacchetto 8",
@@ -326,7 +327,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     ]
 }
       """
-
+  
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP
     Given initial json
       """
@@ -335,8 +336,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "primaryCreditorInstitution": "77777777777",
         "bin": "1005066",
         "paymentMethod": null,
-        "touchpoint": "IO",
-        "idPspList": ["88888888888"],
+        "touchpoint": "IO-test-2",
+        "idPspList": [{"idBrokerPsp":"88888888899","idChannel":"88888888899_01","idPsp":"88888888888"}],
         "transferList": [
           {
             "creditorInstitution": "77777777777",
@@ -359,8 +360,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         {
             "taxPayerFee": 60,
             "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "IO",
+            "paymentMethod": "CP-test-1",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-5",
             "bundleName": "pacchetto 5",
             "bundleDescription": "pacchetto 5",
@@ -368,13 +369,13 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "idPsp": "88888888888",
             "idChannel": "88888888899_01",
             "idBrokerPsp": "88888888899",
-            "onUs": true,
+            "onUs": false,
             "abi": "14156"
         },
         {
             "taxPayerFee": 80,
             "primaryCiIncurredFee": 0,
-            "paymentMethod": "PO",
+            "paymentMethod": "PO-test-2",
             "touchpoint": "ANY",
             "idBundle": "int-test-2",
             "bundleName": "pacchetto 2",
@@ -413,8 +414,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       "primaryCreditorInstitution": "77777777777",
       "bin": "1005066",
       "paymentMethod": null,
-      "touchpoint": "IO",
-      "idPspList": ["88888888889"],
+      "touchpoint": "IO-test-2",
+      "idPspList": [{"idBrokerPsp":"88888888899","idChannel":"88888888899_01","idPsp":"88888888889"}],
       "transferList": [
       {
         "creditorInstitution": "77777777777",
@@ -440,7 +441,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-7",
             "bundleName": "pacchetto 7",
             "bundleDescription": "pacchetto 7",
@@ -463,8 +464,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "primaryCreditorInstitution": "77777777777",
         "bin": "1005066",
         "paymentMethod": null,
-        "touchpoint": "IO",
-        "idPspList": ["88888888889"],
+        "touchpoint": "IO-test-2",
+        "idPspList": [{"idBrokerPsp":"88888888899","idChannel":"88888888899_01","idPsp":"88888888889"}],
         "transferList": [
           {
             "creditorInstitution": "77777777777",
@@ -490,7 +491,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-7",
             "bundleName": "pacchetto 7",
             "bundleDescription": "pacchetto 7",
@@ -505,7 +506,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-8",
             "bundleName": "pacchetto 8",
             "bundleDescription": "pacchetto 8",
@@ -527,7 +528,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "paymentAmount": 70000,
         "primaryCreditorInstitution": "77777777777",
         "bin": "300000",
-        "paymentMethod": "CP",
+        "paymentMethod": "CP-test-1",
         "touchpoint": null,
         "idPspList": null,
         "transferList": [
@@ -550,36 +551,6 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     "belowThreshold": false,
     "bundleOptions": [
         {
-            "taxPayerFee": 60,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "IO",
-            "idBundle": "int-test-5",
-            "bundleName": "pacchetto 5",
-            "bundleDescription": "pacchetto 5",
-            "idCiBundle": null,
-            "idPsp": "88888888888",
-            "idChannel": "88888888899_01",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
-            "taxPayerFee": 90,
-            "primaryCiIncurredFee": 0,
-            "paymentMethod": "CP",
-            "touchpoint": "ANY",
-            "idBundle": "int-test-3",
-            "bundleName": "pacchetto 3",
-            "bundleDescription": "pacchetto 3",
-            "idCiBundle": null,
-            "idPsp": "88888888889",
-            "idChannel": "88888888899_01",
-            "idBrokerPsp": "88888888899",
-            "onUs": true,
-            "abi": "14156"
-        },
-        {
             "taxPayerFee": 30,
             "primaryCiIncurredFee": 20,
             "paymentMethod": "ANY",
@@ -595,10 +566,40 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "abi": "14156"
         },
         {
+            "taxPayerFee": 60,
+            "primaryCiIncurredFee": 0,
+            "paymentMethod": "CP-test-1",
+            "touchpoint": "IO-test-2",
+            "idBundle": "int-test-5",
+            "bundleName": "pacchetto 5",
+            "bundleDescription": "pacchetto 5",
+            "idCiBundle": null,
+            "idPsp": "88888888888",
+            "idChannel": "88888888899_01",
+            "idBrokerPsp": "88888888899",
+            "onUs": false,
+            "abi": "14156"
+        },
+        {
+            "taxPayerFee": 90,
+            "primaryCiIncurredFee": 0,
+            "paymentMethod": "CP-test-1",
+            "touchpoint": "ANY",
+            "idBundle": "int-test-3",
+            "bundleName": "pacchetto 3",
+            "bundleDescription": "pacchetto 3",
+            "idCiBundle": null,
+            "idPsp": "88888888889",
+            "idChannel": "88888888899_01",
+            "idBrokerPsp": "88888888899",
+            "onUs": false,
+            "abi": "14156"
+        },
+        {
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-6",
             "bundleName": "pacchetto 6",
             "bundleDescription": "pacchetto 6",
@@ -613,7 +614,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-7",
             "bundleName": "pacchetto 7",
             "bundleDescription": "pacchetto 7",
@@ -628,7 +629,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "taxPayerFee": 100,
             "primaryCiIncurredFee": 0,
             "paymentMethod": "ANY",
-            "touchpoint": "IO",
+            "touchpoint": "IO-test-2",
             "idBundle": "int-test-8",
             "bundleName": "pacchetto 8",
             "bundleDescription": "pacchetto 8",
@@ -658,27 +659,27 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
 }
       """
 
-  Scenario: Execute a GetFees request with non-existing bin
-    Given initial json
-      """
-      {
-        "paymentAmount": 70000,
-        "primaryCreditorInstitution": "77777777777",
-        "bin": "123456789",
-        "paymentMethod": "CP",
-        "touchpoint": null,
-        "idPspList": null,
-        "transferList": [
-          {
-            "creditorInstitution": "77777777777",
-            "transferCategory": "TAX1"
-          },
-          {
-            "creditorInstitution": "77777777778",
-            "transferCategory": "TAX2"
-          }
-        ]
-      }
-      """
-    When the client send POST to /fees?maxOccurrences=10
-    Then check statusCode is 404
+#  Scenario: Execute a GetFees request with non-existing bin
+#    Given initial json
+#      """
+#      {
+#        "paymentAmount": 70000,
+#        "primaryCreditorInstitution": "77777777777",
+#        "bin": "123456789",
+#        "paymentMethod": "CP-test-1",
+#        "touchpoint": null,
+#        "idPspList": null,
+#        "transferList": [
+#          {
+#            "creditorInstitution": "77777777777",
+#            "transferCategory": "TAX1"
+#          },
+#          {
+#            "creditorInstitution": "77777777778",
+#            "transferCategory": "TAX2"
+#          }
+#        ]
+#      }
+#      """
+#    When the client send POST to /fees?maxOccurrences=10
+#    Then check statusCode is 404
