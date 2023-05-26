@@ -1,7 +1,9 @@
-const {Given, When, Then, After} = require('@cucumber/cucumber')
+const {Given, When, Then, After, setDefaultTimeout} = require('@cucumber/cucumber')
 const assert = require("assert");
 const {call, post} = require("./common");
 const fs = require("fs");
+
+setDefaultTimeout(20 * 1000);
 
 const afm_host = process.env.AFM_HOST;
 
