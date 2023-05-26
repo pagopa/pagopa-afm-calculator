@@ -41,7 +41,7 @@ public class ConfigurationService {
     var filtered =
         touchpoints
             .stream()
-            .filter(elem -> touchpointRepository.findByName(elem.getId()).isEmpty())
+            .filter(elem -> touchpointRepository.findByName(elem.getId()).isPresent())
             .collect(Collectors.toList());
     touchpointRepository.deleteAll(filtered);
   }
@@ -59,7 +59,7 @@ public class ConfigurationService {
     var filtered =
         paymentTypes
             .stream()
-            .filter(elem -> paymentTypeRepository.findByName(elem.getId()).isEmpty())
+            .filter(elem -> paymentTypeRepository.findByName(elem.getId()).isPresent())
             .collect(Collectors.toList());
     paymentTypeRepository.deleteAll(filtered);
   }
