@@ -11,7 +11,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>calculator</artifactId>
-    <version>2.5.5-2-deploy-aks</version>
+    <version>2.5.6-1-main</version>
     <name>afm-calculator</name>
     <description>Calculator Logic microservice for pagoPA AFM</description>
 
@@ -31,7 +31,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-        
+
 		<!-- AZURE -->
         <dependency>
             <groupId>com.azure</groupId>
@@ -127,7 +127,7 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
 
         <!-- fix log4j vulnerability-->
         <dependency>
@@ -149,7 +149,7 @@
 			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
-       
+
         <!-- workaround for Cosmos DB Emulator bug, see: https://github.com/testcontainers/testcontainers-java/issues/5518 -->
         <dependency>
             <groupId>com.github.terma</groupId>
@@ -157,7 +157,7 @@
             <version>1.6</version>
         </dependency>
     </dependencies>
-    
+
     <dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -216,4 +216,3 @@
     </build>
 
 </project>
-

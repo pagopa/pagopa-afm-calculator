@@ -11,15 +11,10 @@ on:
         required: true
         description: The environment target of the job
         type: string
-      beta:
-        required: false
-        type: boolean
-        description: deploy beta version on AKS
-        default: false
 
 env:
   NAMESPACE: afm
-  APP_NAME: pagopaafmcalculator
+  APP_NAME: afm-calculator
 
 
 permissions:
@@ -31,7 +26,7 @@ jobs:
     name: Create Runner
     runs-on: ubuntu-22.04
     environment:
-      name: ${{ inputs.environment }}
+      name: ${{ inputs.target }}
     if: ${{ inputs.target == inputs.environment || inputs.environment == 'all' }}
     outputs:
       runner_name: ${{ steps.create_github_runner.outputs.runner_name }}
@@ -54,7 +49,7 @@ jobs:
     runs-on: [ self-hosted, "${{ needs.create_runner.outputs.runner_name }}" ]
     if: ${{ inputs.target == inputs.environment || inputs.environment == 'all' }}
     name: Deploy on AKS
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.target }}
     steps:
       - name: Deploy
         # from https://github.com/pagopa/github-actions-template
@@ -76,7 +71,7 @@ jobs:
     needs: [ create_runner, deploy ]
     if: ${{ success() || failure() && inputs.target == inputs.environment || inputs.environment == 'all' }}
     runs-on: ubuntu-22.04
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.target }}
     steps:
       - name: Cleanup GitHub Runner
         id: cleanup_github_runner

@@ -1,14 +1,7 @@
 package it.gov.pagopa.afm.calculator.repository;
 
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.and;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.arrayContains;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqual;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqualOrAny;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isEqualOrNull;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.isNull;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.or;
-
+import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
 import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
@@ -31,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -41,6 +35,9 @@ public class CosmosRepository {
   @Autowired CosmosTemplate cosmosTemplate;
 
   @Autowired UtilityComponent utilityComponent;
+
+  @Value("${pspPoste.id}")
+  private String pspPosteId;
 
   /**
    * @param ciFiscalCode fiscal code of the CI
@@ -58,8 +55,9 @@ public class CosmosRepository {
   }
 
   @Cacheable(value = "findValidBundles")
-  public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption) {
-    Iterable<ValidBundle> validBundles = findValidBundles(paymentOption);
+  public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption, boolean allCcp) {
+    Iterable<ValidBundle> validBundles = findValidBundles(paymentOption, allCcp);
+
     return getFilteredBundles(paymentOption, validBundles);
   }
 
@@ -69,7 +67,7 @@ public class CosmosRepository {
    * @param paymentOption Get the Body of the Request
    * @return the filtered bundles
    */
-  private Iterable<ValidBundle> findValidBundles(PaymentOption paymentOption) {
+  private Iterable<ValidBundle> findValidBundles(PaymentOption paymentOption, boolean allCcp) {
 
     // add filter by Payment Amount: minPaymentAmount <= paymentAmount < maxPaymentAmount
     var minFilter =
@@ -141,6 +139,13 @@ public class CosmosRepository {
         queryResult = and(queryResult, taxonomyOrNull);
       }
     }
+
+    // add filter for Poste bundles
+    if(!allCcp) {
+      var allCcpFilter = isNotEqual("idPsp", pspPosteId);
+      queryResult = and(queryResult, allCcpFilter);
+    }
+
     // execute the query
     return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
   }

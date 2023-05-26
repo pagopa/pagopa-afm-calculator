@@ -32,7 +32,7 @@ class CalculatorControllerTest {
   @BeforeEach
   void setup() throws IOException {
     BundleOption result = TestUtil.readObjectFromFile("responses/getFees.json", BundleOption.class);
-    when(calculatorService.calculate(any(), anyInt())).thenReturn(result);
+    when(calculatorService.calculate(any(), anyInt(), any(Boolean.class))).thenReturn(result);
   }
 
   @Test

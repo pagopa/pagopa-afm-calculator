@@ -88,7 +88,6 @@ public class CalculatorController {
           String idPsp,
       @RequestBody @Valid PaymentOptionByPsp paymentOptionByPsp,
       @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
-
     PaymentOption paymentOption =
         PaymentOption.builder()
             .paymentAmount(paymentOptionByPsp.getPaymentAmount())
@@ -105,7 +104,7 @@ public class CalculatorController {
             .transferList(paymentOptionByPsp.getTransferList())
             .bin(paymentOptionByPsp.getBin())
             .build();
-    return calculatorService.calculate(paymentOption, maxOccurrences);
+    return calculatorService.calculate(paymentOption, maxOccurrences, true);
   }
 
   @Operation(
@@ -163,7 +162,9 @@ public class CalculatorController {
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public BundleOption getFees(
       @RequestBody @Valid PaymentOption paymentOption,
-      @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
-    return calculatorService.calculate(paymentOption, maxOccurrences);
+      @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
+      @RequestParam(required = false, defaultValue = "true") @Parameter(description = "Flag for the exclusion of Poste bundles: false -> excluded, true or null -> included")
+        String allCcp) {
+    return calculatorService.calculate(paymentOption, maxOccurrences, Boolean.valueOf(allCcp));
   }
 }
