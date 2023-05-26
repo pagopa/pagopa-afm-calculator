@@ -61,18 +61,14 @@ jobs:
           tenant-id: ${{ secrets.TENANT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
-      - name: Run Service on Docker
+      - name: Run Integration Tests
         shell: bash
-        id: run_service_docker
+        id: run_integration_test
         run: |
           cd ./docker
           chmod +x ./run_docker.sh
           ./run_docker.sh local
 
-      - name: Run Integration Tests
-        shell: bash
-        id: run_integration_test
-        run: |
           export SUBKEY=${{ secrets.SUBKEY }}
           export CANARY=${{ inputs.canary }}
           export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
