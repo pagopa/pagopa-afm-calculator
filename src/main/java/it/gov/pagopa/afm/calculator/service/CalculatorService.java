@@ -40,8 +40,8 @@ public class CalculatorService {
   @Autowired IssuersService issuersService;
 
   @Cacheable(value = "calculate")
-  public BundleOption calculate(@Valid PaymentOption paymentOption, int limit) {
-    List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption);
+  public BundleOption calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
+    List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
 
     return BundleOption.builder()
         .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
