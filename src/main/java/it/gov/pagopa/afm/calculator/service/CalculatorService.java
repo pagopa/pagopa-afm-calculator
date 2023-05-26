@@ -3,6 +3,20 @@ package it.gov.pagopa.afm.calculator.service;
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.inTransferList;
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
@@ -13,22 +27,13 @@ import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @Setter
 public class CalculatorService {
+
+  private static final String ONUS_BUNDLE_SUFFIX = "_ONUS";
 
   @Value("${payment.amount.threshold}")
   private String amountThreshold;
@@ -52,27 +57,78 @@ public class CalculatorService {
 
   private List<Transfer> calculateTaxPayerFee(
       PaymentOption paymentOption, int limit, List<ValidBundle> bundles) {
+
     boolean primaryCiInTransferList =
         inTransferList(
             paymentOption.getPrimaryCreditorInstitution(), paymentOption.getTransferList());
+
     List<Transfer> transfers = new ArrayList<>();
+
+    // 1. Check if ONUS payment:
+    // - ONUS payment = if the bundle ABI attribute matching the one extracted via BIN from the issuers table
+    // 2. The returned transfer list must contain:
+    // - if ONUS payment = Only the bundles with the idChannel attribute ending in '_ONUS'
+    // - if not ONUS payment = Only the bundles with the idChannel attribute NOT ending in '_ONUS'
+
+
+    // 1.a: get issuers by BIN
+    List<IssuerRangeEntity> issuers = StringUtils.isNotBlank(paymentOption.getBin()) ? issuersService.getIssuersByBIN(paymentOption.getBin()) : new ArrayList<>();
+
+    // 1.b: all records extracted via a specific BIN must have the same ABI otherwise the exception is raised
+    // - the limit(2) operation is used to terminate as soon as two distinct ABI objects are found
+    if (isUniqueAbi(issuers)) {
+      throw new AppException(
+          AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
+    }
+
+
     for (ValidBundle bundle : bundles) {
 
-      // if primaryCi is in transfer list we should evaluate the related incurred fee
-      if (primaryCiInTransferList) {
-        // add in transfers!
-        analyzeTransferList(transfers, paymentOption, bundle);
-      } else {
-        Transfer transfer =
-            createTransfer(bundle.getPaymentAmount(), 0, bundle, null, paymentOption);
-        transfers.add(transfer);
+      // 1.c: check if onus payment type
+      boolean isOnusPaymentType = isOnusPayment(issuers, bundle);
+      
+      // 2.a: if ONUS payment -> return the transfer list only for bundles with the idChannel attribute ending in '_ONUS'
+      if (isOnusPaymentType && isOnusBundle(bundle)) {
+        transfers.addAll(this.getTransferList(paymentOption, primaryCiInTransferList, bundle));
       }
+      // 2.b: if not ONUS payment -> return the transfer list only for bundles with the idChannel attribute NOT ending in '_ONUS'
+      if (!isOnusPaymentType && !isOnusBundle(bundle)) {
+        transfers.addAll(this.getTransferList(paymentOption, primaryCiInTransferList, bundle));
+      }
+
     }
 
     // sort according onus and taxpayer fee
     Collections.sort(transfers);
 
     return transfers.stream().limit(limit).collect(Collectors.toList());
+  }
+
+  private boolean isOnusBundle(ValidBundle bundle) {
+    return StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), ONUS_BUNDLE_SUFFIX);
+  }
+
+  private boolean isOnusPayment(List<IssuerRangeEntity> issuers, ValidBundle bundle) {
+    return !CollectionUtils.isEmpty(issuers) && issuers.get(0).getAbi().equalsIgnoreCase(bundle.getAbi());
+  }
+
+  private boolean isUniqueAbi(List<IssuerRangeEntity> issuers) {
+    return !CollectionUtils.isEmpty(issuers) && issuers.stream().map(IssuerRangeEntity::getAbi).distinct().limit(2).count() > 1;
+  }
+
+  private List<Transfer> getTransferList(PaymentOption paymentOption, boolean primaryCiInTransferList,
+      ValidBundle bundle) {
+    List<Transfer> transfers = new ArrayList<>();
+    // if primaryCi is in transfer list we should evaluate the related incurred fee
+    if (primaryCiInTransferList) {
+      // add in transfers!
+      analyzeTransferList(transfers, paymentOption, bundle);
+    } else {
+      Transfer transfer =
+          createTransfer(bundle.getPaymentAmount(), 0, bundle, null, paymentOption);
+      transfers.add(transfer);
+    }
+    return transfers;
   }
 
   /**
@@ -184,27 +240,13 @@ public class CalculatorService {
   private Boolean getOnUsValue(ValidBundle bundle, PaymentOption paymentOption) {
     boolean onusValue = false;
 
-    // if PaymentType is CP and amount > threshold and bin is evaluated ---> calculate onus value
+    // if PaymentType is CP and amount > threshold and idChannel endsWith '_ONUS' ---> onus value true
     if (bundle.getPaymentType() != null
         && StringUtils.equalsIgnoreCase(bundle.getPaymentType(), "cp")
-        && !isBelowThreshold(paymentOption.getPaymentAmount())
-        && StringUtils.isNotBlank(paymentOption.getBin())) {
-      // get issuers by BIN
-      List<IssuerRangeEntity> issuers = issuersService.getIssuersByBIN(paymentOption.getBin());
-     
-      // all extracted record must have the same ABI otherwise expetion raised
-      // - the limit(2) operation is used to terminate as soon as two distinct ABI objects are found
-      if (!CollectionUtils.isEmpty(issuers) && issuers.stream().map(IssuerRangeEntity::getAbi).distinct().limit(2).count() > 1) {
-        throw new AppException(
-            AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
-      }
-
-      // check if the ABI of the bundle is the same as issuers pulled via BIN and that idChannel ends with the suffix _ONUS
-      if (!CollectionUtils.isEmpty(issuers) 
-          && issuers.get(0).getAbi().equalsIgnoreCase(bundle.getAbi())
-          && StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), "_ONUS")) {
-        onusValue = true;
-      }
+        && !isBelowThreshold(paymentOption.getPaymentAmount()) 
+        && isOnusBundle(bundle)) {
+      
+      onusValue = true;
     }
     return onusValue;
   }
