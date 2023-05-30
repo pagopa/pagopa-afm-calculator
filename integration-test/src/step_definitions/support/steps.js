@@ -96,6 +96,13 @@ Then('the body response ordering for the bundleOptions.onUs field is:', function
   }
 });
 
+Then('the body response does not contain the Poste idPsp', function () {
+  for (let i=0; i<responseToCheck.data.bundleOptions.length; i++){
+    let bodyPsp = responseToCheck.data.bundleOptions[i].idPsp;
+    assert.notEqual(bodyPsp, process.env.ID_PSP_POSTE);
+  }
+});
+
 function mapToValidBundles(config) {
 
   let validbundles = [];

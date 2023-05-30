@@ -68,6 +68,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | false |
     | false |
     | false |
+    | false |
 
   Scenario: Get List of fees by CI, amount, method and single PSP
     Given initial json
@@ -249,6 +250,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | false |
     | false |
     | false |
+    | false |
     
 
   Scenario: Execute a GetFees request with non-existing bin
@@ -284,3 +286,29 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | false |
     | false |
     | false |
+
+  Scenario: Execute a GetFees request with allCcp flag set to false
+    Given initial json
+      """
+      {
+        "paymentAmount": 999999999999998,
+        "primaryCreditorInstitution": "77777777777",
+        "bin": "300000",
+        "paymentMethod": "CP",
+        "touchpoint": null,
+        "idPspList": null,
+        "transferList": [
+          {
+            "creditorInstitution": "77777777777",
+            "transferCategory": "TAX1"
+          },
+          {
+            "creditorInstitution": "77777777778",
+            "transferCategory": "TAX2"
+          }
+        ]
+      }
+      """
+    When the client send POST to /fees?maxOccurrences=10&allCcp=false
+    Then check statusCode is 200
+    And the body response does not contain the Poste idPsp
