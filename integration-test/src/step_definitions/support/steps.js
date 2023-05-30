@@ -88,6 +88,14 @@ Then(/^check response body is$/, function(payload) {
   assert.deepStrictEqual(responseToCheck.data, JSON.parse(payload));
 });
 
+Then('the body response ordering for the bundleOptions.onUs field is:', function (dataTable) {
+  for (let i=0; i<responseToCheck.data.bundleOptions.length; i++){
+    let bodyOnUs = responseToCheck.data.bundleOptions[i].onUs;
+    let checkOnUs = JSON.parse(dataTable.rows()[i][0]);
+    assert.equal(bodyOnUs, checkOnUs)
+  }
+});
+
 function mapToValidBundles(config) {
 
   let validbundles = [];
