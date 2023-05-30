@@ -68,6 +68,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | false |
     | false |
     | false |
+    | false |
 
   Scenario: Get List of fees by CI, amount, method and single PSP
     Given initial json
@@ -249,6 +250,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | false |
     | false |
     | false |
+    | false |
     
 
   Scenario: Execute a GetFees request with non-existing bin
@@ -307,14 +309,6 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send POST to /fees?maxOccurrences=10
+    When the client send POST to /fees?maxOccurrences=10&allCcp=false
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | true  |
-    | true  |
-    | false |
-    | false |
-    | false |
-    | false |
-    | false |
+    And the body response does not contain the Poste idPsp
