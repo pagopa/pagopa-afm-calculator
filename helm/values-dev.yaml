@@ -109,7 +109,7 @@ microservice-chart:
       create: true
       image:
         repository: ghcr.io/pagopa/pagopa-afm-calculator
-        tag: "2.5.7-canary"
+        tag: "2.5.7-1-canary"
         pullPolicy: Always
       envConfig:
       envSecret:
