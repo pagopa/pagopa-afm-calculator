@@ -26,8 +26,8 @@ jobs:
     name: Create Runner
     runs-on: ubuntu-22.04
     environment:
-      name: ${{ inputs.target }}
-    if: ${{ inputs.target == inputs.environment || inputs.environment == 'all' }}
+      name: ${{ inputs.environment }}
+    if: ${{ inputs.target == inputs.environment || inputs.target == 'all' }}
     outputs:
       runner_name: ${{ steps.create_github_runner.outputs.runner_name }}
     steps:
@@ -47,31 +47,30 @@ jobs:
   deploy:
     needs: [ create_runner ]
     runs-on: [ self-hosted, "${{ needs.create_runner.outputs.runner_name }}" ]
-    if: ${{ inputs.target == inputs.environment || inputs.environment == 'all' }}
+    if: ${{ inputs.target == inputs.environment || inputs.target == 'all' }}
     name: Deploy on AKS
-    environment: ${{ inputs.target }}
+    environment: ${{ inputs.environment }}
     steps:
       - name: Deploy
-        # from https://github.com/pagopa/github-actions-template
-        uses: pagopa/github-actions-template/aks-blueprint-helm-deploy@dd79d69bbc777cd4f79e14e332267b9c728e2d63
+        uses: pagopa/github-actions-template/aks-deploy@main
         with:
+          branch: ${{ github.ref_name }}
+          client_id: ${{ secrets.CLIENT_ID }}
+          subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
+          tenant_id: ${{ secrets.TENANT_ID }}
+          env: ${{ inputs.environment }}
           namespace: ${{ env.NAMESPACE }}
-          release-name: ${{ env.APP_NAME }}
-          chart-path: "${{ env.CHART_PATH }}"
-          values-file-name: values-${{ vars.ENV }}.yaml
-          aks-name: ${{ vars.CLUSTER_NAME }}
-          aks-resource-group: ${{ vars.CLUSTER_RESOURCE_GROUP }}
-          client-id: ${{ secrets.CLIENT_ID }}
-          tenant-id: ${{ secrets.TENANT_ID }}
-          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
-          helm-upgrade-options: "--debug"
+          cluster_name: ${{ vars.CLUSTER_NAME }}
+          resource_group: ${{ vars.CLUSTER_RESOURCE_GROUP }}
+          app_name: ${{ env.APP_NAME }}
+          helm_upgrade_options: "--debug"
 
   cleanup_runner:
     name: Cleanup Runner
     needs: [ create_runner, deploy ]
-    if: ${{ success() || failure() && inputs.target == inputs.environment || inputs.environment == 'all' }}
+    if: ${{ success() || failure() && inputs.target == inputs.environment || inputs.target == 'all' }}
     runs-on: ubuntu-22.04
-    environment: ${{ inputs.target }}
+    environment: ${{ inputs.environment }}
     steps:
       - name: Cleanup GitHub Runner
         id: cleanup_github_runner
