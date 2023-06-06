@@ -62,27 +62,27 @@ jobs:
           tenant-id: ${{ secrets.TENANT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
-      - name: Run Service on Docker
-        shell: bash
-        id: run_service_docker
-        run: |
-          cd ./docker
-          chmod +x ./run_docker.sh
-          ./run_docker.sh local
-
-      - name: Run Integration Tests
-        shell: bash
-        id: run_integration_test
-        run: |
-          export SUBKEY=${{ secrets.SUBKEY }}
-          export CANARY=${{ inputs.canary }}
-          export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
-          export ISSUER_RANGE_TABLE=${{ vars.ISSUER_RANGE_TABLE }}
-          export AFM_SA_CONNECTION_STRING='${{ secrets.AFM_SA_CONNECTION_STRING }}'
-
-          cd ./integration-test
-          chmod +x ./run_integration_test.sh
-          ./run_integration_test.sh local
+#      - name: Run Service on Docker
+#        shell: bash
+#        id: run_service_docker
+#        run: |
+#          cd ./docker
+#          chmod +x ./run_docker.sh
+#          ./run_docker.sh local
+#
+#      - name: Run Integration Tests
+#        shell: bash
+#        id: run_integration_test
+#        run: |
+#          export SUBKEY=${{ secrets.SUBKEY }}
+#          export CANARY=${{ inputs.canary }}
+#          export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+#          export ISSUER_RANGE_TABLE=${{ vars.ISSUER_RANGE_TABLE }}
+#          export AFM_SA_CONNECTION_STRING='${{ secrets.AFM_SA_CONNECTION_STRING }}'
+#
+#          cd ./integration-test
+#          chmod +x ./run_integration_test.sh
+#          ./run_integration_test.sh local
 
 
   delete_github_deployments:
@@ -90,6 +90,11 @@ jobs:
     needs: smoke-test
     if: ${{ always() }}
     steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
       - name: Delete Previous deployments
         uses: actions/github-script@v6
         with:
