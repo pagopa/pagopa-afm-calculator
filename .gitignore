@@ -9,3 +9,5 @@ target/**/*
 /helm/charts/
 /.classpath
 **/Chart.lock
+/.cache_ggshield
+**/.env
