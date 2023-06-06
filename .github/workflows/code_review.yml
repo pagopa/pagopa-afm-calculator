@@ -98,7 +98,7 @@ jobs:
             const deployments = await github.rest.repos.listDeployments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              sha: context.sha
+              sha: GITHUB_SHA_HEAD
             });
             await Promise.all(
               deployments.data.map(async (deployment) => {
