@@ -86,7 +86,7 @@ jobs:
         id: release
         uses: pagopa/github-actions-template/maven-release@canary
         with:
-          semver: ${{ needs.setup.outputs.semver }}
+          semver: ${{ (github.ref_name != 'main' && 'buildNumber') || needs.setup.outputs.semver }}
           github_token: ${{ secrets.BOT_TOKEN_GITHUB }}
           beta: ${{ inputs.beta }}
           skip_ci: ${{ inputs.beta }}

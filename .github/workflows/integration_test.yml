@@ -33,7 +33,7 @@ permissions:
 
 jobs:
   integration_test:
-    name: Test
+    name: Test ${{(github.event.inputs == null && 'dev') || inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{(github.event.inputs == null && 'dev') || inputs.environment }}
     steps:
