@@ -19,6 +19,11 @@ on:
         required: false
         type: boolean
         default: true
+      deploy_uat:
+        required: false
+        type: boolean
+        description: deploy on UAT
+        default: false
 
 permissions:
   id-token: write
@@ -96,6 +101,17 @@ jobs:
               })
             );
 
+
+
+  deploy_aks:
+    name: Deploy on AKS
+    needs: [ integration_test ]
+    if: ${{ inputs.deploy_uat }}
+    uses: ./.github/workflows/deploy_with_github_runner.yml
+    with:
+      environment: uat
+      target: uat
+    secrets: inherit
 
   notify:
     needs: [ integration_test ]
