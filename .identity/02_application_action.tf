@@ -17,7 +17,7 @@ resource "null_resource" "github_runner_app_permissions_to_namespace" {
     aks_id               = data.azurerm_kubernetes_cluster.aks.id
     service_principal_id = module.github_runner_app.client_id
     namespace            = local.domain
-    version              = "v1"
+    version              = "v2"
   }
 
   provisioner "local-exec" {
@@ -41,24 +41,6 @@ resource "null_resource" "github_runner_app_permissions_to_namespace" {
   }
 }
 
-resource "azurerm_role_assignment" "environment_terraform_subscription" {
-  scope                = data.azurerm_subscription.current.id
-  role_definition_name = "Reader"
-  principal_id         = module.github_runner_app.object_id
-}
-
-resource "azurerm_role_assignment" "environment_terraform_storage_account_tfstate_app" {
-  scope                = data.azurerm_storage_account.tfstate_app.id
-  role_definition_name = "Contributor"
-  principal_id         = module.github_runner_app.object_id
-}
-
-resource "azurerm_role_assignment" "environment_terraform_storage_account_afm" {
-  scope                = data.azurerm_storage_account.storage_account_afm.id
-  role_definition_name = "Owner"
-  principal_id         = module.github_runner_app.object_id
-}
-
 resource "azurerm_role_assignment" "environment_terraform_resource_group_dashboards" {
   scope                = data.azurerm_resource_group.dashboards.id
   role_definition_name = "Contributor"
@@ -67,16 +49,16 @@ resource "azurerm_role_assignment" "environment_terraform_resource_group_dashboa
 
 
 resource "azurerm_role_assignment" "environment_key_vault" {
-  scope                = data.azurerm_key_vault.domain_key_vault[0].id
+  scope                = data.azurerm_key_vault.key_vault.id
   role_definition_name = "Reader"
-  principal_id         = module.github_runner_app.object_id
+  principal_id         = module.github_runner_app.client_id
 }
 
 resource "azurerm_key_vault_access_policy" "ad_group_policy" {
-  key_vault_id = data.azurerm_key_vault.domain_key_vault[0].id
+  key_vault_id = data.azurerm_key_vault.key_vault.id
 
   tenant_id = data.azurerm_client_config.current.tenant_id
-  object_id = module.github_runner_app.object_id
+  object_id = module.github_runner_app.client_id
 
   key_permissions         = ["Get", "List", "Import"]
   secret_permissions      = ["Get", "List"]

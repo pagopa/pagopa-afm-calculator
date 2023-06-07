@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.5.6-1-main"
+    tag: "2.5.7-8-canary"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -94,6 +94,21 @@ microservice-chart:
                 values:
                   - user
   canaryDelivery:
+    create: true
+    ingress:
+      create: true
+      canary:
+        type: header
+        headerName: X-Canary
+        headerValue: canary
+        weightPercent: 0
+    service:
+      create: true
     deployment:
+      create: true
       image:
-        tag: 2.5.5-4-PAGOPA-923-update-onus-logic-integration-test
+        repository: ghcr.io/pagopa/pagopa-afm-calculator
+        tag: "2.5.7-9-canary"
+        pullPolicy: Always
+      envConfig:
+      envSecret:
