@@ -1,5 +1,5 @@
 const { Given, When, Then, BeforeAll, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber')
- 
+
 const assert = require("assert");
 const { call, post } = require("./common");
 const fs = require("fs");
@@ -7,7 +7,7 @@ const tableStorageClient = require("./table_storage_client");
 
 const afm_host = process.env.AFM_HOST;
 
-/*increased the default timeout of the promise to allow 
+/*increased the default timeout of the promise to allow
 the correct execution of the smoke tests*/
 setDefaultTimeout(15000);
 
@@ -127,11 +127,11 @@ AfterAll(async function() {
    let result = await post(afm_host + '/configuration/bundles/delete',
      validBundles);
    assert.strictEqual(result.status, 200);
-  
+
    let result2 = await post(afm_host + '/configuration/touchpoint/delete',
      touchpoints);
    assert.strictEqual(result2.status, 200);
-  
+
    let result3 = await post(afm_host + '/configuration/paymenttypes/delete',
      paymenttypes);
    assert.strictEqual(result3.status, 200);
