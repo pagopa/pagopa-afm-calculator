@@ -30,15 +30,15 @@ jobs:
         with:
           java-version: 11
 
-      - name: Update OpenApi/Swagger file
-        run: |
-          cd ./docker
-          chmod +x ./run_docker.sh
-          ./run_docker.sh local
-          
-          cd ../openapi
-          chmod +x ./generate_openapi.sh
-          ./generate_openapi.sh
+#      - name: Update OpenApi/Swagger file
+#        run: |
+#          cd ./docker
+#          chmod +x ./run_docker.sh
+#          ./run_docker.sh local
+#
+#          cd ../openapi
+#          chmod +x ./generate_openapi.sh
+#          ./generate_openapi.sh
 
       - name: Formatting
         uses: axel-op/googlejavaformat-action@v3
@@ -79,4 +79,3 @@ jobs:
               body: 'Update Code is failed. Please retry.'
             })
             core.setFailed('Update Code is failed. Please retry.')
-

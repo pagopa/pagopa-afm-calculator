@@ -7,7 +7,7 @@ locals {
   prefix         = "pagopa"
   domain         = "afm"
   location_short = "weu"
-  product        = "${local.prefix}-${var.env_short}"
+  product        = "${var.prefix}-${var.env_short}"
 
   app_name = "github-${local.github.org}-${local.github.repository}-${var.prefix}-${local.domain}-${var.env}-aks"
 
@@ -22,17 +22,23 @@ locals {
   }
 }
 
-variable "prefix" {
-  type        = string
-  description = "product prefix"
-}
-
 variable "env" {
   type = string
 }
 
 variable "env_short" {
   type = string
+}
+
+variable "prefix" {
+  type    = string
+  default = "pagopa"
+  validation {
+    condition = (
+      length(var.prefix) <= 6
+    )
+    error_message = "Max length is 6 chars."
+  }
 }
 
 variable "github_repository_environment" {
