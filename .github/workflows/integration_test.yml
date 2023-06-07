@@ -18,7 +18,7 @@ on:
         description: ''
         required: false
         type: boolean
-        default: true
+        default: false
       deploy_uat:
         required: false
         type: boolean
