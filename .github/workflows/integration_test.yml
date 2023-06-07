@@ -15,14 +15,14 @@ on:
           - uat
           - prod
       canary:
-        description: ''
+        description: 'run the tests on canary version'
         required: false
         type: boolean
         default: false
       deploy_uat:
         required: false
         type: boolean
-        description: deploy on UAT
+        description: 'deploy on UAT if testing is successful'
         default: false
 
 permissions:
