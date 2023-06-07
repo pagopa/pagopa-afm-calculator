@@ -99,7 +99,8 @@ jobs:
         id: semver
         uses: pagopa/github-actions-template/maven-semver@canary
         with:
-          semver: ${{ (github.ref_name != 'main' && 'buildNumber') || needs.setup.outputs.semver }}
+          semver: ${{ needs.setup.outputs.semver }}
+#          semver: ${{ (github.ref_name != 'main' && 'buildNumber') || needs.setup.outputs.semver }}
           beta: ${{inputs.beta}}
 
 
