@@ -109,7 +109,7 @@ microservice-chart:
       create: true
       image:
         repository: ghcr.io/pagopa/pagopa-afm-calculator
-        tag: "2.6.1-4-versioning"
+        tag: "2.6.1-5-versioning"
         pullPolicy: Always
       envConfig:
       envSecret:
