@@ -15,14 +15,14 @@ on:
           - uat
           - prod
       canary:
-        description: ''
+        description: 'run the tests on canary version'
         required: false
         type: boolean
         default: false
       deploy_uat:
         required: false
         type: boolean
-        description: deploy on UAT
+        description: 'deploy on UAT if testing is successful'
         default: false
 
 permissions:
@@ -33,7 +33,7 @@ permissions:
 
 jobs:
   integration_test:
-    name: Test
+    name: Test ${{(github.event.inputs == null && 'dev') || inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{(github.event.inputs == null && 'dev') || inputs.environment }}
     steps:
