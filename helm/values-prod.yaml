@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.6.0-3-test"
+    tag: "2.6.0-4-test"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -108,7 +108,7 @@ microservice-chart:
       create: true
       image:
         repository: ghcr.io/pagopa/pagopa-afm-calculator
-        tag: "2.6.0-3-test"
+        tag: "2.6.0-4-test"
         pullPolicy: Always
       envConfig:
       envSecret:
