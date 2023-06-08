@@ -63,18 +63,20 @@ jobs:
       semver: ${{ steps.get_semver.outputs.semver }}
       environment: ${{ steps.get_env.outputs.environment }}
     steps:
+      # Set Semvar
       - run: echo "SEMVER=patch" >> $GITHUB_ENV
 
       - if: ${{ (github.event.pull_request.merged && contains(github.event.pull_request.labels.*.name, 'breaking-change ')) }}
         run: echo "SEMVER=major" >> $GITHUB_ENV
-        shell: bash
+
+      - if: ${{ github.ref_name != 'main' }}
+        run: echo "SEMVER=buildNumber" >> $GITHUB_ENV
 
       - id: get_semver
         name: Set Output
-        run: |
-          echo "semver=${{env.SEMVER}}" >> $GITHUB_OUTPUT
-        shell: bash
+        run: echo "semver=${{env.SEMVER}}" >> $GITHUB_OUTPUT
 
+      # Set Environment
       - run: echo "ENVIRNOMENT=${{github.event.inputs.environment}}" >> $GITHUB_ENV
 
       - if: ${{ github.event.inputs.environment == null }}
@@ -83,13 +85,9 @@ jobs:
       - if: ${{ inputs.skip_release == 'true' }}
         run: echo "ENVIRNOMENT=skip" >> $GITHUB_ENV
 
-      - if: ${{ github.ref_name != 'main' }}
-        run: echo "ENVIRNOMENT=buildNumber" >> $GITHUB_ENV
-
       - id: get_env
         name: Set Output
-        run: |
-          echo "environment=${{env.ENVIRNOMENT}}" >> $GITHUB_OUTPUT
+        run: echo "environment=${{env.ENVIRNOMENT}}" >> $GITHUB_OUTPUT
 
 
   release:
