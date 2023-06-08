@@ -102,16 +102,15 @@ jobs:
               })
             );
 
-
-
   deploy_aks:
     name: Deploy on AKS
     needs: [ integration_test ]
     if: ${{ inputs.deploy_uat }}
-    uses: ./.github/workflows/deploy_with_github_runner.yml
+    uses: ./.github/workflows/release_deploy.yml
     with:
       environment: uat
-      target: uat
+      beta: false
+      skip_release: false
     secrets: inherit
 
   notify:
