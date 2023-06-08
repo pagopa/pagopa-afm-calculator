@@ -77,12 +77,12 @@ jobs:
         run: echo "semver=${{env.SEMVER}}" >> $GITHUB_OUTPUT
 
       # Set Environment
-      - run: echo "ENVIRNOMENT=${{github.event.inputs.environment}}" >> $GITHUB_ENV
+      - run: echo "ENVIRNOMENT=${{ inputs.environment}}" >> $GITHUB_ENV
 
-      - if: ${{ github.event.inputs.environment == null }}
+      - if: ${{ inputs.environment == null }}
         run: echo "ENVIRNOMENT=dev" >> $GITHUB_ENV
 
-      - if: ${{ inputs.skip_release == 'true' }}
+      - if: ${{ inputs.skip_release }}
         run: echo "ENVIRNOMENT=skip" >> $GITHUB_ENV
 
       - id: get_env
