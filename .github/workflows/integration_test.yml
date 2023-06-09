@@ -19,6 +19,11 @@ on:
         required: false
         type: boolean
         default: false
+      notify:
+        required: false
+        type: boolean
+        description: 'do not send the slack notification'
+        default: true
 
 
 permissions:
@@ -63,7 +68,7 @@ jobs:
     needs: [ integration_test ]
     runs-on: ubuntu-latest
     name: Notify
-    if: always()
+    if: ${{ always() && inputs.notify == 'true' }}
     steps:
       - name: Report Status
         if: ${{ needs.setup.outputs.environment == 'prod' || needs.setup.outputs.environment == 'all'  }}
@@ -115,5 +120,3 @@ jobs:
                 });
               })
             );
-
-
