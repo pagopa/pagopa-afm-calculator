@@ -71,6 +71,7 @@ jobs:
     if: ${{ always() && inputs.notify == 'true' }}
     steps:
       - name: Report Status
+        if: always()
         uses: ravsamhq/notify-slack-action@v2
         with:
           status: ${{ needs.integration_test.result }}
