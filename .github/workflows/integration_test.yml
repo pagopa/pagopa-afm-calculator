@@ -73,9 +73,9 @@ jobs:
       - name: Report Status
         uses: ravsamhq/notify-slack-action@v2
         with:
-          notify_when: 'failure,skipped'
-          status: ${{ needs.deploy_aks.result }}
+          status: ${{ needs.integration_test.result }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          notify_when: 'failure,skipped'
           notification_title: '<{run_url}|{Scheduled Integration Test}> has {status_message}'
           message_format: '{emoji} <{run_url}|{workflow}> {status_message} in <{repo_url}|{repo}>'
           footer: 'Linked to <{workflow_url}| workflow file>'
