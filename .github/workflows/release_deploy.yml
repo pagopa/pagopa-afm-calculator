@@ -30,21 +30,6 @@ on:
         description: skip the release. Only deploy
         default: false
 
-  workflow_call:
-    inputs:
-      environment:
-        required: true
-        type: string
-      beta:
-        required: false
-        type: boolean
-        description: deploy beta version on AKS
-        default: false
-      skip_release:
-        required: false
-        type: boolean
-        description: skip the release. Only deploy
-        default: false
 
 permissions:
   packages: write
@@ -68,6 +53,9 @@ jobs:
 
       - if: ${{ (github.event.pull_request.merged && contains(github.event.pull_request.labels.*.name, 'breaking-change ')) }}
         run: echo "SEMVER=major" >> $GITHUB_ENV
+
+      - if: ${{ inputs.environment == 'uat' }}
+        run: echo "SEMVER=minor" >> $GITHUB_ENV
 
       - if: ${{ github.ref_name != 'main' }}
         run: echo "SEMVER=buildNumber" >> $GITHUB_ENV
@@ -104,7 +92,7 @@ jobs:
           semver: ${{ needs.setup.outputs.semver }}
           github_token: ${{ secrets.BOT_TOKEN_GITHUB }}
           beta: ${{ inputs.beta }}
-          skip_ci: ${{ inputs.beta }}
+          skip_ci: false
 
   image:
     needs: [ setup, release ]
@@ -147,6 +135,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           notification_title: 'New Release on Production ${{ needs.release.outputs.version }} has {status_message}'
           message_format: '{emoji} <{run_url}|{workflow}> {status_message} in <{repo_url}|{repo}>'
-          footer: 'Linked to Repo <{repo_url}|{repo}>'
+          footer: 'Linked to <{workflow_url}| workflow file>'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
