@@ -22,7 +22,7 @@ on:
       notify:
         required: false
         type: boolean
-        description: 'do not send the slack notification'
+        description: 'send the slack notification'
         default: true
 
 
