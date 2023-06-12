@@ -3,8 +3,6 @@ name: Release And Deploy
 # Controls when the workflow will run
 on:
   pull_request:
-    branches:
-      - main
     types: [ closed ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -48,6 +46,12 @@ jobs:
       semver: ${{ steps.get_semver.outputs.semver }}
       environment: ${{ steps.get_env.outputs.environment }}
     steps:
+      - name: pull request rejected
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged != true
+        run: |
+          echo "❌ PR was closed without a merge"
+          exit 1
+
       # Set Semvar
       - run: echo "SEMVER=patch" >> $GITHUB_ENV
 
