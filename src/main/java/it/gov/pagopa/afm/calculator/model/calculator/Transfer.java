@@ -34,8 +34,6 @@ public class Transfer implements Comparable<Transfer>, Serializable {
   @Override
   public int compareTo(Transfer t) {
     // order by onUs
-    return Comparator.comparing((Transfer tr) -> tr.onUs)
-        .reversed()
-        .compare(this, t);
+    return Comparator.comparing((Transfer tr) -> tr.onUs).reversed().compare(this, t);
   }
 }

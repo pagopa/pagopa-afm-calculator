@@ -163,8 +163,12 @@ public class CalculatorController {
   public BundleOption getFees(
       @RequestBody @Valid PaymentOption paymentOption,
       @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
-      @RequestParam(required = false, defaultValue = "true") @Parameter(description = "Flag for the exclusion of Poste bundles: false -> excluded, true or null -> included")
-        String allCcp) {
+      @RequestParam(required = false, defaultValue = "true")
+          @Parameter(
+              description =
+                  "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
+                      + " included")
+          String allCcp) {
     return calculatorService.calculate(paymentOption, maxOccurrences, Boolean.valueOf(allCcp));
   }
 }

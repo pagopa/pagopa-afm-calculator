@@ -1,25 +1,22 @@
 package it.gov.pagopa.afm.calculator.service;
 
+import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.table.CloudTable;
+import com.microsoft.azure.storage.table.TableQuery;
+import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
+import it.gov.pagopa.afm.calculator.exception.AppError;
+import it.gov.pagopa.afm.calculator.exception.AppException;
+import it.gov.pagopa.afm.calculator.util.AzuriteStorageUtil;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.microsoft.azure.storage.CloudStorageAccount;
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.table.CloudTable;
-import com.microsoft.azure.storage.table.TableQuery;
-
-import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
-import it.gov.pagopa.afm.calculator.exception.AppError;
-import it.gov.pagopa.afm.calculator.exception.AppException;
-import it.gov.pagopa.afm.calculator.util.AzuriteStorageUtil;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
