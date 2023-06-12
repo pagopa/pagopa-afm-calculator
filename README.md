@@ -1,6 +1,7 @@
 # AFM Calculator Logic
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-afm-calculator&metric=alert_status)](https://sonarcloud.io/dashboard?id=pagopa_pagopa-afm-calculator)
+[![Integration Tests](https://github.com/pagopa/pagopa-afm-calculator/actions/workflows/integration_test.yml/badge.svg)](https://github.com/pagopa/pagopa-afm-calculator/actions/workflows/integration_test.yml)
 
 Spring Application exposes API to calculate taxpayer fees according to [_AFM Marketplace_](https://github.com/pagopa/pagopa-afm-marketplace-be) configuration.
 
