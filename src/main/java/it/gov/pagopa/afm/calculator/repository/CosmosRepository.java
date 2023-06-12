@@ -2,6 +2,7 @@ package it.gov.pagopa.afm.calculator.repository;
 
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
+
 import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
@@ -46,9 +47,7 @@ public class CosmosRepository {
    */
   private static List<CiBundle> filterByCI(String ciFiscalCode, ValidBundle bundle) {
     return bundle.getCiBundleList() != null
-        ? bundle
-            .getCiBundleList()
-            .parallelStream()
+        ? bundle.getCiBundleList().parallelStream()
             .filter(ciBundle -> ciFiscalCode.equals(ciBundle.getCiFiscalCode()))
             .collect(Collectors.toList())
         : null;
@@ -127,8 +126,7 @@ public class CosmosRepository {
     List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
     if (categoryList != null) {
       var taxonomyFilter =
-          categoryList
-              .parallelStream()
+          categoryList.parallelStream()
               .filter(Objects::nonNull)
               .filter(elem -> !elem.isEmpty())
               .map(elem -> arrayContains("transferCategoryList", elem))
@@ -141,7 +139,7 @@ public class CosmosRepository {
     }
 
     // add filter for Poste bundles
-    if(!allCcp) {
+    if (!allCcp) {
       var allCcpFilter = isNotEqual("idPsp", pspPosteId);
       queryResult = and(queryResult, allCcpFilter);
     }
@@ -160,9 +158,7 @@ public class CosmosRepository {
   private List<ValidBundle> getFilteredBundles(
       PaymentOption paymentOption, Iterable<ValidBundle> validBundles) {
     var onlyMarcaBolloDigitale =
-        paymentOption
-            .getTransferList()
-            .stream()
+        paymentOption.getTransferList().stream()
             .filter(Objects::nonNull)
             .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
             .count();

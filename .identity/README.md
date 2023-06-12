@@ -20,8 +20,10 @@
 
 | Name | Type |
 |------|------|
-| [azurerm_key_vault_access_policy.ad_group_policy](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/resources/key_vault_access_policy) | resource |
+| [azurerm_key_vault_access_policy.ad_kv_domain_group_policy](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/resources/key_vault_access_policy) | resource |
+| [azurerm_key_vault_access_policy.ad_kv_group_policy](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/resources/key_vault_access_policy) | resource |
 | [azurerm_role_assignment.environment_key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/resources/role_assignment) | resource |
+| [azurerm_role_assignment.environment_key_vault_domain](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.environment_terraform_resource_group_dashboards](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/resources/role_assignment) | resource |
 | [github_actions_environment_secret.github_environment_runner_secrets](https://registry.terraform.io/providers/integrations/github/5.18.3/docs/resources/actions_environment_secret) | resource |
 | [github_actions_environment_variable.github_environment_runner_variables](https://registry.terraform.io/providers/integrations/github/5.18.3/docs/resources/actions_environment_variable) | resource |
@@ -35,6 +37,7 @@
 | [azurerm_key_vault.key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/data-sources/key_vault) | data source |
 | [azurerm_key_vault_secret.key_vault_bot_token](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/data-sources/key_vault_secret) | data source |
 | [azurerm_key_vault_secret.key_vault_cucumber_token](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_key_vault_secret.key_vault_sa_connection_string](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/data-sources/key_vault_secret) | data source |
 | [azurerm_key_vault_secret.key_vault_sonar](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/data-sources/key_vault_secret) | data source |
 | [azurerm_kubernetes_cluster.aks](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/data-sources/kubernetes_cluster) | data source |
 | [azurerm_resource_group.dashboards](https://registry.terraform.io/providers/hashicorp/azurerm/3.45.0/docs/data-sources/resource_group) | data source |

@@ -30,8 +30,7 @@ public class ConfigurationService {
 
   public void addTouchpoints(List<Touchpoint> touchpoints) {
     var filtered =
-        touchpoints
-            .stream()
+        touchpoints.stream()
             .filter(elem -> touchpointRepository.findByName(elem.getName()).isEmpty())
             .collect(Collectors.toList());
     touchpointRepository.saveAll(filtered);
@@ -39,8 +38,7 @@ public class ConfigurationService {
 
   public void deleteTouchpoints(List<Touchpoint> touchpoints) {
     var filtered =
-        touchpoints
-            .stream()
+        touchpoints.stream()
             .filter(elem -> touchpointRepository.findById(elem.getId()).isPresent())
             .collect(Collectors.toList());
     touchpointRepository.deleteAll(filtered);
@@ -48,8 +46,7 @@ public class ConfigurationService {
 
   public void addPaymentTypes(List<PaymentType> paymentTypes) {
     var filtered =
-        paymentTypes
-            .stream()
+        paymentTypes.stream()
             .filter(elem -> paymentTypeRepository.findByName(elem.getName()).isEmpty())
             .collect(Collectors.toList());
     paymentTypeRepository.saveAll(filtered);
@@ -57,8 +54,7 @@ public class ConfigurationService {
 
   public void deletePaymentTypes(List<PaymentType> paymentTypes) {
     var filtered =
-        paymentTypes
-            .stream()
+        paymentTypes.stream()
             .filter(elem -> paymentTypeRepository.findById(elem.getId()).isPresent())
             .collect(Collectors.toList());
     paymentTypeRepository.deleteAll(filtered);
