@@ -50,7 +50,7 @@
 |------|-------------|------|---------|:--------:|
 | <a name="input_env"></a> [env](#input\_env) | n/a | `string` | n/a | yes |
 | <a name="input_env_short"></a> [env\_short](#input\_env\_short) | n/a | `string` | n/a | yes |
-| <a name="input_github_repository_environment"></a> [github\_repository\_environment](#input\_github\_repository\_environment) | GitHub Continuous Integration roles | <pre>object({<br>    protected_branches     = bool<br>    custom_branch_policies = bool<br>    reviewers_teams        = list(string)<br>  })</pre> | <pre>{<br>  "custom_branch_policies": true,<br>  "protected_branches": false,<br>  "reviewers_teams": [<br>    "pagopa-tech",<br>    "infrastrutture-admins"<br>  ]<br>}</pre> | no |
+| <a name="input_github_repository_environment"></a> [github\_repository\_environment](#input\_github\_repository\_environment) | GitHub Continuous Integration roles | <pre>object({<br>    protected_branches     = bool<br>    custom_branch_policies = bool<br>    reviewers_teams        = list(string)<br>  })</pre> | <pre>{<br>  "custom_branch_policies": true,<br>  "protected_branches": false,<br>  "reviewers_teams": [<br>    "pagopa-team-core"<br>  ]<br>}</pre> | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | n/a | `string` | `"pagopa"` | no |
 
 ## Outputs
