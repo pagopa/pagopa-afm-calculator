@@ -69,7 +69,7 @@ microservice-chart:
     COSMOS_URI: https://pagopa-d-weu-afm-marketplace-cosmos-account.documents.azure.com:443/
     ISSUER_RANGE_TABLE: 'pagopadweuafmsaissuerrangetable'
     AMOUNT_THRESHOLD: '0'
-    ID_PSP_POSTE: 'BPPIITRRZZZ'
+    ID_PSP_POSTE: 'POSTE1'
     ELASTIC_APM_SERVICE_NAME: pagopa-afm-calculator
     ELASTIC_APM_APPLICATION_PACKAGES: it.gov.pagopa.afm.calculator
     ELASTIC_APM_SERVER_URL: http://quickstart-apm-http.elastic-system.svc:8200
