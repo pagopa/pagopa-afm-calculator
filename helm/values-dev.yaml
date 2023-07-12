@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.6.3"
+    tag: "2.6.3-1-PAGOPA-1023-sviluppo-aggiunta-all-ccp-su-get-fees-by-psp"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -109,7 +109,7 @@ microservice-chart:
       create: true
       image:
         repository: ghcr.io/pagopa/pagopa-afm-calculator
-        tag: "2.6.3"
+        tag: "2.6.3-1-PAGOPA-1023-sviluppo-aggiunta-all-ccp-su-get-fees-by-psp"
         pullPolicy: Always
       envConfig:
       envSecret:
