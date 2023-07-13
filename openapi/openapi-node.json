@@ -329,6 +329,16 @@
               "format": "int32",
               "default": 10
             }
+          },
+          {
+            "name": "allCcp",
+            "in": "query",
+            "description": "Flag for the exclusion of Poste bundles: false -> excluded, true or null -> included",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "true"
+            }
           }
         ],
         "requestBody": {
