@@ -16,6 +16,7 @@ import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
 import java.util.List;
 import javax.validation.Valid;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -87,7 +88,13 @@ public class CalculatorController {
       @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp")
           String idPsp,
       @RequestBody @Valid PaymentOptionByPsp paymentOptionByPsp,
-      @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences) {
+      @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
+      @RequestParam(required = false, defaultValue = "true")
+      @Parameter(
+          description =
+              "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
+                  + " included")
+      String allCcp) {
     PaymentOption paymentOption =
         PaymentOption.builder()
             .paymentAmount(paymentOptionByPsp.getPaymentAmount())
@@ -104,7 +111,7 @@ public class CalculatorController {
             .transferList(paymentOptionByPsp.getTransferList())
             .bin(paymentOptionByPsp.getBin())
             .build();
-    return calculatorService.calculate(paymentOption, maxOccurrences, true);
+    return calculatorService.calculate(paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
   }
 
   @Operation(
@@ -169,6 +176,6 @@ public class CalculatorController {
                   "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
                       + " included")
           String allCcp) {
-    return calculatorService.calculate(paymentOption, maxOccurrences, Boolean.valueOf(allCcp));
+    return calculatorService.calculate(paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
   }
 }
