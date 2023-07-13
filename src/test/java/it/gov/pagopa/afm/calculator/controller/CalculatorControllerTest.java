@@ -14,6 +14,7 @@ import it.gov.pagopa.afm.calculator.service.CalculatorService;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +37,12 @@ class CalculatorControllerTest {
   }
 
   @Test
+  @CsvSource({
+      "/psps/12345/fees",
+      "/psps/12345/fees?allCcp=false",
+      "/psps/12345/fees?allCcp=%20"
+
+  })
   void getFeesByPsp() throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
@@ -48,59 +55,17 @@ class CalculatorControllerTest {
   }
 
   @Test
-  void getFeesByPsp_withFlag() throws Exception {
-    var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+  @CsvSource({
+      "/fees",
+      "/fees?allCcp=false",
+      "/fees?allCcp=%20"
 
-    mvc.perform(
-            post("/psps/12345/fees?allCcp=false")
-                .content(TestUtil.toJson(paymentOption))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-  }
-
-  @Test
-  void getFeesByPsp_withBlank() throws Exception {
-    var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-
-    mvc.perform(
-            post("/psps/12345/fees?allCcp=%20")
-                .content(TestUtil.toJson(paymentOption))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-  }
-
-  @Test
+  })
   void getFees() throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
     mvc.perform(
             post("/fees")
-                .content(TestUtil.toJson(paymentOption))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-  }
-
-  @Test
-  void getFees_withFlag() throws Exception {
-    var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-
-    mvc.perform(
-            post("/fees?allCcp=false")
-                .content(TestUtil.toJson(paymentOption))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-  }
-
-  @Test
-  void getFees_withBlank() throws Exception {
-    var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-
-    mvc.perform(
-            post("/fees?allCcp=%20")
                 .content(TestUtil.toJson(paymentOption))
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
