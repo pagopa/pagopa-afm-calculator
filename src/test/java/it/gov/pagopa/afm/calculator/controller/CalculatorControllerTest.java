@@ -48,11 +48,59 @@ class CalculatorControllerTest {
   }
 
   @Test
+  void getFeesByPsp_withFlag() throws Exception {
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+
+    mvc.perform(
+            post("/psps/12345/fees?allCcp=false")
+                .content(TestUtil.toJson(paymentOption))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+  }
+
+  @Test
+  void getFeesByPsp_withBlank() throws Exception {
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+
+    mvc.perform(
+            post("/psps/12345/fees?allCcp=%20")
+                .content(TestUtil.toJson(paymentOption))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+  }
+
+  @Test
   void getFees() throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
     mvc.perform(
             post("/fees")
+                .content(TestUtil.toJson(paymentOption))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+  }
+
+  @Test
+  void getFees_withFlag() throws Exception {
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+
+    mvc.perform(
+            post("/fees?allCcp=false")
+                .content(TestUtil.toJson(paymentOption))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+  }
+
+  @Test
+  void getFees_withBlank() throws Exception {
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+
+    mvc.perform(
+            post("/fees?allCcp=%20")
                 .content(TestUtil.toJson(paymentOption))
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
