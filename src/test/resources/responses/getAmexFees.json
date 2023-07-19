@@ -1,0 +1,20 @@
+{
+  "belowThreshold": false,
+  "bundleOptions": [
+    {
+    "taxPayerFee": 0,
+    "primaryCiIncurredFee": 1,
+    "paymentMethod": "CP",
+    "touchpoint": "1",
+    "idBundle": "1",
+    "bundleName": "bundle1",
+    "bundleDescription": null,
+    "idCiBundle": "1",
+    "idPsp": "AMEX",
+    "idChannel": "AMEX_ONUS",
+    "idBrokerPsp": null,
+    "onUs": true,
+    "abi": "36019"
+    }
+  ]
+}

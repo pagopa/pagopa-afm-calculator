@@ -98,6 +98,27 @@ public class TestUtil {
         .onUs(true)
         .build();
   }
+  
+  public static ValidBundle getMockAmexValidBundle() {
+	    return ValidBundle.builder()
+	        .id("1")
+	        .idChannel("AMEX_ONUS")
+	        .name("bundle1")
+	        .idPsp("AMEX")
+	        .abi("36019")
+	        .paymentAmount(1L)
+	        .minPaymentAmount(0L)
+	        .maxPaymentAmount(1000L)
+	        .type(BundleType.PUBLIC)
+	        .touchpoint("1")
+	        .paymentType("CP")
+	        .transferCategoryList(List.of("TAX1"))
+	        .ciBundleList(Collections.singletonList(getMockCiBundle()))
+	        .digitalStamp(false)
+	        .digitalStampRestriction(false)
+	        .onUs(true)
+	        .build();
+	  }
 
   public static List<ValidBundle> getMockMultipleValidBundle() {
     List<ValidBundle> bundles = new ArrayList<>();
