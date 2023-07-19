@@ -17,7 +17,7 @@ export function getDocumentById(cosmosDbURI, databaseId, containerId, authorizat
 	let authorizationToken = getCosmosDBAuthorizationToken(verb,authorizationType,authorizationVersion,authorizationSignature,resourceType,resourceLink,date);
 	
 	let partitionKeyArray = [];
-	let headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/query+json');
+	let headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/query+json', 'true');
 
   const body = {
     "query": "SELECT * FROM c where c.id=\"" + id + "\"",
@@ -38,7 +38,7 @@ export function createDocument(cosmosDbURI, databaseId, containerId, authorizati
 	let authorizationToken = getCosmosDBAuthorizationToken(verb,authorizationType,authorizationVersion,authorizationSignature,resourceType,resourceLink,date);
 
 	let partitionKeyArray = "[\""+pk+"\"]";
-	let headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/json');
+	let headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/json', 'false');
 
 	const body = JSON.stringify(document);
 
@@ -60,7 +60,7 @@ export function deleteDocument(cosmosDbURI, databaseId, containerId, authorizati
 	let authorizationToken = getCosmosDBAuthorizationToken(verb,authorizationType,authorizationVersion,authorizationSignature,resourceType,resourceLink,date);
 	
 	let partitionKeyArray = "[\""+pk+"\"]";
-	let headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/json');
+	let headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/json', 'false');
 	
 	let params = {
 		headers: headers,
@@ -71,14 +71,14 @@ export function deleteDocument(cosmosDbURI, databaseId, containerId, authorizati
 
 
 
-function getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, contentType){
+function getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, contentType, isQuery){
 	 
    return {'Accept': 'application/json',
    		 'Content-Type': contentType,
 		 'Authorization': authorizationToken,
 		 'x-ms-version': cosmosDBApiVersion,
 		 'x-ms-date': date,
-         'x-ms-documentdb-isquery': 'true',
+         'x-ms-documentdb-isquery': isQuery,
          'x-ms-query-enable-crosspartition': 'true',
          'x-ms-documentdb-partitionkey': partitionKeyArray}; 
 }
