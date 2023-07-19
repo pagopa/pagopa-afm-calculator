@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.6.5"
+    tag: "2.6.6"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -70,6 +70,7 @@ microservice-chart:
     ISSUER_RANGE_TABLE: 'pagopapweuafmsaissuerrangetable'
     AMOUNT_THRESHOLD: '0'
     ID_PSP_POSTE: 'BPPIITRRXXX'
+    AMEX_ABI: '36019'
     ELASTIC_APM_SERVICE_NAME: pagopa-afm-calculator
     ELASTIC_APM_APPLICATION_PACKAGES: it.gov.pagopa.afm.calculator
     ELASTIC_APM_SERVER_URL: http://quickstart-apm-http.elastic-system.svc:8200
@@ -108,7 +109,7 @@ microservice-chart:
       create: true
       image:
         repository: ghcr.io/pagopa/pagopa-afm-calculator
-        tag: "2.6.5"
+        tag: "2.6.6"
         pullPolicy: Always
       envConfig:
       envSecret:

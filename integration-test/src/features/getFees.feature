@@ -312,3 +312,31 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     When the client send POST to /fees?maxOccurrences=10&allCcp=false
     Then check statusCode is 200
     And the body response does not contain the Poste idPsp
+    
+    Scenario: Execute a GetFees request for AMEX payment
+    Given initial json
+      """
+      {
+        "paymentAmount": 999999999999998,
+        "primaryCreditorInstitution": "77777777777",
+        "bin": "340000",
+        "paymentMethod": "CP",
+        "touchpoint": "CHECKOUT",
+        "idPspList": null,
+        "transferList": [
+          {
+            "creditorInstitution": "77777777777",
+            "transferCategory": "TAX1"
+          },
+          {
+            "creditorInstitution": "77777777778",
+            "transferCategory": "TAX2"
+          }
+        ]
+      }
+      """
+    When the client send POST to /fees?maxOccurrences=10
+    Then check statusCode is 200
+    And the body response ordering for the bundleOptions.onUs field is:
+    | onUs  |
+    | true  |

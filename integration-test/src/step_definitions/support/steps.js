@@ -41,11 +41,24 @@ let isseuerEntity2 = {
   ISSUER_ID: "100",
   ABI: "14156"
 };
+let isseuerEntity3 = {
+  partitionKey: "340000",
+  rowKey: "321087",
+  LOW_RANGE: "3400000000000000000",
+  HIGH_RANGE: "3499999999999999999",
+  CIRCUIT: "AMEX",
+  PRODUCT_CODE: "99",
+  PRODUCT_TYPE: "3",
+  PRODUCT_CATEGORY: "C",
+  ISSUER_ID: "999999",
+  ABI: "36019"
+};
 
 // Synchronous
 BeforeAll(function() {
   tableStorageClient.setup(isseuerEntity1);
   tableStorageClient.setup(isseuerEntity2);
+  tableStorageClient.setup(isseuerEntity3);
 });
 
 Given('the configuration {string}', async function(filePath) {
