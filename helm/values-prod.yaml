@@ -108,7 +108,7 @@ microservice-chart:
       create: true
       image:
         repository: ghcr.io/pagopa/pagopa-afm-calculator
-        tag: "2.6.6"
+        tag: "2.6.6-1-kibana"
         pullPolicy: Always
       envConfig:
       envSecret:
