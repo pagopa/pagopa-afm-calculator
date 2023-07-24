@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic for Node",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.6.3-2-kibana"
+    "version": "2.6.6"
   },
   "servers": [
     {
@@ -328,6 +328,16 @@
               "type": "integer",
               "format": "int32",
               "default": 10
+            }
+          },
+          {
+            "name": "allCcp",
+            "in": "query",
+            "description": "Flag for the exclusion of Poste bundles: false -> excluded, true or null -> included",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "true"
             }
           }
         ],

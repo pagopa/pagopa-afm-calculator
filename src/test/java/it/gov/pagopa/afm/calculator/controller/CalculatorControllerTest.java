@@ -14,6 +14,7 @@ import it.gov.pagopa.afm.calculator.service.CalculatorService;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +37,12 @@ class CalculatorControllerTest {
   }
 
   @Test
+  @CsvSource({
+      "/psps/12345/fees",
+      "/psps/12345/fees?allCcp=false",
+      "/psps/12345/fees?allCcp=%20"
+
+  })
   void getFeesByPsp() throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
@@ -48,6 +55,12 @@ class CalculatorControllerTest {
   }
 
   @Test
+  @CsvSource({
+      "/fees",
+      "/fees?allCcp=false",
+      "/fees?allCcp=%20"
+
+  })
   void getFees() throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
