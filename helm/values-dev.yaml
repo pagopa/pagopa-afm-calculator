@@ -110,9 +110,7 @@ microservice-chart:
       create: true
       image:
         repository: ghcr.io/pagopa/pagopa-afm-calculator
-        tag: "2.6.6-4-kibana"
+        tag: "2.6.6-5-kibana"
         pullPolicy: Always
-      envConfig: {
-        OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=azure-dev-beta"
-      }
+      envConfig: {OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=azure-dev-beta"}
       envSecret: {}
