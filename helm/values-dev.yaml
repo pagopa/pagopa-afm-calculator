@@ -71,10 +71,9 @@ microservice-chart:
     AMOUNT_THRESHOLD: '0'
     ID_PSP_POSTE: 'POSTE1'
 
-    OTEL_RESOURCE_ATTRIBUTES: "service.name=pagopa-afm-calculator,deployment.environment=azure-dev"
+    OTEL_SERVICE_NAME: "pagopa-afm-calculator"
+    OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=azure-dev"
     OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.elastic-system.svc:4317"
-    OTEL_TRACES_EXPORTER: otlp
-    OTEL_METRICS_EXPORTER: otlp
     OTEL_LOGS_EXPORTER: none
     OTEL_TRACES_SAMPLER: "always_on"
 
@@ -115,5 +114,7 @@ microservice-chart:
         repository: ghcr.io/pagopa/pagopa-afm-calculator
         tag: "2.6.6-3-kibana"
         pullPolicy: Always
-      envConfig: {}
+      envConfig: {
+        OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=azure-dev-beta"
+      }
       envSecret: {}
