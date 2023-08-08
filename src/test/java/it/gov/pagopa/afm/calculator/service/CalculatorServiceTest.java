@@ -113,7 +113,7 @@ class CalculatorServiceTest {
     e.setIssuerId("100");
     e.setAbi("14156");
     Initializer.table.execute(TableOperation.insert(e));
-    
+
     e = new IssuerRangeEntity("340000", "321087");
     e.setLowRange("3400000000000000000");
     e.setHighRange("3499999999999999999");
@@ -401,7 +401,7 @@ class CalculatorServiceTest {
     BundleOption result = calculatorService.calculate(paymentOption, 10, false);
     assertEquals(1, result.getBundleOptions().size());
   }
-  
+
   @Test
   @Order(12)
   void calculate_amexPayment() throws IOException, JSONException {
@@ -415,7 +415,8 @@ class CalculatorServiceTest {
             Collections.singleton(paymentType),
             Collections.singleton(validBundle));
 
-    var paymentOption = TestUtil.readObjectFromFile("requests/getAmexFees.json", PaymentOption.class);
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getAmexFees.json", PaymentOption.class);
     var result = calculatorService.calculate(paymentOption, 10, true);
     String actual = TestUtil.toJson(result);
 
