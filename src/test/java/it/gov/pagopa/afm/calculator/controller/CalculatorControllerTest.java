@@ -37,12 +37,7 @@ class CalculatorControllerTest {
   }
 
   @Test
-  @CsvSource({
-      "/psps/12345/fees",
-      "/psps/12345/fees?allCcp=false",
-      "/psps/12345/fees?allCcp=%20"
-
-  })
+  @CsvSource({"/psps/12345/fees", "/psps/12345/fees?allCcp=false", "/psps/12345/fees?allCcp=%20"})
   void getFeesByPsp() throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
@@ -55,12 +50,7 @@ class CalculatorControllerTest {
   }
 
   @Test
-  @CsvSource({
-      "/fees",
-      "/fees?allCcp=false",
-      "/fees?allCcp=%20"
-
-  })
+  @CsvSource({"/fees", "/fees?allCcp=false", "/fees?allCcp=%20"})
   void getFees() throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
