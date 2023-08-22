@@ -14,7 +14,8 @@
     "idChannel": "13212880150_07_ONUS",
     "idBrokerPsp": null,
     "onUs": false,
-    "abi": "14156"
+    "abi": "14156",
+    "pspBusinessName": "psp business name 1"
     }
   ]
 }

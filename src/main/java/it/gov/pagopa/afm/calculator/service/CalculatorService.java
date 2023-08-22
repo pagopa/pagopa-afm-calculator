@@ -251,6 +251,7 @@ public class CalculatorService {
         .idChannel(bundle.getIdChannel())
         .onUs(this.getOnUsValue(bundle, paymentOption))
         .abi(bundle.getAbi())
+        .pspBusinessName(bundle.getPspBusinessName())
         .build();
   }
 
