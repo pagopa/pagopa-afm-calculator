@@ -30,6 +30,7 @@ public class Bundle {
   @PartitionKey private String idPsp;
 
   private String abi;
+  private String pspBusinessName;
 
   private String name;
   private String description;
