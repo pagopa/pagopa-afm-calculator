@@ -16,6 +16,7 @@ import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.Setter;
@@ -40,6 +41,9 @@ public class CalculatorService {
   @Autowired UtilityComponent utilityComponent;
 
   @Autowired IssuersService issuersService;
+
+  @Value("${pspAmex.abi:36019}")
+  private String amexABI;
 
   @Cacheable(value = "calculate")
   public BundleOption calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
@@ -98,6 +102,14 @@ public class CalculatorService {
       }
     }
 
+    // if it is a payment on the AMEX circuit --> filter to return only AMEX_ONUS
+    if (this.isAMEXAbi(issuers)) {
+      Predicate<Transfer> abiPredicate = t -> amexABI.equalsIgnoreCase(t.getAbi());
+      Predicate<Transfer> onusPredicate = t -> Boolean.TRUE.equals(t.getOnUs());
+      transfers =
+          transfers.stream().filter(abiPredicate.and(onusPredicate)).collect(Collectors.toList());
+    }
+
     // sort according onus and taxpayer fee
     Collections.sort(transfers);
 
@@ -116,6 +128,10 @@ public class CalculatorService {
   private boolean isUniqueAbi(List<IssuerRangeEntity> issuers) {
     return !CollectionUtils.isEmpty(issuers)
         && issuers.stream().map(IssuerRangeEntity::getAbi).distinct().limit(2).count() > 1;
+  }
+
+  private boolean isAMEXAbi(List<IssuerRangeEntity> issuers) {
+    return !CollectionUtils.isEmpty(issuers) && issuers.get(0).getAbi().equalsIgnoreCase(amexABI);
   }
 
   private List<Transfer> getTransferList(

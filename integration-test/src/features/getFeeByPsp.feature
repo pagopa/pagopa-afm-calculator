@@ -73,10 +73,10 @@ Feature: GetFeeByPsp
     When the client send POST to /psps/88888888888/fees
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | false |
-    | false |
-    
+      | onUs  |
+      | false |
+      | false |
+
   Scenario: Get List of fees by CI, amount and single PSP
     Given initial json
       """
@@ -99,13 +99,12 @@ Feature: GetFeeByPsp
     When the client send POST to /psps/88888888889/fees
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | true  |
-    | false |
-    | false |
-    | false |  
-    | false |
-
+      | onUs  |
+      | true  |
+      | false |
+      | false |
+      | false |
+      | false |
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP
     Given initial json
@@ -130,13 +129,12 @@ Feature: GetFeeByPsp
     When the client send POST to /psps/88888888889/fees
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | true  |
-    | false |
-    | false |
-    | false |  
-    | false |
-    
+      | onUs  |
+      | true  |
+      | false |
+      | false |
+      | false |
+      | false |
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP 2
     Given initial json
@@ -211,9 +209,9 @@ Feature: GetFeeByPsp
     When the client send POST to /psps/88888888889/fees
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | false |
-    | false |
+      | onUs  |
+      | false |
+      | false |
 
   Scenario: Get List of fees by CI, amount, touchpoint, single PSP and above threshold
     Given initial json
@@ -238,13 +236,12 @@ Feature: GetFeeByPsp
     When the client send POST to /psps/88888888889/fees
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | true  |
-    | false |
-    | false |
-    | false |
-    | false |
-    
+      | onUs  |
+      | true  |
+      | false |
+      | false |
+      | false |
+      | false |
 
   Scenario: Get fee by psp with non-existing bin
     Given initial json
@@ -273,5 +270,52 @@ Feature: GetFeeByPsp
       {
         "belowThreshold": false,
         "bundleOptions":[]
+      }
+      """
+
+  Scenario: Get List of fees by CI, amount, method, touchpoint and single PSP for AMEX payment
+    Given initial json
+      """
+      {
+        "paymentAmount": 999999999999990,
+        "primaryCreditorInstitution": "77777777777",
+        "bin": "340000",
+        "paymentMethod": "CP",
+        "idPspList": null,
+        "transferList": [
+          {
+            "creditorInstitution": "77777777777",
+            "transferCategory": "TAX1"
+          },
+          {
+            "creditorInstitution": "77777777778",
+            "transferCategory": "TAX2"
+          }
+        ]
+      } 
+      """
+    When the client send POST to /psps/AMEX/fees
+    Then check statusCode is 200
+    And check response body is
+      """
+      {
+        "belowThreshold": false,
+        "bundleOptions": [
+        {
+          "taxPayerFee": 999999999999990,
+          "primaryCiIncurredFee": 0,
+          "paymentMethod": "CP",
+          "touchpoint": "ANY",
+          "idBundle": "int-test-10",
+          "bundleName": "pacchetto 10",
+          "bundleDescription": "pacchetto 10",
+          "idCiBundle": null,
+          "idPsp": "AMEX",
+          "idBrokerPsp": "88888888899",
+          "idChannel": "AMEX_ONUS",
+          "onUs": true,
+          "abi": "36019"
+         }
+       ]
       }
       """

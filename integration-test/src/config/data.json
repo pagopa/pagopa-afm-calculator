@@ -179,6 +179,25 @@
       "validityDateTo": null,
       "paymentType": null,
       "abi": 14156
+    },
+    {
+      "id": "int-test-10",
+      "idPsp": "AMEX",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "AMEX_ONUS",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 10",
+      "description": "pacchetto 10",
+      "paymentAmount": 999999999999990,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 999999999999999,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": "CP",
+      "abi": 36019
     }
   ],
   "ciBundles": [

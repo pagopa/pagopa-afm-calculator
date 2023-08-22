@@ -113,6 +113,17 @@ class CalculatorServiceTest {
     e.setIssuerId("100");
     e.setAbi("14156");
     Initializer.table.execute(TableOperation.insert(e));
+
+    e = new IssuerRangeEntity("340000", "321087");
+    e.setLowRange("3400000000000000000");
+    e.setHighRange("3499999999999999999");
+    e.setCircuit("AMEX");
+    e.setProductCode("99");
+    e.setProductType("3");
+    e.setProductCategory("C");
+    e.setIssuerId("999999");
+    e.setAbi("36019");
+    Initializer.table.execute(TableOperation.insert(e));
   }
 
   @ParameterizedTest
@@ -389,6 +400,28 @@ class CalculatorServiceTest {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
     BundleOption result = calculatorService.calculate(paymentOption, 10, false);
     assertEquals(1, result.getBundleOptions().size());
+  }
+
+  @Test
+  @Order(12)
+  void calculate_amexPayment() throws IOException, JSONException {
+    ValidBundle validBundle = TestUtil.getMockAmexValidBundle();
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(validBundle));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getAmexFees.json", PaymentOption.class);
+    var result = calculatorService.calculate(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getAmexFees.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
 
   // This must be the last test to run - it needs to mock the cosmosRepository in the service

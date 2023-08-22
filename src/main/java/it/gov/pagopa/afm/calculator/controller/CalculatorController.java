@@ -90,11 +90,11 @@ public class CalculatorController {
       @RequestBody @Valid PaymentOptionByPsp paymentOptionByPsp,
       @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
       @RequestParam(required = false, defaultValue = "true")
-      @Parameter(
-          description =
-              "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
-                  + " included")
-      String allCcp) {
+          @Parameter(
+              description =
+                  "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
+                      + " included")
+          String allCcp) {
     PaymentOption paymentOption =
         PaymentOption.builder()
             .paymentAmount(paymentOptionByPsp.getPaymentAmount())
@@ -111,7 +111,8 @@ public class CalculatorController {
             .transferList(paymentOptionByPsp.getTransferList())
             .bin(paymentOptionByPsp.getBin())
             .build();
-    return calculatorService.calculate(paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
+    return calculatorService.calculate(
+        paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
   }
 
   @Operation(
@@ -176,6 +177,7 @@ public class CalculatorController {
                   "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
                       + " included")
           String allCcp) {
-    return calculatorService.calculate(paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
+    return calculatorService.calculate(
+        paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
   }
 }
