@@ -14,7 +14,8 @@
     "idChannel": null,
     "idBrokerPsp": null,
     "onUs": false,
-    "abi": null
+    "abi": null,
+    "pspBusinessName": "psp business name 2"
     }
   ]
 }

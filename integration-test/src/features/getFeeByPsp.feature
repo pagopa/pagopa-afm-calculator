@@ -44,7 +44,8 @@ Feature: GetFeeByPsp
           "idBrokerPsp": "88888888899",
           "idChannel": "88888888899_01_ONUS",
           "onUs": false,
-          "abi": "14156"
+          "abi": "14156",
+          "pspBusinessName": "psp business name int-test-1"
          }
        ]
       }
@@ -178,7 +179,8 @@ Feature: GetFeeByPsp
           "idBrokerPsp": "88888888899",
           "idChannel": "88888888899_01_ONUS",
           "onUs": false,
-          "abi": "14156"
+          "abi": "14156",
+          "pspBusinessName": "psp business name int-test-7"
         }
       ]
       }
@@ -314,7 +316,8 @@ Feature: GetFeeByPsp
           "idBrokerPsp": "88888888899",
           "idChannel": "AMEX_ONUS",
           "onUs": true,
-          "abi": "36019"
+          "abi": "36019",
+          "pspBusinessName": "psp business name int-test-10"
          }
        ]
       }

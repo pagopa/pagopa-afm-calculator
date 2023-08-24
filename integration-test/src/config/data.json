@@ -17,7 +17,8 @@
       "validityDateTo": null,
       "touchpoint": "ANY",
       "paymentType": null,
-      "abi": 14156
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-1"
     },
     {
       "id": "int-test-2",
@@ -36,7 +37,8 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "abi": 14156
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-2"
     },
     {
       "id": "int-test-3",
@@ -56,7 +58,8 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "abi": 14156
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-3"
     },
     {
       "id": "int-test-4",
@@ -72,6 +75,7 @@
       "maxPaymentAmount": 999999999999999,
       "type": "GLOBAL",
       "abi": 14156,
+      "pspBusinessName": "psp business name int-test-4",
       "transferCategoryList": [
         "TAX1"
       ],
@@ -102,7 +106,8 @@
       ],
       "validityDateFrom": null,
       "validityDateTo": null,
-      "abi": 14156
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-5"
     },
     {
       "id": "int-test-6",
@@ -121,7 +126,8 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "paymentType": null,
-      "abi": 14156
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-6"
     },
     {
       "id": "int-test-7",
@@ -140,7 +146,8 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "paymentType": null,
-      "abi": 14156
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-7"
     },
     {
       "id": "int-test-8",
@@ -159,7 +166,8 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "paymentType": null,
-      "abi": 14156
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-8"
     },
     {
       "id": "int-test-9",
@@ -178,7 +186,8 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "paymentType": null,
-      "abi": 14156
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-9"
     },
     {
       "id": "int-test-10",
@@ -197,7 +206,8 @@
       "validityDateTo": null,
       "touchpoint": "ANY",
       "paymentType": "CP",
-      "abi": 36019
+      "abi": 36019,
+      "pspBusinessName": "psp business name int-test-10"
     }
   ],
   "ciBundles": [

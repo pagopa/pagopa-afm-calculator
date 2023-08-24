@@ -14,7 +14,8 @@
     "idChannel": "AMEX_ONUS",
     "idBrokerPsp": null,
     "onUs": true,
-    "abi": "36019"
+    "abi": "36019",
+    "pspBusinessName": "psp business name amex"
     }
   ]
 }

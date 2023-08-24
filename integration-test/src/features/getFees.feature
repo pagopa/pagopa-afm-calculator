@@ -179,7 +179,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
-            "abi": "14156"
+            "abi": "14156",
+            "pspBusinessName": "psp business name int-test-7"
         }
       ]
       }
