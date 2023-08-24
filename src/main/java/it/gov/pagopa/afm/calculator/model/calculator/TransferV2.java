@@ -18,6 +18,7 @@ public class TransferV2 implements Comparable<TransferV2>, Serializable {
   private String abi;
   private String bundleDescription;
   private String bundleName;
+  private String pspBusinessName;
   private String idBrokerPsp;
   private String idBundle;
   private String idChannel;
