@@ -8,11 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import it.gov.pagopa.afm.calculator.model.PaymentOptionByPsp;
-import it.gov.pagopa.afm.calculator.model.ProblemJson;
-import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
+import it.gov.pagopa.afm.calculator.model.*;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
+import it.gov.pagopa.afm.calculator.model.calculator.BundleOptionV2;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
 import java.util.List;
 import javax.validation.Valid;
@@ -115,6 +113,72 @@ public class CalculatorController {
         paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
   }
 
+    @Operation(
+            summary = "[v2] Get taxpayer fees of the specified idPSP. " +
+                    "The v2 api enables the management of carts payments",
+            security = {@SecurityRequirement(name = "ApiKey")},
+            tags = {"Calculator"})
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Ok",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = BundleOptionV2.class))),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(schema = @Schema())),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unable to process the request",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @ApiResponse(
+                            responseCode = "429",
+                            description = "Too many requests",
+                            content = @Content(schema = @Schema())),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Service unavailable",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class)))
+            })
+    @PostMapping(
+            value = "/v2/psps/{idPsp}/fees",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public BundleOptionV2 getFeesByPspV2(
+            @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp")
+            String idPsp,
+            @RequestBody @Valid PaymentOptionByPspV2 paymentOptionByPsp,
+            @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
+            @RequestParam(required = false, defaultValue = "true")
+            @Parameter(description = "Flag for the exclusion of Poste bundles: false -> excluded, true or null -> included")
+            String allCcp) {
+
+        return null;
+    }
+
   @Operation(
       summary = "Get taxpayer fees of all or specified idPSP",
       security = {@SecurityRequirement(name = "ApiKey")},
@@ -180,4 +244,67 @@ public class CalculatorController {
     return calculatorService.calculate(
         paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
   }
+
+    @Operation(
+            summary = "[v2] Get taxpayer fees of all or specified idPSP. " +
+                    "The v2 api enables the management of carts payments",
+            security = {@SecurityRequirement(name = "ApiKey")},
+            tags = {"Calculator"})
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Ok",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = BundleOptionV2.class))),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(schema = @Schema())),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unable to process the request",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @ApiResponse(
+                            responseCode = "429",
+                            description = "Too many requests",
+                            content = @Content(schema = @Schema())),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Service unavailable",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class)))
+            })
+    @PostMapping(
+            value = "/v2/fees",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public BundleOptionV2 getFeesV2(
+            @RequestBody @Valid PaymentOptionV2 paymentOption,
+            @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
+            @RequestParam(required = false, defaultValue = "true")
+            @Parameter(description = "Flag for the exclusion of Poste bundles: false -> excluded, true or null -> included")
+            String allCcp) {
+        return null;
+    }
 }

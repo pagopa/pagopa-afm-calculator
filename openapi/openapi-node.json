@@ -481,6 +481,355 @@
           }
         }
       ]
+    },
+    "/v2/fees": {
+      "post": {
+        "tags": [
+          "Calculator"
+        ],
+        "summary": "[v2] Get taxpayer fees of all or specified idPSP. The v2 api enables the management of carts payments",
+        "operationId": "getFeesV2",
+        "parameters": [
+          {
+            "name": "maxOccurrences",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "allCcp",
+            "in": "query",
+            "description": "Flag for the exclusion of Poste bundles: false -> excluded, true or null -> included",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "true"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentOptionV2"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BundleOptionV2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unable to process the request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Service unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/psps/{idPsp}/fees": {
+      "post": {
+        "tags": [
+          "Calculator"
+        ],
+        "summary": "[v2] Get taxpayer fees of the specified idPSP. The v2 api enables the management of carts payments",
+        "operationId": "getFeesByPspV2",
+        "parameters": [
+          {
+            "name": "idPsp",
+            "in": "path",
+            "description": "PSP identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxOccurrences",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "allCcp",
+            "in": "query",
+            "description": "Flag for the exclusion of Poste bundles: false -> excluded, true or null -> included",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "true"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentOptionByPspV2"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BundleOptionV2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unable to process the request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Service unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     }
   },
   "components": {
@@ -510,6 +859,21 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Transfer"
+            }
+          }
+        }
+      },
+      "BundleOptionV2": {
+        "type": "object",
+        "properties": {
+          "belowThreshold": {
+            "type": "boolean",
+            "description": "if true (the payment amount is lower than the threshold value) the bundles onus is not calculated (always false)"
+          },
+          "bundleOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransferV2"
             }
           }
         }
@@ -558,6 +922,42 @@
         },
         "required": [
           "id"
+        ]
+      },
+      "Fees": {
+        "type": "object",
+        "properties": {
+          "actualCiIncurredFee": {
+            "type": "string"
+          },
+          "creditorInstitution": {
+            "type": "string"
+          },
+          "primaryCiIncurredFee": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentNoticeItem": {
+        "type": "object",
+        "properties": {
+          "paymentAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "primaryCreditorInstitution": {
+            "type": "string"
+          },
+          "transferList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransferListItem"
+            }
+          }
+        },
+        "required": [
+          "paymentAmount",
+          "transferList"
         ]
       },
       "PaymentOption": {
@@ -630,6 +1030,61 @@
             }
           }
         }
+      },
+      "PaymentOptionByPspV2": {
+        "type": "object",
+        "properties": {
+          "bin": {
+            "type": "string"
+          },
+          "idBrokerPsp": {
+            "type": "string"
+          },
+          "idChannel": {
+            "type": "string"
+          },
+          "paymentMethod": {
+            "type": "string"
+          },
+          "touchpoint": {
+            "type": "string"
+          },
+          "transferList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentNoticeItem"
+            }
+          }
+        }
+      },
+      "PaymentOptionV2": {
+        "type": "object",
+        "properties": {
+          "bin": {
+            "type": "string"
+          },
+          "idPspList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PspSearchCriteria"
+            }
+          },
+          "paymentMethod": {
+            "type": "string"
+          },
+          "paymentNotice": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentNoticeItem"
+            }
+          },
+          "touchpoint": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "paymentNotice"
+        ]
       },
       "PaymentType": {
         "type": "object",
@@ -760,6 +1215,58 @@
             "type": "boolean"
           },
           "transferCategory": {
+            "type": "string"
+          }
+        }
+      },
+      "TransferV2": {
+        "type": "object",
+        "properties": {
+          "abi": {
+            "type": "string"
+          },
+          "actualPayerFee": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "bundleDescription": {
+            "type": "string"
+          },
+          "bundleName": {
+            "type": "string"
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Fees"
+            }
+          },
+          "idBrokerPsp": {
+            "type": "string"
+          },
+          "idBundle": {
+            "type": "string"
+          },
+          "idChannel": {
+            "type": "string"
+          },
+          "idCiBundle": {
+            "type": "string"
+          },
+          "idPsp": {
+            "type": "string"
+          },
+          "onUs": {
+            "type": "boolean"
+          },
+          "paymentMethod": {
+            "type": "string"
+          },
+          "taxPayerFee": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "touchpoint": {
             "type": "string"
           }
         }
