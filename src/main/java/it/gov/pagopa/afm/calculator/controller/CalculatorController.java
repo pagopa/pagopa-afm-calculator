@@ -165,7 +165,7 @@ public class CalculatorController {
                                     schema = @Schema(implementation = ProblemJson.class)))
             })
     @PostMapping(
-            value = "/v2/psps/{idPsp}/fees",
+            value = "/carts/psps/{idPsp}/fees",
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public BundleOptionV2 getFeesByPspV2(
             @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp")
@@ -297,7 +297,7 @@ public class CalculatorController {
                                     schema = @Schema(implementation = ProblemJson.class)))
             })
     @PostMapping(
-            value = "/v2/fees",
+            value = "/carts/fees",
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public BundleOptionV2 getFeesV2(
             @RequestBody @Valid PaymentOptionV2 paymentOption,
