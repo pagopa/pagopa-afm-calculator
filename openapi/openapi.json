@@ -1314,18 +1314,18 @@
                     "paymentMethod": {
                         "type": "string"
                     },
-                    "touchpoint": {
-                        "type": "string"
-                    },
-                    "transferList": {
+                    "paymentNotice": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/PaymentNoticeItem"
                         }
+                    },
+                    "touchpoint": {
+                        "type": "string"
                     }
                 },
                 "required": [
-                    "transferList"
+                    "paymentNotice"
                 ]
             },
             "PaymentOptionV2": {

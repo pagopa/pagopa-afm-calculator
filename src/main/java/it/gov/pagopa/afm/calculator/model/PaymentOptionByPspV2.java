@@ -17,5 +17,5 @@ public class PaymentOptionByPspV2 {
   private String idChannel;
   private String paymentMethod;
   private String touchpoint;
-  @NotNull @Valid private ArrayList<PaymentNoticeItem> transferList;
+  @NotNull @Valid private ArrayList<PaymentNoticeItem> paymentNotice;
 }
