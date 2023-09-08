@@ -6,5 +6,5 @@ version: 2.31.0
 appVersion: 2.7.3
 dependencies:
   - name: microservice-chart
-    version: 1.21.0
+    version: 2.4.0
     repository: "https://pagopa.github.io/aks-microservice-chart-blueprint"
