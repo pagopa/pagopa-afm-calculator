@@ -5,6 +5,7 @@ import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.table.EntityProperty;
 import com.microsoft.azure.storage.table.TableServiceEntity;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -61,6 +62,24 @@ public class IssuerRangeEntity extends TableServiceEntity {
         Optional.ofNullable(properties.get("ABI"))
             .map(EntityProperty::getValueAsString)
             .orElse(abi);
+  }
+  
+  @Override
+  public HashMap<String, EntityProperty> writeEntity(OperationContext operationContext) throws StorageException {
+	  super.writeEntity(operationContext);
+	  
+	  Map<String, EntityProperty> properties = new HashMap<>();
+
+      properties.put("LOW_RANGE", new EntityProperty(this.lowRange));
+      properties.put("HIGH_RANGE", new EntityProperty(this.highRange));
+      properties.put("CIRCUIT", new EntityProperty(this.circuit));
+      properties.put("PRODUCT_CODE", new EntityProperty(this.productCode));
+      properties.put("PRODUCT_TYPE", new EntityProperty(this.productType));
+      properties.put("PRODUCT_CATEGORY", new EntityProperty(this.productCategory));
+      properties.put("ISSUER_ID", new EntityProperty(this.issuerId));
+      properties.put("ABI", new EntityProperty(this.abi));
+      
+      return (HashMap<String, EntityProperty>) properties;
   }
 
   public IssuerRangeEntity(String bin, String id) {

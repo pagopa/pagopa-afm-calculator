@@ -6,25 +6,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import com.azure.spring.data.cosmos.core.CosmosTemplate;
-import com.azure.spring.data.cosmos.core.query.CosmosQuery;
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.table.TableOperation;
-import it.gov.pagopa.afm.calculator.TestUtil;
-import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
-import it.gov.pagopa.afm.calculator.entity.PaymentType;
-import it.gov.pagopa.afm.calculator.entity.Touchpoint;
-import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.exception.AppException;
-import it.gov.pagopa.afm.calculator.initializer.Initializer;
-import it.gov.pagopa.afm.calculator.model.BundleType;
-import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
-import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -43,6 +29,23 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import com.azure.spring.data.cosmos.core.CosmosTemplate;
+import com.azure.spring.data.cosmos.core.query.CosmosQuery;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.table.TableOperation;
+
+import it.gov.pagopa.afm.calculator.TestUtil;
+import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
+import it.gov.pagopa.afm.calculator.entity.PaymentType;
+import it.gov.pagopa.afm.calculator.entity.Touchpoint;
+import it.gov.pagopa.afm.calculator.entity.ValidBundle;
+import it.gov.pagopa.afm.calculator.exception.AppException;
+import it.gov.pagopa.afm.calculator.initializer.Initializer;
+import it.gov.pagopa.afm.calculator.model.BundleType;
+import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
+import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 
 @SpringBootTest
 @Testcontainers
@@ -81,8 +84,8 @@ class CalculatorServiceTest {
     Initializer.table.execute(TableOperation.insert(e));
 
     e = new IssuerRangeEntity("504317", "321134");
-    e.setLowRange("5143170000000000000");
-    e.setHighRange("5143179999999999999");
+    e.setLowRange("5043170000000000000");
+    e.setHighRange("5043179999999999999");
     e.setCircuit("MAST");
     e.setProductCode("CIR");
     e.setProductType("1");
@@ -93,8 +96,8 @@ class CalculatorServiceTest {
 
     // two records with same BIN and same ABI
     e = new IssuerRangeEntity("1005066", "300000");
-    e.setLowRange("3000000000000000000");
-    e.setHighRange("3059999999999999999");
+    e.setLowRange("1005066000000000000");
+    e.setHighRange("1005066999999999999");
     e.setCircuit("DINERS");
     e.setProductCode("N");
     e.setProductType("2");
@@ -104,8 +107,8 @@ class CalculatorServiceTest {
     Initializer.table.execute(TableOperation.insert(e));
 
     e = new IssuerRangeEntity("1005066", "300001");
-    e.setLowRange("3100000000000000000");
-    e.setHighRange("3159999999999999999");
+    e.setLowRange("1005066000000000000");
+    e.setHighRange("1005066999999999999");
     e.setCircuit("DINERS");
     e.setProductCode("N");
     e.setProductType("2");
