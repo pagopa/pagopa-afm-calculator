@@ -9,7 +9,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": "CHECKOUT",
         "idPspList": null,
@@ -41,7 +41,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": null,
         "idPspList": null,
@@ -76,7 +76,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": null,
         "idPspList": [{"idPsp":"88888888889"}],
@@ -110,7 +110,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": null,
         "touchpoint": "IO",
         "idPspList": [{"idPsp":"88888888888"}],
@@ -141,7 +141,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
       "paymentAmount": 999999999999998,
       "primaryCreditorInstitution": "77777777777",
-      "bin": "300000",
+      "bin": "309500",
       "paymentMethod": null,
       "touchpoint": "IO",
       "idPspList": [{"idPsp":"88888888889"}],
@@ -192,7 +192,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": null,
         "touchpoint": "IO",
         "idPspList": [{"idPsp":"88888888889"}],
@@ -224,7 +224,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": null,
         "idPspList": null,
@@ -294,7 +294,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": null,
         "idPspList": null,
