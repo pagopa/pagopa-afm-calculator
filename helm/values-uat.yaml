@@ -39,7 +39,7 @@ microservice-chart:
     create: true
     host: "weuuat.afm.internal.uat.platform.pagopa.it"
     path: /pagopa-afm-calculator-service/(.*)
-    servicePort: 80
+    servicePort: 8080
   serviceAccount:
     create: false
     annotations: {}
