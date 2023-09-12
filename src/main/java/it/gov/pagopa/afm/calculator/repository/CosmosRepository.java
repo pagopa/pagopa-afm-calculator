@@ -180,8 +180,12 @@ public class CosmosRepository {
    */
   private static boolean digitalStampFilter(
       long transferListSize, long onlyMarcaBolloDigitale, ValidBundle bundle) {
-	  boolean digitalStamp = bundle.getDigitalStamp() != null ? bundle.getDigitalStamp() : Boolean.FALSE;
-	  boolean digitalStampRestriction = bundle.getDigitalStampRestriction() != null ? bundle.getDigitalStampRestriction() : Boolean.FALSE;
+    boolean digitalStamp =
+        bundle.getDigitalStamp() != null ? bundle.getDigitalStamp() : Boolean.FALSE;
+    boolean digitalStampRestriction =
+        bundle.getDigitalStampRestriction() != null
+            ? bundle.getDigitalStampRestriction()
+            : Boolean.FALSE;
     if (onlyMarcaBolloDigitale == transferListSize) {
       // if marcaBolloDigitale is present in all paymentOptions
       return digitalStamp;
