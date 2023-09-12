@@ -81,8 +81,8 @@ class CalculatorServiceTest {
     Initializer.table.execute(TableOperation.insert(e));
 
     e = new IssuerRangeEntity("504317", "321134");
-    e.setLowRange("5143170000000000000");
-    e.setHighRange("5143179999999999999");
+    e.setLowRange("5043170000000000000");
+    e.setHighRange("5043179999999999999");
     e.setCircuit("MAST");
     e.setProductCode("CIR");
     e.setProductType("1");
@@ -93,8 +93,8 @@ class CalculatorServiceTest {
 
     // two records with same BIN and same ABI
     e = new IssuerRangeEntity("1005066", "300000");
-    e.setLowRange("3000000000000000000");
-    e.setHighRange("3059999999999999999");
+    e.setLowRange("1005066000000000000");
+    e.setHighRange("1005066999999999999");
     e.setCircuit("DINERS");
     e.setProductCode("N");
     e.setProductType("2");
@@ -104,8 +104,8 @@ class CalculatorServiceTest {
     Initializer.table.execute(TableOperation.insert(e));
 
     e = new IssuerRangeEntity("1005066", "300001");
-    e.setLowRange("3100000000000000000");
-    e.setHighRange("3159999999999999999");
+    e.setLowRange("1005066000000000000");
+    e.setHighRange("1005066999999999999");
     e.setCircuit("DINERS");
     e.setProductCode("N");
     e.setProductType("2");

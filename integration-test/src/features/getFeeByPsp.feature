@@ -9,7 +9,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "paymentMethod": "CP",
           "touchpoint": "CHECKOUT",
           "transferList": [
@@ -57,7 +57,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999988,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "paymentMethod": "PO",
           "transferList": [
             {
@@ -84,7 +84,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "transferList": [
             {
               "creditorInstitution": "77777777777",
@@ -113,7 +113,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "touchpoint": "IO",
           "transferList": [
             {
@@ -143,7 +143,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "touchpoint": "IO",
           "transferList": [
             {
@@ -192,7 +192,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "touchpoint": "IO",
           "transferList": [
             {
@@ -221,7 +221,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "touchpoint": "IO",
           "transferList": [
             {
