@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic for Node",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.7.3-1-upd-chart"
+    "version": "2.7.4"
   },
   "servers": [
     {
