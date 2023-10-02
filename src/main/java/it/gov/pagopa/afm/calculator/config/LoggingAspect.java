@@ -107,10 +107,7 @@ public class LoggingAspect {
         "Successful API operation {} - result: {}", joinPoint.getSignature().getName(), result);
   }
 
-  @AfterReturning(
-    value = "execution(* it.gov.pagopa.afm.calculator.exception.ErrorHandler.*(..))",
-    returning = "result"
-  )
+  @AfterReturning(value = "execution(* *..exception.ErrorHandler.*(..))", returning = "result")
   public void trowingApiInvocation(JoinPoint joinPoint, ResponseEntity<?> result) {
     MDC.put(STATUS, "KO");
     MDC.put(CODE, String.valueOf(result.getStatusCodeValue()));
