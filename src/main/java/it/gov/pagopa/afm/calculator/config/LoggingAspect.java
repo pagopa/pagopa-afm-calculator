@@ -1,9 +1,5 @@
 package it.gov.pagopa.afm.calculator.config;
 
-import java.util.Arrays;
-import java.util.stream.StreamSupport;
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -19,6 +15,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.stream.StreamSupport;
 
 @Aspect
 @Component
@@ -52,8 +53,7 @@ public class LoggingAspect {
     // all repository methods
   }
 
-  @Pointcut(
-      "@within(org.springframework.stereotype.Service) || @within(org.springframework.stereotype.Component)")
+  @Pointcut("@within(org.springframework.stereotype.Service)")
   public void service() {
     // all service methods
   }
