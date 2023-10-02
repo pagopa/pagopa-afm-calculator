@@ -1,5 +1,9 @@
 package it.gov.pagopa.afm.calculator.config;
 
+import java.util.Arrays;
+import java.util.stream.StreamSupport;
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -16,11 +20,6 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.stream.StreamSupport;
-
 @Aspect
 @Component
 @Slf4j
@@ -29,7 +28,7 @@ public class LoggingAspect {
   public static final String START_TIME = "startTime";
   public static final String METHOD = "method";
   public static final String STATUS = "status";
-  public static final String CODE = "code";
+  public static final String CODE = "httpCode";
   public static final String RESPONSE_TIME = "responseTime";
 
   @Value("${info.application.name}")
