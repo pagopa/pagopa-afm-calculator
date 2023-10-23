@@ -4,10 +4,14 @@ import java.util.Arrays;
 import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,8 +35,8 @@ public class LoggingAspect {
   public static final String CODE = "httpCode";
   public static final String RESPONSE_TIME = "responseTime";
 
-  @Value("${info.application.name}")
-  private String name;
+  @Value("${info.application.artifactId}")
+  private String artifactId;
 
   @Value("${info.application.version}")
   private String version;
@@ -41,6 +45,8 @@ public class LoggingAspect {
   private String environment;
 
   @Autowired HttpServletRequest httRequest;
+
+  @Autowired HttpServletResponse httpResponse;
 
   @Pointcut("@within(org.springframework.web.bind.annotation.RestController)")
   public void restController() {
@@ -60,7 +66,7 @@ public class LoggingAspect {
   /** Log essential info of application during the startup. */
   @PostConstruct
   public void logStartup() {
-    log.info("-> Starting {} version {} - environment {}", name, version, environment);
+    log.info("-> Starting {} version {} - environment {}", artifactId, version, environment);
   }
 
   /**
@@ -83,12 +89,14 @@ public class LoggingAspect {
                 !(prop.toLowerCase().contains("credentials")
                     || prop.toLowerCase().contains("password")
                     || prop.toLowerCase().contains("pass")
-                    || prop.toLowerCase().contains("pwd")))
+                    || prop.toLowerCase().contains("pwd")
+                    || prop.toLowerCase().contains("key")
+                    || prop.toLowerCase().contains("secret")))
         .forEach(prop -> log.debug("{}: {}", prop, env.getProperty(prop)));
   }
 
-  @Before(value = "restController()")
-  public void logApiInvocation(JoinPoint joinPoint) {
+  @Around(value = "restController()")
+  public Object logApiInvocation(ProceedingJoinPoint joinPoint) throws Throwable {
     MDC.put(METHOD, joinPoint.getSignature().getName());
     MDC.put(START_TIME, String.valueOf(System.currentTimeMillis()));
     log.info("{} {}", httRequest.getMethod(), httRequest.getRequestURI());
@@ -96,15 +104,19 @@ public class LoggingAspect {
         "Invoking API operation {} - args: {}",
         joinPoint.getSignature().getName(),
         joinPoint.getArgs());
-  }
 
-  @AfterReturning(value = "restController()", returning = "result")
-  public void returnApiInvocation(JoinPoint joinPoint, ResponseEntity<?> result) {
+    Object result = joinPoint.proceed();
+
     MDC.put(STATUS, "OK");
-    MDC.put(CODE, String.valueOf(result.getStatusCodeValue()));
+    MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
     MDC.put(RESPONSE_TIME, getExecutionTime());
     log.info(
         "Successful API operation {} - result: {}", joinPoint.getSignature().getName(), result);
+    MDC.remove(STATUS);
+    MDC.remove(CODE);
+    MDC.remove(RESPONSE_TIME);
+    MDC.remove(START_TIME);
+    return result;
   }
 
   @AfterReturning(value = "execution(* *..exception.ErrorHandler.*(..))", returning = "result")
@@ -112,19 +124,11 @@ public class LoggingAspect {
     MDC.put(STATUS, "KO");
     MDC.put(CODE, String.valueOf(result.getStatusCodeValue()));
     MDC.put(RESPONSE_TIME, getExecutionTime());
-    log.info("Failed API operation {} - error: {}", joinPoint.getSignature().getName(), result);
-  }
-
-  @Around(value = "repository() || service()")
-  public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-    long startTime = System.currentTimeMillis();
-    Object result = joinPoint.proceed();
-    long endTime = System.currentTimeMillis();
-    log.trace(
-        "Time taken for Execution of {} is: {}ms",
-        joinPoint.getSignature().toShortString(),
-        (endTime - startTime));
-    return result;
+    log.info("Failed API operation {} - error: {}", MDC.get(METHOD), result);
+    MDC.remove(STATUS);
+    MDC.remove(CODE);
+    MDC.remove(RESPONSE_TIME);
+    MDC.remove(START_TIME);
   }
 
   @Around(value = "repository() || service()")
@@ -137,9 +141,12 @@ public class LoggingAspect {
   }
 
   private static String getExecutionTime() {
-    long endTime = System.currentTimeMillis();
-    long startTime = Long.parseLong(MDC.get(START_TIME));
-    long executionTime = endTime - startTime;
-    return String.valueOf(executionTime);
+    String startTime = MDC.get(START_TIME);
+    if (startTime != null) {
+      long endTime = System.currentTimeMillis();
+      long executionTime = endTime - Long.parseLong(startTime);
+      return String.valueOf(executionTime);
+    }
+    return "1";
   }
 }
