@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.8.0-3-PAGOPA-1215-afm-calculator-creare-dashboard-elk"
+    tag: "2.8.0-4-PAGOPA-1305-invalidare-i-bundle-settando-la-data-di-fine-validita-per-psp"
     pullPolicy: Always
   livenessProbe:
     httpGet:
