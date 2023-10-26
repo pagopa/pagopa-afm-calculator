@@ -1,8 +1,5 @@
 package it.gov.pagopa.afm.calculator.service;
 
-import static it.gov.pagopa.afm.calculator.service.UtilityComponent.inTransferList;
-import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
-
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
@@ -13,12 +10,6 @@ import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +17,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static it.gov.pagopa.afm.calculator.service.UtilityComponent.inTransferList;
+import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 
 @Service
 @Setter
@@ -113,6 +114,8 @@ public class CalculatorService {
     // sort according onus and taxpayer fee
     Collections.sort(transfers);
 
+    sortByFeePerPsp(transfers);
+
     return transfers.stream().limit(limit).collect(Collectors.toList());
   }
 
@@ -167,7 +170,9 @@ public class CalculatorService {
     for (CiBundle cibundle : ciBundles) {
       if (cibundle.getAttributes() != null && !cibundle.getAttributes().isEmpty()) {
         transfers.addAll(
-            cibundle.getAttributes().parallelStream()
+            cibundle
+                .getAttributes()
+                .parallelStream()
                 .filter(
                     attribute ->
                         (attribute.getTransferCategory() != null
@@ -180,7 +185,9 @@ public class CalculatorService {
                         createTransfer(bundle.getPaymentAmount(), 0, bundle, null, paymentOption))
                 .collect(Collectors.toList()));
         transfers.addAll(
-            cibundle.getAttributes().parallelStream()
+            cibundle
+                .getAttributes()
+                .parallelStream()
                 .filter(
                     attribute ->
                         (attribute.getTransferCategory() == null
@@ -272,5 +279,22 @@ public class CalculatorService {
 
   private boolean isBelowThreshold(long paymentAmount) {
     return paymentAmount < Long.parseLong(StringUtils.trim(amountThreshold));
+  }
+
+  /**
+   * sort by bundles' fee grouped by PSP
+   *
+   * @param transfers list of transfers to sort
+   */
+  private static void sortByFeePerPsp(List<Transfer> transfers) {
+    transfers.sort(
+        (t1, t2) -> {
+          int primarySort = t1.getIdPsp().compareTo(t2.getIdPsp());
+          if (primarySort == 0) {
+            // if two bundles are of the same PSP we'll sort by fees
+            return t1.getTaxPayerFee().compareTo(t2.getTaxPayerFee());
+          }
+          return 0; // fixed to 0 because we don't want to sort by PSP name.
+        });
   }
 }
