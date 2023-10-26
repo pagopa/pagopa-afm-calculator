@@ -62,8 +62,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
     | true  |
-    | true  |
     | false |
+    | true  |
     | false |
     | false |
     | false |
@@ -96,11 +96,11 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
+    | false |
+    | false |
+    | false |
+    | false |
     | true  |
-    | false |
-    | false |
-    | false |
-    | false |
     
     
 
@@ -130,8 +130,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
-    | true  |
     | false |
+    | true  |
     | false |
     
 
@@ -245,8 +245,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
     | true  |
-    | true  |
     | false |
+    | true  |
     | false |
     | false |
     | false |

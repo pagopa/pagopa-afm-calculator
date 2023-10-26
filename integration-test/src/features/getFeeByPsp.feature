@@ -101,11 +101,11 @@ Feature: GetFeeByPsp
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
+      | false |
+      | false |
+      | false |
+      | false |
       | true  |
-      | false |
-      | false |
-      | false |
-      | false |
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP
     Given initial json
@@ -131,11 +131,11 @@ Feature: GetFeeByPsp
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
+      | false |
+      | false |
+      | false |
+      | false |
       | true  |
-      | false |
-      | false |
-      | false |
-      | false |
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP 2
     Given initial json
@@ -239,11 +239,11 @@ Feature: GetFeeByPsp
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
+      | false |
+      | false |
+      | false |
+      | false |
       | true  |
-      | false |
-      | false |
-      | false |
-      | false |
 
   Scenario: Get fee by psp with non-existing bin
     Given initial json
@@ -316,7 +316,7 @@ Feature: GetFeeByPsp
           "idBrokerPsp": "88888888899",
           "idChannel": "AMEX_ONUS",
           "onUs": true,
-          "abi": "36019",
+          "abi": "AMREX",
           "pspBusinessName": "psp business name int-test-10"
          }
        ]
