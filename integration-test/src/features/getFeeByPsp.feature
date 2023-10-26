@@ -316,7 +316,7 @@ Feature: GetFeeByPsp
           "idBrokerPsp": "88888888899",
           "idChannel": "AMEX_ONUS",
           "onUs": true,
-          "abi": "36019",
+          "abi": "AMREX",
           "pspBusinessName": "psp business name int-test-10"
          }
        ]

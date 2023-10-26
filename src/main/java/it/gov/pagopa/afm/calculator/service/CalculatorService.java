@@ -43,7 +43,7 @@ public class CalculatorService {
 
   @Autowired IssuersService issuersService;
 
-  @Value("${pspAmex.abi:36019}")
+  @Value("${pspAmex.abi:AMREX}")
   private String amexABI;
 
   @Cacheable(value = "calculate")
