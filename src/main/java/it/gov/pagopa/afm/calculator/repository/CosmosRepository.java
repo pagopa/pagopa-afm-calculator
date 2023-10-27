@@ -1,8 +1,5 @@
 package it.gov.pagopa.afm.calculator.repository;
 
-import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
-import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
-
 import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
@@ -16,19 +13,19 @@ import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
+import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
 
 @Repository
 public class CosmosRepository {
@@ -70,9 +67,9 @@ public class CosmosRepository {
 
     // add filter by Payment Amount: minPaymentAmount <= paymentAmount < maxPaymentAmount
     var minFilter =
-        CriteriaBuilder.lessThanEqual("minPaymentAmount", paymentOption.getPaymentAmount());
+        CriteriaBuilder.lessThan("minPaymentAmount", paymentOption.getPaymentAmount());
     var maxFilter =
-        CriteriaBuilder.greaterThan("maxPaymentAmount", paymentOption.getPaymentAmount());
+        CriteriaBuilder.greaterThanEqual("maxPaymentAmount", paymentOption.getPaymentAmount());
     var queryResult = and(minFilter, maxFilter);
 
     // add filter by Touch Point: touchpoint=<value> || touchpoint==null

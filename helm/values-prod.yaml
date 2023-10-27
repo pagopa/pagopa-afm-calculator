@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.8.4"
+    tag: "2.8.4-1-PAGOPA-1326-sviluppo-modifica-calcolo-soglia-bundle"
     pullPolicy: Always
   livenessProbe:
     httpGet:
