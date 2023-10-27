@@ -86,7 +86,7 @@ microservice-chart:
     ISSUER_RANGE_TABLE: 'pagopapweuafmsaissuerrangetable'
     AMOUNT_THRESHOLD: '0'
     ID_PSP_POSTE: 'BPPIITRRXXX'
-    AMEX_ABI: '36019'
+    AMEX_ABI: 'AMREX'
     OTEL_SERVICE_NAME: "pagopa-afm-calculator"
     OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=prod"
     OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.elastic-system.svc:4317"

@@ -108,7 +108,7 @@ public class TestUtil {
         .name("bundle1")
         .idPsp("AMEX")
         .pspBusinessName("psp business name amex")
-        .abi("36019")
+        .abi("AMREX")
         .paymentAmount(1L)
         .minPaymentAmount(0L)
         .maxPaymentAmount(1000L)

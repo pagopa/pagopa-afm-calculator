@@ -206,7 +206,7 @@
       "validityDateTo": null,
       "touchpoint": "ANY",
       "paymentType": "CP",
-      "abi": 36019,
+      "abi": "AMREX",
       "pspBusinessName": "psp business name int-test-10"
     }
   ],

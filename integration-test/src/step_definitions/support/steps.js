@@ -51,7 +51,7 @@ let isseuerEntity3 = {
   PRODUCT_TYPE: "3",
   PRODUCT_CATEGORY: "C",
   ISSUER_ID: "999999",
-  ABI: "36019"
+  ABI: "AMREX"
 };
 
 // Synchronous

@@ -122,7 +122,7 @@ class CalculatorServiceTest {
     e.setProductType("3");
     e.setProductCategory("C");
     e.setIssuerId("999999");
-    e.setAbi("36019");
+    e.setAbi("AMREX");
     Initializer.table.execute(TableOperation.insert(e));
   }
 
