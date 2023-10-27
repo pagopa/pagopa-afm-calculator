@@ -41,10 +41,18 @@ jobs:
 #          ./generate_openapi.sh
 
       - name: Formatting
-        uses: axel-op/googlejavaformat-action@v3
+        id: format
+        uses: findologic/intellij-format-action@main
         with:
-          args: "--replace"
-          commit-message: "Google Java format [skip ci]"
+          path: .
+          fail-on-changes: false
+
+      - name: Commit files
+        run: |
+          git config --local user.email "pagopa-github-bot@pagopa.it"
+          git config --local user.name "pagopa-github-bot"
+          git commit -a -m "Formatting [skip ci]"
+          git push
 
   notify:
     needs: [ update ]
