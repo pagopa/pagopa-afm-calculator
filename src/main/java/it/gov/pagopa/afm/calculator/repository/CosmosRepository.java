@@ -54,7 +54,9 @@ public class CosmosRepository {
   public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption, boolean allCcp) {
     Iterable<ValidBundle> validBundles = findValidBundles(paymentOption, allCcp);
 
-    return getFilteredBundles(paymentOption, validBundles);
+    List<ValidBundle> randomList = getFilteredBundles(paymentOption, validBundles);
+    Collections.shuffle(randomList);
+    return randomList;
   }
 
   /**
