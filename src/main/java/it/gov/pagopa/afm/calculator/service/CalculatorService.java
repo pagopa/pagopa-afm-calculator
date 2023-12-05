@@ -14,7 +14,6 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -22,6 +21,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -46,9 +46,9 @@ public class CalculatorService {
   @Value("${pspAmex.abi:AMREX}")
   private String amexABI;
 
-  @Cacheable(value = "calculate")
   public BundleOption calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
     List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
+    Collections.shuffle(filteredBundles, new Random());
 
     return BundleOption.builder()
         .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
