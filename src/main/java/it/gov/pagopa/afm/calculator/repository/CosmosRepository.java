@@ -50,7 +50,7 @@ public class CosmosRepository {
         : null;
   }
 
-  @Cacheable(value = "findValidBundles")
+  // @Cacheable(value = "findValidBundles")
   public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption, boolean allCcp) {
     Iterable<ValidBundle> validBundles = findValidBundles(paymentOption, allCcp);
 
