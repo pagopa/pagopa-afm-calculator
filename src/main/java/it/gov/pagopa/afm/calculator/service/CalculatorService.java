@@ -46,7 +46,7 @@ public class CalculatorService {
   @Value("${pspAmex.abi:AMREX}")
   private String amexABI;
 
-  @Cacheable(value = "calculate")
+  // @Cacheable(value = "calculate")
   public BundleOption calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
     List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
 
