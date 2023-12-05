@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.9.0-5-PAGOPA-1386-afm-issue-shuffle-order-response"
+    "version": "2.9.0-6-PAGOPA-1386-afm-issue-shuffle-order-response"
   },
   "servers": [
     {
