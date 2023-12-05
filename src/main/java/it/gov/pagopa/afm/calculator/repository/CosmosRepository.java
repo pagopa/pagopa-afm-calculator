@@ -50,13 +50,10 @@ public class CosmosRepository {
         : null;
   }
 
-  // @Cacheable(value = "findValidBundles")
+  @Cacheable(value = "findValidBundles")
   public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption, boolean allCcp) {
     Iterable<ValidBundle> validBundles = findValidBundles(paymentOption, allCcp);
-
-    List<ValidBundle> randomList = getFilteredBundles(paymentOption, validBundles);
-    Collections.shuffle(randomList, new Random());
-    return randomList;
+    return getFilteredBundles(paymentOption, validBundles);
   }
 
   /**
