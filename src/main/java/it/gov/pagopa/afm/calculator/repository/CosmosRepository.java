@@ -55,7 +55,7 @@ public class CosmosRepository {
     Iterable<ValidBundle> validBundles = findValidBundles(paymentOption, allCcp);
 
     List<ValidBundle> randomList = getFilteredBundles(paymentOption, validBundles);
-    Collections.shuffle(randomList, new Random(10));
+    Collections.shuffle(randomList, new Random());
     return randomList;
   }
 
