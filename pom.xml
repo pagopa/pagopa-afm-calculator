@@ -16,7 +16,7 @@
     <description>Calculator Logic microservice for pagoPA AFM</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <hibernate-version>6.1.1.Final</hibernate-version>
         <azure.storage.table.version>8.6.6</azure.storage.table.version>
         <testcontainers.version>1.17.2</testcontainers.version>
