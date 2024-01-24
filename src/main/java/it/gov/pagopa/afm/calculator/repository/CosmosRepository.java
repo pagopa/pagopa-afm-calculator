@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +37,9 @@ public class CosmosRepository {
 
   @Value("${pspPoste.id}")
   private String pspPosteId;
+  
+  @Value("#{'${psp.whitelist}'.split(',')}")
+  private List<String> pspWhitelist;
 
   /**
    * @param ciFiscalCode fiscal code of the CI
@@ -138,6 +142,12 @@ public class CosmosRepository {
     if (!allCcp) {
       var allCcpFilter = isNotEqual("idPsp", pspPosteId);
       queryResult = and(queryResult, allCcpFilter);
+    }
+    
+    // add filter for PSP whitelist
+    if (!CollectionUtils.isEmpty(pspWhitelist)) {
+    	var pspIn = in("idPsp", pspWhitelist);
+    	queryResult = and(queryResult, pspIn);
     }
 
     // execute the query
