@@ -40,6 +40,8 @@ public class CosmosRepository {
   
   @Value("#{'${psp.whitelist}'.split(',')}")
   private List<String> pspWhitelist;
+  
+  private static final String ID_PSP_PARAM = "idPsp";
 
   /**
    * @param ciFiscalCode fiscal code of the CI
@@ -140,13 +142,13 @@ public class CosmosRepository {
 
     // add filter for Poste bundles
     if (!allCcp) {
-      var allCcpFilter = isNotEqual("idPsp", pspPosteId);
+      var allCcpFilter = isNotEqual(ID_PSP_PARAM, pspPosteId);
       queryResult = and(queryResult, allCcpFilter);
     }
     
     // add filter for PSP whitelist
     if (!CollectionUtils.isEmpty(pspWhitelist)) {
-    	var pspIn = in("idPsp", pspWhitelist);
+    	var pspIn = in(ID_PSP_PARAM, pspWhitelist);
     	queryResult = and(queryResult, pspIn);
     }
 
@@ -240,7 +242,7 @@ public class CosmosRepository {
     Criteria queryTmp = null;
     while (iterator.hasNext()) {
       var pspSearch = iterator.next();
-      var queryItem = isEqual("idPsp", pspSearch.getIdPsp());
+      var queryItem = isEqual(ID_PSP_PARAM, pspSearch.getIdPsp());
       if (StringUtils.isNotEmpty(pspSearch.getIdChannel())) {
         queryItem = and(queryItem, isEqual("idChannel", pspSearch.getIdChannel()));
       }
