@@ -62,8 +62,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
     | true  |
-    | false |
     | true  |
+    | false |
     | false |
     | false |
     | false |
@@ -144,7 +144,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       "bin": "309500",
       "paymentMethod": null,
       "touchpoint": "IO",
-      "idPspList": [{"idPsp":"88888888889"}],
+      "idPspList": [{"idPsp":"BPPIITRRXXX"}],
       "transferList": [
       {
         "creditorInstitution": "77777777777",
@@ -175,7 +175,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "bundleName": "pacchetto 7",
             "bundleDescription": "pacchetto 7",
             "idCiBundle": null,
-            "idPsp": "88888888889",
+            "idPsp": "BPPIITRRXXX",
             "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
@@ -245,8 +245,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
     | true  |
-    | false |
     | true  |
+    | false |
     | false |
     | false |
     | false |
