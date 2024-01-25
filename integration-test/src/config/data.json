@@ -2,7 +2,7 @@
   "bundles": [
     {
       "id": "int-test-1",
-      "idPsp": "88888888888",
+      "idPsp": "PPAYITR1XXX",
       "idBrokerPsp": "88888888899",
       "idChannel": "88888888899_01_ONUS",
       "digitalStamp": false,
@@ -22,7 +22,7 @@
     },
     {
       "id": "int-test-2",
-      "idPsp": "88888888888",
+      "idPsp": "PPAYITR1XXX",
       "idBrokerPsp": "88888888899",
       "idChannel": "88888888899_01_ONUS",
       "digitalStamp": false,
@@ -42,7 +42,7 @@
     },
     {
       "id": "int-test-3",
-      "idPsp": "88888888889",
+      "idPsp": "BPPIITRRXXX",
       "idBrokerPsp": "88888888899",
       "idChannel": "88888888899_01_ONUS",
       "digitalStamp": false,
@@ -63,7 +63,7 @@
     },
     {
       "id": "int-test-4",
-      "idPsp": "88888888889",
+      "idPsp": "BPPIITRRXXX",
       "idBrokerPsp": "88888888899",
       "idChannel": "88888888899_01_ONUS",
       "digitalStamp": false,
@@ -86,7 +86,7 @@
     },
     {
       "id": "int-test-5",
-      "idPsp": "88888888888",
+      "idPsp": "PPAYITR1XXX",
       "idBrokerPsp": "88888888899",
       "idChannel": "88888888899_01_ONUS",
       "digitalStamp": false,
@@ -111,7 +111,7 @@
     },
     {
       "id": "int-test-6",
-      "idPsp": "88888888889",
+      "idPsp": "BPPIITRRXXX",
       "idBrokerPsp": "88888888899",
       "idChannel": "88888888899_01_ONUS",
       "digitalStamp": false,
@@ -131,7 +131,7 @@
     },
     {
       "id": "int-test-7",
-      "idPsp": "88888888889",
+      "idPsp": "BPPIITRRXXX",
       "idBrokerPsp": "88888888899",
       "idChannel": "88888888899_01_ONUS",
       "digitalStamp": true,
@@ -151,7 +151,7 @@
     },
     {
       "id": "int-test-8",
-      "idPsp": "88888888889",
+      "idPsp": "BPPIITRRXXX",
       "idBrokerPsp": "88888888899",
       "idChannel": "88888888899_01_ONUS",
       "digitalStamp": true,
@@ -171,7 +171,7 @@
     },
     {
       "id": "int-test-9",
-      "idPsp": "BPPIITRRZZZ",
+      "idPsp": "CIPBITMM",
       "idBrokerPsp": "14847241008",
       "idChannel": "88888888899_01_ONUS",
       "digitalStamp": true,
@@ -191,9 +191,9 @@
     },
     {
       "id": "int-test-10",
-      "idPsp": "AMEX",
+      "idPsp": "UNCRITMM",
       "idBrokerPsp": "88888888899",
-      "idChannel": "AMEX_ONUS",
+      "idChannel": "UNCRITMM_ONUS",
       "digitalStamp": false,
       "digitalStampRestriction": false,
       "name": "pacchetto 10",
