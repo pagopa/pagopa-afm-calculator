@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.10.2-2-PAGOPA-1470-sviluppo-afm-utils-e-afm-calculator-migrazione-java-17"
+    "version": "2.10.3"
   },
   "servers": [
     {
