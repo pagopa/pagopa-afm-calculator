@@ -261,7 +261,9 @@ public class CalculatorController {
             .transferList(paymentOptionByPsp.getTransferList())
             .bin(paymentOptionByPsp.getBin())
             .build();
-    return null;
+    return BundleOption.builder()
+        .belowThreshold(false)
+        .build();
   }
 
   @Operation(
@@ -326,6 +328,8 @@ public class CalculatorController {
               "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
                   + " included")
       String allCcp) {
-    return null;
+    return BundleOption.builder()
+        .belowThreshold(false)
+        .build();
   }
 }
