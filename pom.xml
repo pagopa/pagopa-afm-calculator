@@ -11,7 +11,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>calculator</artifactId>
-    <version>2.10.3</version>
+    <version>2.10.3-1-PAGOPA-1172-sviluppo-carrello-multi-ente-definizione-interfacce-v-2</version>
     <name>afm-calculator</name>
     <description>Calculator Logic microservice for pagoPA AFM</description>
 
