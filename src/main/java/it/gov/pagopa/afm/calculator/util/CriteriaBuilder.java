@@ -2,11 +2,12 @@ package it.gov.pagopa.afm.calculator.util;
 
 import com.azure.spring.data.cosmos.core.query.Criteria;
 import com.azure.spring.data.cosmos.core.query.CriteriaType;
-import java.util.Collections;
-import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.repository.query.parser.Part;
+
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.List;
 
 @UtilityClass
 public class CriteriaBuilder {
@@ -70,17 +71,17 @@ public class CriteriaBuilder {
         Part.IgnoreCaseType.NEVER);
   }
 
-  public static Criteria greaterThan(String param, Long value) {
+  public static Criteria greaterThanEqual(String param, Long value) {
     return Criteria.getInstance(
-        CriteriaType.GREATER_THAN,
+        CriteriaType.GREATER_THAN_EQUAL,
         param,
         Collections.singletonList(value),
         Part.IgnoreCaseType.NEVER);
   }
 
-  public static Criteria lessThanEqual(String param, Long value) {
+  public static Criteria lessThan(String param, Long value) {
     return Criteria.getInstance(
-        CriteriaType.LESS_THAN_EQUAL,
+        CriteriaType.LESS_THAN,
         param,
         Collections.singletonList(value),
         Part.IgnoreCaseType.NEVER);

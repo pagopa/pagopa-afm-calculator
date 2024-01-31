@@ -22,7 +22,7 @@ See the [OpenApi 3 here](https://editor.swagger.io/?url=https://raw.githubuserco
 ---
 
 ## Technology Stack
-- Java 11
+- Java 17
 - Spring Boot
 - Spring Web
 - Hibernate
@@ -35,7 +35,7 @@ See the [OpenApi 3 here](https://editor.swagger.io/?url=https://raw.githubuserco
 ### Prerequisites
 - git
 - maven
-- jdk-11
+- jdk-17
 - docker
 
 ## Contributors 👥

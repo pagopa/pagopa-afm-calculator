@@ -9,7 +9,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": "CHECKOUT",
         "idPspList": null,
@@ -41,7 +41,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": null,
         "idPspList": null,
@@ -62,8 +62,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
     | true  |
-    | true  |
     | false |
+    | true  |
     | false |
     | false |
     | false |
@@ -76,7 +76,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": null,
         "idPspList": [{"idPsp":"88888888889"}],
@@ -96,11 +96,11 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
+    | false |
+    | false |
+    | false |
+    | false |
     | true  |
-    | false |
-    | false |
-    | false |
-    | false |
     
     
 
@@ -110,7 +110,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": null,
         "touchpoint": "IO",
         "idPspList": [{"idPsp":"88888888888"}],
@@ -130,8 +130,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
-    | true  |
     | false |
+    | true  |
     | false |
     
 
@@ -141,7 +141,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
       "paymentAmount": 999999999999998,
       "primaryCreditorInstitution": "77777777777",
-      "bin": "300000",
+      "bin": "309500",
       "paymentMethod": null,
       "touchpoint": "IO",
       "idPspList": [{"idPsp":"88888888889"}],
@@ -179,7 +179,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
             "idChannel": "88888888899_01_ONUS",
             "idBrokerPsp": "88888888899",
             "onUs": false,
-            "abi": "14156"
+            "abi": "14156",
+            "pspBusinessName": "psp business name int-test-7"
         }
       ]
       }
@@ -191,7 +192,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": null,
         "touchpoint": "IO",
         "idPspList": [{"idPsp":"88888888889"}],
@@ -223,7 +224,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": null,
         "idPspList": null,
@@ -244,8 +245,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
     | true  |
-    | true  |
     | false |
+    | true  |
     | false |
     | false |
     | false |
@@ -293,7 +294,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       {
         "paymentAmount": 999999999999998,
         "primaryCreditorInstitution": "77777777777",
-        "bin": "300000",
+        "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": null,
         "idPspList": null,

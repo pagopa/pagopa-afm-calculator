@@ -9,7 +9,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "paymentMethod": "CP",
           "touchpoint": "CHECKOUT",
           "transferList": [
@@ -44,7 +44,8 @@ Feature: GetFeeByPsp
           "idBrokerPsp": "88888888899",
           "idChannel": "88888888899_01_ONUS",
           "onUs": false,
-          "abi": "14156"
+          "abi": "14156",
+          "pspBusinessName": "psp business name int-test-1"
          }
        ]
       }
@@ -56,7 +57,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999988,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "paymentMethod": "PO",
           "transferList": [
             {
@@ -83,7 +84,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "transferList": [
             {
               "creditorInstitution": "77777777777",
@@ -100,11 +101,11 @@ Feature: GetFeeByPsp
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
+      | false |
+      | false |
+      | false |
+      | false |
       | true  |
-      | false |
-      | false |
-      | false |
-      | false |
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP
     Given initial json
@@ -112,7 +113,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "touchpoint": "IO",
           "transferList": [
             {
@@ -130,11 +131,11 @@ Feature: GetFeeByPsp
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
+      | false |
+      | false |
+      | false |
+      | false |
       | true  |
-      | false |
-      | false |
-      | false |
-      | false |
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP 2
     Given initial json
@@ -142,7 +143,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "touchpoint": "IO",
           "transferList": [
             {
@@ -178,7 +179,8 @@ Feature: GetFeeByPsp
           "idBrokerPsp": "88888888899",
           "idChannel": "88888888899_01_ONUS",
           "onUs": false,
-          "abi": "14156"
+          "abi": "14156",
+          "pspBusinessName": "psp business name int-test-7"
         }
       ]
       }
@@ -190,7 +192,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "touchpoint": "IO",
           "transferList": [
             {
@@ -219,7 +221,7 @@ Feature: GetFeeByPsp
         {
           "paymentAmount": 999999999999998,
           "primaryCreditorInstitution": "77777777777",
-          "bin": "300000",
+          "bin": "309500",
           "touchpoint": "IO",
           "transferList": [
             {
@@ -237,11 +239,11 @@ Feature: GetFeeByPsp
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
+      | false |
+      | false |
+      | false |
+      | false |
       | true  |
-      | false |
-      | false |
-      | false |
-      | false |
 
   Scenario: Get fee by psp with non-existing bin
     Given initial json
@@ -314,7 +316,8 @@ Feature: GetFeeByPsp
           "idBrokerPsp": "88888888899",
           "idChannel": "AMEX_ONUS",
           "onUs": true,
-          "abi": "36019"
+          "abi": "AMREX",
+          "pspBusinessName": "psp business name int-test-10"
          }
        ]
       }

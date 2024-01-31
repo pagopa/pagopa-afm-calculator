@@ -4,6 +4,7 @@ import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.table.CloudTable;
 import com.microsoft.azure.storage.table.TableQuery;
+import com.microsoft.azure.storage.table.TableQuery.QueryComparisons;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
@@ -15,6 +16,7 @@ import java.util.Spliterator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -46,14 +48,19 @@ public class IssuersService {
           CloudStorageAccount.parse(storageConnectionString)
               .createCloudTableClient()
               .getTableReference(this.issuerRangeTable);
+
+      String paddedBin = StringUtils.rightPad(bin, 19, '0');
+
+      String filters =
+          TableQuery.combineFilters(
+              TableQuery.generateFilterCondition(
+                  "LOW_RANGE", QueryComparisons.LESS_THAN_OR_EQUAL, paddedBin),
+              TableQuery.Operators.AND,
+              TableQuery.generateFilterCondition(
+                  "HIGH_RANGE", QueryComparisons.GREATER_THAN_OR_EQUAL, paddedBin));
+
       resultIssuerRangeEntityList =
-          table
-              .execute(
-                  TableQuery.from(IssuerRangeEntity.class)
-                      .where(
-                          (TableQuery.generateFilterCondition(
-                              "PartitionKey", TableQuery.QueryComparisons.EQUAL, bin))))
-              .spliterator();
+          table.execute(TableQuery.from(IssuerRangeEntity.class).where(filters)).spliterator();
 
     } catch (InvalidKeyException | URISyntaxException | StorageException e) {
       // unexpected error

@@ -30,6 +30,7 @@ public class Transfer implements Comparable<Transfer>, Serializable {
   private String idBrokerPsp;
   private Boolean onUs;
   private String abi;
+  private String pspBusinessName;
 
   @Override
   public int compareTo(Transfer t) {
