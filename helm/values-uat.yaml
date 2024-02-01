@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.10.3-1-PAGOPA-1172-sviluppo-carrello-multi-ente-definizione-interfacce-v-2"
+    tag: "2.10.4"
     pullPolicy: Always
   livenessProbe:
     httpGet:
