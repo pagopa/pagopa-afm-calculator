@@ -30,7 +30,7 @@ class OpenApiGenerationTest {
     @Test
     void swaggerSpringPlugin() throws Exception {
         saveOpenAPI("/v3/api-docs/v1/", "openapi_v1.json");
-        saveOpenAPI("/v3/api-docs/v2", "openapi_v2.json");
+        saveOpenAPI("/v3/api-docs/v2/", "openapi_v2.json");
     }
 
     private void saveOpenAPI(String fromUri, String toFile) throws Exception {
