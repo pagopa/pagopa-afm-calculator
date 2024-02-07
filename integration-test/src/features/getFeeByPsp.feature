@@ -24,7 +24,7 @@ Feature: GetFeeByPsp
           ]
         }
       """
-    When the client send POST to /psps/88888888888/fees
+    When the client send POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
     And check response body is
       """
@@ -40,7 +40,7 @@ Feature: GetFeeByPsp
           "bundleName": "pacchetto 1",
           "bundleDescription": "pacchetto 1",
           "idCiBundle": "int-test-1",
-          "idPsp": "88888888888",
+          "idPsp": "PPAYITR1XXX",
           "idBrokerPsp": "88888888899",
           "idChannel": "88888888899_01_ONUS",
           "onUs": false,
@@ -71,7 +71,7 @@ Feature: GetFeeByPsp
           ]
         }
       """
-    When the client send POST to /psps/88888888888/fees
+    When the client send POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
@@ -97,15 +97,15 @@ Feature: GetFeeByPsp
           ]
         }
       """
-    When the client send POST to /psps/88888888889/fees
+    When the client send POST to /psps/BPPIITRRXXX/fees
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
-      | false |
-      | false |
-      | false |
-      | false |
       | true  |
+      | false |
+      | false |
+      | false |
+      | false |
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP
     Given initial json
@@ -127,15 +127,15 @@ Feature: GetFeeByPsp
           ]
         }
       """
-    When the client send POST to /psps/88888888889/fees
+    When the client send POST to /psps/BPPIITRRXXX/fees
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
-      | false |
-      | false |
-      | false |
-      | false |
       | true  |
+      | false |
+      | false |
+      | false |
+      | false |
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP 2
     Given initial json
@@ -159,7 +159,7 @@ Feature: GetFeeByPsp
           ]
         }
       """
-    When the client send POST to /psps/88888888889/fees
+    When the client send POST to /psps/BPPIITRRXXX/fees
     Then check statusCode is 200
     And check response body is
       """
@@ -175,7 +175,7 @@ Feature: GetFeeByPsp
           "bundleName": "pacchetto 7",
           "bundleDescription": "pacchetto 7",
           "idCiBundle": null,
-          "idPsp": "88888888889",
+          "idPsp": "BPPIITRRXXX",
           "idBrokerPsp": "88888888899",
           "idChannel": "88888888899_01_ONUS",
           "onUs": false,
@@ -208,7 +208,7 @@ Feature: GetFeeByPsp
           ]
         }
       """
-    When the client send POST to /psps/88888888889/fees
+    When the client send POST to /psps/BPPIITRRXXX/fees
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
@@ -235,15 +235,15 @@ Feature: GetFeeByPsp
           ]
         }
       """
-    When the client send POST to /psps/88888888889/fees
+    When the client send POST to /psps/BPPIITRRXXX/fees
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
-      | false |
-      | false |
-      | false |
-      | false |
       | true  |
+      | false |
+      | false |
+      | false |
+      | false |
 
   Scenario: Get fee by psp with non-existing bin
     Given initial json
@@ -265,7 +265,7 @@ Feature: GetFeeByPsp
           ]
         }
       """
-    When the client send POST to /psps/88888888889/fees
+    When the client send POST to /psps/BPPIITRRXXX/fees
     Then check statusCode is 200
     And check response body is
       """
@@ -296,7 +296,7 @@ Feature: GetFeeByPsp
         ]
       } 
       """
-    When the client send POST to /psps/AMEX/fees
+    When the client send POST to /psps/UNCRITMM/fees
     Then check statusCode is 200
     And check response body is
       """
@@ -312,9 +312,9 @@ Feature: GetFeeByPsp
           "bundleName": "pacchetto 10",
           "bundleDescription": "pacchetto 10",
           "idCiBundle": null,
-          "idPsp": "AMEX",
+          "idPsp": "UNCRITMM",
           "idBrokerPsp": "88888888899",
-          "idChannel": "AMEX_ONUS",
+          "idChannel": "UNCRITMM_ONUS",
           "onUs": true,
           "abi": "AMREX",
           "pspBusinessName": "psp business name int-test-10"
