@@ -6,6 +6,7 @@ import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
@@ -57,15 +58,8 @@ public class CalculatorService {
         .build();
   }
 
-  public BundleOption calculateMulti(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
-    List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
-    Collections.shuffle(filteredBundles, new Random());
-
-    return BundleOption.builder()
-        .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
-        // calculate the taxPayerFee
-        .bundleOptions(calculateTaxPayerFee(paymentOption, limit, filteredBundles))
-        .build();
+  public BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp) {
+    return null;
   }
 
   private List<Transfer> calculateTaxPayerFee(
