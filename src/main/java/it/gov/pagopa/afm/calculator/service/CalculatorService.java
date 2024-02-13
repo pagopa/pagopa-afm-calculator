@@ -57,6 +57,17 @@ public class CalculatorService {
         .build();
   }
 
+  public BundleOption calculateMulti(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
+    List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
+    Collections.shuffle(filteredBundles, new Random());
+
+    return BundleOption.builder()
+        .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
+        // calculate the taxPayerFee
+        .bundleOptions(calculateTaxPayerFee(paymentOption, limit, filteredBundles))
+        .build();
+  }
+
   private List<Transfer> calculateTaxPayerFee(
       PaymentOption paymentOption, int limit, List<ValidBundle> bundles) {
 
