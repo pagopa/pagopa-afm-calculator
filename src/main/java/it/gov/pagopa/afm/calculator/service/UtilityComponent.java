@@ -2,7 +2,9 @@ package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.BundleType;
+import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.TransferListItem;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,24 @@ public class UtilityComponent {
             .map(TransferListItem::getTransferCategory)
             .distinct()
             .collect(Collectors.toList())
+        : null;
+  }
+
+  /**
+   * Retrieve the transfer category list from the transfer list of payment option (OR of transfer
+   * categories)
+   *
+   * @param paymentNoticeItem request
+   * @return list of string about transfer categories
+   */
+  @Cacheable(value = "getTransferCategoryList")
+  public List<String> getTransferCategoryList(PaymentNoticeItem paymentNoticeItem) {
+    log.debug("getTransferCategoryList");
+    return paymentNoticeItem.getTransferList() != null
+        ? paymentNoticeItem.getTransferList().parallelStream()
+        .map(TransferListItem::getTransferCategory)
+        .distinct()
+        .collect(Collectors.toList())
         : null;
   }
 
