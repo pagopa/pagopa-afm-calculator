@@ -61,14 +61,18 @@ public class UtilityComponent {
    * Retrieve the transfer category list from the transfer list of payment option (OR of transfer
    * categories)
    *
-   * @param paymentNoticeItem request
+   * @param paymentOptionMulti request
    * @return list of string about transfer categories
    */
   @Cacheable(value = "getTransferCategoryList")
-  public List<String> getTransferCategoryList(PaymentNoticeItem paymentNoticeItem) {
+  public List<String> getTransferCategoryList(PaymentOptionMulti paymentOptionMulti) {
+    List<TransferListItem> transferList = new ArrayList<>();
+    paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> {
+      transferList.addAll(paymentNoticeItem.getTransferList());
+    });
     log.debug("getTransferCategoryList");
-    return paymentNoticeItem.getTransferList() != null
-        ? paymentNoticeItem.getTransferList().parallelStream()
+    return transferList != null
+        ? transferList.parallelStream()
         .map(TransferListItem::getTransferCategory)
         .distinct()
         .collect(Collectors.toList())

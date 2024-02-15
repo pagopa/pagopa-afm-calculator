@@ -139,7 +139,7 @@ public class CosmosRepository {
     }
 
     // add filter by Transfer Category: transferCategory[] contains one of paymentOption
-    List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption.getPaymentNotice().get(0)); //TODO iterate payment notice
+    List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
     if (categoryList != null) {
       var taxonomyFilter =
           categoryList.parallelStream()
