@@ -13,6 +13,7 @@ import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
+import it.gov.pagopa.afm.calculator.model.TransferListItem;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +71,7 @@ public class CosmosRepository {
     paymentOption.getPaymentNotice().forEach(paymentNoticeItem -> {
 
     });
-    return getFilteredBundlesMulti(paymentOption.getPaymentNotice().get(0), validBundles); //TODO stream payment notice
+    return getFilteredBundlesMulti(paymentOption, validBundles);
   }
 
   /**
@@ -267,38 +268,42 @@ public class CosmosRepository {
   /**
    * These filters are done with Java (not with cosmos query)
    *
-   * @param paymentNoticeItem the request
+   * @param paymentOptionMulti the request
    * @param validBundles the valid bundles
    * @return the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
    */
   private List<ValidBundle> getFilteredBundlesMulti(
-      PaymentNoticeItem paymentNoticeItem, Iterable<ValidBundle> validBundles) {
-    Iterable<ValidBundle> filteredValidBundles = filterMinMaxAmount(paymentNoticeItem, validBundles);
+      PaymentOptionMulti paymentOptionMulti, Iterable<ValidBundle> validBundles) {
+    var wrapper = new Object(){ long paymentAmount = 0; };
+    paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> wrapper.paymentAmount += paymentNoticeItem.getPaymentAmount());
+    Iterable<ValidBundle> filteredValidBundles = filterMinMaxAmount(wrapper.paymentAmount, validBundles);
+    List<TransferListItem> transferList = new ArrayList<>();
+    paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> transferList.addAll(paymentNoticeItem.getTransferList()));
     var onlyMarcaBolloDigitale =
-        paymentNoticeItem.getTransferList().stream()
+        transferList.stream()
             .filter(Objects::nonNull)
             .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
             .count();
-    var transferListSize = paymentNoticeItem.getTransferList().size();
+    var transferListSize = transferList.size();
 
     return StreamSupport.stream(filteredValidBundles.spliterator(), true)
         .filter(bundle -> digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
         // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
-        .filter(bundle -> globalAndRelatedFilter(paymentNoticeItem, bundle))
+        .filter(bundle -> globalAndRelatedFilter(paymentOptionMulti, bundle))
         .collect(Collectors.toList());
   }
 
   /**
    * These filters are done with Java (not with cosmos query)
    *
-   * @param paymentNoticeItem the request
+   * @param paymentAmount the request
    * @param validBundles the valid bundles
    * @return the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
    */
-  private Iterable<ValidBundle> filterMinMaxAmount(PaymentNoticeItem paymentNoticeItem, Iterable<ValidBundle> validBundles){
+  private Iterable<ValidBundle> filterMinMaxAmount(long paymentAmount, Iterable<ValidBundle> validBundles){
     return StreamSupport.stream(validBundles.spliterator(), true)
-        .filter(validBundle -> validBundle.getMaxPaymentAmount() <= paymentNoticeItem.getPaymentAmount())
-        .filter(validBundle -> validBundle.getMaxPaymentAmount() > paymentNoticeItem.getPaymentAmount())
+        .filter(validBundle -> validBundle.getMaxPaymentAmount() <= paymentAmount)
+        .filter(validBundle -> validBundle.getMaxPaymentAmount() > paymentAmount)
         .toList();
   }
 
@@ -368,14 +373,29 @@ public class CosmosRepository {
   /**
    * Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
    *
-   * @param paymentNoticeItem the request
+   * @param paymentOptionMulti the request
    * @param bundle a valid bundle
    * @return True if the valid bundle meets the criteria.
    */
-  private static boolean globalAndRelatedFilter(PaymentNoticeItem paymentNoticeItem, ValidBundle bundle) {
+  private static boolean globalAndRelatedFilter(PaymentOptionMulti paymentOptionMulti, ValidBundle bundle) {
     // filter the ci-bundle list
-    bundle.setCiBundleList(filterByCI(paymentNoticeItem.getPrimaryCreditorInstitution(), bundle));
+    bundle.setCiBundleList(filteredCiBundles(paymentOptionMulti, bundle));
     return isGlobal(bundle) || belongsCI(bundle);
+  }
+
+  /**
+   * Check if all the ci fiscal codes in the payment notice are present in the ciBundle
+   *
+   * @param paymentOptionMulti the request
+   * @param bundle a valid bundle
+   * @return empty list if at least one element is not present, otherwise the full list
+   */
+  private static List<CiBundle> filteredCiBundles(PaymentOptionMulti paymentOptionMulti, ValidBundle bundle) {
+    List<String> ciBundlesFiscalCodes = new ArrayList<>();
+    bundle.getCiBundleList().forEach(ciBundle -> ciBundlesFiscalCodes.add(ciBundle.getCiFiscalCode()));
+    boolean allCiBundlesPresent = paymentOptionMulti.getPaymentNotice().stream()
+        .anyMatch(paymentNoticeItem -> ciBundlesFiscalCodes.contains(paymentNoticeItem.getPrimaryCreditorInstitution()));
+    return allCiBundlesPresent ? bundle.getCiBundleList() : new ArrayList<>();
   }
 
 
