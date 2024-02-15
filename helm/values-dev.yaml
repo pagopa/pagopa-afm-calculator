@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.10.5"
+    tag: "2.10.5-1-update-psp-whitelist-env"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -87,6 +87,7 @@ microservice-chart:
     AMOUNT_THRESHOLD: '0'
     ID_PSP_POSTE: 'BPPIITRRZZZ'
     AMEX_ABI: 'AMREX'
+    PSP_WHITELIST: 'PPAYITR1XXX,BPPIITRRXXX,CIPBITMM,UNCRITMM,BNLIITRR,BCITITMM,BIC36019'
     OTEL_SERVICE_NAME: "pagopa-afm-calculator"
     OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=dev"
     OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.elastic-system.svc:4317"
