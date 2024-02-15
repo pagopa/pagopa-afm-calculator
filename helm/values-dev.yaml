@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.10.5-1-update-psp-whitelist-env"
+    tag: "2.10.6"
     pullPolicy: Always
   livenessProbe:
     httpGet:
