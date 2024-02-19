@@ -67,9 +67,7 @@ public class UtilityComponent {
   @Cacheable(value = "getTransferCategoryList")
   public List<String> getTransferCategoryList(PaymentOptionMulti paymentOptionMulti) {
     List<TransferListItem> transferList = new ArrayList<>();
-    paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> {
-      transferList.addAll(paymentNoticeItem.getTransferList());
-    });
+    paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> transferList.addAll(paymentNoticeItem.getTransferList()));
     log.debug("getTransferCategoryList");
     return transferList != null
         ? transferList.parallelStream()
@@ -97,6 +95,27 @@ public class UtilityComponent {
             .map(TransferListItem::getTransferCategory)
             .distinct()
             .collect(Collectors.toList())
+        : new ArrayList<>();
+  }
+
+  /**
+   * Retrieve the transfer category list of primary creditor institution contained in the transfer
+   * list of payment option
+   *
+   * @param paymentNoticeItem request
+   * @param primaryCreditorInstitution fiscal code fo the CI
+   * @return list of string about transfer categories of primary creditor institution
+   */
+  @Cacheable(value = "getPrimaryTransferCategoryListMulti")
+  public List<String> getPrimaryTransferCategoryListMulti(
+      PaymentNoticeItem paymentNoticeItem, String primaryCreditorInstitution) {
+    log.debug("getPrimaryTransferCategoryList {} ", primaryCreditorInstitution);
+    return paymentNoticeItem.getTransferList() != null
+        ? paymentNoticeItem.getTransferList().parallelStream()
+        .filter(elem -> primaryCreditorInstitution.equals(elem.getCreditorInstitution()))
+        .map(TransferListItem::getTransferCategory)
+        .distinct()
+        .collect(Collectors.toList())
         : new ArrayList<>();
   }
 }

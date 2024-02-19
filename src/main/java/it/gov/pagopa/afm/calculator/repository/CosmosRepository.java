@@ -68,9 +68,7 @@ public class CosmosRepository {
   @Cacheable(value = "findValidBundlesMulti")
   public List<ValidBundle> findByPaymentOption(PaymentOptionMulti paymentOption, boolean allCcp) {
     Iterable<ValidBundle> validBundles = findValidBundlesMulti(paymentOption, allCcp);
-    paymentOption.getPaymentNotice().forEach(paymentNoticeItem -> {
-
-    });
+    ValidBundle x = validBundles.iterator().next();
     return getFilteredBundlesMulti(paymentOption, validBundles);
   }
 
@@ -83,15 +81,11 @@ public class CosmosRepository {
   private Iterable<ValidBundle> findValidBundlesMulti(PaymentOptionMulti paymentOption, boolean allCcp) {
 
     // add filter by Payment Amount: minPaymentAmount <= paymentAmount < maxPaymentAmount
-    /*
     var minFilter =
         CriteriaBuilder.lessThan("minPaymentAmount", paymentOption.getPaymentAmount());
     var maxFilter =
         CriteriaBuilder.greaterThanEqual("maxPaymentAmount", paymentOption.getPaymentAmount());
     var queryResult = and(minFilter, maxFilter);
-     */
-
-    Criteria queryResult = null;
     // add filter by Touch Point: touchpoint=<value> || touchpoint==null
     if (paymentOption.getTouchpoint() != null
         && !paymentOption.getTouchpoint().equalsIgnoreCase("any")) {
@@ -274,9 +268,8 @@ public class CosmosRepository {
    */
   private List<ValidBundle> getFilteredBundlesMulti(
       PaymentOptionMulti paymentOptionMulti, Iterable<ValidBundle> validBundles) {
-    var wrapper = new Object(){ long paymentAmount = 0; };
-    paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> wrapper.paymentAmount += paymentNoticeItem.getPaymentAmount());
-    Iterable<ValidBundle> filteredValidBundles = filterMinMaxAmount(wrapper.paymentAmount, validBundles);
+
+    // marca da bollo digitale check
     List<TransferListItem> transferList = new ArrayList<>();
     paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> transferList.addAll(paymentNoticeItem.getTransferList()));
     var onlyMarcaBolloDigitale =
@@ -286,7 +279,7 @@ public class CosmosRepository {
             .count();
     var transferListSize = transferList.size();
 
-    return StreamSupport.stream(filteredValidBundles.spliterator(), true)
+    return StreamSupport.stream(validBundles.spliterator(), true)
         .filter(bundle -> digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
         // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
         .filter(bundle -> globalAndRelatedFilter(paymentOptionMulti, bundle))
@@ -301,6 +294,7 @@ public class CosmosRepository {
    * @return the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
    */
   private Iterable<ValidBundle> filterMinMaxAmount(long paymentAmount, Iterable<ValidBundle> validBundles){
+    ValidBundle x = validBundles.iterator().next();
     return StreamSupport.stream(validBundles.spliterator(), true)
         .filter(validBundle -> validBundle.getMaxPaymentAmount() <= paymentAmount)
         .filter(validBundle -> validBundle.getMaxPaymentAmount() > paymentAmount)

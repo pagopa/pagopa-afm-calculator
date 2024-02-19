@@ -18,6 +18,7 @@ public class Transfer implements Comparable<Transfer>, Serializable {
   private static final long serialVersionUID = 1287710978645388173L;
 
   private Long taxPayerFee;
+  private Long actualPayerFee;
   private String paymentMethod;
   private String touchpoint;
   private String idBundle;

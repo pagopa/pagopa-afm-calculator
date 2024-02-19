@@ -320,7 +320,7 @@ public class CalculatorController {
       value = "/fees/multi",
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public BundleOption getFeesMulti(
-      @RequestBody @Valid PaymentOption paymentOption,
+      @RequestBody @Valid PaymentOptionMulti paymentOption,
       @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
       @RequestParam(required = false, defaultValue = "true")
       @Parameter(
@@ -328,8 +328,7 @@ public class CalculatorController {
               "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
                   + " included")
       String allCcp) {
-    return BundleOption.builder()
-        .belowThreshold(false)
-        .build();
+    return calculatorService.calculateMulti(
+        paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
   }
 }

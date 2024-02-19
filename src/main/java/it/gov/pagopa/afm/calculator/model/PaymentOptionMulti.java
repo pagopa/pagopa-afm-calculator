@@ -17,4 +17,8 @@ public class PaymentOptionMulti {
   private String touchpoint;
   private List<PspSearchCriteria> idPspList;
   @Valid @NotNull @NotEmpty private List<PaymentNoticeItem> paymentNotice;
+
+  public Long getPaymentAmount () {
+    return this.getPaymentNotice().stream().mapToLong(PaymentNoticeItem::getPaymentAmount).sum();
+  }
 }

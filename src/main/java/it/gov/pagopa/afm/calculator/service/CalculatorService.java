@@ -5,11 +5,13 @@ import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
+import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
+import it.gov.pagopa.afm.calculator.model.calculatorMulti.Fee;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -21,12 +23,15 @@ import org.springframework.util.CollectionUtils;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.inTransferList;
+import static it.gov.pagopa.afm.calculator.service.UtilityComponent.inTransferListMulti;
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 
 @Service
@@ -59,7 +64,11 @@ public class CalculatorService {
   }
 
   public BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp) {
-    return null;
+    List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
+    Collections.shuffle(filteredBundles, new Random());
+    return BundleOption.builder()
+        .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
+        .build();
   }
 
   private List<Transfer> calculateTaxPayerFee(
@@ -123,6 +132,74 @@ public class CalculatorService {
 
     return transfers.stream().limit(limit).collect(Collectors.toList());
   }
+  private List<Transfer> calculateTaxPayerFeeMulti(
+      PaymentOptionMulti paymentOption, int limit, List<ValidBundle> bundles) {
+
+    HashMap<String, Boolean> primaryCiInTransferListMap = new HashMap<>();
+    paymentOption.getPaymentNotice().forEach(paymentNoticeItem -> {
+      if(!primaryCiInTransferListMap.containsKey(paymentNoticeItem.getPrimaryCreditorInstitution())) {
+        primaryCiInTransferListMap.put(
+            paymentNoticeItem.getPrimaryCreditorInstitution(),
+            inTransferList(paymentNoticeItem.getPrimaryCreditorInstitution(), paymentNoticeItem.getTransferList()));
+      } else {
+        //TODO lancia eccezione, due paymentNoticeItem con stesso org fiscal code
+      }
+    });
+
+    List<Transfer> transfers = new ArrayList<>();
+
+    // 1. Check if ONUS payment:
+    // - ONUS payment = if the bundle ABI attribute matching the one extracted via BIN from the
+    // issuers table
+    // 2. The returned transfer list must contain:
+    // - if ONUS payment = Only the bundles with the idChannel attribute ending in '_ONUS'
+    // - if not ONUS payment = Only the bundles with the idChannel attribute NOT ending in '_ONUS'
+
+    // 1.a: get issuers by BIN
+    List<IssuerRangeEntity> issuers =
+        StringUtils.isNotBlank(paymentOption.getBin())
+            ? issuersService.getIssuersByBIN(paymentOption.getBin())
+            : new ArrayList<>();
+
+    // 1.b: all records extracted via a specific BIN must have the same ABI otherwise the exception
+    // is raised
+    // - the limit(2) operation is used to terminate as soon as two distinct ABI objects are found
+    if (isUniqueAbi(issuers)) {
+      throw new AppException(AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
+    }
+
+    for (ValidBundle bundle : bundles) {
+
+      // 1.c: check if onus payment type
+      boolean isOnusPaymentType = isOnusPayment(issuers, bundle);
+
+      // 2.a: if ONUS payment -> return the transfer list only for bundles with the idChannel
+      // attribute ending in '_ONUS'
+      if (isOnusPaymentType && isOnusBundle(bundle)) {
+        transfers.addAll(this.getTransferList(paymentOption, primaryCiInTransferListMap, bundle));
+      }
+      // 2.b: if not ONUS payment -> return the transfer list only for bundles with the idChannel
+      // attribute NOT ending in '_ONUS'
+      if (!isOnusPaymentType && !isOnusBundle(bundle)) {
+        transfers.addAll(this.getTransferList(paymentOption, primaryCiInTransferList, bundle));
+      }
+    }
+
+    // if it is a payment on the AMEX circuit --> filter to return only AMEX_ONUS
+    if (this.isAMEXAbi(issuers)) {
+      Predicate<Transfer> abiPredicate = t -> amexABI.equalsIgnoreCase(t.getAbi());
+      Predicate<Transfer> onusPredicate = t -> Boolean.TRUE.equals(t.getOnUs());
+      transfers =
+          transfers.stream().filter(abiPredicate.and(onusPredicate)).collect(Collectors.toList());
+    }
+
+    // sort according onus and taxpayer fee
+    Collections.sort(transfers);
+
+    sortByFeePerPsp(transfers);
+
+    return transfers.stream().limit(limit).collect(Collectors.toList());
+  }
 
   private boolean isOnusBundle(ValidBundle bundle) {
     return StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), ONUS_BUNDLE_SUFFIX);
@@ -153,6 +230,20 @@ public class CalculatorService {
       Transfer transfer = createTransfer(bundle.getPaymentAmount(), 0, bundle, null, paymentOption);
       transfers.add(transfer);
     }
+    return transfers;
+  }
+
+  private List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> getTransferList(
+      PaymentOptionMulti paymentOption, Map<String, Boolean> primaryCiInTransferListMap, ValidBundle bundle) {
+    List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> transfers = new ArrayList<>();
+    paymentOption.getPaymentNotice().forEach(paymentNoticeItem -> {
+      if(primaryCiInTransferListMap.containsKey(paymentNoticeItem.getPrimaryCreditorInstitution())) {
+        List<Fee> x = analyzeFee(paymentNoticeItem, bundle);
+      } else {
+        it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer transfer = null;
+        transfers.add(transfer);
+      }
+    });
     return transfers;
   }
 
@@ -234,6 +325,57 @@ public class CalculatorService {
       Transfer transfer = createTransfer(bundle.getPaymentAmount(), 0, bundle, null, paymentOption);
       transfers.add(transfer);
     }
+  }
+
+  private List<Fee> analyzeFee(
+      PaymentNoticeItem paymentNoticeItem, ValidBundle bundle) {
+    List<Fee> fees = new ArrayList<>();
+    List<String> primaryTransferCategoryList =
+        utilityComponent.getPrimaryTransferCategoryListMulti(
+            paymentNoticeItem, paymentNoticeItem.getPrimaryCreditorInstitution());
+    var ciBundles =
+        bundle.getCiBundleList() != null ? bundle.getCiBundleList() : new ArrayList<CiBundle>();
+
+    // analyze public and private bundles
+    for (CiBundle cibundle : ciBundles) {
+      if (cibundle.getAttributes() != null && !cibundle.getAttributes().isEmpty()) {
+        fees.addAll(
+            cibundle
+                .getAttributes()
+                .parallelStream()
+                .filter(
+                    attribute ->
+                        (attribute.getTransferCategory() == null
+                            || (TransferCategoryRelation.EQUAL.equals(
+                            attribute.getTransferCategoryRelation())
+                            && primaryTransferCategoryList.contains(
+                            attribute.getTransferCategory())
+                            || (TransferCategoryRelation.NOT_EQUAL.equals(
+                            attribute.getTransferCategoryRelation())
+                            && !primaryTransferCategoryList.contains(
+                            attribute.getTransferCategory())))))
+                .map(
+                    attribute -> {
+                      return createFee(attribute.getMaxPaymentAmount(), cibundle.getCiFiscalCode());
+                    })
+                .collect(Collectors.toList()));
+      }
+    }
+    return fees;
+  }
+
+  /**
+   * @param creditorInstitution code of the creditor instiution
+   * @param primaryCiIncurredFee fee of CI
+   * @return Create transfer item
+   */
+  private Fee createFee(
+      long primaryCiIncurredFee,
+      String creditorInstitution) {
+    return Fee.builder()
+        .creditorInstitution(creditorInstitution)
+        .primaryCiIncurredFee(primaryCiIncurredFee)
+        .build();
   }
 
   /**
