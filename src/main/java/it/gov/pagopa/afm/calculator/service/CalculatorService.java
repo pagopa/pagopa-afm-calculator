@@ -248,7 +248,7 @@ public class CalculatorService {
     });
     List<List<Fee>> combinedFees = getCartesianProduct(ciDiscountedFees);
     combinedFees.forEach(fees -> {
-      orderFee(paymentOption.getPaymentAmount(), fees);
+      orderFee(bundle.getPaymentAmount(), fees);
       transfers.add(createTransfer(bundle, paymentOption, fees));
     });
     return transfers;
@@ -261,7 +261,7 @@ public class CalculatorService {
         fee.setActualCiIncurredFee(fee.getPrimaryCiIncurredFee());
       } else {
         if(paymentAmount > 0) {
-          fee.setActualCiIncurredFee(fee.getPrimaryCiIncurredFee() - paymentAmount);
+          fee.setActualCiIncurredFee(paymentAmount);
           paymentAmount = 0;
         } else {
           break;
@@ -379,7 +379,8 @@ public class CalculatorService {
 
     // analyze public and private bundles
     for (CiBundle cibundle : ciBundles) {
-      if (cibundle.getAttributes() != null && !cibundle.getAttributes().isEmpty()) {
+      if (cibundle.getAttributes() != null && !cibundle.getAttributes().isEmpty()
+          && paymentNoticeItem.getPrimaryCreditorInstitution().equals(cibundle.getCiFiscalCode())) {
         fees.addAll(
             cibundle
                 .getAttributes()
