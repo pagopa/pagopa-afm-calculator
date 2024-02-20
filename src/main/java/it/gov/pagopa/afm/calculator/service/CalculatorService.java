@@ -238,12 +238,14 @@ public class CalculatorService {
   private List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> getTransferList(
       PaymentOptionMulti paymentOption, Map<String, Boolean> primaryCiInTransferListMap, ValidBundle bundle) {
     List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> transfers = new ArrayList<>();
+    if(bundle.getCiBundleList().isEmpty()) {
+      transfers.add(createTransfer(bundle, paymentOption, new ArrayList<>()));
+      return transfers;
+    }
     List<List<Fee>> ciDiscountedFees = new ArrayList<>();
     paymentOption.getPaymentNotice().forEach(paymentNoticeItem -> {
       if(primaryCiInTransferListMap.containsKey(paymentNoticeItem.getPrimaryCreditorInstitution())) {
         ciDiscountedFees.add(analyzeFee(paymentNoticeItem, bundle));
-      } else {
-        transfers.add(createTransfer(bundle, paymentOption, new ArrayList<>()));
       }
     });
     List<List<Fee>> combinedFees = getCartesianProduct(ciDiscountedFees);
