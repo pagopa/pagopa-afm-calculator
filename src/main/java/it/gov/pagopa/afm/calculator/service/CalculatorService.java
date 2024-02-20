@@ -255,6 +255,7 @@ public class CalculatorService {
   }
 
   private void orderFee (long paymentAmount, List<Fee> fees) {
+    Collections.shuffle(fees);
     for(Fee fee: fees) {
       if(paymentAmount - fee.getPrimaryCiIncurredFee() >= 0) {
         paymentAmount -= fee.getPrimaryCiIncurredFee();
