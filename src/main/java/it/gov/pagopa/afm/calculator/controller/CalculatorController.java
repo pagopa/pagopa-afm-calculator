@@ -319,7 +319,7 @@ public class CalculatorController {
   @PostMapping(
       value = "/fees/multi",
       produces = {MediaType.APPLICATION_JSON_VALUE})
-  public BundleOption getFeesMulti(
+  public it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption getFeesMulti(
       @RequestBody @Valid PaymentOptionMulti paymentOption,
       @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
       @RequestParam(required = false, defaultValue = "true")

@@ -63,11 +63,13 @@ public class CalculatorService {
         .build();
   }
 
-  public BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp) {
+  public it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp) {
     List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
     Collections.shuffle(filteredBundles, new Random());
-    return BundleOption.builder()
+
+    return it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption.builder()
         .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
+        .bundleOptions(calculateTaxPayerFeeMulti(paymentOption, limit, filteredBundles))
         .build();
   }
 
@@ -196,7 +198,7 @@ public class CalculatorService {
     // sort according onus and taxpayer fee
     Collections.sort(transfers);
 
-    sortByFeePerPsp(transfers);
+    sortByFeePerPspMulti(transfers);
 
     return transfers.stream().limit(limit).collect(Collectors.toList());
   }
@@ -245,7 +247,7 @@ public class CalculatorService {
       }
     });
     List<List<Fee>> combinedFees = getCartesianProduct(ciDiscountedFees);
-    combinedFees.stream().forEach(fees -> {
+    combinedFees.forEach(fees -> {
       orderFee(paymentOption.getPaymentAmount(), fees);
       transfers.add(createTransfer(bundle, paymentOption, fees));
     });
@@ -515,6 +517,23 @@ public class CalculatorService {
    * @param transfers list of transfers to sort
    */
   private static void sortByFeePerPsp(List<Transfer> transfers) {
+    transfers.sort(
+        (t1, t2) -> {
+          int primarySort = t1.getIdPsp().compareTo(t2.getIdPsp());
+          if (primarySort == 0) {
+            // if two bundles are of the same PSP we'll sort by fees
+            return t1.getTaxPayerFee().compareTo(t2.getTaxPayerFee());
+          }
+          return 0; // fixed to 0 because we don't want to sort by PSP name.
+        });
+  }
+
+  /**
+   * sort by bundles' fee grouped by PSP
+   *
+   * @param transfers list of transfers to sort
+   */
+  private static void sortByFeePerPspMulti(List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> transfers) {
     transfers.sort(
         (t1, t2) -> {
           int primarySort = t1.getIdPsp().compareTo(t2.getIdPsp());
