@@ -236,7 +236,7 @@ public class CalculatorController {
   @PostMapping(
       value = "/psps/{idPsp}/fees/multi",
       produces = {MediaType.APPLICATION_JSON_VALUE})
-  public BundleOption getFeesByPspMulti(
+  public it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption getFeesByPspMulti(
       @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp")
       String idPsp,
       @RequestBody @Valid PaymentOptionByPspMulti paymentOptionByPsp,
@@ -261,9 +261,8 @@ public class CalculatorController {
             .bin(paymentOptionByPsp.getBin())
             .paymentNotice(paymentOptionByPsp.getPaymentNotice())
             .build();
-    return BundleOption.builder()
-        .belowThreshold(false)
-        .build();
+    return calculatorService.calculateMulti(
+        paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
   }
 
   @Operation(
