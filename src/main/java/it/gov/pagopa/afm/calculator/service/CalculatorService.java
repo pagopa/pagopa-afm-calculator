@@ -66,7 +66,7 @@ public class CalculatorService {
 
   public it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp) {
     List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
-    Collections.shuffle(filteredBundles, new Random());
+    Collections.shuffle(filteredBundles);
 
     return it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption.builder()
         .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
