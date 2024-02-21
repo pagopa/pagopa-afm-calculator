@@ -435,7 +435,7 @@ class CalculatorServiceTest {
 
     List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundle();
 
-    Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(), any(Boolean.class));
+    Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOption.class), any(Boolean.class));
 
     var paymentOption =
         TestUtil.readObjectFromFile("requests/getFeesMultipleTransfer.json", PaymentOption.class);

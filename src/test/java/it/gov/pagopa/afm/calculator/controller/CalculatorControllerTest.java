@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import it.gov.pagopa.afm.calculator.TestUtil;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
 import java.io.IOException;
@@ -33,7 +34,10 @@ class CalculatorControllerTest {
   @BeforeEach
   void setup() throws IOException {
     BundleOption result = TestUtil.readObjectFromFile("responses/getFees.json", BundleOption.class);
+    it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption resultMulti =
+        TestUtil.readObjectFromFile("responses/getFeesMulti.json", it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption.class);
     when(calculatorService.calculate(any(), anyInt(), any(Boolean.class))).thenReturn(result);
+    when(calculatorService.calculateMulti(any(), anyInt(), any(Boolean.class))).thenReturn(resultMulti);
   }
 
   @Test
@@ -56,6 +60,19 @@ class CalculatorControllerTest {
 
     mvc.perform(
             post("/fees")
+                .content(TestUtil.toJson(paymentOption))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+  }
+
+  @Test
+  @CsvSource({"/fees/multi"})
+  void getFeesMulti() throws Exception {
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+
+    mvc.perform(
+            post("/fees/multi")
                 .content(TestUtil.toJson(paymentOption))
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
