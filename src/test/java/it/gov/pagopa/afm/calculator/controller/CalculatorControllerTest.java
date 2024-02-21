@@ -15,6 +15,7 @@ import it.gov.pagopa.afm.calculator.service.CalculatorService;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -66,13 +67,13 @@ class CalculatorControllerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON));
   }
 
-  @Test
-  @CsvSource({"/fees/multi"})
-  void getFeesMulti() throws Exception {
+  @ParameterizedTest
+  @CsvSource({"/fees/multi", "/psps/12345/fees"})
+  void getFeesMulti(String uri) throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
 
     mvc.perform(
-            post("/fees/multi")
+            post(uri)
                 .content(TestUtil.toJson(paymentOption))
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
