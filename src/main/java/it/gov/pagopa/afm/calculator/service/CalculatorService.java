@@ -24,7 +24,9 @@ import org.springframework.util.CollectionUtils;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -230,9 +232,11 @@ public class CalculatorService {
       transfers.add(createTransfer(bundle, paymentOption, new ArrayList<>(), new ArrayList<>()));
       return transfers;
     }
-    List<List<Fee>> ciDiscountedFees = new ArrayList<>();
-    paymentOption.getPaymentNotice().forEach(paymentNoticeItem -> ciDiscountedFees.add(analyzeFee(paymentNoticeItem, bundle)));
-    List<List<Fee>> combinedFees = getCartesianProduct(ciDiscountedFees);
+    Map<String, List<Fee>> ciDiscountedFeesMap = new HashMap<>();
+    paymentOption.getPaymentNotice().forEach(
+        paymentNoticeItem -> ciDiscountedFeesMap.put(paymentNoticeItem.getPrimaryCreditorInstitution(), analyzeFee(paymentNoticeItem, bundle))
+    );
+    List<List<Fee>> combinedFees = getCartesianProduct(new ArrayList<>(ciDiscountedFeesMap.values()));
     for(List<Fee> fees: combinedFees) {
       orderFee(bundle.getPaymentAmount(), fees);
       List<String> idsCiBundle = bundle.getCiBundleList().stream()
