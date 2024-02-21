@@ -68,7 +68,7 @@ class CalculatorControllerTest {
   }
 
   @ParameterizedTest
-  @CsvSource({"/fees/multi", "/psps/12345/fees"})
+  @CsvSource({"/fees/multi", "/psps/12345/fees/multi"})
   void getFeesMulti(String uri) throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
 
