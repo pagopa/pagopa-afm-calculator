@@ -14,6 +14,7 @@ import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.model.calculatorMulti.Fee;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import lombok.Setter;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -249,10 +250,10 @@ public class CalculatorService {
       }
     });
     List<List<Fee>> combinedFees = getCartesianProduct(ciDiscountedFees);
-    combinedFees.forEach(fees -> {
+    for(List<Fee> fees: combinedFees) {
       orderFee(bundle.getPaymentAmount(), fees);
       transfers.add(createTransfer(bundle, paymentOption, fees));
-    });
+    }
     return transfers;
   }
 
@@ -286,7 +287,7 @@ public class CalculatorService {
     return currentSet.stream().flatMap(element -> cartesianProduct(sets, index+1)
         .map(list -> {
           List<Fee> newList = new ArrayList<>(list);
-          newList.add(0, element);
+          newList.add(0, SerializationUtils.clone(element));
           return newList;
         }));
   }
