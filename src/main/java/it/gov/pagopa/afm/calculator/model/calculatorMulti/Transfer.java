@@ -24,7 +24,7 @@ public class Transfer implements Comparable<Transfer>, Serializable {
   private String idBundle;
   private String bundleName;
   private String bundleDescription;
-  private String idCiBundle;
+  private List<String> idsCiBundle;
   private String idPsp;
   private String idChannel;
   private String idBrokerPsp;

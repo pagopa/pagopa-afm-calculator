@@ -24,9 +24,7 @@ import org.springframework.util.CollectionUtils;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -138,17 +136,6 @@ public class CalculatorService {
   private List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> calculateTaxPayerFeeMulti(
       PaymentOptionMulti paymentOption, int limit, List<ValidBundle> bundles) {
 
-    HashMap<String, Boolean> primaryCiInTransferListMap = new HashMap<>();
-    paymentOption.getPaymentNotice().forEach(paymentNoticeItem -> {
-      if(!primaryCiInTransferListMap.containsKey(paymentNoticeItem.getPrimaryCreditorInstitution())) {
-        primaryCiInTransferListMap.put(
-            paymentNoticeItem.getPrimaryCreditorInstitution(),
-            inTransferList(paymentNoticeItem.getPrimaryCreditorInstitution(), paymentNoticeItem.getTransferList()));
-      } else {
-        //TODO lancia eccezione, due paymentNoticeItem con stesso org fiscal code
-      }
-    });
-
     List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> transfers = new ArrayList<>();
 
     // 1. Check if ONUS payment:
@@ -179,12 +166,12 @@ public class CalculatorService {
       // 2.a: if ONUS payment -> return the transfer list only for bundles with the idChannel
       // attribute ending in '_ONUS'
       if (isOnusPaymentType && isOnusBundle(bundle)) {
-        transfers.addAll(this.getTransferList(paymentOption, primaryCiInTransferListMap, bundle));
+        transfers.addAll(this.getTransferList(paymentOption, bundle));
       }
       // 2.b: if not ONUS payment -> return the transfer list only for bundles with the idChannel
       // attribute NOT ending in '_ONUS'
       if (!isOnusPaymentType && !isOnusBundle(bundle)) {
-        transfers.addAll(this.getTransferList(paymentOption, primaryCiInTransferListMap, bundle));
+        transfers.addAll(this.getTransferList(paymentOption, bundle));
       }
     }
 
@@ -237,24 +224,27 @@ public class CalculatorService {
   }
 
   private List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> getTransferList(
-      PaymentOptionMulti paymentOption, Map<String, Boolean> primaryCiInTransferListMap, ValidBundle bundle) {
+      PaymentOptionMulti paymentOption, ValidBundle bundle) {
     List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> transfers = new ArrayList<>();
     if(bundle.getCiBundleList().isEmpty()) {
-      transfers.add(createTransfer(bundle, paymentOption, new ArrayList<>()));
+      transfers.add(createTransfer(bundle, paymentOption, new ArrayList<>(), new ArrayList<>()));
       return transfers;
     }
     List<List<Fee>> ciDiscountedFees = new ArrayList<>();
-    paymentOption.getPaymentNotice().forEach(paymentNoticeItem -> {
-      if(primaryCiInTransferListMap.containsKey(paymentNoticeItem.getPrimaryCreditorInstitution())) {
-        ciDiscountedFees.add(analyzeFee(paymentNoticeItem, bundle));
-      }
-    });
+    paymentOption.getPaymentNotice().forEach(paymentNoticeItem -> ciDiscountedFees.add(analyzeFee(paymentNoticeItem, bundle)));
     List<List<Fee>> combinedFees = getCartesianProduct(ciDiscountedFees);
     for(List<Fee> fees: combinedFees) {
       orderFee(bundle.getPaymentAmount(), fees);
-      transfers.add(createTransfer(bundle, paymentOption, fees));
+      List<String> idsCiBundle = bundle.getCiBundleList().stream()
+          .filter(ciBundle -> getFiscalCodesFromFees(fees).contains(ciBundle.getCiFiscalCode()))
+          .map(CiBundle::getId).toList();
+      transfers.add(createTransfer(bundle, paymentOption, fees, idsCiBundle));
     }
     return transfers;
+  }
+
+  private List<String> getFiscalCodesFromFees(List<Fee> fees){
+    return fees.stream().map(Fee::getCreditorInstitution).toList();
   }
 
   private void orderFee (long paymentAmount, List<Fee> fees) {
@@ -431,7 +421,8 @@ public class CalculatorService {
   private it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer createTransfer(
       ValidBundle bundle,
       PaymentOptionMulti paymentOption,
-      List<Fee> fees) {
+      List<Fee> fees,
+      List<String> idsCiBundles) {
     long actualPayerFee = bundle.getPaymentAmount() - fees.stream().mapToLong(Fee::getActualCiIncurredFee).sum();
     return it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer.builder()
         .taxPayerFee(bundle.getPaymentAmount())
@@ -444,6 +435,7 @@ public class CalculatorService {
         .idPsp(bundle.getIdPsp())
         .idBrokerPsp(bundle.getIdBrokerPsp())
         .idChannel(bundle.getIdChannel())
+        .idsCiBundle(idsCiBundles)
         .onUs(this.getOnUsValue(bundle, paymentOption))
         .abi(bundle.getAbi())
         .pspBusinessName(bundle.getPspBusinessName())
