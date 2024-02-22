@@ -726,4 +726,26 @@ class CalculatorServiceTest {
     String expected = TestUtil.readStringFromFile("responses/getAmexFeesMulti.json");
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
+
+  @Test
+  @Order(25)
+  void calculateMultiHighCommission() throws IOException, JSONException {
+    ValidBundle validBundle = TestUtil.getHighCommissionValidBundle();
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(validBundle));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+    var result = calculatorService.calculateMulti(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesMultiHighCommission.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
 }
