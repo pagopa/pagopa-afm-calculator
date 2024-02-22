@@ -1,7 +1,6 @@
 {
   "bin": "1005066",
-  "paymentMethod": "CP",
-  "touchpoint": "CHECKOUT",
+  "paymentMethod": "ANY",
   "idPspList": [],
   "paymentNotice": [
     {

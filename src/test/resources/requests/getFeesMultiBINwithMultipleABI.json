@@ -1,5 +1,5 @@
 {
-  "bin": "1005066",
+  "bin": "504317",
   "paymentMethod": "CP",
   "touchpoint": "CHECKOUT",
   "idPspList": [],
@@ -15,12 +15,12 @@
       ]
     },
     {
-      "primaryCreditorInstitution": "77777777778",
+      "primaryCreditorInstitution": "88888888888",
       "paymentAmount": 40,
       "transferList": [
         {
-          "creditorInstitution": "77777777778",
-          "transferCategory": "TAX2"
+          "creditorInstitution": "88888888888",
+          "transferCategory": "TAX1"
         }
       ]
     }

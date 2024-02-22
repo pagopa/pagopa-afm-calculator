@@ -497,4 +497,233 @@ class CalculatorServiceTest {
     String expected = TestUtil.readStringFromFile("responses/getFeesMulti2.json");
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
+
+  @Test
+  @Order(15)
+  void calculateMulti3() throws IOException, JSONException {
+    ValidBundle validBundle = TestUtil.getMockValidBundle();
+    validBundle.setIdPsp("77777777777");
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(Collections.singleton(validBundle));
+
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti2.json", PaymentOptionMulti.class);
+    var result = calculatorService.calculateMulti(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesMulti3.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
+  @Test
+  @Order(16)
+  void calculateMulti_invalidTouchpoint() throws IOException {
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(Collections.emptyList(), Collections.singleton(TestUtil.getMockValidBundle()));
+
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+
+    AppException exception =
+        assertThrows(
+            AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true));
+
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+  }
+
+  @Test
+  @Order(17)
+  void calculateMulti_invalidPaymentMethod() throws IOException {
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(TestUtil.getMockTouchpoints()),
+            Collections.emptyList(),
+            Collections.singleton(TestUtil.getMockValidBundle()));
+
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+
+    AppException exception =
+        assertThrows(
+            AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true));
+
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+  }
+
+  @Test
+  @Order(18)
+  void calculateMulti_digitalStamp() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setDigitalStamp(true);
+    mockValidBundle.setDigitalStampRestriction(true);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(mockValidBundle));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp.json", PaymentOptionMulti.class);
+    var result = calculatorService.calculateMulti(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesMulti.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
+  @Test
+  @Order(19)
+  void calculateMulti_digitalStamp2() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setDigitalStamp(true);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(mockValidBundle));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp2.json", PaymentOptionMulti.class);
+    var result = calculatorService.calculateMulti(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesMulti.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
+  @Test
+  @Order(20)
+  void calculateMulti_BIN_with_different_ABI_error() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(TestUtil.getMockValidBundle()));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesMultiBINwithMultipleABI.json", PaymentOptionMulti.class);
+
+    AppException exception =
+        assertThrows(
+            AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true));
+
+    assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getHttpStatus());
+  }
+
+  @Test
+  @Order(21)
+  void calculateMulti_SubThreshold() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setMinPaymentAmount(-10L);
+    mockValidBundle.setPaymentAmount(-5L);
+    mockValidBundle.setIdPsp("111111111111");
+    mockValidBundle.setType(BundleType.GLOBAL);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(mockValidBundle));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesMultiSubThreshold.json", PaymentOptionMulti.class);
+    var result = calculatorService.calculateMulti(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesMultiSubThreshold.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
+  @Test
+  @Order(22)
+  void calculateMulti_paymentType_Null() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setPaymentType(null);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(mockValidBundle));
+
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+    var result = calculatorService.calculateMulti(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesMultiPaymentTypeNull.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
+  @Test
+  @Order(23)
+  void calculateMulti_digitalStamp3() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    mockValidBundle.setDigitalStamp(true);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(mockValidBundle));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp3.json", PaymentOptionMulti.class);
+    var result = calculatorService.calculateMulti(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesMulti.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
+  @Test
+  @Order(24)
+  void calculateMulti_allCcpFlagDown() throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(TestUtil.getMockValidBundle()));
+
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+    it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption result =
+        calculatorService.calculateMulti(paymentOption, 10, false);
+    assertEquals(1, result.getBundleOptions().size());
+  }
+
+  @Test
+  @Order(25)
+  void calculateMulti_amexPayment() throws IOException, JSONException {
+    ValidBundle validBundle = TestUtil.getMockAmexValidBundle();
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(validBundle));
+
+    var paymentOption =
+        TestUtil.readObjectFromFile("requests/getAmexFeesMulti.json", PaymentOptionMulti.class);
+    var result = calculatorService.calculateMulti(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getAmexFeesMulti.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
 }

@@ -10,7 +10,8 @@
       "transferList": [
         {
           "creditorInstitution": "77777777777",
-          "transferCategory": "TAX1"
+          "transferCategory": "TAX1",
+          "digitalStamp": true
         }
       ]
     },
@@ -20,7 +21,8 @@
       "transferList": [
         {
           "creditorInstitution": "77777777778",
-          "transferCategory": "TAX2"
+          "transferCategory": "TAX2",
+          "digitalStamp": true
         }
       ]
     }
