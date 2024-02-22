@@ -132,10 +132,10 @@ public class CosmosRepository {
     }
 
     // add filter by Transfer Category: transferCategory[] contains one of paymentOption
-    List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOptionMulti);
-    if (categoryList != null) {
+    List<String> categoryListMulti = utilityComponent.getTransferCategoryList(paymentOptionMulti);
+    if (categoryListMulti != null) {
       var taxonomyFilter =
-          categoryList.parallelStream()
+          categoryListMulti.parallelStream()
               .filter(Objects::nonNull)
               .filter(elem -> !elem.isEmpty())
               .map(elem -> arrayContains("transferCategoryList", elem))
