@@ -73,21 +73,21 @@ public class CosmosRepository {
   /**
    * Null value are ignored -> they are skipped when building the filters
    *
-   * @param paymentOption Get the Body of the Request
+   * @param paymentOptionMulti Get the Body of the Request
    * @return the filtered bundles
    */
-  private Iterable<ValidBundle> findValidBundlesMulti(PaymentOptionMulti paymentOption, boolean allCcp) {
+  private Iterable<ValidBundle> findValidBundlesMulti(PaymentOptionMulti paymentOptionMulti, boolean allCcp) {
 
     // add filter by Payment Amount: minPaymentAmount <= paymentAmount < maxPaymentAmount
     var minFilter =
-        CriteriaBuilder.lessThan("minPaymentAmount", paymentOption.getPaymentAmount());
+        CriteriaBuilder.lessThan("minPaymentAmount", paymentOptionMulti.getPaymentAmount());
     var maxFilter =
-        CriteriaBuilder.greaterThanEqual("maxPaymentAmount", paymentOption.getPaymentAmount());
+        CriteriaBuilder.greaterThanEqual("maxPaymentAmount", paymentOptionMulti.getPaymentAmount());
     var queryResult = and(minFilter, maxFilter);
     // add filter by Touch Point: touchpoint=<value> || touchpoint==null
-    if (paymentOption.getTouchpoint() != null
-        && !paymentOption.getTouchpoint().equalsIgnoreCase("any")) {
-      var touchpointNameFilter = isEqualOrAny("name", paymentOption.getTouchpoint());
+    if (paymentOptionMulti.getTouchpoint() != null
+        && !paymentOptionMulti.getTouchpoint().equalsIgnoreCase("any")) {
+      var touchpointNameFilter = isEqualOrAny("name", paymentOptionMulti.getTouchpoint());
       Iterable<Touchpoint> touchpoint =
           cosmosTemplate.find(
               new CosmosQuery(touchpointNameFilter), Touchpoint.class, "touchpoints");
@@ -96,7 +96,7 @@ public class CosmosRepository {
         throw new AppException(
             HttpStatus.NOT_FOUND,
             "Touchpoint not found",
-            "Cannot find touchpont with name: '" + paymentOption.getTouchpoint() + "'");
+            "Cannot find touchpont with name: '" + paymentOptionMulti.getTouchpoint() + "'");
       }
 
       var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.iterator().next().getName());
@@ -104,9 +104,9 @@ public class CosmosRepository {
     }
 
     // add filter by Payment Method: paymentMethod=<value> || paymentMethod==null
-    if (paymentOption.getPaymentMethod() != null
-        && !paymentOption.getPaymentMethod().equalsIgnoreCase("any")) {
-      var paymentTypeNameFilter = isEqualOrNull("name", paymentOption.getPaymentMethod());
+    if (paymentOptionMulti.getPaymentMethod() != null
+        && !paymentOptionMulti.getPaymentMethod().equalsIgnoreCase("any")) {
+      var paymentTypeNameFilter = isEqualOrNull("name", paymentOptionMulti.getPaymentMethod());
       Iterable<PaymentType> paymentType =
           cosmosTemplate.find(
               new CosmosQuery(paymentTypeNameFilter), PaymentType.class, "paymenttypes");
@@ -115,7 +115,7 @@ public class CosmosRepository {
         throw new AppException(
             HttpStatus.NOT_FOUND,
             "PaymentType not found",
-            "Cannot find payment type with name: '" + paymentOption.getPaymentMethod() + "'");
+            "Cannot find payment type with name: '" + paymentOptionMulti.getPaymentMethod() + "'");
       }
 
       var paymentTypeFilter = isEqualOrNull("paymentType", paymentType.iterator().next().getName());
@@ -124,7 +124,7 @@ public class CosmosRepository {
 
     // add filter by PSP: psp in list
     Iterator<PspSearchCriteria> iterator =
-        Optional.ofNullable(paymentOption.getIdPspList())
+        Optional.ofNullable(paymentOptionMulti.getIdPspList())
             .orElse(Collections.<PspSearchCriteria>emptyList())
             .iterator();
     if (iterator.hasNext()) {
@@ -132,7 +132,7 @@ public class CosmosRepository {
     }
 
     // add filter by Transfer Category: transferCategory[] contains one of paymentOption
-    List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
+    List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOptionMulti);
     if (categoryList != null) {
       var taxonomyFilter =
           categoryList.parallelStream()
