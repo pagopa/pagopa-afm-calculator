@@ -19,6 +19,7 @@ import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.initializer.Initializer;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import java.io.IOException;
@@ -447,5 +448,53 @@ class CalculatorServiceTest {
     assertEquals(true, result.getBundleOptions().get(2).getOnUs());
     assertEquals(false, result.getBundleOptions().get(3).getOnUs());
     assertEquals(false, result.getBundleOptions().get(4).getOnUs());
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+      "requests/getFeesMulti.json, responses/getFeesMulti.json",
+      "requests/getFeesMultiBinNull.json, responses/getFeesMultiBinNull.json",
+      "requests/getFeesMultiPspList.json, responses/getFeesMulti.json",
+      "requests/getFeesMultiBinNotFound.json, responses/getFeesMultiBinNotFound.json"
+  })
+  @Order(13)
+  void calculateMulti(String input, String output) throws IOException, JSONException {
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(TestUtil.getMockValidBundle()));
+
+    var paymentOption = TestUtil.readObjectFromFile(input, PaymentOptionMulti.class);
+    var result = calculatorService.calculateMulti(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile(output);
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+  }
+
+  @Test
+  @Order(14)
+  void calculateMulti2() throws IOException, JSONException {
+    ValidBundle validBundle = TestUtil.getMockValidBundle();
+    validBundle.setIdPsp("77777777777");
+    Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+    PaymentType paymentType = TestUtil.getMockPaymentType();
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+        .thenReturn(
+            Collections.singleton(touchpoint),
+            Collections.singleton(paymentType),
+            Collections.singleton(validBundle));
+
+    var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+    var result = calculatorService.calculateMulti(paymentOption, 10, true);
+    String actual = TestUtil.toJson(result);
+
+    String expected = TestUtil.readStringFromFile("responses/getFeesMulti2.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
 }

@@ -9,7 +9,6 @@ import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppException;
-import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
@@ -68,7 +67,6 @@ public class CosmosRepository {
   @Cacheable(value = "findValidBundlesMulti")
   public List<ValidBundle> findByPaymentOption(PaymentOptionMulti paymentOption, boolean allCcp) {
     Iterable<ValidBundle> validBundles = findValidBundlesMulti(paymentOption, allCcp);
-    ValidBundle x = validBundles.iterator().next();
     return getFilteredBundlesMulti(paymentOption, validBundles);
   }
 
@@ -284,21 +282,6 @@ public class CosmosRepository {
         // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
         .filter(bundle -> globalAndRelatedFilter(paymentOptionMulti, bundle))
         .collect(Collectors.toList());
-  }
-
-  /**
-   * These filters are done with Java (not with cosmos query)
-   *
-   * @param paymentAmount the request
-   * @param validBundles the valid bundles
-   * @return the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
-   */
-  private Iterable<ValidBundle> filterMinMaxAmount(long paymentAmount, Iterable<ValidBundle> validBundles){
-    ValidBundle x = validBundles.iterator().next();
-    return StreamSupport.stream(validBundles.spliterator(), true)
-        .filter(validBundle -> validBundle.getMaxPaymentAmount() <= paymentAmount)
-        .filter(validBundle -> validBundle.getMaxPaymentAmount() > paymentAmount)
-        .toList();
   }
 
   /**

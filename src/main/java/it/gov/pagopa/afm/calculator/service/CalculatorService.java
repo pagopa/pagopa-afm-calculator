@@ -233,9 +233,12 @@ public class CalculatorService {
       return transfers;
     }
     Map<String, List<Fee>> ciDiscountedFeesMap = new HashMap<>();
-    paymentOption.getPaymentNotice().forEach(
-        paymentNoticeItem -> ciDiscountedFeesMap.put(paymentNoticeItem.getPrimaryCreditorInstitution(), analyzeFee(paymentNoticeItem, bundle))
-    );
+    paymentOption.getPaymentNotice().forEach(paymentNoticeItem -> {
+      List<Fee> discountedFees = analyzeFee(paymentNoticeItem, bundle);
+      if(!discountedFees.isEmpty()){
+        ciDiscountedFeesMap.put(paymentNoticeItem.getPrimaryCreditorInstitution(), discountedFees);
+      }
+    });
     List<List<Fee>> combinedFees = getCartesianProduct(new ArrayList<>(ciDiscountedFeesMap.values()));
     for(List<Fee> fees: combinedFees) {
       orderFee(bundle.getPaymentAmount(), fees);

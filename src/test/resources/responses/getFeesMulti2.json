@@ -12,7 +12,7 @@
       "idsCiBundle": [
         "1"
       ],
-      "idPsp": "ABC",
+      "idPsp": "77777777777",
       "idChannel": "13212880150_07_ONUS",
       "idBrokerPsp": null,
       "onUs": true,
@@ -20,9 +20,9 @@
       "pspBusinessName": "psp business name 1",
       "fees": [
         {
-        "creditorInstitution" : "77777777777",
-        "primaryCiIncurredFee": 10,
-        "actualCiIncurredFee": 1
+          "creditorInstitution" : "77777777777",
+          "primaryCiIncurredFee": 10,
+          "actualCiIncurredFee": 1
         }
       ]
     }
