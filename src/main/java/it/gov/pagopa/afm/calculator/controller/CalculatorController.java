@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionByPsp;
+import it.gov.pagopa.afm.calculator.model.PaymentOptionByPspMulti;
+import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
 import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
@@ -234,10 +236,10 @@ public class CalculatorController {
   @PostMapping(
       value = "/psps/{idPsp}/fees/multi",
       produces = {MediaType.APPLICATION_JSON_VALUE})
-  public BundleOption getFeesByPspMulti(
+  public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption getFeesByPspMulti(
       @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp")
       String idPsp,
-      @RequestBody @Valid PaymentOptionByPsp paymentOptionByPsp,
+      @RequestBody @Valid PaymentOptionByPspMulti paymentOptionByPsp,
       @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
       @RequestParam(required = false, defaultValue = "true")
       @Parameter(
@@ -245,10 +247,8 @@ public class CalculatorController {
               "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
                   + " included")
       String allCcp) {
-    PaymentOption paymentOption =
-        PaymentOption.builder()
-            .paymentAmount(paymentOptionByPsp.getPaymentAmount())
-            .primaryCreditorInstitution(paymentOptionByPsp.getPrimaryCreditorInstitution())
+    PaymentOptionMulti paymentOption =
+        PaymentOptionMulti.builder()
             .paymentMethod(paymentOptionByPsp.getPaymentMethod())
             .touchpoint(paymentOptionByPsp.getTouchpoint())
             .idPspList(
@@ -258,12 +258,11 @@ public class CalculatorController {
                         .idChannel(paymentOptionByPsp.getIdChannel())
                         .idBrokerPsp(paymentOptionByPsp.getIdBrokerPsp())
                         .build()))
-            .transferList(paymentOptionByPsp.getTransferList())
             .bin(paymentOptionByPsp.getBin())
+            .paymentNotice(paymentOptionByPsp.getPaymentNotice())
             .build();
-    return BundleOption.builder()
-        .belowThreshold(false)
-        .build();
+    return calculatorService.calculateMulti(
+        paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
   }
 
   @Operation(
@@ -319,8 +318,8 @@ public class CalculatorController {
   @PostMapping(
       value = "/fees/multi",
       produces = {MediaType.APPLICATION_JSON_VALUE})
-  public BundleOption getFeesMulti(
-      @RequestBody @Valid PaymentOption paymentOption,
+  public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption getFeesMulti(
+      @RequestBody @Valid PaymentOptionMulti paymentOption,
       @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
       @RequestParam(required = false, defaultValue = "true")
       @Parameter(
@@ -328,8 +327,7 @@ public class CalculatorController {
               "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
                   + " included")
       String allCcp) {
-    return BundleOption.builder()
-        .belowThreshold(false)
-        .build();
+    return calculatorService.calculateMulti(
+        paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
   }
 }
