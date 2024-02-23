@@ -64,7 +64,7 @@ public class UtilityComponent {
    * @param paymentOptionMulti request
    * @return list of string about transfer categories
    */
-  @Cacheable(value = "getTransferCategoryList")
+  @Cacheable(value = "getTransferCategoryListMulti")
   public List<String> getTransferCategoryList(PaymentOptionMulti paymentOptionMulti) {
     List<TransferListItem> transferList = new ArrayList<>();
     paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> transferList.addAll(paymentNoticeItem.getTransferList()));
