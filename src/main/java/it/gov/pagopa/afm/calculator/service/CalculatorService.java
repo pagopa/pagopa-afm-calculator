@@ -190,7 +190,7 @@ public class CalculatorService {
 
     sortByFeePerPspMulti(transfers);
 
-    return transfers.stream().limit(limit).collect(Collectors.toList());
+    return transfers.stream().limit(limit).toList();
   }
 
   private boolean isOnusBundle(ValidBundle bundle) {
@@ -272,7 +272,7 @@ public class CalculatorService {
   }
 
   private List<List<Fee>> getCartesianProduct(List<List<Fee>> sets) {
-    return cartesianProduct(sets,0).collect(Collectors.toList());
+    return cartesianProduct(sets,0).toList();
   }
 
   private Stream<List<Fee>> cartesianProduct(List<List<Fee>> sets, int index) {
