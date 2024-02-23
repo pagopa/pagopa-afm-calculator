@@ -44,6 +44,8 @@ public class CosmosRepository {
   
   private static final String ID_PSP_PARAM = "idPsp";
 
+  private static final String TRANSFER_CATEGORY_LIST = "transferCategoryList";
+
   /**
    * @param ciFiscalCode fiscal code of the CI
    * @param bundle a valid bundle
@@ -137,11 +139,11 @@ public class CosmosRepository {
           categoryListMulti.parallelStream()
               .filter(Objects::nonNull)
               .filter(elem -> !elem.isEmpty())
-              .map(elem -> arrayContains("transferCategoryList", elem))
+              .map(elem -> arrayContains(TRANSFER_CATEGORY_LIST, elem))
               .reduce(CriteriaBuilder::or);
 
       if (taxonomyFilter.isPresent()) {
-        var taxonomyOrNull = or(taxonomyFilter.get(), isNull("transferCategoryList"));
+        var taxonomyOrNull = or(taxonomyFilter.get(), isNull(TRANSFER_CATEGORY_LIST));
         queryResult = and(queryResult, taxonomyOrNull);
       }
     }
@@ -231,11 +233,11 @@ public class CosmosRepository {
           categoryList.parallelStream()
               .filter(Objects::nonNull)
               .filter(elem -> !elem.isEmpty())
-              .map(elem -> arrayContains("transferCategoryList", elem))
+              .map(elem -> arrayContains(TRANSFER_CATEGORY_LIST, elem))
               .reduce(CriteriaBuilder::or);
 
       if (taxonomyFilter.isPresent()) {
-        var taxonomyOrNull = or(taxonomyFilter.get(), isNull("transferCategoryList"));
+        var taxonomyOrNull = or(taxonomyFilter.get(), isNull(TRANSFER_CATEGORY_LIST));
         queryResult = and(queryResult, taxonomyOrNull);
       }
     }
