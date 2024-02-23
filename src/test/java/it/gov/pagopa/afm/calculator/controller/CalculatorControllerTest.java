@@ -35,8 +35,8 @@ class CalculatorControllerTest {
   @BeforeEach
   void setup() throws IOException {
     BundleOption result = TestUtil.readObjectFromFile("responses/getFees.json", BundleOption.class);
-    it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption resultMulti =
-        TestUtil.readObjectFromFile("responses/getFeesMulti.json", it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption.class);
+    it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption resultMulti =
+        TestUtil.readObjectFromFile("responses/getFeesMulti.json", it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.class);
     when(calculatorService.calculate(any(), anyInt(), any(Boolean.class))).thenReturn(result);
     when(calculatorService.calculateMulti(any(), anyInt(), any(Boolean.class))).thenReturn(resultMulti);
   }

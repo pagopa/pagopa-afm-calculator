@@ -11,7 +11,7 @@ import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
-import it.gov.pagopa.afm.calculator.model.calculatorMulti.Fee;
+import it.gov.pagopa.afm.calculator.model.calculatormulti.Fee;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import lombok.Setter;
 import org.apache.commons.lang3.SerializationUtils;
@@ -64,11 +64,11 @@ public class CalculatorService {
         .build();
   }
 
-  public it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp) {
+  public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp) {
     List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
     Collections.shuffle(filteredBundles);
 
-    return it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption.builder()
+    return it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
         .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
         .bundleOptions(calculateTaxPayerFeeMulti(paymentOption, limit, filteredBundles))
         .build();
@@ -135,10 +135,10 @@ public class CalculatorService {
 
     return transfers.stream().limit(limit).collect(Collectors.toList());
   }
-  private List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> calculateTaxPayerFeeMulti(
+  private List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> calculateTaxPayerFeeMulti(
       PaymentOptionMulti paymentOption, int limit, List<ValidBundle> bundles) {
 
-    List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> transfers = new ArrayList<>();
+    List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers = new ArrayList<>();
 
     // 1. Check if ONUS payment:
     // - ONUS payment = if the bundle ABI attribute matching the one extracted via BIN from the
@@ -179,8 +179,8 @@ public class CalculatorService {
 
     // if it is a payment on the AMEX circuit --> filter to return only AMEX_ONUS
     if (this.isAMEXAbi(issuers)) {
-      Predicate<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> abiPredicate = t -> amexABI.equalsIgnoreCase(t.getAbi());
-      Predicate<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> onusPredicate = t -> Boolean.TRUE.equals(t.getOnUs());
+      Predicate<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> abiPredicate = t -> amexABI.equalsIgnoreCase(t.getAbi());
+      Predicate<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> onusPredicate = t -> Boolean.TRUE.equals(t.getOnUs());
       transfers =
           transfers.stream().filter(abiPredicate.and(onusPredicate)).collect(Collectors.toList());
     }
@@ -225,9 +225,9 @@ public class CalculatorService {
     return transfers;
   }
 
-  private List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> getTransferList(
+  private List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> getTransferList(
       PaymentOptionMulti paymentOption, ValidBundle bundle) {
-    List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> transfers = new ArrayList<>();
+    List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers = new ArrayList<>();
     if(bundle.getCiBundleList().isEmpty()) {
       transfers.add(createTransfer(bundle, paymentOption, new ArrayList<>(), new ArrayList<>()));
       return transfers;
@@ -321,7 +321,7 @@ public class CalculatorService {
                 .map(
                     attribute ->
                         createTransfer(bundle.getPaymentAmount(), 0, bundle, null, paymentOption))
-                .collect(Collectors.toList()));
+                .toList());
         transfers.addAll(
             cibundle
                 .getAttributes()
@@ -354,7 +354,7 @@ public class CalculatorService {
                           cibundle.getId(),
                           paymentOption);
                     })
-                .collect(Collectors.toList()));
+                .toList());
       } else {
         transfers.add(
             createTransfer(bundle.getPaymentAmount(), 0, bundle, cibundle.getId(), paymentOption));
@@ -399,7 +399,7 @@ public class CalculatorService {
                             attribute.getTransferCategory())))))
                 .map(
                     attribute -> createFee(attribute.getMaxPaymentAmount(), cibundle.getCiFiscalCode()))
-                .collect(Collectors.toList()));
+                .toList());
       }
     }
     return fees;
@@ -425,13 +425,13 @@ public class CalculatorService {
    * @param fees the fees to include in the transfer
    * @return Create transfer item
    */
-  private it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer createTransfer(
+  private it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer createTransfer(
       ValidBundle bundle,
       PaymentOptionMulti paymentOption,
       List<Fee> fees,
       List<String> idsCiBundles) {
     long actualPayerFee = bundle.getPaymentAmount() - fees.stream().mapToLong(Fee::getActualCiIncurredFee).sum();
-    return it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer.builder()
+    return it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer.builder()
         .taxPayerFee(bundle.getPaymentAmount())
         .actualPayerFee(Math.max(0, actualPayerFee))
         .paymentMethod(bundle.getPaymentType() == null ? "ANY" : bundle.getPaymentType())
@@ -537,7 +537,7 @@ public class CalculatorService {
    *
    * @param transfers list of transfers to sort
    */
-  private static void sortByFeePerPspMulti(List<it.gov.pagopa.afm.calculator.model.calculatorMulti.Transfer> transfers) {
+  private static void sortByFeePerPspMulti(List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers) {
     transfers.sort(
         (t1, t2) -> {
           int primarySort = t1.getIdPsp().compareTo(t2.getIdPsp());

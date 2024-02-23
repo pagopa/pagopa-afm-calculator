@@ -700,7 +700,7 @@ class CalculatorServiceTest {
             Collections.singleton(TestUtil.getMockValidBundle()));
 
     var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-    it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption result =
+    it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption result =
         calculatorService.calculateMulti(paymentOption, 10, false);
     assertEquals(1, result.getBundleOptions().size());
   }

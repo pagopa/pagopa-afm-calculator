@@ -236,7 +236,7 @@ public class CalculatorController {
   @PostMapping(
       value = "/psps/{idPsp}/fees/multi",
       produces = {MediaType.APPLICATION_JSON_VALUE})
-  public it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption getFeesByPspMulti(
+  public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption getFeesByPspMulti(
       @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp")
       String idPsp,
       @RequestBody @Valid PaymentOptionByPspMulti paymentOptionByPsp,
@@ -318,7 +318,7 @@ public class CalculatorController {
   @PostMapping(
       value = "/fees/multi",
       produces = {MediaType.APPLICATION_JSON_VALUE})
-  public it.gov.pagopa.afm.calculator.model.calculatorMulti.BundleOption getFeesMulti(
+  public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption getFeesMulti(
       @RequestBody @Valid PaymentOptionMulti paymentOption,
       @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
       @RequestParam(required = false, defaultValue = "true")

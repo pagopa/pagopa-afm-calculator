@@ -1,4 +1,4 @@
-package it.gov.pagopa.afm.calculator.model.calculatorMulti;
+package it.gov.pagopa.afm.calculator.model.calculatormulti;
 
 import lombok.*;
 import java.io.Serializable;
