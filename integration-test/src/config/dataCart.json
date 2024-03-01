@@ -1,0 +1,57 @@
+{
+  "bundles": [
+    {
+      "id": "int-test-1",
+      "idPsp": "PPAYITR1XXX",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01_ONUS",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 1",
+      "description": "pacchetto 1",
+      "paymentAmount": 100,
+      "minPaymentAmount": 899999999999998,
+      "maxPaymentAmount": 899999999999999,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": null,
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-1"
+    }
+  ],
+  "ciBundles": [
+    {
+      "id": "int-test-1",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "int-test-1",
+      "attributes": [
+        {
+          "id": "int-test-1",
+          "maxPaymentAmount": 20
+        }
+      ]
+    }
+  ],
+  "touchpoints": [
+    {
+      "id": "int-test-1",
+      "name": "CHECKOUT"
+    },
+    {
+      "id": "int-test-2",
+      "name": "IO"
+    }
+  ],
+  "paymenttypes": [
+    {
+      "id": "int-test-1",
+      "name": "CP"
+    },
+    {
+      "id": "int-test-2",
+      "name": "PO"
+    }
+  ]
+}
