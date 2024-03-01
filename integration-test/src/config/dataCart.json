@@ -19,6 +19,26 @@
       "paymentType": null,
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-1"
+    },
+    {
+      "id": "int-test-2",
+      "idPsp": "PPAYITR1XXX",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01_ONUS",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 2",
+      "description": "pacchetto 2",
+      "paymentAmount": 50,
+      "minPaymentAmount": 899999999999996,
+      "maxPaymentAmount": 899999999999998,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": null,
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-2"
     }
   ],
   "ciBundles": [
@@ -30,6 +50,17 @@
         {
           "id": "int-test-1",
           "maxPaymentAmount": 20
+        }
+      ]
+    },
+    {
+      "id": "int-test-2",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "int-test-2",
+      "attributes": [
+        {
+          "id": "int-test-2",
+          "maxPaymentAmount": 60
         }
       ]
     }
