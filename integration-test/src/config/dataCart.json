@@ -1,7 +1,7 @@
 {
   "bundles": [
     {
-      "id": "int-test-1",
+      "id": "int-test-cart-1",
       "idPsp": "PPAYITR1XXX",
       "idBrokerPsp": "88888888899",
       "idChannel": "88888888899_01_ONUS",
@@ -21,7 +21,7 @@
       "pspBusinessName": "psp business name int-test-1"
     },
     {
-      "id": "int-test-2",
+      "id": "int-test-cart-2",
       "idPsp": "PPAYITR1XXX",
       "idBrokerPsp": "88888888899",
       "idChannel": "88888888899_01_ONUS",
@@ -39,13 +39,73 @@
       "paymentType": null,
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-2"
+    },
+    {
+      "id": "int-test-cart-3",
+      "idPsp": "PPAYITR1XXX",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01_ONUS",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 3",
+      "description": "pacchetto 3",
+      "paymentAmount": 70,
+      "minPaymentAmount": 899999999999994,
+      "maxPaymentAmount": 899999999999996,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": null,
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-3"
+    },
+    {
+      "id": "int-test-cart-4",
+      "idPsp": "PPAYITR1XXX",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01_ONUS",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 4",
+      "description": "pacchetto 4",
+      "paymentAmount": 80,
+      "minPaymentAmount": 899999999999992,
+      "maxPaymentAmount": 899999999999994,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": null,
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-4"
+    },
+    {
+      "id": "int-test-cart-5",
+      "idPsp": "PPAYITR1XXX",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01_ONUS",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 5",
+      "description": "pacchetto 5",
+      "paymentAmount": 100,
+      "minPaymentAmount": 899999999999990,
+      "maxPaymentAmount": 899999999999992,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": null,
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-5"
     }
   ],
   "ciBundles": [
     {
       "id": "int-test-1",
       "ciFiscalCode": "77777777777",
-      "idBundle": "int-test-1",
+      "idBundle": "int-test-cart-1",
       "attributes": [
         {
           "id": "int-test-1",
@@ -56,11 +116,55 @@
     {
       "id": "int-test-2",
       "ciFiscalCode": "77777777777",
-      "idBundle": "int-test-2",
+      "idBundle": "int-test-cart-2",
       "attributes": [
         {
           "id": "int-test-2",
           "maxPaymentAmount": 60
+        }
+      ]
+    },
+    {
+      "id": "int-test-3",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "int-test-cart-4",
+      "attributes": [
+        {
+          "id": "int-test-3",
+          "maxPaymentAmount": 50
+        }
+      ]
+    },
+    {
+      "id": "int-test-4",
+      "ciFiscalCode": "88888888888",
+      "idBundle": "int-test-cart-4",
+      "attributes": [
+        {
+          "id": "int-test-4",
+          "maxPaymentAmount": 60
+        }
+      ]
+    },
+    {
+      "id": "int-test-5",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "int-test-cart-5",
+      "attributes": [
+        {
+          "id": "int-test-5",
+          "maxPaymentAmount": 60
+        }
+      ]
+    },
+    {
+      "id": "int-test-6",
+      "ciFiscalCode": "88888888888",
+      "idBundle": "int-test-cart-5",
+      "attributes": [
+        {
+          "id": "int-test-6",
+          "maxPaymentAmount": 80
         }
       ]
     }
