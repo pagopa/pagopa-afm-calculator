@@ -214,3 +214,50 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the sum of the fees is correct and the EC codes are:
     | feeCode1  | feeCode2  |
     | "77777777777"  | "88888888888"  |
+
+  Scenario: Execute a GetFeesMulti request 7
+    Given initial json
+      """
+      {
+        "bin": "309500",
+        "paymentMethod": "CP",
+        "touchpoint": "CHECKOUT",
+        "idPspList": null,
+        "paymentNotice": [
+            {
+                "primaryCreditorInstitution": "77777777777",
+                "paymentAmount": 899999999998989,
+                "transferList": [
+                    {
+                        "creditorInstitution": "77777777777",
+                        "transferCategory": "TAX1"
+                    }
+                ]
+            },
+            {
+                "primaryCreditorInstitution": "88888888888",
+                "paymentAmount": 1000,
+                "transferList": [
+                    {
+                        "creditorInstitution": "88888888888",
+                        "transferCategory": "TAX1"
+                    }
+                ]
+            }
+        ]
+      }
+      """
+    When the client send POST to /fees/multi?maxOccurrences=10
+    Then check statusCode is 200
+    And the body response for the bundleOptions.idsCiBundle field is:
+    | idCiBundle1  | idCiBundle2  |
+    | "int-test-7"  | "int-test-8"  |
+    | "int-test-7"  | "int-test-8"  |
+    | "int-test-7"  | "int-test-8"  |
+    | "int-test-7"  | "int-test-8"  |
+    And the sum of the fees is correct and the EC codes are:
+    | feeCode1  | feeCode2  |
+    | "77777777777"  | "88888888888"  |
+    | "77777777777"  | "88888888888"  |
+    | "77777777777"  | "88888888888"  |
+    | "77777777777"  | "88888888888"  |
