@@ -7,7 +7,7 @@ Feature: GetFeeByPsp
     Given initial json
       """
         {
-          "paymentAmount": 999999999999998,
+          "paymentAmount": 799999999999998,
           "primaryCreditorInstitution": "77777777777",
           "bin": "309500",
           "paymentMethod": "CP",
@@ -55,7 +55,7 @@ Feature: GetFeeByPsp
     Given initial json
       """
         {
-          "paymentAmount": 999999999999988,
+          "paymentAmount": 799999999999988,
           "primaryCreditorInstitution": "77777777777",
           "bin": "309500",
           "paymentMethod": "PO",
@@ -82,7 +82,7 @@ Feature: GetFeeByPsp
     Given initial json
       """
         {
-          "paymentAmount": 999999999999998,
+          "paymentAmount": 799999999999998,
           "primaryCreditorInstitution": "77777777777",
           "bin": "309500",
           "transferList": [
@@ -111,7 +111,7 @@ Feature: GetFeeByPsp
     Given initial json
       """
         {
-          "paymentAmount": 999999999999998,
+          "paymentAmount": 799999999999998,
           "primaryCreditorInstitution": "77777777777",
           "bin": "309500",
           "touchpoint": "IO",
@@ -141,7 +141,7 @@ Feature: GetFeeByPsp
     Given initial json
       """
         {
-          "paymentAmount": 999999999999998,
+          "paymentAmount": 799999999999998,
           "primaryCreditorInstitution": "77777777777",
           "bin": "309500",
           "touchpoint": "IO",
@@ -190,7 +190,7 @@ Feature: GetFeeByPsp
     Given initial json
       """
         {
-          "paymentAmount": 999999999999998,
+          "paymentAmount": 799999999999998,
           "primaryCreditorInstitution": "77777777777",
           "bin": "309500",
           "touchpoint": "IO",
@@ -219,7 +219,7 @@ Feature: GetFeeByPsp
     Given initial json
       """
         {
-          "paymentAmount": 999999999999998,
+          "paymentAmount": 799999999999998,
           "primaryCreditorInstitution": "77777777777",
           "bin": "309500",
           "touchpoint": "IO",
@@ -249,7 +249,7 @@ Feature: GetFeeByPsp
     Given initial json
       """
         {
-          "paymentAmount": 999999999999998,
+          "paymentAmount": 799999999999998,
           "primaryCreditorInstitution": "77777777777",
           "bin": "123456789",
           "touchpoint": "IO",
@@ -279,7 +279,7 @@ Feature: GetFeeByPsp
     Given initial json
       """
       {
-        "paymentAmount": 999999999999990,
+        "paymentAmount": 799999999999990,
         "primaryCreditorInstitution": "77777777777",
         "bin": "340000",
         "paymentMethod": "CP",
