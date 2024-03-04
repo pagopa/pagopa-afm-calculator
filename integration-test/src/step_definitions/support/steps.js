@@ -121,6 +121,16 @@ Then('the body response does not contain the Poste idPsp', function () {
   }
 });
 
+Then('the body response for the bundleOptions.idsCiBundle field is:', function (dataTable) {
+  for (let i=0; i<responseToCheck.data.bundleOptions.length; i++){
+    for(let j=0; j<responseToCheck.data.bundleOptions[i].idsCiBundle.length; j++){
+      let bodyIdCiBundle = responseToCheck.data.bundleOptions[i].idsCiBundle[j];
+      let checkIdCiBundle = JSON.parse(dataTable.rows()[i][j]);
+      assert.equal(bodyIdCiBundle, checkIdCiBundle)
+    }
+  }
+});
+
 function mapToValidBundles(config) {
 
   let validbundles = [];

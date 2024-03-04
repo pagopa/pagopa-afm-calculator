@@ -27,6 +27,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees/multi?maxOccurrences=10
     Then check statusCode is 200
+    And the body response for the bundleOptions.idsCiBundle field is:
+    | idCiBundle  |
+    | "int-test-1"  |
 
   Scenario: Execute a GetFeesMulti request 2
     Given initial json
@@ -52,6 +55,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees/multi?maxOccurrences=10
     Then check statusCode is 200
+    And the body response for the bundleOptions.idsCiBundle field is:
+    | idCiBundle  |
+    | "int-test-2"  |
 
   Scenario: Execute a GetFeesMulti request 3
     Given initial json
@@ -87,6 +93,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees/multi?maxOccurrences=10
     Then check statusCode is 200
+    And the body response for the bundleOptions.idsCiBundle field is:
+    | idCiBundle  |
 
   Scenario: Execute a GetFeesMulti request 4
     Given initial json
@@ -122,6 +130,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees/multi?maxOccurrences=10
     Then check statusCode is 200
+    And the body response for the bundleOptions.idsCiBundle field is:
+    | idCiBundle  |
 
   Scenario: Execute a GetFeesMulti request 5
     Given initial json
@@ -147,6 +157,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees/multi?maxOccurrences=10
     Then check statusCode is 200
+    And the body response for the bundleOptions.idsCiBundle field is:
+    | idCiBundle  |
+    | "int-test-6"  |
 
   Scenario: Execute a GetFeesMulti request 6
     Given initial json
@@ -182,3 +195,6 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees/multi?maxOccurrences=10
     Then check statusCode is 200
+    And the body response for the bundleOptions.idsCiBundle field is:
+    | idCiBundle1  | idCiBundle2  |
+    | "int-test-5"  | "int-test-6"  |
