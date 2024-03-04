@@ -12,16 +12,6 @@
           "transferCategory": "TAX1"
         }
       ]
-    },
-    {
-      "primaryCreditorInstitution": "77777777778",
-      "paymentAmount": 40,
-      "transferList": [
-        {
-          "creditorInstitution": "77777777778",
-          "transferCategory": "TAX2"
-        }
-      ]
     }
   ]
 }
