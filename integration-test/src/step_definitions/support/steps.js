@@ -131,6 +131,25 @@ Then('the body response for the bundleOptions.idsCiBundle field is:', function (
   }
 });
 
+Then('the sum of the fees is correct and the EC codes are:', function (dataTable) {
+  let sumFee = 0;
+  for (let i=0; i<responseToCheck.data.bundleOptions.length; i++){
+    responseToCheck.data.bundleOptions[i].fees.sort(function (a, b) {
+        // alphabetical order
+      return (a.creditorInstitution > b.creditorInstitution) ? 1 : ((b.creditorInstitution > a.creditorInstitution) ? -1 : 0);
+    });
+    for(let j=0; j<responseToCheck.data.bundleOptions[i].fees.length; j++){
+      let bodyFeeCode = responseToCheck.data.bundleOptions[i].fees[j].creditorInstitution;
+      let checkFeeCode = JSON.parse(dataTable.rows()[i][j]);
+      assert.equal(bodyFeeCode, checkFeeCode);
+      sumFee += responseToCheck.data.bundleOptions[i].fees[j].actualCiIncurredFee;
+    }
+    assert.equal(responseToCheck.data.bundleOptions[i].taxPayerFee - responseToCheck.data.bundleOptions[i].actualPayerFee, sumFee);
+    sumFee = 0;
+  }
+});
+
+
 function mapToValidBundles(config) {
 
   let validbundles = [];

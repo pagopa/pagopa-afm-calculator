@@ -30,6 +30,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     | "int-test-1"  |
+    And the sum of the fees is correct and the EC codes are:
+    | feeCode  |
+    | "77777777777"  |
 
   Scenario: Execute a GetFeesMulti request 2
     Given initial json
@@ -58,6 +61,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     | "int-test-2"  |
+    And the sum of the fees is correct and the EC codes are:
+    | feeCode  |
+    | "77777777777"  |
 
   Scenario: Execute a GetFeesMulti request 3
     Given initial json
@@ -95,6 +101,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
+    And the sum of the fees is correct and the EC codes are:
+    | feeCode  |
 
   Scenario: Execute a GetFeesMulti request 4
     Given initial json
@@ -132,6 +140,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
+    And the sum of the fees is correct and the EC codes are:
+    | feeCode  |
 
   Scenario: Execute a GetFeesMulti request 5
     Given initial json
@@ -160,6 +170,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     | "int-test-6"  |
+    And the sum of the fees is correct and the EC codes are:
+    | feeCode  |
+    | "88888888888"  |
 
   Scenario: Execute a GetFeesMulti request 6
     Given initial json
@@ -198,3 +211,6 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle1  | idCiBundle2  |
     | "int-test-5"  | "int-test-6"  |
+    And the sum of the fees is correct and the EC codes are:
+    | feeCode1  | feeCode2  |
+    | "77777777777"  | "88888888888"  |
