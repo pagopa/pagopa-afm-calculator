@@ -15,7 +15,11 @@ Spring Application exposes API to calculate taxpayer fees according to [_AFM Mar
 
 ---
 ## API Documentation 📖
-See the [OpenApi 3 here](https://editor.swagger.io/?url=https://raw.githubusercontent.com/pagopa/pagopa-afm-calculator/main/openapi/openapi.json)
+See the Openapi files at the following links:
+- [OpenApi V1](https://editor.swagger.io/?url=https://raw.githubusercontent.com/pagopa/pagopa-afm-calculator/main/openapi/openapi-v1.json)
+- [OpenApi V2](https://editor.swagger.io/?url=https://raw.githubusercontent.com/pagopa/pagopa-afm-calculator/main/openapi/openapi-v2.json)
+- [OpenApi for Nodo dei pagamenti V1](https://editor.swagger.io/?url=https://raw.githubusercontent.com/pagopa/pagopa-afm-calculator/main/openapi/openapi-node-v1.json)
+- [OpenApi for Nodo dei pagamenti V2](https://editor.swagger.io/?url=https://raw.githubusercontent.com/pagopa/pagopa-afm-calculator/main/openapi/openapi-node-v2.json)
 
 See the [OpenApi 3 here](https://editor.swagger.io/?url=https://raw.githubusercontent.com/pagopa/pagopa-afm-calculator/main/openapi/openapi-node.json) **for Nodo dei pagamenti**
 
