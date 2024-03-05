@@ -1,14 +1,14 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "PagoPA API Calculator Logic for Node",
+    "title": "PagoPA API Calculator Logic",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
     "version": "2.10.8"
   },
   "servers": [
     {
-      "url": "http://localhost:8080",
+      "url": "http://localhost/",
       "description": "Generated server url"
     }
   ],
@@ -19,13 +19,13 @@
     }
   ],
   "paths": {
-    "/fees": {
+    "/fees/multi": {
       "post": {
         "tags": [
           "Calculator"
         ],
-        "summary": "Get taxpayer fees of all or specified idPSP",
-        "operationId": "getFees",
+        "summary": "Get taxpayer fees of all or specified idPSP with ECs contributions",
+        "operationId": "getFeesMulti",
         "parameters": [
           {
             "name": "maxOccurrences",
@@ -61,14 +61,6 @@
         "responses": {
           "200": {
             "description": "Ok",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -79,14 +71,6 @@
           },
           "400": {
             "description": "Bad Request",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -96,26 +80,10 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -126,14 +94,6 @@
           },
           "422": {
             "description": "Unable to process the request",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -143,26 +103,10 @@
             }
           },
           "429": {
-            "description": "Too many requests",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": "Too many requests"
           },
           "500": {
             "description": "Service unavailable",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -177,17 +121,7 @@
             "ApiKey": []
           }
         ]
-      },
-      "parameters": [
-        {
-          "name": "X-Request-Id",
-          "in": "header",
-          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-          "schema": {
-            "type": "string"
-          }
-        }
-      ]
+      }
     },
     "/info": {
       "get": {
@@ -200,14 +134,6 @@
         "responses": {
           "200": {
             "description": "OK",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -218,14 +144,6 @@
           },
           "400": {
             "description": "Bad Request",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -235,48 +153,16 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": "Forbidden"
           },
           "429": {
-            "description": "Too many requests",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": "Too many requests"
           },
           "500": {
             "description": "Service unavailable",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -291,25 +177,15 @@
             "ApiKey": []
           }
         ]
-      },
-      "parameters": [
-        {
-          "name": "X-Request-Id",
-          "in": "header",
-          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-          "schema": {
-            "type": "string"
-          }
-        }
-      ]
+      }
     },
-    "/psps/{idPsp}/fees": {
+    "/psps/{idPsp}/fees/multi": {
       "post": {
         "tags": [
           "Calculator"
         ],
-        "summary": "Get taxpayer fees of the specified idPSP",
-        "operationId": "getFeesByPsp",
+        "summary": "Get taxpayer fees of the specified idPSP with ECs contributions",
+        "operationId": "getFeesByPspMulti",
         "parameters": [
           {
             "name": "idPsp",
@@ -354,14 +230,6 @@
         "responses": {
           "200": {
             "description": "Ok",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -372,14 +240,6 @@
           },
           "400": {
             "description": "Bad Request",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -389,26 +249,10 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -419,14 +263,6 @@
           },
           "422": {
             "description": "Unable to process the request",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -436,26 +272,10 @@
             }
           },
           "429": {
-            "description": "Too many requests",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": "Too many requests"
           },
           "500": {
             "description": "Service unavailable",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -470,17 +290,7 @@
             "ApiKey": []
           }
         ]
-      },
-      "parameters": [
-        {
-          "name": "X-Request-Id",
-          "in": "header",
-          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-          "schema": {
-            "type": "string"
-          }
-        }
-      ]
+      }
     }
   },
   "components": {
@@ -513,52 +323,6 @@
             }
           }
         }
-      },
-      "CiBundle": {
-        "type": "object",
-        "properties": {
-          "attributes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CiBundleAttribute"
-            }
-          },
-          "ciFiscalCode": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "ciFiscalCode",
-          "id"
-        ]
-      },
-      "CiBundleAttribute": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "maxPaymentAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "transferCategory": {
-            "type": "string"
-          },
-          "transferCategoryRelation": {
-            "type": "string",
-            "enum": [
-              "EQUAL",
-              "NOT_EQUAL"
-            ]
-          }
-        },
-        "required": [
-          "id"
-        ]
       },
       "PaymentOption": {
         "type": "object",
@@ -631,25 +395,6 @@
           }
         }
       },
-      "PaymentType": {
-        "type": "object",
-        "properties": {
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
-      },
       "ProblemJson": {
         "type": "object",
         "properties": {
@@ -689,21 +434,6 @@
           "idPsp"
         ]
       },
-      "Touchpoint": {
-        "type": "object",
-        "properties": {
-          "creationDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
       "Transfer": {
         "type": "object",
         "properties": {
@@ -741,6 +471,9 @@
             "type": "integer",
             "format": "int64"
           },
+          "pspBusinessName": {
+            "type": "string"
+          },
           "taxPayerFee": {
             "type": "integer",
             "format": "int64"
@@ -763,83 +496,6 @@
             "type": "string"
           }
         }
-      },
-      "ValidBundle": {
-        "type": "object",
-        "properties": {
-          "abi": {
-            "type": "string"
-          },
-          "ciBundleList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CiBundle"
-            }
-          },
-          "description": {
-            "type": "string"
-          },
-          "digitalStamp": {
-            "type": "boolean"
-          },
-          "digitalStampRestriction": {
-            "type": "boolean"
-          },
-          "id": {
-            "type": "string"
-          },
-          "idBrokerPsp": {
-            "type": "string"
-          },
-          "idChannel": {
-            "type": "string"
-          },
-          "idPsp": {
-            "type": "string"
-          },
-          "maxPaymentAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "minPaymentAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "name": {
-            "type": "string"
-          },
-          "onUs": {
-            "type": "boolean"
-          },
-          "paymentAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "paymentType": {
-            "type": "string"
-          },
-          "touchpoint": {
-            "type": "string"
-          },
-          "transferCategoryList": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "GLOBAL",
-              "PUBLIC",
-              "PRIVATE"
-            ]
-          }
-        },
-        "required": [
-          "digitalStamp",
-          "digitalStampRestriction"
-        ]
       }
     },
     "securitySchemes": {

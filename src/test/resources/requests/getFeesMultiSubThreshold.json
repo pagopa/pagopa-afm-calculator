@@ -1,0 +1,28 @@
+{
+  "bin": "1005066",
+  "paymentMethod": "CP",
+  "touchpoint": "CHECKOUT",
+  "idPspList": [],
+  "paymentNotice": [
+    {
+      "primaryCreditorInstitution": "111111111111",
+      "paymentAmount": -3,
+      "transferList": [
+        {
+          "creditorInstitution": "111111111111",
+          "transferCategory": "TAX1"
+        }
+      ]
+    },
+    {
+      "primaryCreditorInstitution": "77777777778",
+      "paymentAmount": -2,
+      "transferList": [
+        {
+          "creditorInstitution": "77777777778",
+          "transferCategory": "TAX2"
+        }
+      ]
+    }
+  ]
+}

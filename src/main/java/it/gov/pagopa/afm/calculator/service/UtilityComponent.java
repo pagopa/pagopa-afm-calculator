@@ -2,7 +2,9 @@ package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.BundleType;
+import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.TransferListItem;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +58,26 @@ public class UtilityComponent {
   }
 
   /**
+   * Retrieve the transfer category list from the transfer list of payment option (OR of transfer
+   * categories)
+   *
+   * @param paymentOptionMulti request
+   * @return list of string about transfer categories
+   */
+  @Cacheable(value = "getTransferCategoryListMulti")
+  public List<String> getTransferCategoryList(PaymentOptionMulti paymentOptionMulti) {
+    List<TransferListItem> transferList = new ArrayList<>();
+    paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> transferList.addAll(paymentNoticeItem.getTransferList()));
+    log.debug("getTransferCategoryList");
+    return transferList != null
+        ? transferList.parallelStream()
+        .map(TransferListItem::getTransferCategory)
+        .distinct()
+        .collect(Collectors.toList())
+        : null;
+  }
+
+  /**
    * Retrieve the transfer category list of primary creditor institution contained in the transfer
    * list of payment option
    *
@@ -73,6 +95,27 @@ public class UtilityComponent {
             .map(TransferListItem::getTransferCategory)
             .distinct()
             .collect(Collectors.toList())
+        : new ArrayList<>();
+  }
+
+  /**
+   * Retrieve the transfer category list of primary creditor institution contained in the transfer
+   * list of payment option
+   *
+   * @param paymentNoticeItem request
+   * @param primaryCreditorInstitution fiscal code fo the CI
+   * @return list of string about transfer categories of primary creditor institution
+   */
+  @Cacheable(value = "getPrimaryTransferCategoryListMulti")
+  public List<String> getPrimaryTransferCategoryListMulti(
+      PaymentNoticeItem paymentNoticeItem, String primaryCreditorInstitution) {
+    log.debug("getPrimaryTransferCategoryList {} ", primaryCreditorInstitution);
+    return paymentNoticeItem.getTransferList() != null
+        ? paymentNoticeItem.getTransferList().parallelStream()
+        .filter(elem -> primaryCreditorInstitution.equals(elem.getCreditorInstitution()))
+        .map(TransferListItem::getTransferCategory)
+        .distinct()
+        .collect(Collectors.toList())
         : new ArrayList<>();
   }
 }

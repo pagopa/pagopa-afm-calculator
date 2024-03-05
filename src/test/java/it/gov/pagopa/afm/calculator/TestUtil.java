@@ -123,6 +123,28 @@ public class TestUtil {
         .build();
   }
 
+  public static ValidBundle getHighCommissionValidBundle() {
+    return ValidBundle.builder()
+        .id("1")
+        .idChannel("13212880150_07_ONUS")
+        .name("bundle1")
+        .idPsp("ABC")
+        .abi("14156")
+        .pspBusinessName("psp business name 1")
+        .paymentAmount(50L)
+        .minPaymentAmount(0L)
+        .maxPaymentAmount(1000L)
+        .type(BundleType.PUBLIC)
+        .touchpoint("1")
+        .paymentType("CP")
+        .transferCategoryList(List.of("TAX1"))
+        .ciBundleList(Collections.singletonList(getMockCiBundle()))
+        .digitalStamp(false)
+        .digitalStampRestriction(false)
+        .onUs(true)
+        .build();
+  }
+
   public static List<ValidBundle> getMockMultipleValidBundle() {
     List<ValidBundle> bundles = new ArrayList<>();
     bundles.add(

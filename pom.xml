@@ -11,12 +11,12 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>calculator</artifactId>
-    <version>2.10.2</version>
+    <version>2.10.8</version>
     <name>afm-calculator</name>
     <description>Calculator Logic microservice for pagoPA AFM</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <hibernate-version>6.1.1.Final</hibernate-version>
         <azure.storage.table.version>8.6.6</azure.storage.table.version>
         <testcontainers.version>1.17.2</testcontainers.version>
@@ -176,6 +176,13 @@
 	</dependencyManagement>
 
     <build>
+        <!-- to resolve test/resources/application.properties values -->
+        <testResources>
+          <testResource>
+            <directory>src/test/resources</directory>
+            <filtering>true</filtering>
+          </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

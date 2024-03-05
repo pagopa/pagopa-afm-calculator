@@ -102,6 +102,11 @@ Then(/^check response body is$/, function(payload) {
 });
 
 Then('the body response ordering for the bundleOptions.onUs field is:', function (dataTable) {
+  // force the obtained list to be sorted by onUs field value
+  responseToCheck.data.bundleOptions.sort(function (a, b) {
+	    // true values first
+    return (a.onUs === b.onUs)? 0 : a.onUs? -1 : 1;
+  });
   for (let i=0; i<responseToCheck.data.bundleOptions.length; i++){
     let bodyOnUs = responseToCheck.data.bundleOptions[i].onUs;
     let checkOnUs = JSON.parse(dataTable.rows()[i][0]);
