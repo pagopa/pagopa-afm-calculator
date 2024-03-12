@@ -11,7 +11,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>calculator</artifactId>
-    <version>2.10.11</version>
+    <version>2.10.11-1-PAGOPA-1494-test-implementazione-integration-test-per-api-v-2</version>
     <name>afm-calculator</name>
     <description>Calculator Logic microservice for pagoPA AFM</description>
 
