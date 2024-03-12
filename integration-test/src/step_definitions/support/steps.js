@@ -6,6 +6,8 @@ const fs = require("fs");
 const tableStorageClient = require("./table_storage_client");
 
 const afm_host = process.env.AFM_HOST;
+const afm_host_V2 = process.env.AFM_HOST_V2;
+const afm_api_extension_V2 = process.env.AFM_API_EXTENSION_V2;
 
 /*increased the default timeout of the promise to allow
 the correct execution of the smoke tests*/
@@ -90,6 +92,11 @@ Given(/^initial json$/, function(payload) {
 When(/^the client send (GET|POST|PUT|DELETE) to (.*)$/,
   async function(method, url) {
     responseToCheck = await call(method, afm_host + url, body)
+  });
+
+When(/^the client send a V2 (GET|POST|PUT|DELETE) to (.*)$/,
+  async function(method, url) {
+    responseToCheck = await call(method, afm_host_V2 + url + afm_api_extension_V2, body)
   });
 
 Then(/^check statusCode is (\d+)$/, function(status) {

@@ -25,7 +25,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send POST to /fees/multi?maxOccurrences=10
+    When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
@@ -56,7 +56,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send POST to /fees/multi?maxOccurrences=10
+    When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
@@ -97,7 +97,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send POST to /fees/multi?maxOccurrences=10
+    When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
@@ -136,7 +136,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send POST to /fees/multi?maxOccurrences=10
+    When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
@@ -165,7 +165,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send POST to /fees/multi?maxOccurrences=10
+    When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
@@ -206,7 +206,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send POST to /fees/multi?maxOccurrences=10
+    When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle1  | idCiBundle2  |
@@ -247,7 +247,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send POST to /fees/multi?maxOccurrences=10
+    When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle1  | idCiBundle2  |
