@@ -3,14 +3,13 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
   Background: 
     Given the configuration "dataCart.json"
 
-  Scenario: Execute a GetFeesMulti request
+  Scenario: Execute a GetFeesByPspMulti request
     Given initial json
       """
       {
         "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": "CHECKOUT",
-        "idPspList": null,
         "paymentNotice": [
             {
                 "primaryCreditorInstitution": "77777777777",
@@ -25,29 +24,22 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send a V2 POST to /fees
+    When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | true  |
-    | false |
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     | "int-test-1"  |
-    | "int-test-9"  |
     And the sum of the fees is correct and the EC codes are:
     | feeCode  |
     | "77777777777"  |
-    | "77777777777"  |
 
-  Scenario: Execute a GetFeesMulti request 2
+  Scenario: Execute a GetFeesByPspMulti request 2
     Given initial json
       """
       {
         "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": "CHECKOUT",
-        "idPspList": null,
         "paymentNotice": [
             {
                 "primaryCreditorInstitution": "77777777777",
@@ -62,29 +54,22 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send a V2 POST to /fees
+    When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | true  |
-    | false |
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     | "int-test-2"  |
-    | "int-test-9"  |
     And the sum of the fees is correct and the EC codes are:
     | feeCode  |
     | "77777777777"  |
-    | "77777777777"  |
 
-  Scenario: Execute a GetFeesMulti request 3
+  Scenario: Execute a GetFeesByPspMulti request 3
     Given initial json
       """
       {
         "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": "CHECKOUT",
-        "idPspList": null,
         "paymentNotice": [
             {
                 "primaryCreditorInstitution": "77777777777",
@@ -109,25 +94,20 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send a V2 POST to /fees
+    When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | true  |
-    | false |
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     And the sum of the fees is correct and the EC codes are:
     | feeCode  |
 
-  Scenario: Execute a GetFeesMulti request 4
+  Scenario: Execute a GetFeesByPspMulti request 4
     Given initial json
       """
       {
         "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": "CHECKOUT",
-        "idPspList": null,
         "paymentNotice": [
             {
                 "primaryCreditorInstitution": "77777777777",
@@ -152,25 +132,20 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send a V2 POST to /fees
+    When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | true  |
-    | false |
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     And the sum of the fees is correct and the EC codes are:
     | feeCode  |
 
-  Scenario: Execute a GetFeesMulti request 5
+  Scenario: Execute a GetFeesByPspMulti request 5
     Given initial json
       """
       {
         "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": "CHECKOUT",
-        "idPspList": null,
         "paymentNotice": [
             {
                 "primaryCreditorInstitution": "88888888888",
@@ -185,12 +160,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send a V2 POST to /fees
+    When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | true  |
-    | false |
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     | "int-test-6"  |
@@ -198,14 +169,13 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | feeCode  |
     | "88888888888"  |
 
-  Scenario: Execute a GetFeesMulti request 6
+  Scenario: Execute a GetFeesByPspMulti request 6
     Given initial json
       """
       {
         "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": "CHECKOUT",
-        "idPspList": null,
         "paymentNotice": [
             {
                 "primaryCreditorInstitution": "77777777777",
@@ -230,12 +200,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send a V2 POST to /fees
+    When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | true  |
-    | false |
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle1  | idCiBundle2  |
     | "int-test-5"  | "int-test-6"  |
@@ -243,14 +209,13 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | feeCode1  | feeCode2  |
     | "77777777777"  | "88888888888"  |
 
-  Scenario: Execute a GetFeesMulti request 7
+  Scenario: Execute a GetFeesByPspMulti request 7
     Given initial json
       """
       {
         "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": "CHECKOUT",
-        "idPspList": null,
         "paymentNotice": [
             {
                 "primaryCreditorInstitution": "77777777777",
@@ -275,15 +240,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         ]
       }
       """
-    When the client send a V2 POST to /fees
+    When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
-    | onUs  |
-    | true  |
-    | true  |
-    | true  |
-    | true  |
-    | false |
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle1  | idCiBundle2  |
     | "int-test-7"  | "int-test-8"  |

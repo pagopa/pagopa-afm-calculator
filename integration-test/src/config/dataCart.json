@@ -16,7 +16,7 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "paymentType": null,
+      "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-1"
     },
@@ -36,7 +36,7 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "paymentType": null,
+      "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-2"
     },
@@ -56,7 +56,7 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "paymentType": null,
+      "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-3"
     },
@@ -76,7 +76,7 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "paymentType": null,
+      "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-4"
     },
@@ -96,7 +96,7 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "paymentType": null,
+      "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-5"
     },
@@ -116,9 +116,29 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "paymentType": null,
+      "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-6"
+    },
+    {
+      "id": "int-test-cart-7",
+      "idPsp": "UNCRITMM",
+      "idChannel": "00348170101_01",
+      "idBrokerPsp": "00348170101",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 7",
+      "description": "pacchetto 7",
+      "paymentAmount": 100,
+      "minPaymentAmount": 899999999999980,
+      "maxPaymentAmount": 899999999999999,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": null,
+      "abi": 10101,
+      "pspBusinessName": "psp business name int-test-7"
     }
   ],
   "ciBundles": [
@@ -215,6 +235,17 @@
         {
           "id": "int-test-10",
           "maxPaymentAmount": 40
+        }
+      ]
+    },
+    {
+      "id": "int-test-9",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "int-test-cart-7",
+      "attributes": [
+        {
+          "id": "int-test-9",
+          "maxPaymentAmount": 20
         }
       ]
     }
