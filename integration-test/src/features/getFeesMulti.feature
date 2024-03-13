@@ -3,7 +3,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
   Background: 
     Given the configuration "dataCart.json"
 
-  Scenario: Execute a GetFeesMulti request
+  Scenario: Commission is higher than the sum of the fees
     Given initial json
       """
       {
@@ -40,7 +40,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | "77777777777"  |
     | "77777777777"  |
 
-  Scenario: Execute a GetFeesMulti request 2
+  Scenario: Commission is lower than the sum of the fees
     Given initial json
       """
       {
@@ -77,7 +77,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | "77777777777"  |
     | "77777777777"  |
 
-  Scenario: Execute a GetFeesMulti request 3
+  Scenario: No ciBundles present
     Given initial json
       """
       {
@@ -120,7 +120,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the sum of the fees is correct and the EC codes are:
     | feeCode  |
 
-  Scenario: Execute a GetFeesMulti request 4
+  Scenario: Multiple ciBundles present but one paymentNoticeItem has EC code not corresponding
     Given initial json
       """
       {
@@ -163,7 +163,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     And the sum of the fees is correct and the EC codes are:
     | feeCode  |
 
-  Scenario: Execute a GetFeesMulti request 5
+  Scenario: Multiple ciBundles present but only one element in the paymentNotice
     Given initial json
       """
       {
@@ -198,7 +198,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | feeCode  |
     | "88888888888"  |
 
-  Scenario: Execute a GetFeesMulti request 6
+  Scenario: Multiple ciBundles and multiple paymentNoticeItems
     Given initial json
       """
       {
@@ -243,7 +243,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | feeCode1  | feeCode2  |
     | "77777777777"  | "88888888888"  |
 
-  Scenario: Execute a GetFeesMulti request 7
+  Scenario: Multiple ciBundles present with multiple attributes, cartesian product is returned
     Given initial json
       """
       {
