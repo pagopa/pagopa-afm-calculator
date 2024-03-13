@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.10.11-1-PAGOPA-1494-test-implementazione-integration-test-per-api-v-2"
+    "version": "2.10.12"
   },
   "servers": [
     {

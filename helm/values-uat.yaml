@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.10.11-1-PAGOPA-1494-test-implementazione-integration-test-per-api-v-2"
+    tag: "2.10.12"
     pullPolicy: Always
   livenessProbe:
     httpGet:
