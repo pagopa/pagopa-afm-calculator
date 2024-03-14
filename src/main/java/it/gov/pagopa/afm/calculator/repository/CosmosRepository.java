@@ -370,11 +370,14 @@ public class CosmosRepository {
    * @return empty list if at least one element is not present, otherwise the full list
    */
   private static List<CiBundle> filteredCiBundles(PaymentOptionMulti paymentOptionMulti, ValidBundle bundle) {
-    List<String> ciBundlesFiscalCodes = new ArrayList<>();
-    bundle.getCiBundleList().forEach(ciBundle -> ciBundlesFiscalCodes.add(ciBundle.getCiFiscalCode()));
-    boolean allCiBundlesPresent = paymentOptionMulti.getPaymentNotice().stream()
-        .anyMatch(paymentNoticeItem -> ciBundlesFiscalCodes.contains(paymentNoticeItem.getPrimaryCreditorInstitution()));
-    return allCiBundlesPresent ? bundle.getCiBundleList() : new ArrayList<>();
+    if(bundle.getCiBundleList() != null) {
+      List<String> ciBundlesFiscalCodes = new ArrayList<>();
+      bundle.getCiBundleList().forEach(ciBundle -> ciBundlesFiscalCodes.add(ciBundle.getCiFiscalCode()));
+      boolean allCiBundlesPresent = paymentOptionMulti.getPaymentNotice().stream()
+          .anyMatch(paymentNoticeItem -> ciBundlesFiscalCodes.contains(paymentNoticeItem.getPrimaryCreditorInstitution()));
+      return allCiBundlesPresent ? bundle.getCiBundleList() : new ArrayList<>();
+    }
+    return new ArrayList<>();
   }
 
 

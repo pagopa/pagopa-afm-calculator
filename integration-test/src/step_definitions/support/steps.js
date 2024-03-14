@@ -6,6 +6,8 @@ const fs = require("fs");
 const tableStorageClient = require("./table_storage_client");
 
 const afm_host = process.env.AFM_HOST;
+const afm_host_V2 = process.env.AFM_HOST_V2;
+const afm_api_extension_V2 = process.env.AFM_API_EXTENSION_V2;
 
 /*increased the default timeout of the promise to allow
 the correct execution of the smoke tests*/
@@ -92,6 +94,11 @@ When(/^the client send (GET|POST|PUT|DELETE) to (.*)$/,
     responseToCheck = await call(method, afm_host + url, body)
   });
 
+When(/^the client send a V2 (GET|POST|PUT|DELETE) to (.*)$/,
+  async function(method, url) {
+    responseToCheck = await call(method, afm_host_V2 + url + afm_api_extension_V2, body)
+  });
+
 Then(/^check statusCode is (\d+)$/, function(status) {
   assert.strictEqual(responseToCheck.status, status);
 
@@ -120,6 +127,35 @@ Then('the body response does not contain the Poste idPsp', function () {
     assert.notEqual(bodyPsp, process.env.ID_PSP_POSTE);
   }
 });
+
+Then('the body response for the bundleOptions.idsCiBundle field is:', function (dataTable) {
+  for (let i=0; i<responseToCheck.data.bundleOptions.length; i++){
+    for(let j=0; j<responseToCheck.data.bundleOptions[i].idsCiBundle.length; j++){
+      let bodyIdCiBundle = responseToCheck.data.bundleOptions[i].idsCiBundle[j];
+      let checkIdCiBundle = JSON.parse(dataTable.rows()[i][j]);
+      assert.equal(bodyIdCiBundle, checkIdCiBundle)
+    }
+  }
+});
+
+Then('the sum of the fees is correct and the EC codes are:', function (dataTable) {
+  let sumFee = 0;
+  for (let i=0; i<responseToCheck.data.bundleOptions.length; i++){
+    responseToCheck.data.bundleOptions[i].fees.sort(function (a, b) {
+        // alphabetical order
+      return (a.creditorInstitution > b.creditorInstitution) ? 1 : ((b.creditorInstitution > a.creditorInstitution) ? -1 : 0);
+    });
+    for(let j=0; j<responseToCheck.data.bundleOptions[i].fees.length; j++){
+      let bodyFeeCode = responseToCheck.data.bundleOptions[i].fees[j].creditorInstitution;
+      let checkFeeCode = JSON.parse(dataTable.rows()[i][j]);
+      assert.equal(bodyFeeCode, checkFeeCode);
+      sumFee += responseToCheck.data.bundleOptions[i].fees[j].actualCiIncurredFee;
+    }
+    assert.equal(responseToCheck.data.bundleOptions[i].taxPayerFee - responseToCheck.data.bundleOptions[i].actualPayerFee, sumFee);
+    sumFee = 0;
+  }
+});
+
 
 function mapToValidBundles(config) {
 

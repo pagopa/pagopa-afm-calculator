@@ -7,7 +7,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Given initial json
       """
       {
-        "paymentAmount": 999999999999998,
+        "paymentAmount": 799999999999998,
         "primaryCreditorInstitution": "77777777777",
         "bin": "309500",
         "paymentMethod": "CP",
@@ -39,7 +39,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Given initial json
       """
       {
-        "paymentAmount": 999999999999998,
+        "paymentAmount": 799999999999998,
         "primaryCreditorInstitution": "77777777777",
         "bin": "309500",
         "paymentMethod": "CP",
@@ -74,7 +74,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Given initial json
       """
       {
-        "paymentAmount": 999999999999998,
+        "paymentAmount": 799999999999998,
         "primaryCreditorInstitution": "77777777777",
         "bin": "309500",
         "paymentMethod": "CP",
@@ -108,7 +108,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Given initial json
       """
       {
-        "paymentAmount": 999999999999998,
+        "paymentAmount": 799999999999998,
         "primaryCreditorInstitution": "77777777777",
         "bin": "309500",
         "paymentMethod": null,
@@ -139,7 +139,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Given initial json
       """
       {
-      "paymentAmount": 999999999999998,
+      "paymentAmount": 799999999999998,
       "primaryCreditorInstitution": "77777777777",
       "bin": "309500",
       "paymentMethod": null,
@@ -190,7 +190,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Given initial json
       """
       {
-        "paymentAmount": 999999999999998,
+        "paymentAmount": 799999999999998,
         "primaryCreditorInstitution": "77777777777",
         "bin": "309500",
         "paymentMethod": null,
@@ -222,7 +222,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Given initial json
       """
       {
-        "paymentAmount": 999999999999998,
+        "paymentAmount": 799999999999998,
         "primaryCreditorInstitution": "77777777777",
         "bin": "309500",
         "paymentMethod": "CP",
@@ -258,7 +258,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Given initial json
       """
       {
-        "paymentAmount": 999999999999998,
+        "paymentAmount": 799999999999998,
         "primaryCreditorInstitution": "77777777777",
         "bin": "123456789",
         "paymentMethod": "CP",
@@ -292,7 +292,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Given initial json
       """
       {
-        "paymentAmount": 999999999999998,
+        "paymentAmount": 799999999999998,
         "primaryCreditorInstitution": "77777777777",
         "bin": "309500",
         "paymentMethod": "CP",
@@ -318,7 +318,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Given initial json
       """
       {
-        "paymentAmount": 999999999999998,
+        "paymentAmount": 799999999999998,
         "primaryCreditorInstitution": "77777777777",
         "bin": "340000",
         "paymentMethod": "CP",
