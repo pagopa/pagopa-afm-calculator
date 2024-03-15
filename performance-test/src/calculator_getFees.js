@@ -21,7 +21,7 @@ const paymenttypes = data["paymenttypes"];
 
 // workaround to use shared array (only array should be used)
 const vars = varsArray[0];
-const rootUrl = `${vars.host}`;
+const rootUrl = `${vars.hostV1}`;
 const cosmosDBURI = `${vars.cosmosDBURI}`;
 const databaseID = `${vars.databaseID}`;
 const validBundlesNum = `${vars.validBundlesNum}`;
