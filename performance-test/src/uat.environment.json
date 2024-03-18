@@ -7,7 +7,7 @@
       "cartPathApi": "",
       "cosmosDBURI": "https://pagopa-u-weu-afm-marketplace-cosmos-account.documents.azure.com:443/",
       "databaseID":"db",
-      "validBundlesNum":"10000"
+      "validBundlesNum":"10"
     }
   ]
 }
