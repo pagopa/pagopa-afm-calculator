@@ -66,7 +66,7 @@ export default function calculator() {
 
     // to give randomness to request in order to avoid caching
     const paymentAmount = Math.floor(Math.random() * (100 + __VU) % 100);
-    const primaryCreditorInstitution = 'fiscalCode-' + Math.floor(Math.random() * 2) + 1;
+    const primaryCreditorInstitution = '7777777777' + (int)Math.floor(Math.random() * 10);
 
     let payload = {
         "bin": "1005066",
