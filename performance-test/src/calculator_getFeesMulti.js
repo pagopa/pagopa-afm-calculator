@@ -66,9 +66,9 @@ export default function calculator() {
 
     // to give randomness to request in order to avoid caching
     const paymentAmount = Math.floor(Math.random() * (100 + __VU) % 100);
-    const primaryCreditorInstitution1 = '7777777777' + Math.floor(Math.random() * 10);
-    const primaryCreditorInstitution2 = '7777777777' + Math.floor(Math.random() * 10);
-    //const primaryCreditorInstitution = 'fiscalCode-' + Math.floor(Math.random() * 2) + 1;
+    //const primaryCreditorInstitution1 = '7777777777' + Math.floor(Math.random() * 10);
+    //const primaryCreditorInstitution2 = '7777777777' + Math.floor(Math.random() * 10);
+    const primaryCreditorInstitution = 'fiscalCode-' + Math.floor(Math.random() * 2) + 1;
 
     let payload = {
         "bin": "1005066",
@@ -77,7 +77,7 @@ export default function calculator() {
         "idPspList": [],
         "paymentNotice": [
             {
-                "primaryCreditorInstitution": primaryCreditorInstitution1,
+                "primaryCreditorInstitution": primaryCreditorInstitution,
                 "paymentAmount": paymentAmount/2,
                 "transferList": [
                     {
@@ -87,7 +87,7 @@ export default function calculator() {
                 ]
             },
             {
-                "primaryCreditorInstitution": primaryCreditorInstitution2,
+                "primaryCreditorInstitution": primaryCreditorInstitution,
                 "paymentAmount": paymentAmount/2,
                 "transferList": [
                     {
