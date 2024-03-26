@@ -2,7 +2,9 @@
   "environment": [
     {
       "env": "uat",
-      "host": "https://api.uat.platform.pagopa.it/afm/calculator-service/v1",
+      "hostV1": "https://api.uat.platform.pagopa.it/afm/calculator-service/v1",
+      "hostV2": "https://api.uat.platform.pagopa.it/afm/calculator-service/v2",
+      "cartPathApi": "",
       "cosmosDBURI": "https://pagopa-u-weu-afm-marketplace-cosmos-account.documents.azure.com:443/",
       "databaseID":"db",
       "validBundlesNum":"10000"

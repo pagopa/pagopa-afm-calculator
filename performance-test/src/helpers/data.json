@@ -191,6 +191,21 @@
           "maxPaymentAmount": 20
         }
       ]
+    },
+    {
+      "id": "int-test-4",
+      "ciFiscalCode": "77777777778",
+      "idBundle": "int-test-4",
+      "attributes": [
+        {
+          "id": "int-test-4",
+          "maxPaymentAmount": 20
+        },
+        {
+          "id": "int-test-5",
+          "maxPaymentAmount": 40
+        }
+      ]
     }
   ],
   "touchpoints": [
