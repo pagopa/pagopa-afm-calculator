@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.10.13"
+    tag: "2.10.14"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -53,7 +53,7 @@ microservice-chart:
   resources:
     requests:
       memory: "512Mi"
-      cpu: "0.75"
+      cpu: "0.5"
     limits:
       memory: "1024Mi"
       cpu: "1.0"
@@ -68,12 +68,12 @@ microservice-chart:
         metadata:
           # Required
           type: Utilization # Allowed types are 'Utilization' or 'AverageValue'
-          value: "70"
+          value: "80"
       - type: memory
         metadata:
           # Required
           type: Utilization # Allowed types are 'Utilization' or 'AverageValue'
-          value: "70"
+          value: "80"
   fileConfig: {}
   envConfig:
     WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
@@ -87,7 +87,7 @@ microservice-chart:
     AMOUNT_THRESHOLD: '0'
     ID_PSP_POSTE: 'BPPIITRRXXX'
     AMEX_ABI: 'AMREX'
-    PSP_WHITELIST: 'PPAYITR1XXX,BPPIITRRXXX,CIPBITMM,UNCRITMM,BNLIITRR,BCITITMM,BIC36019'
+    PSP_WHITELIST: 'PPAYITR1XXX,BPPIITRRXXX,CIPBITMM,UNCRITMM,BNLIITRR,BCITITMM,BIC36019,TMIL0101,POSOIT22XXX'
     OTEL_SERVICE_NAME: "pagopa-afm-calculator"
     OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=uat"
     OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.elastic-system.svc:4317"

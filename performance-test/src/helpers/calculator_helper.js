@@ -12,6 +12,18 @@ export function getFees(rootUrl, payload, params) {
     return http.post(url, JSON.stringify(payload), params);
 }
 
+export function getFeesByPspMulti(rootUrl, cartPathApi, idPsp, payload, params) {
+	const url = `${rootUrl}/psps/${idPsp}/fees`.concat(cartPathApi)
+
+    return http.post(url, JSON.stringify(payload), params);
+}
+
+export function getFeesMulti(rootUrl, cartPathApi, payload, params) {
+	const url = `${rootUrl}/fees`.concat(cartPathApi)
+
+    return http.post(url, JSON.stringify(payload), params);
+}
+
 export function addTouchpoints(rootUrl, payload, params) {
 	const url = `${rootUrl}/configuration/touchpoint/add`
 
