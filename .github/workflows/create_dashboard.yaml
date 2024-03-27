@@ -14,6 +14,7 @@ on:
 
 env:
   TEMPLATE_DIR: azure-dashboard
+  API_NAME: api-afm-calculator-dashboard
   DOCKER_IMAGE_TAG: sha256:04d8ead53c772d23b094c2a395292dc159e6f2905e1b13b5f828f31eac6eb27f
 
 permissions:
@@ -54,7 +55,7 @@ jobs:
           environment: ${{ matrix.environment }}
           api-name: ${{ matrix.product }}
           config: .opex/${{ matrix.product }}/env/${{ matrix.environment }}/config.yaml
-          client-id: ${{ secrets.CLIENT_ID }} ???
+          client-id: ${{ secrets.CLIENT_ID }}
           tenant-id: ${{ secrets.TENANT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
           docker-version: ${{ env.DOCKER_IMAGE_TAG }}
