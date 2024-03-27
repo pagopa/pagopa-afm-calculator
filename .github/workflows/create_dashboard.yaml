@@ -14,6 +14,8 @@ on:
 
 env:
   TEMPLATE_DIR: azure-dashboard
+  API_NAME: api-afm-calculator-dashboard
+  DOCKER_IMAGE_TAG: sha256:04d8ead53c772d23b094c2a395292dc159e6f2905e1b13b5f828f31eac6eb27f
 
 permissions:
   id-token: write
@@ -62,10 +64,14 @@ jobs:
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
       # this action create a folder named /azure-dashboard
-      - uses: pagopa/opex-dashboard-action@v1.1.2
+      - uses: pagopa/opex-dashboard-azure-action@3ad80a5e4a2d5a8f342615637072f21b687320ce
         with:
-          template: ${{ env.TEMPLATE_DIR }}
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          api-name: ${{ env.API_NAME }}
           config: .opex/${{ matrix.product }}/env/${{ matrix.environment }}/config.yaml
+          docker-version: ${{ env.DOCKER_IMAGE_TAG }}
 
       # we need to set env variables in the folder /azure-dashboard
       - name: Copy Environments
