@@ -12,18 +12,17 @@ on:
 
   workflow_dispatch:
 
-env:
-  TEMPLATE_DIR: azure-dashboard
-  API_NAME: api-afm-calculator-dashboard
-  DOCKER_IMAGE_TAG: sha256:04d8ead53c772d23b094c2a395292dc159e6f2905e1b13b5f828f31eac6eb27f
-
 permissions:
   id-token: write
   contents: read
+  deployments: write
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   dashboard:
+    # The type of runner that the job will run on
     runs-on: ubuntu-22.04
+
     strategy:
       matrix:
         environment: [prod]
@@ -34,23 +33,13 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        # from https://github.com/actions/checkout/commits/main
+        uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
         with:
           persist-credentials: false
-          fetch-depth: 0
 
-      - name: Read terraform version
-        id: read-version
-        shell: bash
-        run: |
-          echo "TERRAFORM_VERSION=`cat .terraform-version`" >> $GITHUB_ENV
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@69c00852f1304c321337f45a105731218c2d5544
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-
-      - uses: pagopa/opex-dashboard-azure-action@3ad80a5e4a2d5a8f342615637072f21b687320ce
+      # from https://github.com/pagopa/opex-dashboard-azure-action/
+      - uses: pagopa/opex-dashboard-azure-action@v1.1.2
         with:
           environment: ${{ matrix.environment }}
           api-name: ${{ matrix.product }}
@@ -58,4 +47,5 @@ jobs:
           client-id: ${{ secrets.CLIENT_ID }}
           tenant-id: ${{ secrets.TENANT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
-          docker-version: ${{ env.DOCKER_IMAGE_TAG }}
+          # from https://github.com/pagopa/opex-dashboard-azure-action/pkgs/container/opex-dashboard-azure-action
+          docker-version: sha256:e4245954566cd3470e1b5527d33bb58ca132ce7493eac01be9e808fd25a11c8d
