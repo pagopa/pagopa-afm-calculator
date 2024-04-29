@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.calculator.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -18,6 +19,7 @@ public class PaymentOptionMulti {
   private List<PspSearchCriteria> idPspList;
   @Valid @NotNull @NotEmpty private List<PaymentNoticeItem> paymentNotice;
 
+  @JsonIgnore
   public Long getPaymentAmount () {
     return this.getPaymentNotice().stream().mapToLong(PaymentNoticeItem::getPaymentAmount).sum();
   }
