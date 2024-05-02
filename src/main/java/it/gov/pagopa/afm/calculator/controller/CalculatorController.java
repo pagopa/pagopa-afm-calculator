@@ -195,7 +195,7 @@ public class CalculatorController {
               content =
               @Content(
                   mediaType = MediaType.APPLICATION_JSON_VALUE,
-                  schema = @Schema(implementation = BundleOption.class))),
+                  schema = @Schema(implementation = it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.class))),
           @ApiResponse(
               responseCode = "400",
               description = "Bad Request",
@@ -277,7 +277,7 @@ public class CalculatorController {
               content =
               @Content(
                   mediaType = MediaType.APPLICATION_JSON_VALUE,
-                  schema = @Schema(implementation = BundleOption.class))),
+                  schema = @Schema(implementation = it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.class))),
           @ApiResponse(
               responseCode = "400",
               description = "Bad Request",
