@@ -13,6 +13,16 @@
   "tags" : [ {
     "name" : "Calculator",
     "description" : "Everything about Calculator business logic"
+  }, {
+    "name" : "Configuration",
+    "description" : "Utility Services"
+  }, {
+    "name" : "Actuator",
+    "description" : "Monitor and interact",
+    "externalDocs" : {
+      "description" : "Spring Boot Actuator Web API Documentation",
+      "url" : "https://docs.spring.io/spring-boot/docs/current/actuator-api/html/"
+    }
   } ],
   "paths" : {
     "/psps/{idPsp}/fees" : {
@@ -217,6 +227,150 @@
         } ]
       }
     },
+    "/configuration/touchpoint/delete" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "operationId" : "deleteTouchpoints",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/Touchpoint"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/configuration/touchpoint/add" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "operationId" : "addTouchpoints",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/Touchpoint"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/configuration/paymenttypes/delete" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "operationId" : "deletePaymentTypes",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/PaymentType"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/configuration/paymenttypes/add" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "operationId" : "addPaymentTypes",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/PaymentType"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/configuration/bundles/delete" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "operationId" : "deleteValidBundles",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/ValidBundle"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/configuration/bundles/add" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "operationId" : "addValidBundles",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/ValidBundle"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
     "/info" : {
       "get" : {
         "tags" : [ "Home" ],
@@ -267,6 +421,140 @@
         "security" : [ {
           "ApiKey" : [ ]
         } ]
+      }
+    },
+    "/actuator" : {
+      "get" : {
+        "tags" : [ "Actuator" ],
+        "summary" : "Actuator root web endpoint",
+        "operationId" : "links",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/vnd.spring-boot.actuator.v3+json" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "$ref" : "#/components/schemas/Link"
+                    }
+                  }
+                }
+              },
+              "application/vnd.spring-boot.actuator.v2+json" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "$ref" : "#/components/schemas/Link"
+                    }
+                  }
+                }
+              },
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "$ref" : "#/components/schemas/Link"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actuator/info" : {
+      "get" : {
+        "tags" : [ "Actuator" ],
+        "summary" : "Actuator web endpoint 'info'",
+        "operationId" : "info",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/vnd.spring-boot.actuator.v3+json" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              },
+              "application/vnd.spring-boot.actuator.v2+json" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              },
+              "application/json" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actuator/health" : {
+      "get" : {
+        "tags" : [ "Actuator" ],
+        "summary" : "Actuator web endpoint 'health'",
+        "operationId" : "health",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/vnd.spring-boot.actuator.v3+json" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              },
+              "application/vnd.spring-boot.actuator.v2+json" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              },
+              "application/json" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actuator/health/**" : {
+      "get" : {
+        "tags" : [ "Actuator" ],
+        "summary" : "Actuator web endpoint 'health-path'",
+        "operationId" : "health-path",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/vnd.spring-boot.actuator.v3+json" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              },
+              "application/vnd.spring-boot.actuator.v2+json" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              },
+              "application/json" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -454,6 +742,148 @@
           }
         }
       },
+      "Touchpoint" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "creationDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "PaymentType" : {
+        "required" : [ "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "createdDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "CiBundle" : {
+        "required" : [ "ciFiscalCode", "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "ciFiscalCode" : {
+            "type" : "string"
+          },
+          "attributes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CiBundleAttribute"
+            }
+          }
+        }
+      },
+      "CiBundleAttribute" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "maxPaymentAmount" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "transferCategory" : {
+            "type" : "string"
+          },
+          "transferCategoryRelation" : {
+            "type" : "string",
+            "enum" : [ "EQUAL", "NOT_EQUAL" ]
+          }
+        }
+      },
+      "ValidBundle" : {
+        "required" : [ "digitalStamp", "digitalStampRestriction" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "idPsp" : {
+            "type" : "string"
+          },
+          "abi" : {
+            "type" : "string"
+          },
+          "pspBusinessName" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "paymentAmount" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "minPaymentAmount" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "maxPaymentAmount" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "paymentType" : {
+            "type" : "string"
+          },
+          "touchpoint" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "GLOBAL", "PUBLIC", "PRIVATE" ]
+          },
+          "transferCategoryList" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "idChannel" : {
+            "type" : "string"
+          },
+          "idBrokerPsp" : {
+            "type" : "string"
+          },
+          "digitalStamp" : {
+            "type" : "boolean"
+          },
+          "digitalStampRestriction" : {
+            "type" : "boolean"
+          },
+          "onUs" : {
+            "type" : "boolean"
+          },
+          "ciBundleList" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CiBundle"
+            }
+          }
+        }
+      },
       "AppInfo" : {
         "type" : "object",
         "properties" : {
@@ -465,6 +895,17 @@
           },
           "environment" : {
             "type" : "string"
+          }
+        }
+      },
+      "Link" : {
+        "type" : "object",
+        "properties" : {
+          "href" : {
+            "type" : "string"
+          },
+          "templated" : {
+            "type" : "boolean"
           }
         }
       }
