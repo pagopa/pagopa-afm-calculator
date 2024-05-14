@@ -182,13 +182,5 @@ AfterAll(async function() {
      validBundles);
    assert.strictEqual(result.status, 200);
 
-   let result2 = await post(afm_host + '/configuration/touchpoint/delete',
-     touchpoints);
-   assert.strictEqual(result2.status, 200);
-
-   let result3 = await post(afm_host + '/configuration/paymenttypes/delete',
-     paymenttypes);
-   assert.strictEqual(result3.status, 200);
-
   return Promise.resolve()
 });
