@@ -1,7 +1,7 @@
 Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
 
   Background: 
-    Given the configuration "dataCart.json"
+    Given the configuration "data.json"
 
   Scenario: Commission is higher than the sum of the fees (psp id specified)
     Given initial json
@@ -28,7 +28,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
-    | "int-test-1"  |
+    | "int-test-cart-1"  |
     And the sum of the fees is correct and the EC codes are:
     | feeCode  |
     | "77777777777"  |
@@ -58,7 +58,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
-    | "int-test-2"  |
+    | "int-test-cart-2"  |
     And the sum of the fees is correct and the EC codes are:
     | feeCode  |
     | "77777777777"  |
@@ -164,7 +164,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
-    | "int-test-6"  |
+    | "int-test-cart-6"  |
     And the sum of the fees is correct and the EC codes are:
     | feeCode  |
     | "88888888888"  |
@@ -204,7 +204,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle1  | idCiBundle2  |
-    | "int-test-5"  | "int-test-6"  |
+    | "int-test-cart-5"  | "int-test-cart-6"  |
     And the sum of the fees is correct and the EC codes are:
     | feeCode1  | feeCode2  |
     | "77777777777"  | "88888888888"  |
@@ -244,10 +244,10 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle1  | idCiBundle2  |
-    | "int-test-7"  | "int-test-8"  |
-    | "int-test-7"  | "int-test-8"  |
-    | "int-test-7"  | "int-test-8"  |
-    | "int-test-7"  | "int-test-8"  |
+    | "int-test-cart-7"  | "int-test-cart-8"  |
+    | "int-test-cart-7"  | "int-test-cart-8"  |
+    | "int-test-cart-7"  | "int-test-cart-8"  |
+    | "int-test-cart-7"  | "int-test-cart-8"  |
     And the sum of the fees is correct and the EC codes are:
     | feeCode1  | feeCode2  |
     | "77777777777"  | "88888888888"  |
