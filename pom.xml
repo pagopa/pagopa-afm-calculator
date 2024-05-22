@@ -11,7 +11,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>calculator</artifactId>
-    <version>2.10.26-1-PAGOPA-1761-issue-rivedere-dash-afm-gec</version>
+    <version>2.10.27</version>
     <name>afm-calculator</name>
     <description>Calculator Logic microservice for pagoPA AFM</description>
 

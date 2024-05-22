@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.10.26-1-PAGOPA-1761-issue-rivedere-dash-afm-gec"
+    "version": "2.10.27"
   },
   "servers": [
     {
