@@ -39,9 +39,9 @@ public class CosmosRepository {
 
   @Value("${pspPoste.id}")
   private String pspPosteId;
-  
-  @Value("#{'${psp.whitelist}'.split(',')}")
-  private List<String> pspWhitelist;
+
+  @Value("#{'${psp.blacklist}'.split(',')}")
+  private List<String> pspBlacklist;
   
   private static final String ID_PSP_PARAM = "idPsp";
 
@@ -155,10 +155,10 @@ public class CosmosRepository {
       queryResult = and(queryResult, allCcpFilter);
     }
 
-    // add filter for PSP whitelist
-    if (!CollectionUtils.isEmpty(pspWhitelist)) {
-      var pspIn = in(ID_PSP_PARAM, pspWhitelist);
-      queryResult = and(queryResult, pspIn);
+    // add filter for PSP blacklist
+    if (!CollectionUtils.isEmpty(pspBlacklist)) {
+      var pspNotIn = notIn(ID_PSP_PARAM, pspBlacklist);
+      queryResult = and(queryResult, pspNotIn);
     }
 
     // execute the query
@@ -248,11 +248,11 @@ public class CosmosRepository {
       var allCcpFilter = isNotEqual(ID_PSP_PARAM, pspPosteId);
       queryResult = and(queryResult, allCcpFilter);
     }
-    
-    // add filter for PSP whitelist
-    if (!CollectionUtils.isEmpty(pspWhitelist)) {
-    	var pspIn = in(ID_PSP_PARAM, pspWhitelist);
-    	queryResult = and(queryResult, pspIn);
+
+    // add filter for PSP blacklist
+    if (!CollectionUtils.isEmpty(pspBlacklist)) {
+      var pspNotIn = notIn(ID_PSP_PARAM, pspBlacklist);
+      queryResult = and(queryResult, pspNotIn);
     }
 
     // execute the query
