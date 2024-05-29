@@ -156,10 +156,7 @@ public class CosmosRepository {
     }
 
     // add filter for PSP blacklist
-    if (!CollectionUtils.isEmpty(pspBlacklist)) {
-      var pspNotIn = notIn(ID_PSP_PARAM, pspBlacklist);
-      queryResult = and(queryResult, pspNotIn);
-    }
+    queryResult = blackListCriteria(queryResult);
 
     // execute the query
     return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
@@ -250,10 +247,7 @@ public class CosmosRepository {
     }
 
     // add filter for PSP blacklist
-    if (!CollectionUtils.isEmpty(pspBlacklist)) {
-      var pspNotIn = notIn(ID_PSP_PARAM, pspBlacklist);
-      queryResult = and(queryResult, pspNotIn);
-    }
+    queryResult = blackListCriteria(queryResult);
 
     // execute the query
     return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
@@ -418,5 +412,14 @@ public class CosmosRepository {
       }
     }
     return queryTmp != null ? and(queryResult, queryTmp) : queryResult;
+  }
+
+  private Criteria blackListCriteria(Criteria queryResult) {
+    // add filter for PSP blacklist
+    if (!CollectionUtils.isEmpty(pspBlacklist)) {
+      var pspNotIn = notIn(ID_PSP_PARAM, pspBlacklist);
+      queryResult = and(queryResult, pspNotIn);
+    }
+    return queryResult;
   }
 }
