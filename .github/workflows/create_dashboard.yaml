@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         environment: [prod]
-        product: [internal, node]
+        product: [internal, node, internal_apim_v2, node_apim_v2]
         version: [v1, v2]
       max-parallel: 1
     environment:
