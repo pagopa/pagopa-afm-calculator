@@ -22,6 +22,14 @@ public class CriteriaBuilder {
         CriteriaType.IS_EQUAL, param, Collections.singletonList(value), Part.IgnoreCaseType.ALWAYS);
   }
 
+  public static <T> Criteria isTrue(String param, T value) {
+    var queryCart = Criteria.getInstance(
+            CriteriaType.IS_EQUAL, param, Collections.singletonList(value), Part.IgnoreCaseType.NEVER);
+    var queryNull = Criteria.getInstance(CriteriaType.IS_NULL,
+            param, Collections.emptyList(), Part.IgnoreCaseType.NEVER);
+    return or(queryCart, queryNull);
+  }
+
   public static <T> Criteria isNotEqual(String param, T value) {
     return Criteria.getInstance(
         CriteriaType.NOT, param, Collections.singletonList(value), Part.IgnoreCaseType.ALWAYS);

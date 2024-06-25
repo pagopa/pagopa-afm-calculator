@@ -47,6 +47,8 @@ public class CosmosRepository {
 
   private static final String TRANSFER_CATEGORY_LIST = "transferCategoryList";
 
+  private static final String CART_PARAM = "cart";
+
   /**
    * @param ciFiscalCode fiscal code of the CI
    * @param bundle a valid bundle
@@ -157,6 +159,11 @@ public class CosmosRepository {
 
     // add filter for PSP blacklist
     queryResult = blackListCriteria(queryResult);
+
+    // add filter for cart bundle param
+    if (paymentOptionMulti.getPaymentNotice().size() > 1) {
+      queryResult = and(queryResult, isTrue(CART_PARAM, Boolean.TRUE));
+    }
 
     // execute the query
     return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
