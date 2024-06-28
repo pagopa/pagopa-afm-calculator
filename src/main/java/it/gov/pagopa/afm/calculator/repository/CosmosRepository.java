@@ -4,6 +4,7 @@ import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
 import com.azure.spring.data.cosmos.core.query.Criteria;
+import com.azure.spring.data.cosmos.core.query.CriteriaType;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.repository.query.parser.Part;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -46,6 +48,8 @@ public class CosmosRepository {
   private static final String ID_PSP_PARAM = "idPsp";
 
   private static final String TRANSFER_CATEGORY_LIST = "transferCategoryList";
+
+  private static final String CART_PARAM = "cart";
 
   /**
    * @param ciFiscalCode fiscal code of the CI
@@ -157,6 +161,13 @@ public class CosmosRepository {
 
     // add filter for PSP blacklist
     queryResult = blackListCriteria(queryResult);
+
+    // add filter for cart bundle param
+    if (paymentOptionMulti.getPaymentNotice().size() > 1) {
+      var queryCart = Criteria.getInstance(
+              CriteriaType.IS_EQUAL, CART_PARAM, Collections.singletonList(Boolean.TRUE), Part.IgnoreCaseType.NEVER);
+      queryResult = and(queryResult, queryCart);
+    }
 
     // execute the query
     return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
