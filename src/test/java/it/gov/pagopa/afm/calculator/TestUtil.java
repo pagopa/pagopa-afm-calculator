@@ -283,6 +283,51 @@ public class TestUtil {
     return bundles;
   }
 
+  public static List<ValidBundle> getMockMultipleValidBundleSamePsp() {
+    List<ValidBundle> bundles = new ArrayList<>();
+    bundles.add(
+            ValidBundle.builder()
+                    .id("1")
+                    .idChannel("13212880150_01")
+                    .name("bundle1")
+                    .idPsp("ABC")
+                    .pspBusinessName("psp business name")
+                    .abi("14160")
+                    .paymentAmount(50L)
+                    .minPaymentAmount(0L)
+                    .maxPaymentAmount(1000L)
+                    .type(BundleType.GLOBAL)
+                    .touchpoint("1")
+                    .paymentType("CP")
+                    .transferCategoryList(List.of("TAX1"))
+                    .ciBundleList(new ArrayList<>())
+                    .digitalStamp(false)
+                    .digitalStampRestriction(false)
+                    .onUs(true)
+                    .build());
+    bundles.add(
+            ValidBundle.builder()
+                    .id("2")
+                    .idChannel("13212880150_02_ONUS")
+                    .name("bundle2")
+                    .idPsp("ABC")
+                    .pspBusinessName("psp business name")
+                    .abi("14156")
+                    .paymentAmount(55L)
+                    .minPaymentAmount(0L)
+                    .maxPaymentAmount(1000L)
+                    .type(BundleType.PUBLIC)
+                    .touchpoint("1")
+                    .paymentType("CP")
+                    .transferCategoryList(List.of("TAX2"))
+                    .ciBundleList(Collections.singletonList(getMockCiBundle()))
+                    .digitalStamp(false)
+                    .digitalStampRestriction(false)
+                    .onUs(true)
+                    .build());
+    return bundles;
+  }
+
   public static Touchpoint getMockTouchpoints() {
     return Touchpoint.builder().id("1").name("CHECKOUT").creationDate(LocalDateTime.now()).build();
   }

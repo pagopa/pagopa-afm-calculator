@@ -1,0 +1,28 @@
+{
+  "belowThreshold": false,
+  "bundleOptions": [
+    {
+      "taxPayerFee": 55,
+      "actualPayerFee": 45,
+      "paymentMethod": "CP",
+      "touchpoint": "1",
+      "idBundle": "2",
+      "bundleName": "bundle2",
+      "bundleDescription": null,
+      "idsCiBundle": ["1"],
+      "idPsp": "ABC",
+      "idChannel": "13212880150_02_ONUS",
+      "idBrokerPsp": null,
+      "onUs": true,
+      "abi": "14156",
+      "pspBusinessName": "psp business name",
+      "fees": [
+        {
+        "creditorInstitution" : "77777777777",
+        "primaryCiIncurredFee": 10,
+        "actualCiIncurredFee": 10
+        }
+      ]
+    }
+  ]
+}
