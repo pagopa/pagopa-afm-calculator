@@ -114,7 +114,7 @@ Then('the body response ordering for the bundleOptions.onUs field is:', function
 	    // true values first
     return (a.onUs === b.onUs)? 0 : a.onUs? -1 : 1;
   });
-  for (let i=0; i<responseToCheck.data.bundleOptions.length; i++){
+  for (let i=0; i<dataTable.rows().length; i++){
     let bodyOnUs = responseToCheck.data.bundleOptions[i].onUs;
     let checkOnUs = JSON.parse(dataTable.rows()[i][0]);
     assert.equal(bodyOnUs, checkOnUs)
@@ -127,7 +127,6 @@ Then('the body response has one bundle for each psp', function () {
     assert(!idPsps.includes(responseToCheck.data.bundleOptions[i].idPsp));
     idPsps.push(responseToCheck.data.bundleOptions[i].idPsp);
   }
-  console.log(idPsps);
 });
 
 Then('the body response does not contain the Poste idPsp', function () {
@@ -138,8 +137,8 @@ Then('the body response does not contain the Poste idPsp', function () {
 });
 
 Then('the body response for the bundleOptions.idsCiBundle field is:', function (dataTable) {
-  for (let i=0; i<responseToCheck.data.bundleOptions.length; i++){
-    for(let j=0; j<responseToCheck.data.bundleOptions[i].idsCiBundle.length; j++){
+  for (let i=0; i<dataTable.rows().length; i++){
+    for(let j=0; j<dataTable.rows()[i].length; j++){
       let bodyIdCiBundle = responseToCheck.data.bundleOptions[i].idsCiBundle[j];
       let checkIdCiBundle = JSON.parse(dataTable.rows()[i][j]);
       assert.equal(bodyIdCiBundle, checkIdCiBundle)
@@ -149,12 +148,12 @@ Then('the body response for the bundleOptions.idsCiBundle field is:', function (
 
 Then('the sum of the fees is correct and the EC codes are:', function (dataTable) {
   let sumFee = 0;
-  for (let i=0; i<responseToCheck.data.bundleOptions.length; i++){
+  for (let i=0; i<dataTable.rows().length; i++){
     responseToCheck.data.bundleOptions[i].fees.sort(function (a, b) {
         // alphabetical order
       return (a.creditorInstitution > b.creditorInstitution) ? 1 : ((b.creditorInstitution > a.creditorInstitution) ? -1 : 0);
     });
-    for(let j=0; j<responseToCheck.data.bundleOptions[i].fees.length; j++){
+    for(let j=0; j<dataTable.rows()[i].length; j++){
       let bodyFeeCode = responseToCheck.data.bundleOptions[i].fees[j].creditorInstitution;
       let checkFeeCode = JSON.parse(dataTable.rows()[i][j]);
       assert.equal(bodyFeeCode, checkFeeCode);

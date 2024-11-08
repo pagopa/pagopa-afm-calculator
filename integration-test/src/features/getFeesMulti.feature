@@ -41,6 +41,41 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     | "77777777777"  |
     | "77777777777"  |
 
+  Scenario: Commission is higher than the sum of the fees with one psp
+    Given initial json
+      """
+      {
+        "bin": "309500",
+        "paymentMethod": "CP",
+        "touchpoint": "CHECKOUT",
+        "idPspList": [{"idPsp":"PPAYITR1XXX"}],
+        "paymentNotice": [
+            {
+                "primaryCreditorInstitution": "77777777777",
+                "paymentAmount": 899999999999999,
+                "transferList": [
+                    {
+                        "creditorInstitution": "77777777777",
+                        "transferCategory": "TAX1"
+                    }
+                ]
+            }
+        ]
+      }
+      """
+    When the client send a V2 POST to /fees
+    Then check statusCode is 200
+    And the body response has one bundle for each psp
+    And the body response ordering for the bundleOptions.onUs field is:
+    | onUs  |
+    | true  |
+    And the body response for the bundleOptions.idsCiBundle field is:
+    | idCiBundle  |
+    | "int-test-cart-1"  |
+    And the sum of the fees is correct and the EC codes are:
+    | feeCode  |
+    | "77777777777"  |
+
   Scenario: Commission is lower than the sum of the fees
     Given initial json
       """
