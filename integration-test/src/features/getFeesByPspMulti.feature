@@ -26,6 +26,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
+    And the body response has one bundle for each psp
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     | "int-test-cart-1"  |
@@ -56,6 +57,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
+    And the body response has one bundle for each psp
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     | "int-test-cart-2"  |
@@ -96,6 +98,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
+    And the body response has one bundle for each psp
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     And the sum of the fees is correct and the EC codes are:
@@ -134,6 +137,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
+    And the body response has one bundle for each psp
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     And the sum of the fees is correct and the EC codes are:
@@ -162,6 +166,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
+    And the body response has one bundle for each psp
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle  |
     | "int-test-cart-6"  |
@@ -202,6 +207,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
+    And the body response has one bundle for each psp
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle1  | idCiBundle2  |
     | "int-test-cart-5"  | "int-test-cart-6"  |
@@ -242,15 +248,48 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send a V2 POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
+    And the body response has one bundle for each psp
     And the body response for the bundleOptions.idsCiBundle field is:
     | idCiBundle1  | idCiBundle2  |
-    | "int-test-cart-7"  | "int-test-cart-8"  |
-    | "int-test-cart-7"  | "int-test-cart-8"  |
-    | "int-test-cart-7"  | "int-test-cart-8"  |
     | "int-test-cart-7"  | "int-test-cart-8"  |
     And the sum of the fees is correct and the EC codes are:
     | feeCode1  | feeCode2  |
     | "77777777777"  | "88888888888"  |
-    | "77777777777"  | "88888888888"  |
-    | "77777777777"  | "88888888888"  |
-    | "77777777777"  | "88888888888"  |
+
+  Scenario: Multiple bundles are available, but only one is returned
+    Given initial json
+        """
+        {
+          "bin": "309500",
+          "paymentMethod": "CP",
+          "touchpoint": "CHECKOUT",
+          "idPspList": null,
+          "paymentNotice": [
+              {
+                  "primaryCreditorInstitution": "77777777777",
+                  "paymentAmount": 899999999999987,
+                  "transferList": [
+                      {
+                          "creditorInstitution": "77777777777",
+                          "transferCategory": "TAX1"
+                      }
+                  ]
+              }
+          ]
+        }
+        """
+      When the client send a V2 POST to /psps/PPAYITR1XXX/fees
+      Then check statusCode is 200
+      And the body response has one bundle for each psp
+      And the body response ordering for the bundleOptions.onUs field is:
+      | onUs  |
+      | true  |
+      | false |
+      And the body response for the bundleOptions.idsCiBundle field is:
+      | idCiBundle |
+      | "int-test-cart-10" |
+      | "int-test-cart-9" |
+      And the sum of the fees is correct and the EC codes are:
+      | feeCode  |
+      | "77777777777"  |
+      | "77777777777"  |
