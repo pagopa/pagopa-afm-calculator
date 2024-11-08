@@ -333,7 +333,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       | feeCode1  | feeCode2  |
       | "77777777777"  | "88888888888"  |
 
-    Scenario: Multiple ciBundles and multiple paymentNoticeItems
+    Scenario: Multiple bundles are available, but only one per psp is returned
       Given initial json
         """
         {
