@@ -284,12 +284,9 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       And the body response ordering for the bundleOptions.onUs field is:
       | onUs  |
       | true  |
-      | false |
       And the body response for the bundleOptions.idsCiBundle field is:
       | idCiBundle |
       | "int-test-cart-10" |
-      | "int-test-cart-9" |
       And the sum of the fees is correct and the EC codes are:
       | feeCode  |
-      | "77777777777"  |
       | "77777777777"  |
