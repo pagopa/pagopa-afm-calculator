@@ -59,4 +59,7 @@ public class Bundle {
 
   // useful only if paymentType = CP
   private Boolean onUs;
+
+  // useful to see if a bundle available for carts
+  private Boolean cart;
 }

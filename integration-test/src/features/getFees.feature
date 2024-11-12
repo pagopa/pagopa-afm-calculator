@@ -79,7 +79,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bin": "309500",
         "paymentMethod": "CP",
         "touchpoint": null,
-        "idPspList": [{"idPsp":"88888888889"}],
+        "idPspList": [{"idPsp":"PPAYITR1XXX"}],
         "transferList": [
           {
             "creditorInstitution": "77777777777",
@@ -96,12 +96,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
+    | true |
     | false |
-    | false |
-    | false |
-    | false |
-    | true  |
-    
     
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP
@@ -113,7 +109,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bin": "309500",
         "paymentMethod": null,
         "touchpoint": "IO",
-        "idPspList": [{"idPsp":"88888888888"}],
+        "idPspList": [{"idPsp":"PPAYITR1XXX"}],
         "transferList": [
           {
             "creditorInstitution": "77777777777",
@@ -130,8 +126,8 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
+    | true |
     | false |
-    | true  |
     | false |
     
 
@@ -195,7 +191,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
         "bin": "309500",
         "paymentMethod": null,
         "touchpoint": "IO",
-        "idPspList": [{"idPsp":"88888888889"}],
+        "idPspList": [{"idPsp":"BPPIITRRXXX"}],
         "transferList": [
           {
             "creditorInstitution": "77777777777",
@@ -280,13 +276,6 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field is:
     | onUs  |
-    | false |
-    | false |
-    | false |
-    | false |
-    | false |
-    | false |
-    | false |
 
   Scenario: Execute a GetFees request with allCcp flag set to false
     Given initial json
