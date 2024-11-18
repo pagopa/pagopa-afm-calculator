@@ -100,7 +100,9 @@ public class CalculatorService {
     // is raised
     // - the limit(2) operation is used to terminate as soon as two distinct ABI objects are found
     if (isUniqueAbi(issuers)) {
-      throw new AppException(AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
+      // fix to solve the problem with overlapping ranges of some psps
+      issuers.clear();
+      //throw new AppException(AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
     }
 
     for (ValidBundle bundle : bundles) {
@@ -157,7 +159,9 @@ public class CalculatorService {
     // is raised
     // - the limit(2) operation is used to terminate as soon as two distinct ABI objects are found
     if (isUniqueAbi(issuers)) {
-      throw new AppException(AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
+      // fix to solve the problem with overlapping ranges of some psps
+      issuers.clear();
+      //throw new AppException(AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
     }
 
     for (ValidBundle bundle : bundles) {
