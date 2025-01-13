@@ -18,7 +18,8 @@
       "touchpoint": "ANY",
       "paymentType": null,
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-1"
+      "pspBusinessName": "psp business name int-test-1",
+      "cart" : true
     },
     {
       "id": "int-test-2",
@@ -38,7 +39,8 @@
       "validityDateTo": null,
       "touchpoint": "ANY",
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-2"
+      "pspBusinessName": "psp business name int-test-2",
+      "cart" : true
     },
     {
       "id": "int-test-3",
@@ -59,7 +61,8 @@
       "validityDateTo": null,
       "touchpoint": "ANY",
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-3"
+      "pspBusinessName": "psp business name int-test-3",
+      "cart" : true
     },
     {
       "id": "int-test-4",
@@ -82,7 +85,8 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "touchpoint": "ANY",
-      "paymentType": null
+      "paymentType": null,
+      "cart" : true
     },
     {
       "id": "int-test-5",
@@ -107,7 +111,8 @@
       "validityDateFrom": null,
       "validityDateTo": null,
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-5"
+      "pspBusinessName": "psp business name int-test-5",
+      "cart" : true
     },
     {
       "id": "int-test-6",
@@ -127,7 +132,8 @@
       "validityDateTo": null,
       "paymentType": null,
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-6"
+      "pspBusinessName": "psp business name int-test-6",
+      "cart" : true
     },
     {
       "id": "int-test-7",
@@ -147,7 +153,8 @@
       "validityDateTo": null,
       "paymentType": null,
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-7"
+      "pspBusinessName": "psp business name int-test-7",
+      "cart" : true
     },
     {
       "id": "int-test-8",
@@ -167,7 +174,8 @@
       "validityDateTo": null,
       "paymentType": null,
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-8"
+      "pspBusinessName": "psp business name int-test-8",
+      "cart" : true
     },
     {
       "id": "int-test-9",
@@ -187,7 +195,8 @@
       "validityDateTo": null,
       "paymentType": null,
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-9"
+      "pspBusinessName": "psp business name int-test-9",
+      "cart" : true
     },
     {
       "id": "int-test-10",
@@ -207,7 +216,8 @@
       "touchpoint": "ANY",
       "paymentType": "CP",
       "abi": "AMREX",
-      "pspBusinessName": "psp business name int-test-10"
+      "pspBusinessName": "psp business name int-test-10",
+      "cart" : true
     },
     {
       "id": "int-test-cart-cart-1",
@@ -227,7 +237,8 @@
       "touchpoint": "ANY",
       "paymentType": "CP",
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-cart-1"
+      "pspBusinessName": "psp business name int-test-cart-1",
+      "cart" : true
     },
     {
       "id": "int-test-cart-cart-2",
@@ -247,7 +258,8 @@
       "touchpoint": "ANY",
       "paymentType": "CP",
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-cart-2"
+      "pspBusinessName": "psp business name int-test-cart-2",
+      "cart" : true
     },
     {
       "id": "int-test-cart-cart-3",
@@ -267,7 +279,8 @@
       "touchpoint": "ANY",
       "paymentType": "CP",
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-cart-3"
+      "pspBusinessName": "psp business name int-test-cart-3",
+      "cart" : true
     },
     {
       "id": "int-test-cart-cart-4",
@@ -287,7 +300,8 @@
       "touchpoint": "ANY",
       "paymentType": "CP",
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-cart-4"
+      "pspBusinessName": "psp business name int-test-cart-4",
+      "cart" : true
     },
     {
       "id": "int-test-cart-cart-5",
@@ -307,7 +321,8 @@
       "touchpoint": "ANY",
       "paymentType": "CP",
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-cart-5"
+      "pspBusinessName": "psp business name int-test-cart-5",
+      "cart" : true
     },
     {
       "id": "int-test-cart-cart-6",
@@ -327,7 +342,8 @@
       "touchpoint": "ANY",
       "paymentType": "CP",
       "abi": 14156,
-      "pspBusinessName": "psp business name int-test-cart-6"
+      "pspBusinessName": "psp business name int-test-cart-6",
+      "cart" : true
     },
     {
       "id": "int-test-cart-cart-7",
@@ -347,7 +363,50 @@
       "touchpoint": "ANY",
       "paymentType": null,
       "abi": 10101,
-      "pspBusinessName": "psp business name int-test-cart-7"
+      "pspBusinessName": "psp business name int-test-cart-7",
+      "cart" : true
+    },
+    {
+      "id": "int-test-cart-cart-8",
+      "idPsp": "PPAYITR1XXX",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01_ONUS",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 8",
+      "description": "pacchetto 8",
+      "paymentAmount": 100,
+      "minPaymentAmount": 899999999999986,
+      "maxPaymentAmount": 899999999999988,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": "CP",
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-cart-8",
+      "cart" : true
+    },
+    {
+      "id": "int-test-cart-cart-9",
+      "idPsp": "PPAYITR1XXX",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01_ONUS",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 9",
+      "description": "pacchetto 9",
+      "paymentAmount": 150,
+      "minPaymentAmount": 899999999999986,
+      "maxPaymentAmount": 899999999999988,
+      "type": "PRIVATE",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": "CP",
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-cart-9",
+      "cart" : true
     }
   ],
   "ciBundles": [
@@ -479,7 +538,7 @@
           "maxPaymentAmount": 20
         },
         {
-          "id": "int-test-cart-cart-10",
+          "id": "int-test-cart-10",
           "maxPaymentAmount": 40
         }
       ]
@@ -490,8 +549,19 @@
       "idBundle": "int-test-cart-cart-7",
       "attributes": [
         {
-          "id": "int-test-cart-9",
+          "id": "int-test-cart-11",
           "maxPaymentAmount": 20
+        }
+      ]
+    },
+    {
+      "id": "int-test-cart-10",
+      "ciFiscalCode": "77777777777",
+      "idBundle": "int-test-cart-cart-9",
+      "attributes": [
+        {
+          "id": "int-test-cart-12",
+          "maxPaymentAmount": 60
         }
       ]
     }

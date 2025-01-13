@@ -100,7 +100,9 @@ public class CalculatorService {
     // is raised
     // - the limit(2) operation is used to terminate as soon as two distinct ABI objects are found
     if (isUniqueAbi(issuers)) {
-      throw new AppException(AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
+      // fix to solve the problem with overlapping ranges of some psps
+      issuers.clear();
+      //throw new AppException(AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
     }
 
     for (ValidBundle bundle : bundles) {
@@ -138,7 +140,7 @@ public class CalculatorService {
   private List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> calculateTaxPayerFeeMulti(
       PaymentOptionMulti paymentOption, int limit, List<ValidBundle> bundles) {
 
-    List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers = new ArrayList<>();
+    Map<String, it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> pspTransfersMap = new HashMap<>();
 
     // 1. Check if ONUS payment:
     // - ONUS payment = if the bundle ABI attribute matching the one extracted via BIN from the
@@ -157,7 +159,9 @@ public class CalculatorService {
     // is raised
     // - the limit(2) operation is used to terminate as soon as two distinct ABI objects are found
     if (isUniqueAbi(issuers)) {
-      throw new AppException(AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
+      // fix to solve the problem with overlapping ranges of some psps
+      issuers.clear();
+      //throw new AppException(AppError.ISSUERS_BIN_WITH_DIFFERENT_ABI_ERROR, paymentOption.getBin());
     }
 
     for (ValidBundle bundle : bundles) {
@@ -168,14 +172,17 @@ public class CalculatorService {
       // 2.a: if ONUS payment -> return the transfer list only for bundles with the idChannel
       // attribute ending in '_ONUS'
       if (isOnusPaymentType && isOnusBundle(bundle)) {
-        transfers.addAll(this.getTransferList(paymentOption, bundle));
+        addToPspTransfersMap(pspTransfersMap, this.getTransferList(paymentOption, bundle));
       }
       // 2.b: if not ONUS payment -> return the transfer list only for bundles with the idChannel
       // attribute NOT ending in '_ONUS'
       if (!isOnusPaymentType && !isOnusBundle(bundle)) {
-        transfers.addAll(this.getTransferList(paymentOption, bundle));
+        addToPspTransfersMap(pspTransfersMap, this.getTransferList(paymentOption, bundle));
       }
     }
+
+    // convert mapping of psp and transfer to transfer list
+    List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers = new ArrayList<>(pspTransfersMap.values());
 
     // if it is a payment on the AMEX circuit --> filter to return only AMEX_ONUS
     if (this.isAMEXAbi(issuers)) {
@@ -516,6 +523,16 @@ public class CalculatorService {
 
   private boolean isBelowThreshold(long paymentAmount) {
     return paymentAmount < Long.parseLong(StringUtils.trim(amountThreshold));
+  }
+
+  private void addToPspTransfersMap(Map<String, it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> pspTransferMap,
+                                    List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transferList) {
+    for(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer transfer : transferList) {
+      if(!pspTransferMap.containsKey(transfer.getIdPsp()) ||
+              pspTransferMap.get(transfer.getIdPsp()).getActualPayerFee() > transfer.getActualPayerFee()) {
+        pspTransferMap.put(transfer.getIdPsp(), transfer);
+      }
+    }
   }
 
   /**
