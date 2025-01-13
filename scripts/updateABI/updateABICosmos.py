@@ -13,7 +13,7 @@ container = database.get_container_client("validbundles")
 old_abi = sys.argv[1]
 new_abi = sys.argv[2]
 
-queryText = "SELECT * FROM bundles b WHERE b.abi = @abi"
+queryText = "SELECT * FROM collection b WHERE b.abi = @abi"
 
 results = container.query_items(
     query=queryText,
