@@ -56,6 +56,19 @@ jobs:
           tenant-id: ${{ secrets.TENANT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
+      - name: Delete old reports
+        uses: azure/CLI@4db43908b9df2e7ac93c8275a8f9a448c59338dd # v1
+        env:
+          STORAGE_NAME: ${{ vars.INTEGRATION_TEST_STORAGE_ACCOUNT_NAME }}
+          STORAGE_FOLDER: ${{ vars.INTEGRATION_TEST_REPORTS_FOLDER }}
+        with:
+          inlineScript: |
+            az storage blob delete-batch \
+            --source "${{ env.STORAGE_FOLDER }}" \
+            --account-name "${{ env.STORAGE_NAME }}" \
+            --subscription "${{ secrets.SUBSCRIPTION_ID }}" \
+            --auth-mode login
+
       - name: Run Integration Tests
         shell: bash
         run: |
@@ -69,6 +82,21 @@ jobs:
           cd ./integration-test
           chmod +x ./run_integration_test.sh
           ./run_integration_test.sh ${{( github.event.inputs == null && 'dev') || inputs.environment }} $TYPE
+
+      - name: Upload reports
+        uses: azure/CLI@4db43908b9df2e7ac93c8275a8f9a448c59338dd # v1
+        env:
+          STORAGE_NAME: ${{ vars.INTEGRATION_TEST_STORAGE_ACCOUNT_NAME }}
+          STORAGE_FOLDER: ${{ vars.INTEGRATION_TEST_REPORTS_FOLDER }}
+        with:
+          inlineScript: |
+            az storage blob upload-batch \
+              --destination '${{ env.STORAGE_FOLDER }}/reports' \
+              --source ./integration-test/reports \
+              --account-name ${{ env.STORAGE_NAME }} \
+              --subscription ${{ secrets.SUBSCRIPTION_ID }} \
+              --overwrite true \
+              --auth-mode login
 
   notify:
     needs: [ integration_test ]
