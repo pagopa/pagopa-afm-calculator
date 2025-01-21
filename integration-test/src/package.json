@@ -3,10 +3,10 @@
   "license": "MIT",
   "version": "1.0.0",
   "scripts": {
-    "test-normal:local": "dotenv -e ./config/.env.local yarn cucumber",
-    "test-normal:dev": "dotenv -e ./config/.env.dev yarn cucumber",
+    "test-old:local": "dotenv -e ./config/.env.local yarn cucumber",
+    "test-old:dev": "dotenv -e ./config/.env.dev yarn cucumber",
     "test-allure:dev": "dotenv -e ./config/.env.dev yarn cucumber-allure",
-    "test-normal:uat": "dotenv -e ./config/.env.uat yarn cucumber",
+    "test-old:uat": "dotenv -e ./config/.env.uat yarn cucumber",
     "cucumber": "npx cucumber-js --publish -r step_definitions",
     "cucumber-allure": "npx cucumber-js --publish -r step_definitions --format allure-cucumberjs/reporter --format-options '{ \"resultsDir\": \"../allure/results\" }'"
   },
