@@ -3,15 +3,19 @@
   "license": "MIT",
   "version": "1.0.0",
   "scripts": {
-    "test:local": "dotenv -e ./config/.env.local yarn cucumber",
-    "test:dev": "dotenv -e ./config/.env.dev yarn cucumber",
-    "test:uat": "dotenv -e ./config/.env.uat yarn cucumber",
-    "test:prod": "dotenv -e ./config/.env.prod yarn cucumber",
-    "cucumber": "npx cucumber-js --publish -r step_definitions"
+    "test-normal:local": "dotenv -e ./config/.env.local yarn cucumber",
+    "test-normal:dev": "dotenv -e ./config/.env.dev yarn cucumber",
+    "test-allure:dev": "dotenv -e ./config/.env.dev yarn cucumber-allure",
+    "test-normal:uat": "dotenv -e ./config/.env.uat yarn cucumber",
+    "cucumber": "npx cucumber-js --publish -r step_definitions",
+    "cucumber-allure": "npx cucumber-js --publish -r step_definitions --format allure-cucumberjs/reporter --format-options '{ \"resultsDir\": \"../allure/results\" }'"
   },
   "dependencies": {
-    "@azure/data-tables": "^13.2.2",
-    "@cucumber/cucumber": "^8.4.0",
+    "@azure/data-tables": "^13.3.0",
+    "@cucumber/cucumber": "^11.2.0",
+    "@cucumber/messages": "^27.0.2",
+    "allure-cucumberjs": "^3.0.9",
+    "allure-js-commons": "^3.0.9",
     "axios": "^0.28.0",
     "dotenv": "^16.0.2",
     "dotenv-cli": "^3.2.0",
