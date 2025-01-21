@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# example: sh ./run_integration_test.sh <local|dev|uat|prod> <normal|allure>
+# example: sh ./run_integration_test.sh <local|dev|uat|prod> <old|allure>
 set -e
 
 ENVIRONMENT=$1
