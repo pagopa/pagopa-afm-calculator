@@ -57,6 +57,7 @@ jobs:
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
       - name: Delete old reports
+        if: ${{ inputs.allure }}
         uses: azure/CLI@4db43908b9df2e7ac93c8275a8f9a448c59338dd # v1
         env:
           STORAGE_NAME: ${{ vars.INTEGRATION_TEST_STORAGE_ACCOUNT_NAME }}
@@ -84,6 +85,7 @@ jobs:
           ./run_integration_test.sh ${{( github.event.inputs == null && 'dev') || inputs.environment }} $TYPE
 
       - name: Upload reports
+        if: ${{ inputs.allure }}
         uses: azure/CLI@4db43908b9df2e7ac93c8275a8f9a448c59338dd # v1
         env:
           STORAGE_NAME: ${{ vars.INTEGRATION_TEST_STORAGE_ACCOUNT_NAME }}
