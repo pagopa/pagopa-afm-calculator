@@ -22,6 +22,7 @@ resource "github_repository_environment" "github_repository_environment" {
 locals {
   env_secrets = {
     "CD_CLIENT_ID" : data.azurerm_user_assigned_identity.identity_cd.client_id,
+    "CI_CLIENT_ID" : var.env_short != "p" ? data.azurerm_user_assigned_identity.identity_ci[0].client_id : "",
     "TENANT_ID" : data.azurerm_client_config.current.tenant_id,
     "SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id,
     "ISSUER_RANGE_TABLE" : "${local.prefix}${var.env_short}${local.location_short}${local.domain}saissuerrangetable",
