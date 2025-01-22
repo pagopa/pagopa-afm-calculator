@@ -84,6 +84,15 @@ jobs:
           chmod +x ./run_integration_test.sh
           ./run_integration_test.sh ${{( github.event.inputs == null && 'dev') || inputs.environment }} $TYPE
 
+      - name: Generate allure report
+        if: ${{ inputs.allure }}
+        shell: bash
+        run: |
+          cd ../
+          docker build -t afm-calculator-allure-report-generator .
+          docker run \
+          -v  ./allure:/app/allure afm-calculator-allure-report-generator
+
       - name: Upload reports
         if: ${{ inputs.allure }}
         uses: azure/CLI@4db43908b9df2e7ac93c8275a8f9a448c59338dd # v1

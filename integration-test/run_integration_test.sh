@@ -13,10 +13,3 @@ cd ./src || exit
 yarn install
 yarn add @azure/data-tables
 yarn test-"$TYPE":"$ENVIRONMENT"
-
-# generate allure report
-if [ "$2" == "allure" ]
-then
-  cd ../
-  allure generate ./allure/results -o ./allure/reports --clean
-fi
