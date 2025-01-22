@@ -73,7 +73,6 @@ jobs:
       - name: Run Integration Tests
         shell: bash
         run: |
-          echo ${{ inputs.allure }}
           export SUBKEY=${{ secrets.SUBKEY }}
           export CANARY=${{ inputs.canary }}
           export TYPE=$([ ${{ inputs.allure }} = true ] && echo "allure" || echo "old")
