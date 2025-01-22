@@ -6,6 +6,8 @@ set -e
 ENVIRONMENT=$1
 TYPE=$2
 
+echo "TEST: test-"$TYPE":"$ENVIRONMENT""
+
 # run integration tests
 cd ./src || exit
 yarn install
