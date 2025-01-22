@@ -88,7 +88,8 @@ jobs:
         if: ${{ inputs.allure }}
         shell: bash
         run: |
-          cd ../
+          pwd
+          cd ./integration-test
           docker build -t afm-calculator-allure-report-generator .
           docker run \
           -v  ./allure:/app/allure afm-calculator-allure-report-generator
