@@ -75,7 +75,7 @@ jobs:
         run: |
           export SUBKEY=${{ secrets.SUBKEY }}
           export CANARY=${{ inputs.canary }}
-          export TYPE=$([ inputs.allure = "true" ] && echo "allure" || echo "old")
+          export TYPE=$([ inputs.allure ] && echo "allure" || echo "old")
           export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
           export ISSUER_RANGE_TABLE=${{ vars.ISSUER_RANGE_TABLE }}
           export AFM_SA_CONNECTION_STRING='${{ secrets.AFM_SA_CONNECTION_STRING }}'
