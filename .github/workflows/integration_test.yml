@@ -88,7 +88,6 @@ jobs:
         if: ${{ inputs.allure }}
         shell: bash
         run: |
-          pwd
           cd ./integration-test
           docker build -t afm-calculator-allure-report-generator .
           docker run \
@@ -104,7 +103,7 @@ jobs:
           inlineScript: |
             az storage blob upload-batch \
               --destination '${{ env.STORAGE_FOLDER }}/reports' \
-              --source ./integration-test/reports \
+              --source ./integration-test/allure/reports \
               --account-name ${{ env.STORAGE_NAME }} \
               --subscription ${{ secrets.SUBSCRIPTION_ID }} \
               --overwrite true \
