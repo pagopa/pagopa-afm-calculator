@@ -38,6 +38,11 @@ locals {
     "INTEGRATION_TEST_STORAGE_ACCOUNT_NAME" : local.integration_test.storage_account_name
     "INTEGRATION_TEST_REPORTS_FOLDER" : local.integration_test.reports_folder
   }
+  repo_secrets = {
+    "SONAR_TOKEN" : data.azurerm_key_vault_secret.key_vault_sonar.value,
+    "BOT_TOKEN_GITHUB" : data.azurerm_key_vault_secret.key_vault_bot_cd_token.value,
+    "CUCUMBER_PUBLISH_TOKEN" : data.azurerm_key_vault_secret.key_vault_cucumber_token.value
+  }
 }
 
 ###############
@@ -69,25 +74,9 @@ resource "github_actions_environment_variable" "github_environment_runner_variab
 # Secrets of the Repository #
 #############################
 
-#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
-resource "github_actions_secret" "secret_sonar_token" {
+resource "github_actions_secret" "repo_secrets" {
+  for_each        = local.repo_secrets
   repository      = local.github.repository
-  secret_name     = "SONAR_TOKEN"
-  plaintext_value = data.azurerm_key_vault_secret.key_vault_sonar.value
-}
-
-#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
-resource "github_actions_secret" "secret_bot_token" {
-
-  repository      = local.github.repository
-  secret_name     = "BOT_TOKEN_GITHUB"
-  plaintext_value = data.azurerm_key_vault_secret.key_vault_bot_token.value
-}
-
-#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
-resource "github_actions_secret" "secret_cucumber_token" {
-
-  repository      = local.github.repository
-  secret_name     = "CUCUMBER_PUBLISH_TOKEN"
-  plaintext_value = data.azurerm_key_vault_secret.key_vault_cucumber_token.value
+  secret_name     = each.key
+  plaintext_value = each.value
 }
