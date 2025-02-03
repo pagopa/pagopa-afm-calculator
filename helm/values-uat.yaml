@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.10.38"
+    tag: "2.10.38-1-allure-integration-reports"
     pullPolicy: Always
   livenessProbe:
     httpGet:
