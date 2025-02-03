@@ -52,6 +52,7 @@ public class UtilityComponent {
     return paymentOption.getTransferList() != null
         ? paymentOption.getTransferList().parallelStream()
             .map(TransferListItem::getTransferCategory)
+            .map(UtilityComponent::getTaxonomyValue)
             .distinct()
             .collect(Collectors.toList())
         : null;
@@ -69,9 +70,10 @@ public class UtilityComponent {
     List<TransferListItem> transferList = new ArrayList<>();
     paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> transferList.addAll(paymentNoticeItem.getTransferList()));
     log.debug("getTransferCategoryList");
-    return transferList != null
+    return !transferList.isEmpty()
         ? transferList.parallelStream()
         .map(TransferListItem::getTransferCategory)
+        .map(UtilityComponent::getTaxonomyValue)
         .distinct()
         .collect(Collectors.toList())
         : null;
@@ -93,6 +95,7 @@ public class UtilityComponent {
         ? paymentOption.getTransferList().parallelStream()
             .filter(elem -> primaryCreditorInstitution.equals(elem.getCreditorInstitution()))
             .map(TransferListItem::getTransferCategory)
+            .map(UtilityComponent::getTaxonomyValue)
             .distinct()
             .collect(Collectors.toList())
         : new ArrayList<>();
@@ -114,8 +117,25 @@ public class UtilityComponent {
         ? paymentNoticeItem.getTransferList().parallelStream()
         .filter(elem -> primaryCreditorInstitution.equals(elem.getCreditorInstitution()))
         .map(TransferListItem::getTransferCategory)
+        .map(UtilityComponent::getTaxonomyValue)
         .distinct()
         .collect(Collectors.toList())
         : new ArrayList<>();
   }
+
+
+    /**
+     * Extracts and returns the taxonomy value from the given element string.
+     * examples:
+     * 9/9182ABC/ -> 9182ABC
+     * 9182ABC -> 9182ABC
+     *
+     * @param elem the input string containing taxonomy information, expected to be in the format "category/taxonomy".
+     * @return the taxonomy part of the input string if available, otherwise returns the original string.
+     */
+    private static String getTaxonomyValue(String elem) {
+        String[] split = elem.split("/");
+        return split.length > 1 ? split[1] : split[0];
+    }
+
 }
