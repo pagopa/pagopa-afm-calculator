@@ -21,3 +21,8 @@ If you use dev, uat or prod **you test the images on Azure ACR**
 sh ./run_integration_test.sh local
 ```
 
+## Allure report 
+
+It is possible to check the latest report for these integration tests at the following link: 
+🔗 [Report with Allure](https://pagopadweusharedtstdtsa.blob.core.windows.net/pagopa-afm-calculator/reports/index.html)
+

@@ -22,6 +22,7 @@ resource "github_repository_environment" "github_repository_environment" {
 locals {
   env_secrets = {
     "CD_CLIENT_ID" : data.azurerm_user_assigned_identity.identity_cd.client_id,
+    "CI_CLIENT_ID" : var.env_short != "p" ? data.azurerm_user_assigned_identity.identity_ci[0].client_id : "",
     "TENANT_ID" : data.azurerm_client_config.current.tenant_id,
     "SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id,
     "ISSUER_RANGE_TABLE" : "${local.prefix}${var.env_short}${local.location_short}${local.domain}saissuerrangetable",
@@ -34,6 +35,13 @@ locals {
     "CLUSTER_RESOURCE_GROUP" : local.aks_cluster.resource_group_name,
     "DOMAIN" : local.domain,
     "NAMESPACE" : local.domain,
+    "INTEGRATION_TEST_STORAGE_ACCOUNT_NAME" : local.integration_test.storage_account_name
+    "INTEGRATION_TEST_REPORTS_FOLDER" : local.integration_test.reports_folder
+  }
+  repo_secrets = {
+    "SONAR_TOKEN" : data.azurerm_key_vault_secret.key_vault_sonar.value,
+    "BOT_TOKEN_GITHUB" : data.azurerm_key_vault_secret.key_vault_bot_cd_token.value,
+    "CUCUMBER_PUBLISH_TOKEN" : data.azurerm_key_vault_secret.key_vault_cucumber_token.value
   }
 }
 
@@ -66,25 +74,9 @@ resource "github_actions_environment_variable" "github_environment_runner_variab
 # Secrets of the Repository #
 #############################
 
-#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
-resource "github_actions_secret" "secret_sonar_token" {
+resource "github_actions_secret" "repo_secrets" {
+  for_each        = local.repo_secrets
   repository      = local.github.repository
-  secret_name     = "SONAR_TOKEN"
-  plaintext_value = data.azurerm_key_vault_secret.key_vault_sonar.value
-}
-
-#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
-resource "github_actions_secret" "secret_bot_token" {
-
-  repository      = local.github.repository
-  secret_name     = "BOT_TOKEN_GITHUB"
-  plaintext_value = data.azurerm_key_vault_secret.key_vault_bot_token.value
-}
-
-#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
-resource "github_actions_secret" "secret_cucumber_token" {
-
-  repository      = local.github.repository
-  secret_name     = "CUCUMBER_PUBLISH_TOKEN"
-  plaintext_value = data.azurerm_key_vault_secret.key_vault_cucumber_token.value
+  secret_name     = each.key
+  plaintext_value = each.value
 }
