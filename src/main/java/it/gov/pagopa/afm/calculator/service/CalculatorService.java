@@ -1,10 +1,11 @@
 package it.gov.pagopa.afm.calculator.service;
 
+import static it.gov.pagopa.afm.calculator.service.UtilityComponent.inTransferList;
+import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
+
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.exception.AppError;
-import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
@@ -13,15 +14,6 @@ import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Fee;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
-import lombok.Setter;
-import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,9 +23,13 @@ import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static it.gov.pagopa.afm.calculator.service.UtilityComponent.inTransferList;
-import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
+import javax.validation.Valid;
+import lombok.Setter;
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Setter
@@ -41,17 +37,29 @@ public class CalculatorService {
 
   private static final String ONUS_BUNDLE_SUFFIX = "_ONUS";
 
-  @Value("${payment.amount.threshold}")
-  private String amountThreshold;
+  private final String amountThreshold;
 
-  @Autowired CosmosRepository cosmosRepository;
+  private CosmosRepository cosmosRepository;
 
-  @Autowired UtilityComponent utilityComponent;
+  private final UtilityComponent utilityComponent;
 
-  @Autowired IssuersService issuersService;
+  private final IssuersService issuersService;
+  
+  private final String amexABI;
 
-  @Value("${pspAmex.abi:AMREX}")
-  private String amexABI;
+  public CalculatorService(
+          @Value("${payment.amount.threshold}") String amountThreshold,
+          CosmosRepository cosmosRepository,
+          UtilityComponent utilityComponent,
+          IssuersService issuersService,
+          @Value("${pspAmex.abi:AMREX}") String amexABI
+  ) {
+    this.amountThreshold = amountThreshold;
+    this.cosmosRepository = cosmosRepository;
+    this.utilityComponent = utilityComponent;
+    this.issuersService = issuersService;
+    this.amexABI = amexABI;
+  }
 
   public BundleOption calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
     List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
@@ -135,7 +143,7 @@ public class CalculatorService {
 
     sortByFeePerPsp(transfers);
 
-    return transfers.stream().limit(limit).collect(Collectors.toList());
+    return transfers.stream().limit(limit).toList();
   }
   private List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> calculateTaxPayerFeeMulti(
       PaymentOptionMulti paymentOption, int limit, List<ValidBundle> bundles) {
@@ -201,7 +209,7 @@ public class CalculatorService {
   }
 
   private boolean isOnusBundle(ValidBundle bundle) {
-    return StringUtils.endsWithIgnoreCase(bundle.getIdChannel(), ONUS_BUNDLE_SUFFIX);
+    return Boolean.TRUE.equals(bundle.getOnUs());
   }
 
   private boolean isOnusPayment(List<IssuerRangeEntity> issuers, ValidBundle bundle) {
