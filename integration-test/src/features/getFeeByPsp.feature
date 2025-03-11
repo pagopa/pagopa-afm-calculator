@@ -43,7 +43,7 @@ Feature: GetFeeByPsp
           "idPsp": "PPAYITR1XXX",
           "idBrokerPsp": "88888888899",
           "idChannel": "88888888899_01_ONUS",
-          "onUs": false,
+          "onUs": true,
           "abi": "14156",
           "pspBusinessName": "psp business name int-test-1"
          }
