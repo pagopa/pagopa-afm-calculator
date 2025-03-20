@@ -137,8 +137,24 @@ public class SwaggerConfig {
                       } else {
                         openApi.setServers(buildOpenapiServers(List.of(BASE_PATH), BASE_PATH));
                       }
+                      if (id.equals("v2") || id.equals("node_v2")) {
+                        openApi.setPaths(removeMultiFromPath(openApi.getPaths()));
+                      }
                     }));
     return groupOpenApi;
+  }
+
+  private Paths removeMultiFromPath(Paths paths) {
+    Paths updated = new Paths();
+    paths.forEach(
+        (k, v) -> {
+          if (k.contains("/multi")) {
+            updated.addPathItem(k.replace("/multi", ""), v);
+          } else {
+            updated.addPathItem(k, v);
+          }
+        });
+    return updated;
   }
 
   private List<Server> buildOpenapiServers(List<String> basePathList, String defaultBasePath) {
