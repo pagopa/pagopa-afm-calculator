@@ -150,6 +150,8 @@ public class CosmosRepository {
       if (taxonomyFilter.isPresent()) {
         var taxonomyOrNull = or(taxonomyFilter.get(), isNull(TRANSFER_CATEGORY_LIST));
         queryResult = and(queryResult, taxonomyOrNull);
+      } else {
+        queryResult = and(queryResult, isNull(TRANSFER_CATEGORY_LIST));
       }
     }
 
@@ -248,6 +250,8 @@ public class CosmosRepository {
       if (taxonomyFilter.isPresent()) {
         var taxonomyOrNull = or(taxonomyFilter.get(), isNull(TRANSFER_CATEGORY_LIST));
         queryResult = and(queryResult, taxonomyOrNull);
+      } else {
+        queryResult = and(queryResult, isNull(TRANSFER_CATEGORY_LIST));
       }
     }
 

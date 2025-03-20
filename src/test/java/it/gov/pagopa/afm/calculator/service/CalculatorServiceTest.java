@@ -389,7 +389,7 @@ class CalculatorServiceTest {
 
   @Test
   @Order(11)
-  void calculate_allCcpFlagDown() throws IOException, JSONException {
+  void calculate_allCcpFlagDown() throws IOException {
     Touchpoint touchpoint = TestUtil.getMockTouchpoints();
     PaymentType paymentType = TestUtil.getMockPaymentType();
     when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
@@ -428,7 +428,7 @@ class CalculatorServiceTest {
   // This must be the last test to run - it needs to mock the cosmosRepository in the service
   @Test
   @Order(Integer.MAX_VALUE)
-  void calculate_multipleTransferCreation() throws IOException, JSONException {
+  void calculate_multipleTransferCreation() throws IOException {
 
     CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
 
@@ -690,7 +690,7 @@ class CalculatorServiceTest {
 
   @Test
   @Order(24)
-  void calculateMulti_allCcpFlagDown() throws IOException, JSONException {
+  void calculateMulti_allCcpFlagDown() throws IOException {
     Touchpoint touchpoint = TestUtil.getMockTouchpoints();
     PaymentType paymentType = TestUtil.getMockPaymentType();
     when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
