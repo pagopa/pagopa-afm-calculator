@@ -321,7 +321,7 @@
         }
       ]
     },
-    "/psps/fees/{idPsp}": {
+    "/psps/{idPsp}/fees": {
       "post": {
         "tags": [
           "Calculator"
