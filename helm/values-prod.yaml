@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.10.42"
+    tag: "2.10.42-PIDM-486-update-helm-chart"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -28,9 +28,6 @@ microservice-chart:
       - interval: 10s #jmx-exporter
         targetPort: 12345
         path: /metrics
-  ports:
-    - 80 #http
-    - 12345 #jmx-exporter
   service:
     type: ClusterIP
     ports:
@@ -43,7 +40,7 @@ microservice-chart:
   serviceAccount:
     create: false
     annotations: {}
-    name: ""
+    name: "afm-workload-identity"
   podAnnotations: {}
   podSecurityContext:
     seccompProfile:
@@ -127,19 +124,14 @@ microservice-chart:
   canaryDelivery:
     create: false
     ingress:
-      create: true
-      canary:
-        type: header
-        headerName: X-Canary
-        headerValue: canary
-        weightPercent: 0
-    service:
-      create: true
-    deployment:
-      create: true
+      headerName: X-Canary
+      headerValue: canary
+      weightPercent: 0
       image:
         repository: ghcr.io/pagopa/pagopa-afm-calculator
-        tag: "2.7.3"
-        pullPolicy: Always
-      envConfig:
-      envSecret:
+        tag: 2.7.3
+      envConfig: { }
+      envSecret: { }
+      azure:
+        workloadIdentityClientId: <workload-identity-client-id-set-automatically-by-gha>
+
