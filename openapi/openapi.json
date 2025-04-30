@@ -4,7 +4,7 @@
     "title": "afm-utils",
     "description": "@project.description@",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "0.9.9"
+    "version": "0.9.9-PIDM-486-update-helm-chart"
   },
   "servers": [
     {
