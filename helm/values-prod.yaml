@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.10.43-1-change-docker-image"
+    tag: "2.10.44"
     pullPolicy: Always
   livenessProbe:
     httpGet:
