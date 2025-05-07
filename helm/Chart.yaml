@@ -2,8 +2,8 @@ apiVersion: v2
 name: pagopa-afm-calculator
 description: Microservice that handles calculation for pagoPA Advanced Fees Management
 type: application
-version: 2.59.0
-appVersion: 2.10.43
+version: 2.60.0
+appVersion: 2.10.43-1-change-docker-image
 dependencies:
   - name: microservice-chart
     version: 2.4.0
