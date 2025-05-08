@@ -16,7 +16,7 @@
     "@cucumber/messages": "^27.0.2",
     "allure-cucumberjs": "^3.0.9",
     "allure-js-commons": "^3.0.9",
-    "axios": "^0.28.0",
+    "axios": "^0.30.0",
     "dotenv": "^16.0.2",
     "dotenv-cli": "^3.2.0",
     "npx": "^10.2.2"
