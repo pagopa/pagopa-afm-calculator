@@ -18,6 +18,16 @@ data "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = local.aks_cluster.resource_group_name
 }
 
+data "azurerm_user_assigned_identity" "workload_identity_clientid" {
+  name                = "afm-workload-identity"
+  resource_group_name = "pagopa-${var.env_short}-${local.location_short}-${var.env}-aks-rg"
+}
+
+data "azurerm_user_assigned_identity" "identity_cd_01" {
+  resource_group_name = "${local.product}-identity-rg"
+  name                = "${local.product}-${local.domain}-job-01-github-cd-identity"
+}
+
 data "github_organization_teams" "all" {
   root_teams_only = true
   summary_only    = true
