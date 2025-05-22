@@ -164,7 +164,7 @@ public class TestUtil {
             .ciBundleList(Collections.singletonList(getMockCiBundle()))
             .digitalStamp(false)
             .digitalStampRestriction(false)
-            .onUs(true)
+            .onUs(false)
             .build());
     bundles.add(
         ValidBundle.builder()
@@ -278,7 +278,7 @@ public class TestUtil {
             .ciBundleList(Collections.singletonList(getMockCiBundle()))
             .digitalStamp(false)
             .digitalStampRestriction(false)
-            .onUs(true)
+            .onUs(false)
             .build());
     return bundles;
   }

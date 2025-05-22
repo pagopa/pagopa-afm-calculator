@@ -9,21 +9,30 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.servers.ServerVariable;
+import io.swagger.v3.oas.models.servers.ServerVariables;
+import java.util.List;
 import java.util.Map;
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.GroupedOpenApi;
+import org.springdoc.core.customizers.GlobalOpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
-  public static final String HEADER_REQUEST_ID = "X-Request-Id";
+
+  private static final String HEADER_REQUEST_ID = "X-Request-Id";
+  private static final String BASE_PATH = "afm/calculator-service";
+  private static final String BASE_PATH_NODE = "afm/node/calculator-service";
 
   @Bean
   public OpenAPI customOpenAPI(
       @Value("${info.application.description}") String appDescription,
       @Value("${info.application.version}") String appVersion) {
     return new OpenAPI()
+        .servers(buildOpenapiServers(List.of(BASE_PATH, BASE_PATH_NODE), BASE_PATH))
         .components(
             new Components()
                 .addSecuritySchemes(
@@ -42,7 +51,7 @@ public class SwaggerConfig {
   }
 
   @Bean
-  public OpenApiCustomiser sortOperationsAlphabetically() {
+  public GlobalOpenApiCustomizer sortOperationsAlphabetically() {
     return openApi -> {
       Paths paths =
           openApi.getPaths().entrySet().stream()
@@ -73,7 +82,7 @@ public class SwaggerConfig {
   }
 
   @Bean
-  public OpenApiCustomiser addCommonHeaders() {
+  public GlobalOpenApiCustomizer addCommonHeaders() {
     return openApi ->
         openApi
             .getPaths()
@@ -87,8 +96,8 @@ public class SwaggerConfig {
                           .name(HEADER_REQUEST_ID)
                           .schema(new StringSchema())
                           .description(
-                              "This header identifies the call, if not passed it is self-generated."
-                                  + " This ID is returned in the response."));
+                              "This header identifies the call, if not passed it is"
+                                  + " self-generated. This ID is returned in the response."));
 
                   // add Request-ID as response header
                   value
@@ -107,5 +116,65 @@ public class SwaggerConfig {
                                                   .description(
                                                       "This header identifies the call"))));
                 });
+  }
+
+  @Bean
+  public Map<String, GroupedOpenApi> configureGroupOpenApi(
+      Map<String, GroupedOpenApi> groupOpenApi) {
+    groupOpenApi.forEach(
+        (id, groupedOpenApi) ->
+            groupedOpenApi
+                .getOpenApiCustomisers()
+                .add(
+                    openApi -> {
+                      var baseTitle = openApi.getInfo().getTitle();
+                      var group = groupedOpenApi.getDisplayName();
+                      String title = String.format("%s - %s", baseTitle, group);
+                      openApi.getInfo().setTitle(title);
+                      if (id.contains("node")) {
+                        openApi.setServers(
+                            buildOpenapiServers(List.of(BASE_PATH_NODE), BASE_PATH_NODE));
+                      } else {
+                        openApi.setServers(buildOpenapiServers(List.of(BASE_PATH), BASE_PATH));
+                      }
+                      if (id.equals("v2") || id.equals("node_v2")) {
+                        openApi.setPaths(removeMultiFromPath(openApi.getPaths()));
+                      }
+                    }));
+    return groupOpenApi;
+  }
+
+  private Paths removeMultiFromPath(Paths paths) {
+    Paths updated = new Paths();
+    paths.forEach(
+        (k, v) -> {
+          if (k.contains("/multi")) {
+            updated.addPathItem(k.replace("/multi", ""), v);
+          } else {
+            updated.addPathItem(k, v);
+          }
+        });
+    return updated;
+  }
+
+  private List<Server> buildOpenapiServers(List<String> basePathList, String defaultBasePath) {
+    return List.of(
+        new Server().url("http://localhost:8080"),
+        new Server()
+            .url("https://{host}{basePath}")
+            .variables(
+                new ServerVariables()
+                    .addServerVariable(
+                        "host",
+                        new ServerVariable()
+                            ._enum(
+                                List.of(
+                                    "api.dev.platform.pagopa.it",
+                                    "api.uat.platform.pagopa.it",
+                                    "api.platform.pagopa.it"))
+                            ._default("api.dev.platform.pagopa.it"))
+                    .addServerVariable(
+                        "basePath",
+                        new ServerVariable()._enum(basePathList)._default(defaultBasePath))));
   }
 }

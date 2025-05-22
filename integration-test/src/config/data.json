@@ -19,7 +19,8 @@
       "paymentType": null,
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-1",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-2",
@@ -40,7 +41,8 @@
       "touchpoint": "ANY",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-2",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-3",
@@ -55,7 +57,7 @@
       "minPaymentAmount": 0,
       "maxPaymentAmount": 799999999999999,
       "paymentType": "CP",
-      "onUs": "false",
+      "onUs": true,
       "type": "GLOBAL",
       "validityDateFrom": null,
       "validityDateTo": null,
@@ -86,7 +88,8 @@
       "validityDateTo": null,
       "touchpoint": "ANY",
       "paymentType": null,
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-5",
@@ -101,7 +104,7 @@
       "minPaymentAmount": 0,
       "maxPaymentAmount": 799999999999999,
       "paymentType": "CP",
-      "onUs": false,
+      "onUs": true,
       "touchpoint": "IO",
       "type": "GLOBAL",
       "transferCategoryList": [
@@ -133,7 +136,8 @@
       "paymentType": null,
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-6",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-7",
@@ -154,7 +158,8 @@
       "paymentType": null,
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-7",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-8",
@@ -175,7 +180,8 @@
       "paymentType": null,
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-8",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-9",
@@ -196,7 +202,8 @@
       "paymentType": null,
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-9",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-10",
@@ -217,7 +224,8 @@
       "paymentType": "CP",
       "abi": "AMREX",
       "pspBusinessName": "psp business name int-test-10",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-cart-cart-1",
@@ -238,7 +246,8 @@
       "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-cart-1",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-cart-cart-2",
@@ -259,7 +268,8 @@
       "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-cart-2",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-cart-cart-3",
@@ -280,7 +290,8 @@
       "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-cart-3",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-cart-cart-4",
@@ -301,7 +312,8 @@
       "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-cart-4",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-cart-cart-5",
@@ -322,7 +334,8 @@
       "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-cart-5",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-cart-cart-6",
@@ -343,7 +356,8 @@
       "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-cart-6",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-cart-cart-7",
@@ -364,7 +378,8 @@
       "paymentType": null,
       "abi": 10101,
       "pspBusinessName": "psp business name int-test-cart-7",
-      "cart" : true
+      "cart" : true,
+      "onUs" : false
     },
     {
       "id": "int-test-cart-cart-8",
@@ -385,7 +400,8 @@
       "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-cart-8",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     },
     {
       "id": "int-test-cart-cart-9",
@@ -406,7 +422,8 @@
       "paymentType": "CP",
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-cart-9",
-      "cart" : true
+      "cart" : true,
+      "onUs" : true
     }
   ],
   "ciBundles": [
