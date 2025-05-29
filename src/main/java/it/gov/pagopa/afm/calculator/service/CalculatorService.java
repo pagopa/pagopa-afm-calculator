@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,7 +55,7 @@ public class CalculatorService {
           Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName);
 
   private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> randomComparator =
-          (t1, t2) -> Integer.compare(new Random().nextInt(3) - 1, 0);
+          (t1, t2) -> Integer.compare(ThreadLocalRandom.current().nextInt(3) - 1, 0);
 
   public CalculatorService(
           @Value("${payment.amount.threshold}") String amountThreshold,
