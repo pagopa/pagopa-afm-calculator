@@ -13,13 +13,10 @@ import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Fee;
+import it.gov.pagopa.afm.calculator.model.calculatormulti.OrderType;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -72,13 +69,13 @@ public class CalculatorService {
         .build();
   }
 
-  public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp) {
+  public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp, boolean onUsFirst, OrderType orderType ) {
     List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
-    Collections.shuffle(filteredBundles);
+    Collections.shuffle(filteredBundles); //TODO may not be needed anymore
 
     return it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
         .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
-        .bundleOptions(calculateTaxPayerFeeMulti(paymentOption, limit, filteredBundles))
+        .bundleOptions(calculateTaxPayerFeeMulti(paymentOption, limit, filteredBundles, orderType, onUsFirst))
         .build();
   }
 
@@ -146,7 +143,7 @@ public class CalculatorService {
     return transfers.stream().limit(limit).toList();
   }
   private List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> calculateTaxPayerFeeMulti(
-      PaymentOptionMulti paymentOption, int limit, List<ValidBundle> bundles) {
+      PaymentOptionMulti paymentOption, int limit, List<ValidBundle> bundles,OrderType orderType, boolean onUsFirst) {
 
     Map<String, it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> pspTransfersMap = new HashMap<>();
 
@@ -200,10 +197,8 @@ public class CalculatorService {
           transfers.stream().filter(abiPredicate.and(onusPredicate)).collect(Collectors.toList());
     }
 
-    // sort according onus and taxpayer fee
-    Collections.sort(transfers);
 
-    sortByFeePerPspMulti(transfers);
+    Collections.sort(transfers, getDynamicComparator(orderType, onUsFirst));
 
     return transfers.stream().limit(limit).toList();
   }
@@ -576,4 +571,41 @@ public class CalculatorService {
           return 0; // fixed to 0 because we don't want to sort by PSP name.
         });
   }
+
+  /**
+   * Returns a dynamic comparator for {@code it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer}
+   * based on the specified {@link OrderType} and whether to prioritize OnUs transfers.
+   *
+   * @param orderType  the type of ordering to apply (BYFEE, BYPSPNAME, RANDOM)
+   * @param onUsFirst  if true, OnUs transfers are sorted before others
+   * @return a comparator for {@code it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer}
+   */
+  private static Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> getDynamicComparator(OrderType orderType, boolean onUsFirst) {
+
+    Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> comparator ;
+
+    Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> onUsFirstComparator =
+            Comparator.comparing((it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs),Comparator.reverseOrder());
+
+    Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byFeeComparator =
+            Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee)
+                    .thenComparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName);
+
+    Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byPspNameComparator =
+            Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName);
+
+    Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> randomComparator =
+            (t1, t2) -> Integer.compare(new Random().nextInt(3) - 1, 0);
+
+    switch (orderType) {
+      case BYFEE -> comparator = byFeeComparator;
+      case BYPSPNAME -> comparator = byPspNameComparator;
+      case RANDOM -> comparator = randomComparator;
+      default -> comparator = randomComparator;
+    }
+
+    return onUsFirst?onUsFirstComparator.thenComparing(comparator):comparator;
+
+  }
+
 }

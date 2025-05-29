@@ -38,7 +38,7 @@ class CalculatorControllerTest {
     it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption resultMulti =
         TestUtil.readObjectFromFile("responses/getFeesMulti.json", it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.class);
     when(calculatorService.calculate(any(), anyInt(), any(Boolean.class))).thenReturn(result);
-    when(calculatorService.calculateMulti(any(), anyInt(), any(Boolean.class))).thenReturn(resultMulti);
+    when(calculatorService.calculateMulti(any(), anyInt(), any(Boolean.class),any(Boolean.class),any())).thenReturn(resultMulti);
   }
 
   @Test

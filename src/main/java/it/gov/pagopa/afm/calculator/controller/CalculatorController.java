@@ -15,6 +15,7 @@ import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
 import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
+import it.gov.pagopa.afm.calculator.model.calculatormulti.OrderType;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
 import java.util.List;
 import javax.validation.Valid;
@@ -234,19 +235,34 @@ public class CalculatorController {
                   schema = @Schema(implementation = ProblemJson.class)))
       })
   @PostMapping(
-      value = "/psps/{idPsp}/fees/multi",
-      produces = {MediaType.APPLICATION_JSON_VALUE})
+          value = "/psps/{idPsp}/fees/multi",
+          produces = {MediaType.APPLICATION_JSON_VALUE})
   public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption getFeesByPspMulti(
-      @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp")
-      String idPsp,
-      @RequestBody @Valid PaymentOptionByPspMulti paymentOptionByPsp,
-      @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
-      @RequestParam(required = false, defaultValue = "true")
-      @Parameter(
-          description =
-              "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
-                  + " included")
-      String allCcp) {
+          @Parameter(description = "PSP identifier", required = true) @PathVariable("idPsp")
+          String idPsp,
+          @RequestBody @Valid PaymentOptionByPspMulti paymentOptionByPsp,
+          @RequestParam(required = false, defaultValue = "10") Integer maxOccurrences,
+          @RequestParam(required = false, defaultValue = "true")
+          @Parameter(
+                  description =
+                          "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
+                                  + " included")
+          String allCcp,
+          @RequestParam(required = false, defaultValue = "true")
+          @Parameter(
+                  description =
+                          "Affects the sorting logic [default = true]." +
+                                  " true → if the onus bundle is present, it is returned in the first position, regardless of the chosen sorting logic." +
+                                  " false → the sorting logic is also applied to the onus bundle, which may therefore appear in positions other than the first")
+          String onUsFirst,
+          @RequestParam(required = false, defaultValue = "random")
+          @Parameter(
+                  description =
+                          "Sorting logic to be applied to the bundles [default = RANDOM]." +
+                                  " random → bundles are sorted randomly." +
+                                  " byfee → sorted by increasing fee, if fees are equal then by PSP name." +
+                                  " bypspname → sorted by PSP name.")
+          OrderType orderType) {
     PaymentOptionMulti paymentOption =
         PaymentOptionMulti.builder()
             .paymentMethod(paymentOptionByPsp.getPaymentMethod())
@@ -262,7 +278,10 @@ public class CalculatorController {
             .paymentNotice(paymentOptionByPsp.getPaymentNotice())
             .build();
     return calculatorService.calculateMulti(
-        paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
+        paymentOption, maxOccurrences,
+            StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp),
+            StringUtils.isBlank(onUsFirst) || Boolean.parseBoolean(onUsFirst),
+            orderType == null ? OrderType.RANDOM:orderType );
   }
 
   @Operation(
@@ -326,8 +345,26 @@ public class CalculatorController {
           description =
               "Flag for the exclusion of Poste bundles: false -> excluded, true or null ->"
                   + " included")
-      String allCcp) {
+      String allCcp,
+      @RequestParam(required = false, defaultValue = "true")
+      @Parameter(
+              description =
+                      "Affects the sorting logic [default = true]." +
+                              " true → if the onus bundle is present, it is returned in the first position, regardless of the chosen sorting logic." +
+                              " false → the sorting logic is also applied to the onus bundle, which may therefore appear in positions other than the first")
+      String onUsFirst,
+      @RequestParam(required = false, defaultValue = "random")
+      @Parameter(
+              description =
+                      "Sorting logic to be applied to the bundles [default = RANDOM]." +
+                              " random → bundles are sorted randomly." +
+                              " byfee → sorted by increasing fee, if fees are equal then by PSP name." +
+                              " bypspname → sorted by PSP name.")
+      OrderType orderType) {
     return calculatorService.calculateMulti(
-        paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
+        paymentOption, maxOccurrences,
+            StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp),
+            StringUtils.isBlank(onUsFirst) || Boolean.parseBoolean(onUsFirst),
+            orderType == null ? OrderType.RANDOM : orderType);
   }
 }
