@@ -8,25 +8,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import it.gov.pagopa.afm.calculator.model.PaymentOptionByPsp;
-import it.gov.pagopa.afm.calculator.model.PaymentOptionByPspMulti;
-import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
-import it.gov.pagopa.afm.calculator.model.ProblemJson;
-import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
+import it.gov.pagopa.afm.calculator.model.*;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
-import it.gov.pagopa.afm.calculator.model.calculatormulti.OrderType;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
-import java.util.List;
-import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController()
 @Tag(name = "Calculator", description = "Everything about Calculator business logic")
@@ -262,7 +253,7 @@ public class CalculatorController {
                                   " random → bundles are sorted randomly." +
                                   " byfee → sorted by increasing fee, if fees are equal then by PSP name." +
                                   " bypspname → sorted by PSP name.")
-          OrderType orderType) {
+          String orderBy) {
     PaymentOptionMulti paymentOption =
         PaymentOptionMulti.builder()
             .paymentMethod(paymentOptionByPsp.getPaymentMethod())
@@ -281,7 +272,7 @@ public class CalculatorController {
         paymentOption, maxOccurrences,
             StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp),
             StringUtils.isBlank(onUsFirst) || Boolean.parseBoolean(onUsFirst),
-            orderType == null ? OrderType.RANDOM:orderType );
+            orderBy == null ? "random":orderBy );
   }
 
   @Operation(
@@ -360,11 +351,11 @@ public class CalculatorController {
                               " random → bundles are sorted randomly." +
                               " byfee → sorted by increasing fee, if fees are equal then by PSP name." +
                               " bypspname → sorted by PSP name.")
-      OrderType orderType) {
+      String orderBy) {
     return calculatorService.calculateMulti(
         paymentOption, maxOccurrences,
             StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp),
             StringUtils.isBlank(onUsFirst) || Boolean.parseBoolean(onUsFirst),
-            orderType == null ? OrderType.RANDOM : orderType);
+            orderBy == null ? "random" : orderBy);
   }
 }
