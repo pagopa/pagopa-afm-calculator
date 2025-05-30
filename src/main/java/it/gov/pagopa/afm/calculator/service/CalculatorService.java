@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.validation.Valid;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
@@ -55,7 +56,7 @@ public class CalculatorService {
           Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName);
 
   private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> randomComparator =
-          (t1, t2) -> Integer.compare(ThreadLocalRandom.current().nextInt(3) - 1, 0);
+          (t1, t2) -> Integer.compare(new SecureRandom().nextInt(3) - 1, 0);
 
   public CalculatorService(
           @Value("${payment.amount.threshold}") String amountThreshold,
@@ -209,7 +210,6 @@ public class CalculatorService {
       transfers =
           transfers.stream().filter(abiPredicate.and(onusPredicate)).collect(Collectors.toList());
     }
-
 
     Collections.sort(transfers, getDynamicComparator(orderType, onUsFirst));
 
@@ -568,22 +568,22 @@ public class CalculatorService {
         });
   }
 
-  /**
-   * sort by bundles' fee grouped by PSP
-   *
-   * @param transfers list of transfers to sort
-   */
-  private static void sortByFeePerPspMulti(List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers) {
-    transfers.sort(
-        (t1, t2) -> {
-          int primarySort = t1.getIdPsp().compareTo(t2.getIdPsp());
-          if (primarySort == 0) {
-            // if two bundles are of the same PSP we'll sort by fees
-            return t1.getTaxPayerFee().compareTo(t2.getTaxPayerFee());
-          }
-          return 0; // fixed to 0 because we don't want to sort by PSP name.
-        });
-  }
+//  /**
+//   * sort by bundles' fee grouped by PSP
+//   *
+//   * @param transfers list of transfers to sort
+//   */
+//  private static void sortByFeePerPspMulti(List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers) {
+//    transfers.sort(
+//        (t1, t2) -> {
+//          int primarySort = t1.getIdPsp().compareTo(t2.getIdPsp());
+//          if (primarySort == 0) {
+//            // if two bundles are of the same PSP we'll sort by fees
+//            return t1.getTaxPayerFee().compareTo(t2.getTaxPayerFee());
+//          }
+//          return 0; // fixed to 0 because we don't want to sort by PSP name.
+//        });
+//  }
 
   /**
    * Returns a dynamic comparator for {@code it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer}
