@@ -73,7 +73,8 @@ class CalculatorControllerTest {
               "/fees/multi?maxOccurrences=10&onUsFirst=true",
               "/psps/12345/fees/multi?maxOccurrences=10&&onUsFirst=true",
               "/fees/multi?maxOccurrences=10&onUsFirst=true&orderBy=byfee",
-              "/psps/12345/fees/multi?maxOccurrences=10&&onUsFirst=true&orderBy=byfee" })
+              "/psps/12345/fees/multi?maxOccurrences=10&&onUsFirst=true&orderBy=byfee",
+              "/fees/multi?onUsFirst=&orderBy=","/psps/12345/fees/multi?onUsFirst=&orderBy="})
   void getFeesMulti(String uri) throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
 

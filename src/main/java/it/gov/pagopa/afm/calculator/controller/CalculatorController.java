@@ -272,7 +272,7 @@ public class CalculatorController {
         paymentOption, maxOccurrences,
             StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp),
             StringUtils.isBlank(onUsFirst) || Boolean.parseBoolean(onUsFirst),
-            orderBy == null ? "random":orderBy );
+            StringUtils.isBlank(orderBy)? "random":orderBy );
   }
 
   @Operation(
@@ -356,6 +356,6 @@ public class CalculatorController {
         paymentOption, maxOccurrences,
             StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp),
             StringUtils.isBlank(onUsFirst) || Boolean.parseBoolean(onUsFirst),
-            orderBy == null ? "random" : orderBy);
+            StringUtils.isBlank(orderBy) ? "random" : orderBy);
   }
 }
