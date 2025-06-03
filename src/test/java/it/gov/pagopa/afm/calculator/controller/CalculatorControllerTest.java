@@ -1,18 +1,11 @@
 package it.gov.pagopa.afm.calculator.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import it.gov.pagopa.afm.calculator.TestUtil;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
-import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,6 +16,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import java.io.IOException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -84,6 +84,29 @@ class CalculatorControllerTest {
                             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+  }
+
+
+
+  @Test
+  void parameterTest() {
+    final CalculatorController controller = new CalculatorController();
+    Assertions.assertTrue(controller.getAllCCP(null));
+    Assertions.assertTrue(controller.getAllCCP(""));
+    Assertions.assertTrue(controller.getAllCCP("true"));
+    Assertions.assertFalse(controller.getAllCCP("false"));
+    Assertions.assertFalse(controller.getAllCCP("randomString"));
+
+    Assertions.assertTrue(controller.getOnUsFirst(null));
+    Assertions.assertTrue(controller.getOnUsFirst(""));
+    Assertions.assertTrue(controller.getOnUsFirst("true"));
+    Assertions.assertFalse(controller.getOnUsFirst("false"));
+    Assertions.assertFalse(controller.getOnUsFirst("randomString"));
+
+    Assertions.assertEquals("random", controller.getOrderBy(null));
+    Assertions.assertEquals("random", controller.getOrderBy(""));
+    Assertions.assertEquals("byfee", controller.getOrderBy("byfee"));
+    Assertions.assertEquals("bypspname", controller.getOrderBy("bypspname"));
   }
 
 }

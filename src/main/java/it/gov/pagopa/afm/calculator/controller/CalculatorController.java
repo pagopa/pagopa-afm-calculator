@@ -106,7 +106,7 @@ public class CalculatorController {
             .bin(paymentOptionByPsp.getBin())
             .build();
     return calculatorService.calculate(
-        paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
+        paymentOption, maxOccurrences, getAllCCP(allCcp));
   }
 
   @Operation(
@@ -172,7 +172,7 @@ public class CalculatorController {
                       + " included")
           String allCcp) {
     return calculatorService.calculate(
-        paymentOption, maxOccurrences, StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp));
+        paymentOption, maxOccurrences, getAllCCP(allCcp));
   }
 
   @Operation(
@@ -269,10 +269,7 @@ public class CalculatorController {
             .paymentNotice(paymentOptionByPsp.getPaymentNotice())
             .build();
     return calculatorService.calculateMulti(
-        paymentOption, maxOccurrences,
-            StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp),
-            StringUtils.isBlank(onUsFirst) || Boolean.parseBoolean(onUsFirst),
-            StringUtils.isBlank(orderBy)? "random":orderBy );
+        paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy));
   }
 
   @Operation(
@@ -353,9 +350,16 @@ public class CalculatorController {
                               " bypspname → sorted by PSP name.")
       String orderBy) {
     return calculatorService.calculateMulti(
-        paymentOption, maxOccurrences,
-            StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp),
-            StringUtils.isBlank(onUsFirst) || Boolean.parseBoolean(onUsFirst),
-            StringUtils.isBlank(orderBy) ? "random" : orderBy);
+        paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy));
   }
+
+    public boolean getAllCCP(String allCcp) {
+        return StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp);
+    }
+    public boolean getOnUsFirst(String onUsFirst) {
+        return StringUtils.isBlank(onUsFirst) || Boolean.parseBoolean(onUsFirst);
+    }
+    public String getOrderBy(String orderBy) {
+        return StringUtils.isBlank(orderBy) ? "random" : orderBy;
+    }
 }
