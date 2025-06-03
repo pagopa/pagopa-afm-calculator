@@ -68,56 +68,21 @@ class CalculatorControllerTest {
   }
 
   @ParameterizedTest
-  @CsvSource({"/fees/multi", "/psps/12345/fees/multi" })
+  @CsvSource({"/fees/multi", "/psps/12345/fees/multi",
+              "/fees/multi?maxOccurrences=10", "/psps/12345/fees/multi?maxOccurrences=10",
+              "/fees/multi?maxOccurrences=10&onUsFirst=true",
+              "/psps/12345/fees/multi?maxOccurrences=10&&onUsFirst=true",
+              "/fees/multi?maxOccurrences=10&onUsFirst=true&orderBy=byfee",
+              "/psps/12345/fees/multi?maxOccurrences=10&&onUsFirst=true&orderBy=byfee" })
   void getFeesMulti(String uri) throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
 
     mvc.perform(
-            post(uri)
-                .content(TestUtil.toJson(paymentOption))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                    post(uri)
+                            .content(TestUtil.toJson(paymentOption))
+                            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
   }
-
-  @ParameterizedTest
-  @CsvSource({"/fees/multi?maxOccurrences=10", "/psps/12345/fees/multi?maxOccurrences=10" })
-  void getFeesMultiMaxOccurrences(String uri) throws Exception {
-    var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-
-    mvc.perform(
-            post(uri)
-                .content(TestUtil.toJson(paymentOption))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-  }
-
-  @ParameterizedTest
-  @CsvSource({"/fees/multi?maxOccurrences=10&onUsFirst=true", "/psps/12345/fees/multi?maxOccurrences=10&&onUsFirst=true" })
-  void getFeesMultiOnusFirst(String uri) throws Exception {
-    var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-
-    mvc.perform(
-            post(uri)
-                .content(TestUtil.toJson(paymentOption))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-  }
-
-  @ParameterizedTest
-  @CsvSource({"/fees/multi?maxOccurrences=10&onUsFirst=true&orderBy=byfee", "/psps/12345/fees/multi?maxOccurrences=10&&onUsFirst=true&orderBy=byfee" })
-  void getFeesMultiOnusFirstOrderBy(String uri) throws Exception {
-    var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-
-    mvc.perform(
-            post(uri)
-                .content(TestUtil.toJson(paymentOption))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-  }
-
 
 }
