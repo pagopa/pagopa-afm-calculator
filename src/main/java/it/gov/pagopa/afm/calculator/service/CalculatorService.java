@@ -17,11 +17,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import javax.validation.Valid;
 import java.security.SecureRandom;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -568,22 +566,6 @@ public class CalculatorService {
         });
   }
 
-//  /**
-//   * sort by bundles' fee grouped by PSP
-//   *
-//   * @param transfers list of transfers to sort
-//   */
-//  private static void sortByFeePerPspMulti(List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers) {
-//    transfers.sort(
-//        (t1, t2) -> {
-//          int primarySort = t1.getIdPsp().compareTo(t2.getIdPsp());
-//          if (primarySort == 0) {
-//            // if two bundles are of the same PSP we'll sort by fees
-//            return t1.getTaxPayerFee().compareTo(t2.getTaxPayerFee());
-//          }
-//          return 0; // fixed to 0 because we don't want to sort by PSP name.
-//        });
-//  }
 
   /**
    * Returns a dynamic comparator for {@code it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer}
