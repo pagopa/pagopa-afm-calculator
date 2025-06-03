@@ -72,8 +72,8 @@ class CalculatorControllerTest {
               "/fees/multi?maxOccurrences=10", "/psps/12345/fees/multi?maxOccurrences=10",
               "/fees/multi?maxOccurrences=10&onUsFirst=true",
               "/psps/12345/fees/multi?maxOccurrences=10&&onUsFirst=true",
-              "/fees/multi?maxOccurrences=10&onUsFirst=true&orderBy=byfee",
-              "/psps/12345/fees/multi?maxOccurrences=10&&onUsFirst=true&orderBy=byfee",
+              "/fees/multi?maxOccurrences=10&onUsFirst=true&orderBy=fee",
+              "/psps/12345/fees/multi?maxOccurrences=10&&onUsFirst=true&orderBy=fee",
               "/fees/multi?onUsFirst=&orderBy=","/psps/12345/fees/multi?onUsFirst=&orderBy="})
   void getFeesMulti(String uri) throws Exception {
     var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -105,8 +105,8 @@ class CalculatorControllerTest {
 
     Assertions.assertEquals("random", controller.getOrderBy(null));
     Assertions.assertEquals("random", controller.getOrderBy(""));
-    Assertions.assertEquals("byfee", controller.getOrderBy("byfee"));
-    Assertions.assertEquals("bypspname", controller.getOrderBy("bypspname"));
+    Assertions.assertEquals("fee", controller.getOrderBy("fee"));
+    Assertions.assertEquals("pspname", controller.getOrderBy("pspname"));
   }
 
 }

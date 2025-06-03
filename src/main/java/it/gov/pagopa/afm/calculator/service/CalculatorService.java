@@ -571,7 +571,7 @@ public class CalculatorService {
    * Returns a dynamic comparator for {@code it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer}
    * based on the specified order type and whether to prioritize OnUs transfers.
    *
-   * @param orderType  the type of ordering to apply (BYFEE, BYPSPNAME, RANDOM)
+   * @param orderType  the sorting algorithm to apply (random, fee, pspname)
    * @param onUsFirst  if true, OnUs transfers are sorted before others
    * @return a comparator for {@code it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer}
    */
@@ -580,8 +580,8 @@ public class CalculatorService {
     Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> comparator ;
 
     switch (orderType != null ? orderType.toLowerCase() : "") {
-      case "byfee" -> comparator = byFeeComparator;
-      case "bypspname" -> comparator = byPspNameComparator;
+      case "fee" -> comparator = byFeeComparator;
+      case "pspname" -> comparator = byPspNameComparator;
       case "random" -> comparator = randomComparator;
       default -> comparator = randomComparator;
     }

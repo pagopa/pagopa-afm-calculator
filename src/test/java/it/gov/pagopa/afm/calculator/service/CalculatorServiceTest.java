@@ -824,7 +824,7 @@ class CalculatorServiceTest {
 
     var paymentOption =
             TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-    var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "byfee");
+    var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "fee");
     assertEquals(10, result.getBundleOptions().size());
 
     // Check that the fees are in ascending order
@@ -850,7 +850,7 @@ class CalculatorServiceTest {
 
     var paymentOption =
             TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-    var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "byfee");
+    var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "fee");
     assertEquals(10, result.getBundleOptions().size());
 
     // Check that the fees are in ascending order
@@ -890,7 +890,7 @@ class CalculatorServiceTest {
 
     var paymentOption =
             TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-    var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "bypspname");
+    var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "pspname");
     assertEquals(10, result.getBundleOptions().size());
 
     // Check that the Psp Names are in ascending order
@@ -917,7 +917,7 @@ class CalculatorServiceTest {
 
     var paymentOption =
             TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-    var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "bypspname");
+    var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "pspname");
     assertEquals(10, result.getBundleOptions().size());
 
     // Check that the Psp Names are in ascending order and the first element has onUs == true

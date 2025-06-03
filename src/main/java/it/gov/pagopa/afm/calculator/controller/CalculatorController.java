@@ -251,8 +251,8 @@ public class CalculatorController {
                   description =
                           "Sorting logic to be applied to the bundles [default = RANDOM]." +
                                   " random → bundles are sorted randomly." +
-                                  " byfee → sorted by increasing fee, if fees are equal then by PSP name." +
-                                  " bypspname → sorted by PSP name.")
+                                  " fee → sorted by increasing fee, if fees are equal then by PSP name." +
+                                  " pspname → sorted by PSP name.")
           String orderBy) {
     PaymentOptionMulti paymentOption =
         PaymentOptionMulti.builder()
@@ -346,8 +346,8 @@ public class CalculatorController {
               description =
                       "Sorting logic to be applied to the bundles [default = RANDOM]." +
                               " random → bundles are sorted randomly." +
-                              " byfee → sorted by increasing fee, if fees are equal then by PSP name." +
-                              " bypspname → sorted by PSP name.")
+                              " fee → sorted by increasing fee, if fees are equal then by PSP name." +
+                              " pspname → sorted by PSP name.")
       String orderBy) {
     return calculatorService.calculateMulti(
         paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy));
