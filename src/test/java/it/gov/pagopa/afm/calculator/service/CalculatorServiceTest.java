@@ -869,7 +869,7 @@ class CalculatorServiceTest {
           // If the fees are equal, check that the PSP names are in ascending order
           String prevPspName = options.get(prevFeeIndex).getPspBusinessName();
           String currPspName = options.get(i).getPspBusinessName();
-          assertTrue(prevPspName.compareTo(currPspName) < 0, "Psp Names are not in ascending order: " + prevPspName + " > " + currPspName);
+          assertTrue(prevPspName.compareTo(currPspName) <= 0, "Psp Names are not in ascending order: " + prevPspName + " > " + currPspName);
         }
 
       }
@@ -899,7 +899,7 @@ class CalculatorServiceTest {
       int prevFeeIndex= i - 1;
       String prevPspName = options.get(prevFeeIndex).getPspBusinessName();
       String currPspName = options.get(i).getPspBusinessName();
-      assertTrue(prevPspName.compareTo(currPspName) < 0, "Psp Names are not in ascending order: " + prevPspName + " > " + currPspName);
+      assertTrue(prevPspName.compareTo(currPspName) <= 0, "Psp Names are not in ascending order: " + prevPspName + " > " + currPspName);
     }
   }
 
@@ -931,7 +931,7 @@ class CalculatorServiceTest {
       else {
         String prevPspName = options.get(prevFeeIndex).getPspBusinessName();
         String currPspName = options.get(i).getPspBusinessName();
-        assertTrue(prevPspName.compareTo(currPspName) < 0, "Psp Names are not in ascending order: " + prevPspName + " > " + currPspName);
+        assertTrue(prevPspName.compareTo(currPspName) <= 0, "Psp Names are not in ascending order: " + prevPspName + " > " + currPspName);
       }
     }
   }
