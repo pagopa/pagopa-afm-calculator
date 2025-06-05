@@ -1,7 +1,9 @@
 package it.gov.pagopa.afm.calculator.util;
 
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
+@UtilityClass
 public class CalculatorUtil {
 
     public static boolean getAllCCP(String allCcp) {

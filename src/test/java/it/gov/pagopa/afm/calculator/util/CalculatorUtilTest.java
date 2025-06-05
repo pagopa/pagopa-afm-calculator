@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static it.gov.pagopa.afm.calculator.util.CalculatorUtil.*;
 
-public class CalculatorUtilTest {
+class CalculatorUtilTest {
 
     @Test
     void parameterTest() {
