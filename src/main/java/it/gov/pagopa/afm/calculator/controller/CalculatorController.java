@@ -11,13 +11,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.model.*;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
+
+import static it.gov.pagopa.afm.calculator.util.CalculatorUtil.*;
 
 @RestController()
 @Tag(name = "Calculator", description = "Everything about Calculator business logic")
@@ -353,13 +353,5 @@ public class CalculatorController {
         paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy));
   }
 
-    public boolean getAllCCP(String allCcp) {
-        return StringUtils.isBlank(allCcp) || Boolean.parseBoolean(allCcp);
-    }
-    public boolean getOnUsFirst(String onUsFirst) {
-        return StringUtils.isBlank(onUsFirst) || Boolean.parseBoolean(onUsFirst);
-    }
-    public String getOrderBy(String orderBy) {
-        return StringUtils.isBlank(orderBy) ? "random" : orderBy;
-    }
+
 }

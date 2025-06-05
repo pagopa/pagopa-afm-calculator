@@ -586,7 +586,9 @@ public class CalculatorService {
       default -> comparator = randomComparator;
     }
 
-    return onUsFirst?onUsFirstComparator.thenComparing(comparator):comparator;
+    return onUsFirst
+            ? onUsFirstComparator.thenComparing(comparator)
+            : comparator;
 
   }
 
