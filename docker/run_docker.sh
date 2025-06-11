@@ -21,8 +21,18 @@ else
 fi
 export image=${image}
 
+FILE=.env
+if test -f "$FILE"; then
+    rm .env
+fi
+config=$(yq  -r '."microservice-chart".envConfig' ../helm/values-$ENV.yaml)
+for line in $(echo $config | jq -r '. | to_entries[] | select(.key) | "\(.key)=\(.value)"'); do
+    echo $line >> .env
+done
+
 stack_name=$(cd .. && basename "$PWD")
 docker compose -p "${stack_name}" up -d --remove-orphans --force-recreate --build
+
 
 # waiting the containers
 printf 'Waiting for the service'
