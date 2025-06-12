@@ -93,17 +93,12 @@ public class CosmosRepository {
     // add filter by Touch Point: touchpoint=<value> || touchpoint==null
     if (paymentOptionMulti.getTouchpoint() != null
         && !paymentOptionMulti.getTouchpoint().equalsIgnoreCase("any")) {
-      var touchpointNameFilter = isEqualOrAny("name", paymentOptionMulti.getTouchpoint());
+      var touchpointNameFilter = isEqual("name", paymentOptionMulti.getTouchpoint());
       Iterable<Touchpoint> touchpoint =
           cosmosTemplate.find(
               new CosmosQuery(touchpointNameFilter), Touchpoint.class, "touchpoints");
 
-      if (Iterables.size(touchpoint) == 0) {
-        throw new AppException(
-            HttpStatus.NOT_FOUND,
-            "Touchpoint not found",
-            "Cannot find touchpont with name: '" + paymentOptionMulti.getTouchpoint() + "'");
-      }
+      checkTouchpointListSize(Iterables.size(touchpoint), paymentOptionMulti.getTouchpoint());
 
       var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.iterator().next().getName());
       queryResult = and(queryResult, touchpointFilter);
@@ -193,17 +188,12 @@ public class CosmosRepository {
     // add filter by Touch Point: touchpoint=<value> || touchpoint==null
     if (paymentOption.getTouchpoint() != null
         && !paymentOption.getTouchpoint().equalsIgnoreCase("any")) {
-      var touchpointNameFilter = isEqualOrAny("name", paymentOption.getTouchpoint());
+      var touchpointNameFilter = isEqual("name", paymentOption.getTouchpoint());
       Iterable<Touchpoint> touchpoint =
           cosmosTemplate.find(
               new CosmosQuery(touchpointNameFilter), Touchpoint.class, "touchpoints");
 
-      if (Iterables.size(touchpoint) == 0) {
-        throw new AppException(
-            HttpStatus.NOT_FOUND,
-            "Touchpoint not found",
-            "Cannot find touchpont with name: '" + paymentOption.getTouchpoint() + "'");
-      }
+      checkTouchpointListSize(Iterables.size(touchpoint), paymentOption.getTouchpoint());
 
       var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.iterator().next().getName());
       queryResult = and(queryResult, touchpointFilter);
@@ -436,5 +426,21 @@ public class CosmosRepository {
       queryResult = and(queryResult, pspNotIn);
     }
     return queryResult;
+  }
+
+  private void checkTouchpointListSize(int touchpointListSize, String touchpointName) {
+    if (touchpointListSize == 0) {
+      throw new AppException(
+              HttpStatus.NOT_FOUND,
+              "Touchpoint not found",
+              "Cannot find touchpont with name: '" + touchpointName + "'");
+    }
+
+    if (touchpointListSize > 1) {
+      throw new AppException(
+              HttpStatus.INTERNAL_SERVER_ERROR,
+              "Too many touchpoints found",
+              "Too many touchpoints found with name: '" + touchpointName + "', contact technical support");
+    }
   }
 }

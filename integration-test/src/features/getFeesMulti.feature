@@ -1,4 +1,4 @@
-Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
+Feature: GetFeesMulti - Get List of fees by CI, amount, method, touchpoint using V2 APIs
 
   Background: 
     Given the configuration "data.json"

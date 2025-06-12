@@ -41,7 +41,7 @@ for line in $(echo $secret | jq -r '. | to_entries[] | select(.key) | "\(.key)=\
 #      echo "Set secret env ${array[0]}"
 #      echo "::add-mask::$value"
 #      echo AFM_SA_CONNECTION_STRING=$value >> $GITHUB_ENV
-#  fi 
+#  fi
 done
 
 
