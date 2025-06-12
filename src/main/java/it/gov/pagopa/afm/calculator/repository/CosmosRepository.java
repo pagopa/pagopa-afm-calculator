@@ -93,7 +93,7 @@ public class CosmosRepository {
     // add filter by Touch Point: touchpoint=<value> || touchpoint==null
     if (paymentOptionMulti.getTouchpoint() != null
         && !paymentOptionMulti.getTouchpoint().equalsIgnoreCase("any")) {
-      var touchpointNameFilter = isEqualOrAny("name", paymentOptionMulti.getTouchpoint());
+      var touchpointNameFilter = isEqual("name", paymentOptionMulti.getTouchpoint());
       Iterable<Touchpoint> touchpoint =
           cosmosTemplate.find(
               new CosmosQuery(touchpointNameFilter), Touchpoint.class, "touchpoints");
@@ -103,6 +103,13 @@ public class CosmosRepository {
             HttpStatus.NOT_FOUND,
             "Touchpoint not found",
             "Cannot find touchpont with name: '" + paymentOptionMulti.getTouchpoint() + "'");
+      }
+
+      if (Iterables.size(touchpoint) > 1) {
+        throw new AppException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Too many touchpoints found",
+                "Too many touchpoints found with name: '" + paymentOptionMulti.getTouchpoint() + "', contact technical support");
       }
 
       var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.iterator().next().getName());
@@ -193,7 +200,7 @@ public class CosmosRepository {
     // add filter by Touch Point: touchpoint=<value> || touchpoint==null
     if (paymentOption.getTouchpoint() != null
         && !paymentOption.getTouchpoint().equalsIgnoreCase("any")) {
-      var touchpointNameFilter = isEqualOrAny("name", paymentOption.getTouchpoint());
+      var touchpointNameFilter = isEqual("name", paymentOption.getTouchpoint());
       Iterable<Touchpoint> touchpoint =
           cosmosTemplate.find(
               new CosmosQuery(touchpointNameFilter), Touchpoint.class, "touchpoints");
@@ -203,6 +210,13 @@ public class CosmosRepository {
             HttpStatus.NOT_FOUND,
             "Touchpoint not found",
             "Cannot find touchpont with name: '" + paymentOption.getTouchpoint() + "'");
+      }
+
+      if (Iterables.size(touchpoint) > 1) {
+        throw new AppException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Too many touchpoints found",
+                "Too many touchpoints found with name: '" + paymentOption.getTouchpoint() + "', contact technical support");
       }
 
       var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.iterator().next().getName());
