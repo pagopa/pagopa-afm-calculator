@@ -125,6 +125,26 @@ class CalculatorServiceTest {
     Initializer.table.execute(TableOperation.insert(e));
   }
 
+  @Test
+  @Order(0)
+  void calculateTooManyTouchPointsException() throws IOException, JSONException {
+    Touchpoint touchpoint1 = TestUtil.getMockTouchpoints();
+    Touchpoint touchpoint2 = TestUtil.getMockTouchpoints();
+    var touchpointList = new ArrayList<>();https://github.com/pagopa/pagopa-afm-calculator/actions/runs/15437046294/job/43445739038
+    touchpointList.add(touchpoint1);
+    touchpointList.add(touchpoint2);
+
+    when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
+            .thenReturn(touchpointList);
+
+    var paymentOptionMulti = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+    AppException exception =
+            assertThrows(
+                    AppException.class, () -> calculatorService.calculateMulti(paymentOptionMulti, 10, true, true, "random"));
+
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getHttpStatus());
+  }
+
   @ParameterizedTest
   @CsvSource({
           "requests/getFees.json, responses/getFees.json",
@@ -935,7 +955,5 @@ class CalculatorServiceTest {
       }
     }
   }
-
-
 }
 
