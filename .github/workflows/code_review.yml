@@ -83,7 +83,7 @@ jobs:
 
           cd ./integration-test
           chmod +x ./run_integration_test.sh
-          ./run_integration_test.sh local old
+          ./run_integration_test.sh local cucumber
 
 
   delete_github_deployments:
