@@ -368,7 +368,7 @@
       "digitalStampRestriction": false,
       "name": "pacchetto 7",
       "description": "pacchetto 7",
-      "paymentAmount": 100,
+      "paymentAmount": 10,
       "minPaymentAmount": 899999999999980,
       "maxPaymentAmount": 899999999999999,
       "type": "GLOBAL",

@@ -94,9 +94,17 @@ When(/^the client send (GET|POST|PUT|DELETE) to (.*)$/,
     responseToCheck = await call(method, afm_host + url, body)
   });
 
-When(/^the client send a V2 (GET|POST|PUT|DELETE) to (.*)$/,
+When(/^the client send a V2 (GET|POST|PUT|DELETE) to (.*) without parameters$/,
   async function(method, url) {
-    responseToCheck = await call(method, afm_host_V2 + url + afm_api_extension_V2, body)
+    responseToCheck = await call(method, afm_host_V2 + url + afm_api_extension_V2, body, {})
+  });
+
+When(/^the client send a V2 (GET|POST|PUT|DELETE) to (.*) with onUsFirst (true|false) and orderBy (random|fee|pspname)$/,
+  async function(method, url, onUsFirst, orderBy) {
+    const params = {}
+    params.onUsFirst = onUsFirst
+    params.orderBy = orderBy
+    responseToCheck = await call(method, afm_host_V2 + url + afm_api_extension_V2, body, {params})
   });
 
 Then(/^check statusCode is (\d+)$/, function(status) {
