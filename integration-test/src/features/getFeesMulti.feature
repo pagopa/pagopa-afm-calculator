@@ -28,7 +28,7 @@ Feature: GetFeesMulti - Get List of fees by CI, amount, method, touchpoint using
     When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response has one bundle for each psp
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V2" API is:
     | onUs  |
     | true  |
     | false |
@@ -66,7 +66,7 @@ Feature: GetFeesMulti - Get List of fees by CI, amount, method, touchpoint using
     When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response has one bundle for each psp
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V2" API is:
     | onUs  |
     | true  |
     And the body response for the bundleOptions.idsCiBundle field is:
@@ -101,7 +101,7 @@ Feature: GetFeesMulti - Get List of fees by CI, amount, method, touchpoint using
     When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response has one bundle for each psp
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V2" API is:
     | onUs  |
     | true  |
     | false |
@@ -149,7 +149,7 @@ Feature: GetFeesMulti - Get List of fees by CI, amount, method, touchpoint using
     When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response has one bundle for each psp
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V2" API is:
     | onUs  |
     | true  |
     | false |
@@ -193,7 +193,7 @@ Feature: GetFeesMulti - Get List of fees by CI, amount, method, touchpoint using
     When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response has one bundle for each psp
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V2" API is:
     | onUs  |
     | true  |
     | false |
@@ -227,7 +227,7 @@ Feature: GetFeesMulti - Get List of fees by CI, amount, method, touchpoint using
     When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response has one bundle for each psp
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V2" API is:
     | onUs  |
     | true  |
     | false |
@@ -273,7 +273,7 @@ Feature: GetFeesMulti - Get List of fees by CI, amount, method, touchpoint using
     When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response has one bundle for each psp
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V2" API is:
     | onUs  |
     | true  |
     | false |
@@ -319,7 +319,7 @@ Feature: GetFeesMulti - Get List of fees by CI, amount, method, touchpoint using
     When the client send a V2 POST to /fees
     Then check statusCode is 200
     And the body response has one bundle for each psp
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V2" API is:
     | onUs  |
     | true  |
     | false |
@@ -365,7 +365,7 @@ Feature: GetFeesMulti - Get List of fees by CI, amount, method, touchpoint using
       When the client send a V2 POST to /fees
       Then check statusCode is 200
       And the body response has one bundle for each psp
-      And the body response ordering for the bundleOptions.onUs field is:
+      And the body response ordering for the bundleOptions.onUs field for the "V2" API is:
       | onUs  |
       | true  |
       | false |
@@ -401,7 +401,7 @@ Feature: GetFeesMulti - Get List of fees by CI, amount, method, touchpoint using
       When the client send a V2 POST to /fees
       Then check statusCode is 200
       And the body response has one bundle for each psp
-      And the body response ordering for the bundleOptions.onUs field is:
+      And the body response ordering for the bundleOptions.onUs field for the "V2" API is:
       | onUs  |
       | true  |
       | false |

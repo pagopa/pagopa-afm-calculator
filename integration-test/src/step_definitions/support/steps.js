@@ -108,12 +108,14 @@ Then(/^check response body is$/, function(payload) {
   assert.deepStrictEqual(responseToCheck.data, JSON.parse(payload));
 });
 
-Then('the body response ordering for the bundleOptions.onUs field is:', function (dataTable) {
-  // force the obtained list to be sorted by onUs field value
-  responseToCheck.data.bundleOptions.sort(function (a, b) {
-	    // true values first
-    return (a.onUs === b.onUs)? 0 : a.onUs? -1 : 1;
-  });
+Then('the body response ordering for the bundleOptions.onUs field for the {string} API is:', function (version, dataTable) {
+  // force the obtained list to be sorted by onUs field value if API version is V1
+  if(version === "V1") {
+    responseToCheck.data.bundleOptions.sort(function (a, b) {
+  	    // true values first
+      return (a.onUs === b.onUs)? 0 : a.onUs? -1 : 1;
+    });
+  }
   for (let i=0; i<dataTable.rows().length; i++){
     let bodyOnUs = responseToCheck.data.bundleOptions[i].onUs;
     let checkOnUs = JSON.parse(dataTable.rows()[i][0]);
