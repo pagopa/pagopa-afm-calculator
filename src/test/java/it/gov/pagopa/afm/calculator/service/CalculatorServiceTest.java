@@ -127,7 +127,7 @@ class CalculatorServiceTest {
 
   @Test
   @Order(0)
-  void calculateTooManyTouchPointsException() throws IOException, JSONException {
+  void calculateTooManyTouchPointsException() throws IOException {
     Touchpoint touchpoint1 = TestUtil.getMockTouchpoints();
     Touchpoint touchpoint2 = TestUtil.getMockTouchpoints();
     var touchpointList = new ArrayList<>();https://github.com/pagopa/pagopa-afm-calculator/actions/runs/15437046294/job/43445739038
