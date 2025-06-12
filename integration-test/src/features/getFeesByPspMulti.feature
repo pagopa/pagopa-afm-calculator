@@ -1,4 +1,4 @@
-Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
+Feature: GetFeeByPsp - Get fee by CI, amount, method, touchpoint with specified PSP using V2 APIs
 
   Background: 
     Given the configuration "data.json"
