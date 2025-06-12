@@ -98,19 +98,7 @@ public class CosmosRepository {
           cosmosTemplate.find(
               new CosmosQuery(touchpointNameFilter), Touchpoint.class, "touchpoints");
 
-      if (Iterables.size(touchpoint) == 0) {
-        throw new AppException(
-            HttpStatus.NOT_FOUND,
-            "Touchpoint not found",
-            "Cannot find touchpont with name: '" + paymentOptionMulti.getTouchpoint() + "'");
-      }
-
-      if (Iterables.size(touchpoint) > 1) {
-        throw new AppException(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "Too many touchpoints found",
-                "Too many touchpoints found with name: '" + paymentOptionMulti.getTouchpoint() + "', contact technical support");
-      }
+      checkTouchpointListSize(Iterables.size(touchpoint), paymentOptionMulti.getTouchpoint());
 
       var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.iterator().next().getName());
       queryResult = and(queryResult, touchpointFilter);
@@ -205,19 +193,7 @@ public class CosmosRepository {
           cosmosTemplate.find(
               new CosmosQuery(touchpointNameFilter), Touchpoint.class, "touchpoints");
 
-      if (Iterables.size(touchpoint) == 0) {
-        throw new AppException(
-            HttpStatus.NOT_FOUND,
-            "Touchpoint not found",
-            "Cannot find touchpont with name: '" + paymentOption.getTouchpoint() + "'");
-      }
-
-      if (Iterables.size(touchpoint) > 1) {
-        throw new AppException(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "Too many touchpoints found",
-                "Too many touchpoints found with name: '" + paymentOption.getTouchpoint() + "', contact technical support");
-      }
+      checkTouchpointListSize(Iterables.size(touchpoint), paymentOption.getTouchpoint());
 
       var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.iterator().next().getName());
       queryResult = and(queryResult, touchpointFilter);
@@ -450,5 +426,21 @@ public class CosmosRepository {
       queryResult = and(queryResult, pspNotIn);
     }
     return queryResult;
+  }
+
+  private void checkTouchpointListSize(int touchpointListSize, String touchpointName) {
+    if (touchpointListSize == 0) {
+      throw new AppException(
+              HttpStatus.NOT_FOUND,
+              "Touchpoint not found",
+              "Cannot find touchpont with name: '" + touchpointName + "'");
+    }
+
+    if (touchpointListSize > 1) {
+      throw new AppException(
+              HttpStatus.INTERNAL_SERVER_ERROR,
+              "Too many touchpoints found",
+              "Too many touchpoints found with name: '" + touchpointName + "', contact technical support");
+    }
   }
 }
