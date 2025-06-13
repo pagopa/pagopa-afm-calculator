@@ -73,7 +73,7 @@ Feature: GetFeeByPsp
       """
     When the client send POST to /psps/PPAYITR1XXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
       | onUs  |
       | false |
       | false |
@@ -99,7 +99,7 @@ Feature: GetFeeByPsp
       """
     When the client send POST to /psps/BPPIITRRXXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
       | onUs  |
       | true  |
       | false |
@@ -129,7 +129,7 @@ Feature: GetFeeByPsp
       """
     When the client send POST to /psps/BPPIITRRXXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
       | onUs  |
       | true  |
       | false |
@@ -210,7 +210,7 @@ Feature: GetFeeByPsp
       """
     When the client send POST to /psps/BPPIITRRXXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
       | onUs  |
       | false |
       | false |
@@ -237,7 +237,7 @@ Feature: GetFeeByPsp
       """
     When the client send POST to /psps/BPPIITRRXXX/fees
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
       | onUs  |
       | true  |
       | false |

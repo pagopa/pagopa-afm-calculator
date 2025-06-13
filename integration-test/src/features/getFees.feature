@@ -27,7 +27,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
     | onUs  |
     | true  |
     | false |
@@ -59,7 +59,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
     | onUs  |
     | true  |
     | true  |
@@ -94,7 +94,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
     | onUs  |
     | true |
     | false |
@@ -124,7 +124,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
     | onUs  |
     | true |
     | false |
@@ -208,7 +208,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
     | onUs  |
     | false |
     | false |
@@ -238,7 +238,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
     | onUs  |
     | true  |
     | true  |
@@ -274,7 +274,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
     | onUs  |
 
   Scenario: Execute a GetFees request with allCcp flag set to false
@@ -327,6 +327,6 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
-    And the body response ordering for the bundleOptions.onUs field is:
+    And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
     | onUs  |
     | true  |
