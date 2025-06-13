@@ -174,6 +174,14 @@ Then('the sum of the fees is correct and the EC codes are:', function (dataTable
   }
 });
 
+Then('the body response for the bundleOptions.bundleId field is:', function (dataTable) {
+  for (let i=0; i<dataTable.rows().length; i++){
+    let idBundle = responseToCheck.data.bundleOptions[i].idBundle;
+    let checkIdBundle = dataTable.rows()[i];
+    assert.equal(idBundle, checkIdBundle)
+  }
+});
+
 
 function mapToValidBundles(config) {
 
