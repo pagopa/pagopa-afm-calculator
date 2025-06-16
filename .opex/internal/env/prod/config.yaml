@@ -11,3 +11,19 @@ overrides:
   base_path: "/afm/calculator-service/{version}"
   hosts: # Use these hosts instead of those inside the OpenApi spec
     - api.platform.pagopa.it
+  endpoints:
+    GET /info:
+      response_time_threshold: 1
+      availability_threshold: 0.90
+    POST /fees:
+      response_time_threshold: 9
+      availability_threshold: 0.90
+    POST /fees/multi:
+      response_time_threshold: 9
+      availability_threshold: 0.90
+    POST /psps/{idPsp}/fees:
+      response_time_threshold: 9
+      availability_threshold: 0.90
+    POST /psps/{idPsp}/fees/multi:
+      response_time_threshold: 9
+      availability_threshold: 0.90
