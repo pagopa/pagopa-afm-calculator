@@ -62,3 +62,11 @@ data "azurerm_key_vault_secret" "key_vault_sa_connection_string" {
   name         = "afm-${var.env_short}-sa-connection-string"
   key_vault_id = data.azurerm_key_vault.domain_key_vault.id
 }
+
+data "azurerm_key_vault_secret" "key_vault_integration_test_afm_calculator_subkey" {
+  count        = var.env_short != "p" ? 1 : 0
+
+  name         = "integration-test-afm-calculator-subkey"
+  key_vault_id = data.azurerm_key_vault.domain_key_vault.id
+}
+

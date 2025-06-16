@@ -5,8 +5,8 @@ if (process.env.canary) {
   axios.defaults.headers.common['X-CANARY'] = 'canary' // for all requests
 }
 
-function get(url) {
-  return axios.get(url)
+function get(url, config) {
+  return axios.get(url, config)
   .then(res => {
     return res;
   })
@@ -15,8 +15,8 @@ function get(url) {
   });
 }
 
-function post(url, body) {
-  return axios.post(url, body)
+function post(url, body, config) {
+  return axios.post(url, body, config)
   .then(res => {
     return res;
   })
@@ -25,8 +25,8 @@ function post(url, body) {
   });
 }
 
-function put(url, body) {
-  return axios.put(url, body)
+function put(url, body, config) {
+  return axios.put(url, body, config)
   .then(res => {
     return res;
   })
@@ -35,8 +35,8 @@ function put(url, body) {
   });
 }
 
-function del(url) {
-  return axios.delete(url)
+function del(url, config) {
+  return axios.delete(url, config)
   .then(res => {
     return res;
   })
@@ -45,18 +45,18 @@ function del(url) {
   });
 }
 
-function call(method, url, body) {
+function call(method, url, body, config) {
   if (method === 'GET') {
-    return get(url)
+    return get(url, config)
   }
   if (method === 'POST') {
-    return post(url, body)
+    return post(url, body, config)
   }
   if (method === 'PUT') {
-    return put(url, body)
+    return put(url, body, config)
   }
   if (method === 'DELETE') {
-    return del(url)
+    return del(url, config)
   }
 
 }

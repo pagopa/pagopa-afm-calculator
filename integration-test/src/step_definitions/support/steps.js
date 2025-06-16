@@ -94,9 +94,17 @@ When(/^the client send (GET|POST|PUT|DELETE) to (.*)$/,
     responseToCheck = await call(method, afm_host + url, body)
   });
 
-When(/^the client send a V2 (GET|POST|PUT|DELETE) to (.*)$/,
+When(/^the client send a V2 (GET|POST|PUT|DELETE) to (.*) without parameters$/,
   async function(method, url) {
-    responseToCheck = await call(method, afm_host_V2 + url + afm_api_extension_V2, body)
+    responseToCheck = await call(method, afm_host_V2 + url + afm_api_extension_V2, body, {})
+  });
+
+When(/^the client send a V2 (GET|POST|PUT|DELETE) to (.*) with onUsFirst (true|false) and orderBy (random|fee|pspname)$/,
+  async function(method, url, onUsFirst, orderBy) {
+    const params = {}
+    params.onUsFirst = onUsFirst
+    params.orderBy = orderBy
+    responseToCheck = await call(method, afm_host_V2 + url + afm_api_extension_V2, body, {params})
   });
 
 Then(/^check statusCode is (\d+)$/, function(status) {
@@ -108,12 +116,14 @@ Then(/^check response body is$/, function(payload) {
   assert.deepStrictEqual(responseToCheck.data, JSON.parse(payload));
 });
 
-Then('the body response ordering for the bundleOptions.onUs field is:', function (dataTable) {
-  // force the obtained list to be sorted by onUs field value
-  responseToCheck.data.bundleOptions.sort(function (a, b) {
-	    // true values first
-    return (a.onUs === b.onUs)? 0 : a.onUs? -1 : 1;
-  });
+Then('the body response ordering for the bundleOptions.onUs field for the {string} API is:', function (version, dataTable) {
+  // force the obtained list to be sorted by onUs field value if API version is V1
+  if(version === "V1") {
+    responseToCheck.data.bundleOptions.sort(function (a, b) {
+  	    // true values first
+      return (a.onUs === b.onUs)? 0 : a.onUs? -1 : 1;
+    });
+  }
   for (let i=0; i<dataTable.rows().length; i++){
     let bodyOnUs = responseToCheck.data.bundleOptions[i].onUs;
     let checkOnUs = JSON.parse(dataTable.rows()[i][0]);
@@ -161,6 +171,14 @@ Then('the sum of the fees is correct and the EC codes are:', function (dataTable
     }
     assert.equal(responseToCheck.data.bundleOptions[i].taxPayerFee - responseToCheck.data.bundleOptions[i].actualPayerFee, sumFee);
     sumFee = 0;
+  }
+});
+
+Then('the body response for the bundleOptions.bundleId field is:', function (dataTable) {
+  for (let i=0; i<dataTable.rows().length; i++){
+    let idBundle = responseToCheck.data.bundleOptions[i].idBundle;
+    let checkIdBundle = dataTable.rows()[i];
+    assert.equal(idBundle, checkIdBundle)
   }
 });
 
