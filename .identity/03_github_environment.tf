@@ -25,7 +25,6 @@ locals {
     "CI_CLIENT_ID" : var.env_short != "p" ? data.azurerm_user_assigned_identity.identity_ci[0].client_id : "",
     "TENANT_ID" : data.azurerm_client_config.current.tenant_id,
     "SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id,
-    "ISSUER_RANGE_TABLE" : "${local.prefix}${var.env_short}${local.location_short}${local.domain}saissuerrangetable",
     "AFM_SA_CONNECTION_STRING" : data.azurerm_key_vault_secret.key_vault_sa_connection_string.value,
     "CLIENT_ID" : data.azurerm_user_assigned_identity.identity_cd_01.client_id,
     "SUBKEY" : (var.env_short != "p" ? data.azurerm_key_vault_secret.key_vault_integration_test_afm_calculator_subkey[0].value : "fake"),
@@ -39,7 +38,8 @@ locals {
     "NAMESPACE" : local.domain,
     "INTEGRATION_TEST_STORAGE_ACCOUNT_NAME" : local.integration_test.storage_account_name
     "INTEGRATION_TEST_REPORTS_FOLDER" : local.integration_test.reports_folder
-    "WORKLOAD_IDENTITY_ID": data.azurerm_user_assigned_identity.workload_identity_clientid.client_id
+    "WORKLOAD_IDENTITY_ID": data.azurerm_user_assigned_identity.workload_identity_clientid.client_id,
+    "ISSUER_RANGE_TABLE" : "${local.prefix}${var.env_short}${local.location_short}${local.domain}saissuerrangetable",
   }
   repo_secrets = {
     "SONAR_TOKEN" : data.azurerm_key_vault_secret.key_vault_sonar.value,
