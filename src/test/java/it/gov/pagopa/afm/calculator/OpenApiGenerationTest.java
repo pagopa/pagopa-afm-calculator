@@ -29,6 +29,7 @@ class OpenApiGenerationTest {
 
     @Test
     void swaggerSpringPlugin() throws Exception {
+        saveOpenAPI("/v3/api-docs/internal/", "openapi-internal.json");
         saveOpenAPI("/v3/api-docs/v1/", "openapi-v1-dev-uat.json");
         saveOpenAPI("/v3/api-docs/v2/", "openapi-v2.json");
         saveOpenAPI("/v3/api-docs/node_v1/", "openapi-node-v1.json");
