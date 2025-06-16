@@ -11,7 +11,7 @@
     "cucumber-allure": "npx cucumber-js --publish -r step_definitions --format allure-cucumberjs/reporter --format-options '{ \"resultsDir\": \"../allure/results\" }'"
   },
   "dependencies": {
-    "@azure/data-tables": "^13.3.0",
+    "@azure/data-tables": "^13.3.1",
     "@cucumber/cucumber": "^11.2.0",
     "@cucumber/messages": "^27.0.2",
     "allure-cucumberjs": "^3.0.9",
