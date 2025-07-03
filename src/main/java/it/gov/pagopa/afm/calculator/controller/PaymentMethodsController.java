@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController()
 @Tag(name = "Payment Methods", description = "Everything about the payment methods")
@@ -25,7 +26,7 @@ public class PaymentMethodsController {
     @PostMapping(
             value = "/search",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public PaymentMethodsResponse searchPaymentMethods(@RequestBody @Valid PaymentMethodRequest paymentMethodRequest) {
+    public List<PaymentMethodsResponse> searchPaymentMethods(@RequestBody @Valid PaymentMethodRequest paymentMethodRequest) {
         return paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
     }
 

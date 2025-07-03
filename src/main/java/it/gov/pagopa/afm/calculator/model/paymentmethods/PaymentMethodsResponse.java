@@ -22,4 +22,7 @@ public class PaymentMethodsResponse {
     Map<String, String> metadata;
     FeeRange feeRange;
     PaymentMethodDisabledReason disabledReason;
+    String paymentMethodAsset;
+    MethodManagement methodManagement;
+    Map<String, String> paymentMethodsBrandAssets;
 }

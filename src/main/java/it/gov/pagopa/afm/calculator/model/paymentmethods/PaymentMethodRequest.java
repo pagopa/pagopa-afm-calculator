@@ -1,12 +1,15 @@
 package it.gov.pagopa.afm.calculator.model.paymentmethods;
 
 
+import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
+import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Builder
 @Data
@@ -16,11 +19,18 @@ public class PaymentMethodRequest {
 
     @NotNull
     UserTouchpoint userTouchpoint;
+
     @NotNull
     UserDevice userDevice;
-    @NotNull
-    Integer amount;
-    Boolean digitalStamp;
+
+    String bin;
+
+    Integer totalAmount;
+
+    List<PaymentNoticeItem> paymentNotice;
+
+    Boolean allCCp;
+
     String targetKey;
 
 }
