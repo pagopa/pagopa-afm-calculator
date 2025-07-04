@@ -3,15 +3,14 @@ package it.gov.pagopa.afm.calculator.entity;
 import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.MethodManagement;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.*;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 

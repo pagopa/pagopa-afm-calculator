@@ -1,4 +1,4 @@
-package it.gov.pagopa.afm.calculator.model.paymentmethods;
+package it.gov.pagopa.afm.calculator.model.paymentmethods.enums;
 
 public enum PaymentMethodGroup {
     CP,

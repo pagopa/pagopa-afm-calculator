@@ -13,33 +13,33 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class MockitoConfig {
 
-  @Bean
-  @Primary
-  public CosmosTemplate cosmosTemplate() {
-    return Mockito.mock(CosmosTemplate.class);
-  }
+    @Bean
+    @Primary
+    public CosmosTemplate cosmosTemplate() {
+        return Mockito.mock(CosmosTemplate.class);
+    }
 
-  @Bean
-  @Primary
-  public ValidBundleRepository validBundleRepository() {
-    return Mockito.mock(ValidBundleRepository.class);
-  }
+    @Bean
+    @Primary
+    public ValidBundleRepository validBundleRepository() {
+        return Mockito.mock(ValidBundleRepository.class);
+    }
 
-  @Bean
-  @Primary
-  public TouchpointRepository touchpointRepository() {
-    return Mockito.mock(TouchpointRepository.class);
-  }
+    @Bean
+    @Primary
+    public TouchpointRepository touchpointRepository() {
+        return Mockito.mock(TouchpointRepository.class);
+    }
 
-  @Bean
-  @Primary
-  public PaymentTypeRepository paymentTypeRepository() {
-    return Mockito.mock(PaymentTypeRepository.class);
-  }
+    @Bean
+    @Primary
+    public PaymentTypeRepository paymentTypeRepository() {
+        return Mockito.mock(PaymentTypeRepository.class);
+    }
 
-  @Bean
-  @Primary
-  public PaymentMethodRepository paymentMethodRepository() {
-    return Mockito.mock(PaymentMethodRepository.class);
-  }
+    @Bean
+    @Primary
+    public PaymentMethodRepository paymentMethodRepository() {
+        return Mockito.mock(PaymentMethodRepository.class);
+    }
 }

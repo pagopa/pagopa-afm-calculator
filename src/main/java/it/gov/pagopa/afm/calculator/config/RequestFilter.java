@@ -17,38 +17,38 @@ import java.util.UUID;
 @Slf4j
 public class RequestFilter implements Filter {
 
-  public static final String HEADER_REQUEST_ID = "X-Request-Id";
+    public static final String HEADER_REQUEST_ID = "X-Request-Id";
 
-  /**
-   * Get the request ID from the custom header "X-Request-Id" if present, otherwise it generates
-   * one. Set the X-Request-Id value in the {@code response} and in the MDC
-   *
-   * @param request http request
-   * @param response http response
-   * @param chain next filter
-   * @throws IOException if an I/O error occurs during this filter's processing of the request
-   * @throws ServletException if the processing fails for any other reason
-   */
-  @Override
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-      throws IOException, ServletException {
-    try {
-      HttpServletRequest httRequest = (HttpServletRequest) request;
+    /**
+     * Get the request ID from the custom header "X-Request-Id" if present, otherwise it generates
+     * one. Set the X-Request-Id value in the {@code response} and in the MDC
+     *
+     * @param request  http request
+     * @param response http response
+     * @param chain    next filter
+     * @throws IOException      if an I/O error occurs during this filter's processing of the request
+     * @throws ServletException if the processing fails for any other reason
+     */
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        try {
+            HttpServletRequest httRequest = (HttpServletRequest) request;
 
-      // get requestId from header or generate one
-      String requestId = httRequest.getHeader(HEADER_REQUEST_ID);
-      if (requestId == null || requestId.isEmpty()) {
-        requestId = UUID.randomUUID().toString();
-      }
+            // get requestId from header or generate one
+            String requestId = httRequest.getHeader(HEADER_REQUEST_ID);
+            if (requestId == null || requestId.isEmpty()) {
+                requestId = UUID.randomUUID().toString();
+            }
 
-      // set requestId in MDC
-      MDC.put("requestId", requestId);
+            // set requestId in MDC
+            MDC.put("requestId", requestId);
 
-      // set requestId in the response header
-      ((HttpServletResponse) response).setHeader(HEADER_REQUEST_ID, requestId);
-      chain.doFilter(request, response);
-    } finally {
-      MDC.clear();
+            // set requestId in the response header
+            ((HttpServletResponse) response).setHeader(HEADER_REQUEST_ID, requestId);
+            chain.doFilter(request, response);
+        } finally {
+            MDC.clear();
+        }
     }
-  }
 }

@@ -2,7 +2,8 @@ package it.gov.pagopa.afm.calculator.model.paymentmethods;
 
 
 import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
-import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.UserDevice;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.UserTouchpoint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

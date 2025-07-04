@@ -8,7 +8,7 @@ import lombok.*;
 @ToString
 @Builder
 public class TransferListItem {
-  private String creditorInstitution;
-  private String transferCategory;
-  private Boolean digitalStamp;
+    private String creditorInstitution;
+    private String transferCategory;
+    private Boolean digitalStamp;
 }

@@ -13,7 +13,12 @@ import java.util.List;
 @Builder
 @ToString
 public class PaymentNoticeItem {
-  @NotNull private Long paymentAmount;
-  @NotNull private String primaryCreditorInstitution;
-  @Valid @NotNull @NotEmpty private List<TransferListItem> transferList;
+    @NotNull
+    private Long paymentAmount;
+    @NotNull
+    private String primaryCreditorInstitution;
+    @Valid
+    @NotNull
+    @NotEmpty
+    private List<TransferListItem> transferList;
 }

@@ -1,23 +1,22 @@
 package it.gov.pagopa.afm.calculator.service;
 
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.table.TableOperation;
 import it.gov.pagopa.afm.calculator.TestUtil;
-import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
-import it.gov.pagopa.afm.calculator.initializer.Initializer;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.*;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodRequest;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsResponse;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodDisabledReason;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodGroup;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStatus;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 import java.util.List;

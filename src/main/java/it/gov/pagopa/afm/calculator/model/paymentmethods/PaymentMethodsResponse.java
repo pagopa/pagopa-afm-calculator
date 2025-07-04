@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.calculator.model.paymentmethods;
 
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

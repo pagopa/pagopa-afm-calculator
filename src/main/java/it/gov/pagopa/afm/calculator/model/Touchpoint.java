@@ -1,11 +1,8 @@
 package it.gov.pagopa.afm.calculator.model;
 
+import lombok.*;
+
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,7 +10,7 @@ import lombok.ToString;
 @ToString
 @Builder
 public class Touchpoint {
-  private String id;
-  private String name;
-  private LocalDateTime creationDate;
+    private String id;
+    private String name;
+    private LocalDateTime creationDate;
 }

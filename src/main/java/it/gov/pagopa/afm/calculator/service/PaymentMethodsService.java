@@ -3,11 +3,16 @@ package it.gov.pagopa.afm.calculator.service;
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.*;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodRequest;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsResponse;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodDisabledReason;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStatus;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +47,12 @@ public class PaymentMethodsService {
                 status = PaymentMethodStatus.DISABLED;
             }
 
+            // validity date filtering
+            if (candidate.getValidityDateFrom().isAfter(LocalDate.now())) {
+                disabledReason = PaymentMethodDisabledReason.NOT_YET_VALID;
+                status = PaymentMethodStatus.DISABLED;
+            }
+
             // disabled filtering
             if (candidate.getStatus() == PaymentMethodStatus.DISABLED) {
                 disabledReason = PaymentMethodDisabledReason.METHOD_DISABLED;
@@ -68,7 +79,7 @@ public class PaymentMethodsService {
                 disabledReason = PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE;
                 status = PaymentMethodStatus.DISABLED;
             } else {
-                var last = bundles.getBundleOptions().size() - 1;
+                int last = bundles.getBundleOptions().size() - 1;
                 Long minFee = bundles.getBundleOptions().get(0).getTaxPayerFee();
                 Long maxFee = bundles.getBundleOptions().get(last).getTaxPayerFee();
                 feeRange = FeeRange.builder()
@@ -76,7 +87,7 @@ public class PaymentMethodsService {
                         .max(maxFee)
                         .build();
             }
-            var item = PaymentMethodsResponse.builder()
+            PaymentMethodsResponse item = PaymentMethodsResponse.builder()
                     .paymentMethodId(candidate.getPaymentMethodId())
                     .name(candidate.getName())
                     .description(candidate.getDescription())

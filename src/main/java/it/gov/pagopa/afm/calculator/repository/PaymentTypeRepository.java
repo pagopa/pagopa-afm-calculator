@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface PaymentTypeRepository extends CosmosRepository<PaymentType, String> {
-  Optional<PaymentType> findByName(String name);
+    Optional<PaymentType> findByName(String name);
 }

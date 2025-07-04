@@ -3,7 +3,6 @@ package it.gov.pagopa.afm.calculator.repository;
 import com.azure.spring.data.cosmos.repository.CosmosRepository;
 import com.azure.spring.data.cosmos.repository.Query;
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 

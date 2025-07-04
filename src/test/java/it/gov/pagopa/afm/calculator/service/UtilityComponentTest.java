@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class UtilityComponentTest {
@@ -28,9 +28,9 @@ class UtilityComponentTest {
             "123ABC987/"})
     void getPrimaryTransferCategoryListMulti(String input) {
         var res = utilityComponent.getTransferCategoryList(PaymentOption.builder()
-                        .transferList(List.of(TransferListItem.builder()
-                                        .transferCategory(input)
-                                .build()))
+                .transferList(List.of(TransferListItem.builder()
+                        .transferCategory(input)
+                        .build()))
                 .build());
         assertEquals("123ABC987", res.get(0));
     }
@@ -38,9 +38,9 @@ class UtilityComponentTest {
     @Test
     void getPrimaryTransferCategoryListMulti2() {
         var res = utilityComponent.getTransferCategoryList(PaymentOption.builder()
-                        .transferList(List.of(TransferListItem.builder()
-                                        .transferCategory(null)
-                                .build()))
+                .transferList(List.of(TransferListItem.builder()
+                        .transferCategory(null)
+                        .build()))
                 .build());
         assertEquals(0, res.size());
     }
