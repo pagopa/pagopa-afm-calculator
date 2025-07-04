@@ -1,0 +1,25 @@
+{
+  "userTouchpoint": "IO",
+  "userDevice": "IOS",
+  "bin": "string",
+  "totalAmount": 0,
+  "paymentNotice": [
+    {
+      "paymentAmount": 120,
+      "primaryCreditorInstitution": "BPPIITRRZZZ",
+      "transferList": [
+        {
+
+          "creditorInstitution": "BPPIITRRZZZ",
+          "transferCategory": "TAX1"
+        },
+        {
+          "creditorInstitution": "77777777778",
+          "transferCategory": "TAX2"
+        }
+      ]
+    }
+  ],
+  "allCCp": true,
+  "targetKey": "string"
+}
