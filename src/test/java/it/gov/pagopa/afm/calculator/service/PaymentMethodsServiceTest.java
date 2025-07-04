@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,6 +51,7 @@ class PaymentMethodsServiceTest {
                 .status(PaymentMethodStatus.ENABLED)
                 .group(PaymentMethodGroup.PPAL)
                 .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
                         .min(0L)
                         .max(1000L)
@@ -83,6 +85,7 @@ class PaymentMethodsServiceTest {
                 .status(PaymentMethodStatus.ENABLED)
                 .group(PaymentMethodGroup.PPAL)
                 .target(List.of("user"))
+                .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
                         .min(0L)
                         .max(1000L)
@@ -112,6 +115,7 @@ class PaymentMethodsServiceTest {
                 .status(PaymentMethodStatus.ENABLED)
                 .group(PaymentMethodGroup.PPAL)
                 .target(List.of("user"))
+                .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
                         .min(5L)
                         .max(1000L)
@@ -141,6 +145,7 @@ class PaymentMethodsServiceTest {
                 .status(PaymentMethodStatus.DISABLED)
                 .group(PaymentMethodGroup.PPAL)
                 .target(List.of("user"))
+                .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
                         .min(5L)
                         .max(1000L)
@@ -170,6 +175,7 @@ class PaymentMethodsServiceTest {
                 .status(PaymentMethodStatus.MAINTENANCE)
                 .group(PaymentMethodGroup.PPAL)
                 .target(List.of("user"))
+                .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
                         .min(5L)
                         .max(1000L)
