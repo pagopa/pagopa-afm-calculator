@@ -13,10 +13,13 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @Data
 public class PaymentOptionByPspMulti {
-  private String idChannel;
-  private String idBrokerPsp;
-  private String paymentMethod;
-  private String touchpoint;
-  private String bin;
-  @Valid @NotNull @NotEmpty private ArrayList<PaymentNoticeItem> paymentNotice;
+    private String idChannel;
+    private String idBrokerPsp;
+    private String paymentMethod;
+    private String touchpoint;
+    private String bin;
+    @Valid
+    @NotNull
+    @NotEmpty
+    private ArrayList<PaymentNoticeItem> paymentNotice;
 }

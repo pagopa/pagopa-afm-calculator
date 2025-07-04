@@ -40,6 +40,32 @@ public class UtilityComponent {
     }
 
     /**
+     * Extracts and returns the taxonomy value from the given element string.
+     * examples:
+     * 9/9182ABC/ -> 9182ABC
+     * 9182ABC -> 9182ABC
+     *
+     * @param elem the input string containing taxonomy information, expected to be in the format "category/taxonomy".
+     * @return the taxonomy part of the input string if available, otherwise returns the original string.
+     */
+    private static String getTaxonomyValue(String elem) {
+        if (elem == null) {
+            return null;
+        }
+
+        String[] split = elem.split("/");
+
+        // 12324    split[0]
+        // 9/23423  split[1]
+        // /12324   split[1]
+        // /23423/  split[1]
+        // 1212/    split[0]
+        // 9/23423/ split[1]
+
+        return split.length > 1 ? split[1] : split[0];
+    }
+
+    /**
      * Retrieve the transfer category list from the transfer list of payment option (OR of transfer
      * categories)
      *
@@ -125,33 +151,6 @@ public class UtilityComponent {
                 .distinct()
                 .toList()
                 : new ArrayList<>();
-    }
-
-
-    /**
-     * Extracts and returns the taxonomy value from the given element string.
-     * examples:
-     * 9/9182ABC/ -> 9182ABC
-     * 9182ABC -> 9182ABC
-     *
-     * @param elem the input string containing taxonomy information, expected to be in the format "category/taxonomy".
-     * @return the taxonomy part of the input string if available, otherwise returns the original string.
-     */
-    private static String getTaxonomyValue(String elem) {
-        if (elem == null) {
-            return null;
-        }
-
-        String[] split = elem.split("/");
-
-        // 12324    split[0]
-        // 9/23423  split[1]
-        // /12324   split[1]
-        // /23423/  split[1]
-        // 1212/    split[0]
-        // 9/23423/ split[1]
-
-        return split.length > 1 ? split[1] : split[0];
     }
 
 }

@@ -7,4 +7,5 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnExpression("'${cache.enabled}'=='true'")
 @EnableCaching
-public class CacheConfig {}
+public class CacheConfig {
+}
