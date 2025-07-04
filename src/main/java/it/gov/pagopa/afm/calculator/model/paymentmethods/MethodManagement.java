@@ -1,6 +1,5 @@
 package it.gov.pagopa.afm.calculator.model.paymentmethods;
 
-import lombok.Data;
 import lombok.Getter;
 
 @Getter

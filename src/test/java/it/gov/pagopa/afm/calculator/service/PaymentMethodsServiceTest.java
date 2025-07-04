@@ -27,10 +27,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@Testcontainers
-@ContextConfiguration(initializers = {Initializer.class})
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PaymentMethodsServiceTest {
 
     @Autowired
@@ -45,77 +41,6 @@ class PaymentMethodsServiceTest {
 
     @MockBean
     CalculatorService calculatorService;
-
-    @BeforeAll
-    void setup() throws StorageException {
-        IssuerRangeEntity e = new IssuerRangeEntity("403027", "335106");
-        e.setLowRange("4030270000000000000");
-        e.setHighRange("4030279999999999999");
-        e.setCircuit("VISA");
-        e.setProductCode("L");
-        e.setProductType("1");
-        e.setProductCategory("P");
-        e.setIssuerId("453997");
-        e.setAbi("1030");
-        Initializer.table.execute(TableOperation.insert(e));
-
-        // two records with same BIN but different ABI --> error
-        e = new IssuerRangeEntity("504317", "321133");
-        e.setLowRange("5043170000000000000");
-        e.setHighRange("5043179999999999999");
-        e.setCircuit("MAST");
-        e.setProductCode("CIR");
-        e.setProductType("1");
-        e.setProductCategory("D");
-        e.setIssuerId("329");
-        e.setAbi("80006");
-        Initializer.table.execute(TableOperation.insert(e));
-
-        e = new IssuerRangeEntity("504317", "321134");
-        e.setLowRange("5043170000000000000");
-        e.setHighRange("5043179999999999999");
-        e.setCircuit("MAST");
-        e.setProductCode("CIR");
-        e.setProductType("1");
-        e.setProductCategory("D");
-        e.setIssuerId("329");
-        e.setAbi("80007");
-        Initializer.table.execute(TableOperation.insert(e));
-
-        // two records with same BIN and same ABI
-        e = new IssuerRangeEntity("1005066", "300000");
-        e.setLowRange("1005066000000000000");
-        e.setHighRange("1005066999999999999");
-        e.setCircuit("DINERS");
-        e.setProductCode("N");
-        e.setProductType("2");
-        e.setProductCategory("C");
-        e.setIssuerId("100");
-        e.setAbi("14156");
-        Initializer.table.execute(TableOperation.insert(e));
-
-        e = new IssuerRangeEntity("1005066", "300001");
-        e.setLowRange("1005066000000000000");
-        e.setHighRange("1005066999999999999");
-        e.setCircuit("DINERS");
-        e.setProductCode("N");
-        e.setProductType("2");
-        e.setProductCategory("C");
-        e.setIssuerId("100");
-        e.setAbi("14156");
-        Initializer.table.execute(TableOperation.insert(e));
-
-        e = new IssuerRangeEntity("340000", "321087");
-        e.setLowRange("3400000000000000000");
-        e.setHighRange("3499999999999999999");
-        e.setCircuit("AMEX");
-        e.setProductCode("99");
-        e.setProductType("3");
-        e.setProductCategory("C");
-        e.setIssuerId("999999");
-        e.setAbi("AMREX");
-        Initializer.table.execute(TableOperation.insert(e));
-    }
 
 
     @Test

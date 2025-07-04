@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class PaymentMethod {
     private PaymentMethodStatus status;
 
     @JsonProperty("validity_date_from")
-    private LocalDateTime validityDateFrom; // oppure LocalDate se il formato è fisso
+    private LocalDate validityDateFrom;
 
     private List<String> target;
 

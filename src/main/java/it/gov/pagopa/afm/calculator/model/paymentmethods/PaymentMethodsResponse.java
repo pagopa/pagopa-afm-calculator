@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Map;
 
 @Builder
@@ -17,7 +17,7 @@ public class PaymentMethodsResponse {
     Map<Language, String> name;
     Map<Language, String> description;
     PaymentMethodStatus status;
-    LocalDateTime validityDateFrom;
+    LocalDate validityDateFrom;
     PaymentMethodGroup group;
     Map<String, String> metadata;
     FeeRange feeRange;
