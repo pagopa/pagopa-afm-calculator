@@ -1,6 +1,7 @@
 package it.gov.pagopa.afm.calculator.config;
 
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
+import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import it.gov.pagopa.afm.calculator.repository.PaymentTypeRepository;
 import it.gov.pagopa.afm.calculator.repository.TouchpointRepository;
 import it.gov.pagopa.afm.calculator.repository.ValidBundleRepository;
@@ -34,5 +35,11 @@ public class MockitoConfig {
   @Primary
   public PaymentTypeRepository paymentTypeRepository() {
     return Mockito.mock(PaymentTypeRepository.class);
+  }
+
+  @Bean
+  @Primary
+  public PaymentMethodRepository paymentMethodRepository() {
+    return Mockito.mock(PaymentMethodRepository.class);
   }
 }
