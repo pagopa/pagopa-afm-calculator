@@ -18,5 +18,7 @@ public interface PaymentMethodRepository extends CosmosRepository<PaymentMethod,
 
     List<PaymentMethod> findAll();
 
-    Optional<PaymentMethod> findByPaymentMethodId(String paymentMethodId);
+    @Query("SELECT * FROM c WHERE c.payment_method_id = @paymentMethodId")
+    List<PaymentMethod> findByPaymentMethodId(@Param("paymentMethodId")  String paymentMethodId);
+
 }

@@ -24,7 +24,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class PaymentMethodsServiceTest {
@@ -65,9 +65,9 @@ class PaymentMethodsServiceTest {
 
         PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
 
-        List<PaymentMethodsResponse> response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
-        assertEquals(1, response.size());
-        assertEquals(PaymentMethodStatus.ENABLED, response.get(0).getStatus());
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(1, response.getPaymentMethods().size());
+        assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
     }
 
     @Test
@@ -93,11 +93,11 @@ class PaymentMethodsServiceTest {
                 .build()));
         PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
 
-        List<PaymentMethodsResponse> response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
-        assertEquals(1, response.size());
-        assertEquals("PAYPAL", response.get(0).getPaymentMethodId());
-        assertEquals(PaymentMethodStatus.DISABLED, response.get(0).getStatus());
-        assertEquals(PaymentMethodDisabledReason.TARGET_PREVIEW, response.get(0).getDisabledReason());
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(1, response.getPaymentMethods().size());
+        assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
+        assertEquals(PaymentMethodStatus.DISABLED, response.getPaymentMethods().get(0).getStatus());
+        assertEquals(PaymentMethodDisabledReason.TARGET_PREVIEW, response.getPaymentMethods().get(0).getDisabledReason());
     }
 
     @Test
@@ -123,11 +123,11 @@ class PaymentMethodsServiceTest {
                 .build()));
         PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
 
-        List<PaymentMethodsResponse> response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
-        assertEquals(1, response.size());
-        assertEquals("PAYPAL", response.get(0).getPaymentMethodId());
-        assertEquals(PaymentMethodStatus.DISABLED, response.get(0).getStatus());
-        assertEquals(PaymentMethodDisabledReason.AMOUNT_OUT_OF_BOUND, response.get(0).getDisabledReason());
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(1, response.getPaymentMethods().size());
+        assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
+        assertEquals(PaymentMethodStatus.DISABLED, response.getPaymentMethods().get(0).getStatus());
+        assertEquals(PaymentMethodDisabledReason.AMOUNT_OUT_OF_BOUND, response.getPaymentMethods().get(0).getDisabledReason());
     }
 
     @Test
@@ -153,11 +153,11 @@ class PaymentMethodsServiceTest {
                 .build()));
         PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
 
-        List<PaymentMethodsResponse> response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
-        assertEquals(1, response.size());
-        assertEquals("PAYPAL", response.get(0).getPaymentMethodId());
-        assertEquals(PaymentMethodStatus.DISABLED, response.get(0).getStatus());
-        assertEquals(PaymentMethodDisabledReason.METHOD_DISABLED, response.get(0).getDisabledReason());
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(1, response.getPaymentMethods().size());
+        assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
+        assertEquals(PaymentMethodStatus.DISABLED, response.getPaymentMethods().get(0).getStatus());
+        assertEquals(PaymentMethodDisabledReason.METHOD_DISABLED, response.getPaymentMethods().get(0).getDisabledReason());
     }
 
     @Test
@@ -183,10 +183,115 @@ class PaymentMethodsServiceTest {
                 .build()));
         PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
 
-        List<PaymentMethodsResponse> response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
-        assertEquals(1, response.size());
-        assertEquals("PAYPAL", response.get(0).getPaymentMethodId());
-        assertEquals(PaymentMethodStatus.DISABLED, response.get(0).getStatus());
-        assertEquals(PaymentMethodDisabledReason.MAINTENANCE_IN_PROGRESS, response.get(0).getDisabledReason());
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(1, response.getPaymentMethods().size());
+        assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
+        assertEquals(PaymentMethodStatus.DISABLED, response.getPaymentMethods().get(0).getStatus());
+        assertEquals(PaymentMethodDisabledReason.MAINTENANCE_IN_PROGRESS, response.getPaymentMethods().get(0).getDisabledReason());
+    }
+
+    @Test
+    void getPaymentMethods() {
+
+        when(paymentMethodRepository
+                .findAll()).thenReturn(List.of(PaymentMethod.builder()
+                .paymentMethodId("PAYPAL")
+                .status(PaymentMethodStatus.MAINTENANCE)
+                .group(PaymentMethodGroup.PPAL)
+                .target(List.of("user"))
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(5L)
+                        .max(1000L)
+                        .build())
+                .build()));
+
+        var result = paymentMethodsService.getPaymentMethods();
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void getPaymentMethod() {
+        when(paymentMethodRepository
+                .findByPaymentMethodId(anyString())).thenReturn(List.of(PaymentMethod.builder()
+                .paymentMethodId("PAYPAL")
+                .status(PaymentMethodStatus.MAINTENANCE)
+                .group(PaymentMethodGroup.PPAL)
+                .target(List.of("user"))
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(5L)
+                        .max(1000L)
+                        .build())
+                .build()));
+
+        var result = paymentMethodsService.getPaymentMethod("PAYPAL");
+        assertEquals("PAYPAL", result.getPaymentMethodId());
+    }
+
+    @Test
+    void createPaymentMethod() {
+        paymentMethodsService.createPaymentMethod(PaymentMethod.builder()
+                .paymentMethodId("PAYPAL")
+                .status(PaymentMethodStatus.MAINTENANCE)
+                .group(PaymentMethodGroup.PPAL)
+                .target(List.of("user"))
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(5L)
+                        .max(1000L)
+                        .build())
+                .build());
+        verify(paymentMethodRepository, times(1)).save(any(PaymentMethod.class));
+    }
+
+    @Test
+    void updatePaymentMethod() {
+        when(paymentMethodRepository
+                .findByPaymentMethodId(anyString())).thenReturn(List.of(PaymentMethod.builder()
+                .paymentMethodId("PAYPAL")
+                .status(PaymentMethodStatus.MAINTENANCE)
+                .group(PaymentMethodGroup.PPAL)
+                .target(List.of("user"))
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(5L)
+                        .max(1000L)
+                        .build())
+                .build()));
+        paymentMethodsService.updatePaymentMethod("PAYPAL", PaymentMethod.builder()
+                .paymentMethodId("PAYPAL")
+                .status(PaymentMethodStatus.MAINTENANCE)
+                .group(PaymentMethodGroup.PPAL)
+                .target(List.of("user"))
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(5L)
+                        .max(1000L)
+                        .build())
+                .build());
+        verify(paymentMethodRepository, times(1)).save(any(PaymentMethod.class));
+
+    }
+
+    @Test
+    void deletePaymentMethod() {
+
+        when(paymentMethodRepository
+                .findByPaymentMethodId(anyString())).thenReturn(List.of(PaymentMethod.builder()
+                .paymentMethodId("PAYPAL")
+                .status(PaymentMethodStatus.MAINTENANCE)
+                .group(PaymentMethodGroup.PPAL)
+                .target(List.of("user"))
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(5L)
+                        .max(1000L)
+                        .build())
+                .build()));
+
+        paymentMethodsService.deletePaymentMethod("PAYPAL");
+        verify(paymentMethodRepository, times(1)).delete(any(PaymentMethod.class));
+
     }
 }

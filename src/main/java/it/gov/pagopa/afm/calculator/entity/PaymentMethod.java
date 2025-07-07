@@ -1,6 +1,7 @@
 package it.gov.pagopa.afm.calculator.entity;
 
 import com.azure.spring.data.cosmos.core.mapping.Container;
+import com.azure.spring.data.cosmos.core.mapping.GeneratedValue;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class PaymentMethod {
 
     @Id
+    @GeneratedValue
     private String id;
 
     @JsonProperty("payment_method_id")

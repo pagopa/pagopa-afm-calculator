@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
-import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodRequest;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsResponse;
 import it.gov.pagopa.afm.calculator.service.PaymentMethodsService;
@@ -41,7 +40,8 @@ public class PaymentMethodsController {
                             description = "OK",
                             content =
                             @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = PaymentMethodsResponse.class))),
                     @ApiResponse(
                             responseCode = "400",
                             description = "Bad Request",
@@ -75,7 +75,7 @@ public class PaymentMethodsController {
     @PostMapping(
             value = "/search",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public List<PaymentMethodsResponse> searchPaymentMethods(@RequestBody @Valid PaymentMethodRequest paymentMethodRequest) {
+    public PaymentMethodsResponse searchPaymentMethods(@RequestBody @Valid PaymentMethodRequest paymentMethodRequest) {
         return paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
     }
 
@@ -87,7 +87,8 @@ public class PaymentMethodsController {
                             description = "OK",
                             content =
                             @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = List.class))),
                     @ApiResponse(
                             responseCode = "400",
                             description = "Bad Request",
@@ -128,7 +129,6 @@ public class PaymentMethodsController {
     }
 
 
-
     @Operation(
             summary = "Find payment method by id",
             security = {@SecurityRequirement(name = "ApiKey")},
@@ -140,7 +140,8 @@ public class PaymentMethodsController {
                             description = "OK",
                             content =
                             @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = PaymentMethod.class))),
                     @ApiResponse(
                             responseCode = "400",
                             description = "Bad Request",
@@ -190,11 +191,12 @@ public class PaymentMethodsController {
     @ApiResponses(
             value = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "201",
                             description = "OK",
                             content =
                             @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = PaymentMethod.class))),
                     @ApiResponse(
                             responseCode = "400",
                             description = "Bad Request",
@@ -242,7 +244,8 @@ public class PaymentMethodsController {
                             description = "OK",
                             content =
                             @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = PaymentMethod.class))),
                     @ApiResponse(
                             responseCode = "400",
                             description = "Bad Request",
@@ -286,6 +289,59 @@ public class PaymentMethodsController {
     }
 
 
+    @Operation(
+            summary = "Delete a payment method by id",
+            security = {@SecurityRequirement(name = "ApiKey")},
+            tags = {"Payment Methods"})
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(schema = @Schema())),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unable to process the request",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @ApiResponse(
+                            responseCode = "429",
+                            description = "Too many requests",
+                            content = @Content(schema = @Schema())),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Service unavailable",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ProblemJson.class)))
+            })
+    @DeleteMapping(value = "/{paymentMethodId}")
+    public void deletePaymentMethod(@PathVariable String paymentMethodId) {
+        paymentMethodsService.deletePaymentMethod(paymentMethodId);
+    }
 
 
 }

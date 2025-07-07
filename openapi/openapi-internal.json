@@ -4,7 +4,7 @@
     "title" : "PagoPA API Calculator Logic - API AFM-Calculator internal",
     "description" : "Calculator Logic microservice for pagoPA AFM",
     "termsOfService" : "https://www.pagopa.gov.it/",
-    "version" : "2.11.6"
+    "version" : "2.11.7"
   },
   "servers" : [ {
     "url" : "http://localhost:8080"
@@ -737,7 +737,11 @@
               }
             },
             "content" : {
-              "application/json" : { }
+              "application/json" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
             }
           },
           "400" : {
@@ -836,7 +840,7 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "OK",
             "headers" : {
               "X-Request-Id" : {
@@ -847,7 +851,11 @@
               }
             },
             "content" : {
-              "application/json" : { }
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PaymentMethod"
+                }
+              }
             }
           },
           "400" : {
@@ -967,7 +975,11 @@
               }
             },
             "content" : {
-              "application/json" : { }
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PaymentMethodsResponse"
+                }
+              }
             }
           },
           "400" : {
@@ -1085,7 +1097,11 @@
               }
             },
             "content" : {
-              "application/json" : { }
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PaymentMethod"
+                }
+              }
             }
           },
           "400" : {
@@ -1209,6 +1225,136 @@
           },
           "required" : true
         },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PaymentMethod"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unable to process the request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too many requests",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Service unavailable",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "ApiKey" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Payment Methods" ],
+        "summary" : "Delete a payment method by id",
+        "operationId" : "deletePaymentMethod",
+        "parameters" : [ {
+          "name" : "paymentMethodId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -2018,6 +2164,75 @@
           },
           "targetKey" : {
             "type" : "string"
+          }
+        }
+      },
+      "PaymentMethodsItem" : {
+        "type" : "object",
+        "properties" : {
+          "paymentMethodId" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "description" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "ENABLED", "DISABLED", "MAINTENANCE" ]
+          },
+          "validityDateFrom" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "group" : {
+            "type" : "string",
+            "enum" : [ "CP", "MYBK", "BPAY", "PPAL", "RPIC", "RBPS", "SATY", "APPL", "RICO" ]
+          },
+          "metadata" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "feeRange" : {
+            "$ref" : "#/components/schemas/FeeRange"
+          },
+          "disabledReason" : {
+            "type" : "string",
+            "enum" : [ "AMOUNT_OUT_OF_BOUND", "MAINTENANCE_IN_PROGRESS", "METHOD_DISABLED", "NOT_YET_VALID", "TARGET_PREVIEW", "NO_BUNDLE_AVAILABLE" ]
+          },
+          "paymentMethodAsset" : {
+            "type" : "string"
+          },
+          "methodManagement" : {
+            "type" : "string",
+            "enum" : [ "ONBOARDABLE", "ONBOARDABLE_ONLY", "NOT_ONBOARDABLE", "REDIRECT" ]
+          },
+          "paymentMethodsBrandAssets" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "PaymentMethodsResponse" : {
+        "type" : "object",
+        "properties" : {
+          "paymentMethods" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PaymentMethodsItem"
+            }
           }
         }
       },

@@ -17,6 +17,10 @@ public enum AppError {
             HttpStatus.NOT_FOUND,
             "Payment method not found",
             "Payment method with id %s not found"),
+    PAYMENT_METHOD_MULTIPLE_FOUND(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            "Payment method multiple found",
+            "Payment method with id %s multiple found, contact technical support"),
 
     UNKNOWN(null, null, null);
 

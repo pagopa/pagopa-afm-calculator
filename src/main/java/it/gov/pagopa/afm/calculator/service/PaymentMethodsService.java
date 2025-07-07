@@ -8,6 +8,7 @@ import it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodRequest;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsResponse;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsItem;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodDisabledReason;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStatus;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
@@ -25,8 +26,8 @@ public class PaymentMethodsService {
     private final PaymentMethodRepository paymentMethodRepository;
     private final CalculatorService calculatorService;
 
-    public List<PaymentMethodsResponse> searchPaymentMethods(PaymentMethodRequest request) {
-        List<PaymentMethodsResponse> response = new ArrayList<>();
+    public PaymentMethodsResponse searchPaymentMethods(PaymentMethodRequest request) {
+        List<PaymentMethodsItem> paymentMethodsItems = new ArrayList<>();
 
         List<PaymentMethod> candidates = paymentMethodRepository
                 .findByTouchpointAndDevice(request.getUserTouchpoint().name(), request.getUserDevice().name());
@@ -89,7 +90,7 @@ public class PaymentMethodsService {
                         .max(maxFee)
                         .build();
             }
-            PaymentMethodsResponse item = PaymentMethodsResponse.builder()
+            PaymentMethodsItem item = PaymentMethodsItem.builder()
                     .paymentMethodId(candidate.getPaymentMethodId())
                     .name(candidate.getName())
                     .description(candidate.getDescription())
@@ -103,9 +104,11 @@ public class PaymentMethodsService {
                     .methodManagement(candidate.getMethodManagement())
                     .paymentMethodsBrandAssets(candidate.getPaymentMethodsBrandAssets())
                     .build();
-            response.add(item);
+            paymentMethodsItems.add(item);
         }
-        return response;
+        return PaymentMethodsResponse.builder()
+                .paymentMethods(paymentMethodsItems)
+                .build();
     }
 
     public List<PaymentMethod> getPaymentMethods() {
@@ -113,8 +116,14 @@ public class PaymentMethodsService {
     }
 
     public PaymentMethod getPaymentMethod(String paymentMethodId) {
-        return paymentMethodRepository.findByPaymentMethodId(paymentMethodId)
-                .orElseThrow(() -> new AppException(AppError.PAYMENT_METHOD_NOT_FOUND, paymentMethodId));
+        List<PaymentMethod> result = paymentMethodRepository.findByPaymentMethodId(paymentMethodId);
+        if (result.isEmpty()) {
+            throw new AppException(AppError.PAYMENT_METHOD_NOT_FOUND, paymentMethodId);
+        }
+        if (result.size() > 1) {
+            throw new AppException(AppError.PAYMENT_METHOD_MULTIPLE_FOUND, paymentMethodId);
+        }
+        return result.get(0);
     }
 
     public PaymentMethod createPaymentMethod(PaymentMethod paymentMethod) {
@@ -136,5 +145,10 @@ public class PaymentMethodsService {
         existing.setMethodManagement(paymentMethod.getMethodManagement());
         existing.setPaymentMethodsBrandAssets(paymentMethod.getPaymentMethodsBrandAssets());
         return paymentMethodRepository.save(existing);
+    }
+
+    public void deletePaymentMethod(String paymentMethodId) {
+        PaymentMethod existing = getPaymentMethod(paymentMethodId);
+        paymentMethodRepository.delete(existing);
     }
 }
