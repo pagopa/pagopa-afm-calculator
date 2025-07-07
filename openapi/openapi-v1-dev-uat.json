@@ -541,9 +541,230 @@
         }
       } ]
     },
+    "/payment-methods" : {
+      "get" : {
+        "tags" : [ "Payment Methods" ],
+        "summary" : "Retrieve all payment methods",
+        "operationId" : "getPaymentMethods",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unable to process the request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too many requests",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Service unavailable",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "ApiKey" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Payment Methods" ],
+        "summary" : "Create a new payment method",
+        "operationId" : "createPaymentMethod",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PaymentMethod"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unable to process the request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too many requests",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Service unavailable",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "ApiKey" : [ ]
+        } ]
+      },
+      "parameters" : [ {
+        "name" : "X-Request-Id",
+        "in" : "header",
+        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+        "schema" : {
+          "type" : "string"
+        }
+      } ]
+    },
     "/payment-methods/search" : {
       "post" : {
         "tags" : [ "Payment Methods" ],
+        "summary" : "Advanced search of payment methods",
         "operationId" : "searchPaymentMethods",
         "requestBody" : {
           "content" : {
@@ -567,17 +788,361 @@
               }
             },
             "content" : {
+              "application/json" : { }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/PaymentMethodsResponse"
-                  }
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unable to process the request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too many requests",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Service unavailable",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
                 }
               }
             }
           }
+        },
+        "security" : [ {
+          "ApiKey" : [ ]
+        } ]
+      },
+      "parameters" : [ {
+        "name" : "X-Request-Id",
+        "in" : "header",
+        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+        "schema" : {
+          "type" : "string"
         }
+      } ]
+    },
+    "/payment-methods/{paymentMethodId}" : {
+      "get" : {
+        "tags" : [ "Payment Methods" ],
+        "summary" : "Find payment method by id",
+        "operationId" : "getPaymentMethod",
+        "parameters" : [ {
+          "name" : "paymentMethodId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unable to process the request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too many requests",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Service unavailable",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "ApiKey" : [ ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Payment Methods" ],
+        "summary" : "Update a payment method using id",
+        "operationId" : "updatePaymentMethod",
+        "parameters" : [ {
+          "name" : "paymentMethodId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PaymentMethod"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unable to process the request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too many requests",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Service unavailable",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "ApiKey" : [ ]
+        } ]
       },
       "parameters" : [ {
         "name" : "X-Request-Id",
@@ -760,6 +1325,120 @@
   },
   "components" : {
     "schemas" : {
+      "FeeRange" : {
+        "required" : [ "max", "min" ],
+        "type" : "object",
+        "properties" : {
+          "min" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "max" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "PaymentMethod" : {
+        "required" : [ "range_amount" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "group" : {
+            "type" : "string",
+            "enum" : [ "CP", "MYBK", "BPAY", "PPAL", "RPIC", "RBPS", "SATY", "APPL", "RICO" ]
+          },
+          "name" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "description" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "ENABLED", "DISABLED", "MAINTENANCE" ]
+          },
+          "target" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "metadata" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "payment_method_id" : {
+            "type" : "string"
+          },
+          "user_touchpoint" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "IO", "CHECKOUT", "CHECKOUT_CART" ]
+            }
+          },
+          "user_device" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "IOS", "ANDROID", "WEB" ]
+            }
+          },
+          "validity_date_from" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "range_amount" : {
+            "$ref" : "#/components/schemas/FeeRange"
+          },
+          "payment_method_asset" : {
+            "type" : "string"
+          },
+          "method_management" : {
+            "type" : "string",
+            "enum" : [ "ONBOARDABLE", "ONBOARDABLE_ONLY", "NOT_ONBOARDABLE", "REDIRECT" ]
+          },
+          "payment_methods_brand_assets" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "ProblemJson" : {
+        "type" : "object",
+        "properties" : {
+          "title" : {
+            "type" : "string",
+            "description" : "A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized); example: Service Unavailable"
+          },
+          "status" : {
+            "maximum" : 600,
+            "minimum" : 100,
+            "type" : "integer",
+            "description" : "The HTTP status code generated by the origin server for this occurrence of the problem.",
+            "format" : "int32",
+            "example" : 200
+          },
+          "detail" : {
+            "type" : "string",
+            "description" : "A human readable explanation specific to this occurrence of the problem.",
+            "example" : "There was an error processing the request"
+          }
+        }
+      },
       "PaymentOptionByPsp" : {
         "type" : "object",
         "properties" : {
@@ -871,28 +1550,6 @@
           }
         }
       },
-      "ProblemJson" : {
-        "type" : "object",
-        "properties" : {
-          "title" : {
-            "type" : "string",
-            "description" : "A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized); example: Service Unavailable"
-          },
-          "status" : {
-            "maximum" : 600,
-            "minimum" : 100,
-            "type" : "integer",
-            "description" : "The HTTP status code generated by the origin server for this occurrence of the problem.",
-            "format" : "int32",
-            "example" : 200
-          },
-          "detail" : {
-            "type" : "string",
-            "description" : "A human readable explanation specific to this occurrence of the problem.",
-            "example" : "There was an error processing the request"
-          }
-        }
-      },
       "PaymentMethodRequest" : {
         "required" : [ "userDevice", "userTouchpoint" ],
         "type" : "object",
@@ -941,78 +1598,6 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/TransferListItem"
-            }
-          }
-        }
-      },
-      "FeeRange" : {
-        "required" : [ "max", "min" ],
-        "type" : "object",
-        "properties" : {
-          "min" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "max" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        }
-      },
-      "PaymentMethodsResponse" : {
-        "type" : "object",
-        "properties" : {
-          "paymentMethodId" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "description" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "status" : {
-            "type" : "string",
-            "enum" : [ "ENABLED", "DISABLED", "MAINTENANCE" ]
-          },
-          "validityDateFrom" : {
-            "type" : "string",
-            "format" : "date"
-          },
-          "group" : {
-            "type" : "string",
-            "enum" : [ "CP", "MYBK", "BPAY", "PPAL", "RPIC", "RBPS", "SATY", "APPL", "RICO" ]
-          },
-          "metadata" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "feeRange" : {
-            "$ref" : "#/components/schemas/FeeRange"
-          },
-          "disabledReason" : {
-            "type" : "string",
-            "enum" : [ "AMOUNT_OUT_OF_BOUND", "MAINTENANCE_IN_PROGRESS", "METHOD_DISABLED", "NOT_YET_VALID", "TARGET_PREVIEW", "NO_BUNDLE_AVAILABLE" ]
-          },
-          "paymentMethodAsset" : {
-            "type" : "string"
-          },
-          "methodManagement" : {
-            "type" : "string",
-            "enum" : [ "ONBOARDABLE", "ONBOARDABLE_ONLY", "NOT_ONBOARDABLE", "REDIRECT" ]
-          },
-          "paymentMethodsBrandAssets" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
             }
           }
         }
