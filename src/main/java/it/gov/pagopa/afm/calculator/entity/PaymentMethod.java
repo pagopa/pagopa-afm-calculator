@@ -30,23 +30,25 @@ public class PaymentMethod {
     private String id;
 
     @JsonProperty("payment_method_id")
+    @NotNull
     private String paymentMethodId;
-
+    @NotNull
     private PaymentMethodGroup group;
-
+    @NotNull
     private Map<Language, String> name;
-
+    @NotNull
     private Map<Language, String> description;
-
+    @NotNull
     @JsonProperty("user_touchpoint")
     private List<UserTouchpoint> userTouchpoint;
-
+    @NotNull
     @JsonProperty("user_device")
     private List<UserDevice> userDevice;
-
+    @NotNull
     private PaymentMethodStatus status;
 
     @JsonProperty("validity_date_from")
+    @NotNull
     private LocalDate validityDateFrom;
 
     private List<String> target;
@@ -57,9 +59,11 @@ public class PaymentMethod {
 
     private Map<String, String> metadata;
 
+    @NotNull
     @JsonProperty("payment_method_asset")
     private String paymentMethodAsset;
 
+    @NotNull
     @JsonProperty("method_management")
     private MethodManagement methodManagement;
 

@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -24,10 +26,15 @@ public class PaymentMethodRequest {
     @NotNull
     UserDevice userDevice;
 
+    @NotNull
     String bin;
 
+    @NotNull
     Integer totalAmount;
 
+    @NotNull
+    @NotEmpty
+    @Valid
     List<PaymentNoticeItem> paymentNotice;
 
     Boolean allCCp;

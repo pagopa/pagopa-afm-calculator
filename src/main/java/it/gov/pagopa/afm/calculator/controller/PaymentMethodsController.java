@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController()
@@ -75,7 +76,7 @@ public class PaymentMethodsController {
     @PostMapping(
             value = "/search",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public PaymentMethodsResponse searchPaymentMethods(@RequestBody @Valid PaymentMethodRequest paymentMethodRequest) {
+    public PaymentMethodsResponse searchPaymentMethods(@RequestBody @Valid @NotNull PaymentMethodRequest paymentMethodRequest) {
         return paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
     }
 

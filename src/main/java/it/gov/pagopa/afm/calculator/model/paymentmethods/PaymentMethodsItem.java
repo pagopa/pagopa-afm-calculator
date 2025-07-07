@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -14,16 +15,25 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentMethodsItem {
+    @NotNull
     String paymentMethodId;
+    @NotNull
     Map<Language, String> name;
+    @NotNull
     Map<Language, String> description;
+    @NotNull
     PaymentMethodStatus status;
+    @NotNull
     LocalDate validityDateFrom;
+    @NotNull
     PaymentMethodGroup group;
-    Map<String, String> metadata;
+    @NotNull
     FeeRange feeRange;
-    PaymentMethodDisabledReason disabledReason;
+    @NotNull
     String paymentMethodAsset;
+    @NotNull
     MethodManagement methodManagement;
+    PaymentMethodDisabledReason disabledReason;
     Map<String, String> paymentMethodsBrandAssets;
+    Map<String, String> metadata;
 }

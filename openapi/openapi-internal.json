@@ -1852,7 +1852,7 @@
         }
       },
       "PaymentMethod" : {
-        "required" : [ "range_amount" ],
+        "required" : [ "description", "group", "method_management", "name", "payment_method_asset", "payment_method_id", "range_amount", "status", "user_device", "user_touchpoint", "validity_date_from" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -1985,6 +1985,7 @@
         }
       },
       "TransferListItem" : {
+        "required" : [ "creditorInstitution", "transferCategory" ],
         "type" : "object",
         "properties" : {
           "creditorInstitution" : {
@@ -2135,7 +2136,7 @@
         }
       },
       "PaymentMethodRequest" : {
-        "required" : [ "userDevice", "userTouchpoint" ],
+        "required" : [ "bin", "paymentNotice", "totalAmount", "userDevice", "userTouchpoint" ],
         "type" : "object",
         "properties" : {
           "userTouchpoint" : {
@@ -2168,6 +2169,7 @@
         }
       },
       "PaymentMethodsItem" : {
+        "required" : [ "description", "feeRange", "group", "methodManagement", "name", "paymentMethodAsset", "paymentMethodId", "status", "validityDateFrom" ],
         "type" : "object",
         "properties" : {
           "paymentMethodId" : {
@@ -2197,18 +2199,8 @@
             "type" : "string",
             "enum" : [ "CP", "MYBK", "BPAY", "PPAL", "RPIC", "RBPS", "SATY", "APPL", "RICO" ]
           },
-          "metadata" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
           "feeRange" : {
             "$ref" : "#/components/schemas/FeeRange"
-          },
-          "disabledReason" : {
-            "type" : "string",
-            "enum" : [ "AMOUNT_OUT_OF_BOUND", "MAINTENANCE_IN_PROGRESS", "METHOD_DISABLED", "NOT_YET_VALID", "TARGET_PREVIEW", "NO_BUNDLE_AVAILABLE" ]
           },
           "paymentMethodAsset" : {
             "type" : "string"
@@ -2217,7 +2209,17 @@
             "type" : "string",
             "enum" : [ "ONBOARDABLE", "ONBOARDABLE_ONLY", "NOT_ONBOARDABLE", "REDIRECT" ]
           },
+          "disabledReason" : {
+            "type" : "string",
+            "enum" : [ "AMOUNT_OUT_OF_BOUND", "MAINTENANCE_IN_PROGRESS", "METHOD_DISABLED", "NOT_YET_VALID", "TARGET_PREVIEW", "NO_BUNDLE_AVAILABLE" ]
+          },
           "paymentMethodsBrandAssets" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
@@ -2226,6 +2228,7 @@
         }
       },
       "PaymentMethodsResponse" : {
+        "required" : [ "paymentMethods" ],
         "type" : "object",
         "properties" : {
           "paymentMethods" : {
