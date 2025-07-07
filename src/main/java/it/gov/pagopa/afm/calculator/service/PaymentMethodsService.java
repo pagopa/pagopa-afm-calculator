@@ -1,6 +1,8 @@
 package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
+import it.gov.pagopa.afm.calculator.exception.AppError;
+import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
@@ -104,5 +106,35 @@ public class PaymentMethodsService {
             response.add(item);
         }
         return response;
+    }
+
+    public List<PaymentMethod> getPaymentMethods() {
+        return paymentMethodRepository.findAll();
+    }
+
+    public PaymentMethod getPaymentMethod(String paymentMethodId) {
+        return paymentMethodRepository.findByPaymentMethodId(paymentMethodId)
+                .orElseThrow(() -> new AppException(AppError.PAYMENT_METHOD_NOT_FOUND, paymentMethodId));
+    }
+
+    public PaymentMethod createPaymentMethod(PaymentMethod paymentMethod) {
+        return paymentMethodRepository.save(paymentMethod);
+    }
+
+    public PaymentMethod updatePaymentMethod(String paymentMethodId, PaymentMethod paymentMethod) {
+        PaymentMethod existing = getPaymentMethod(paymentMethodId);
+        existing.setName(paymentMethod.getName());
+        existing.setDescription(paymentMethod.getDescription());
+        existing.setUserTouchpoint(paymentMethod.getUserTouchpoint());
+        existing.setUserDevice(paymentMethod.getUserDevice());
+        existing.setStatus(paymentMethod.getStatus());
+        existing.setValidityDateFrom(paymentMethod.getValidityDateFrom());
+        existing.setTarget(paymentMethod.getTarget());
+        existing.setRangeAmount(paymentMethod.getRangeAmount());
+        existing.setMetadata(paymentMethod.getMetadata());
+        existing.setPaymentMethodAsset(paymentMethod.getPaymentMethodAsset());
+        existing.setMethodManagement(paymentMethod.getMethodManagement());
+        existing.setPaymentMethodsBrandAssets(paymentMethod.getPaymentMethodsBrandAssets());
+        return paymentMethodRepository.save(existing);
     }
 }

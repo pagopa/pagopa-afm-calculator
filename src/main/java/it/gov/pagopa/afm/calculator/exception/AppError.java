@@ -13,6 +13,11 @@ public enum AppError {
     INTERNAL_SERVER_ERROR(
             HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", "Something was wrong"),
 
+    PAYMENT_METHOD_NOT_FOUND(
+            HttpStatus.NOT_FOUND,
+            "Payment method not found",
+            "Payment method with id %s not found"),
+
     UNKNOWN(null, null, null);
 
     public final HttpStatus httpStatus;
