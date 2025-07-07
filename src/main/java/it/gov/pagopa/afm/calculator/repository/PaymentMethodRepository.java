@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface PaymentMethodRepository extends CosmosRepository<PaymentMethod, String> {
@@ -19,6 +18,6 @@ public interface PaymentMethodRepository extends CosmosRepository<PaymentMethod,
     List<PaymentMethod> findAll();
 
     @Query("SELECT * FROM c WHERE c.payment_method_id = @paymentMethodId")
-    List<PaymentMethod> findByPaymentMethodId(@Param("paymentMethodId")  String paymentMethodId);
+    List<PaymentMethod> findByPaymentMethodId(@Param("paymentMethodId") String paymentMethodId);
 
 }
