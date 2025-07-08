@@ -4,14 +4,14 @@
 # more info https://docs.gitguardian.com/internal-repositories-monitoring/integrations/git_hooks/pre_commit
 repos:
    - repo: https://github.com/gitguardian/ggshield
-     rev: v1.11.0
+     rev: v1.41.0
      hooks:
        - id: ggshield
          language_version: python3
-         stages: [ commit ]
+         stages: [ pre-commit ]
 
    - repo: https://github.com/pre-commit/pre-commit-hooks
-     rev: v4.0.1
+     rev: v5.0.0
      hooks:
       # Common errors
       - id: end-of-file-fixer
@@ -32,7 +32,7 @@ repos:
       - id: detect-private-key
   ## terraform
    - repo: https://github.com/antonbabenko/pre-commit-terraform
-     rev: v1.77.0
+     rev: v1.99.4
      hooks:
       - id: terraform_fmt
       - id: terraform_docs

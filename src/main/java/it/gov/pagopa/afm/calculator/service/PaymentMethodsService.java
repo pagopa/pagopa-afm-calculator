@@ -5,6 +5,7 @@ import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodRequest;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsItem;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsResponse;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodDisabledReason;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStatus;
@@ -23,8 +24,8 @@ public class PaymentMethodsService {
     private final PaymentMethodRepository paymentMethodRepository;
     private final CalculatorService calculatorService;
 
-    public List<PaymentMethodsResponse> searchPaymentMethods(PaymentMethodRequest request) {
-        List<PaymentMethodsResponse> response = new ArrayList<>();
+    public PaymentMethodsResponse searchPaymentMethods(PaymentMethodRequest request) {
+        List<PaymentMethodsItem> paymentMethodsItems = new ArrayList<>();
 
         List<PaymentMethod> candidates = paymentMethodRepository
                 .findByTouchpointAndDevice(request.getUserTouchpoint().name(), request.getUserDevice().name());
@@ -87,7 +88,7 @@ public class PaymentMethodsService {
                         .max(maxFee)
                         .build();
             }
-            PaymentMethodsResponse item = PaymentMethodsResponse.builder()
+            PaymentMethodsItem item = PaymentMethodsItem.builder()
                     .paymentMethodId(candidate.getPaymentMethodId())
                     .name(candidate.getName())
                     .description(candidate.getDescription())
@@ -101,8 +102,11 @@ public class PaymentMethodsService {
                     .methodManagement(candidate.getMethodManagement())
                     .paymentMethodsBrandAssets(candidate.getPaymentMethodsBrandAssets())
                     .build();
-            response.add(item);
+            paymentMethodsItems.add(item);
         }
-        return response;
+        return PaymentMethodsResponse.builder()
+                .paymentMethods(paymentMethodsItems)
+                .build();
     }
+
 }

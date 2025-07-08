@@ -14,4 +14,5 @@ public interface PaymentMethodRepository extends CosmosRepository<PaymentMethod,
 
     @Query("SELECT * FROM c WHERE ARRAY_CONTAINS(c.user_touchpoint, @touchpoint) AND ARRAY_CONTAINS(c.user_device, @device)")
     List<PaymentMethod> findByTouchpointAndDevice(@Param("touchpoint") String touchpoint, @Param("device") String device);
+
 }
