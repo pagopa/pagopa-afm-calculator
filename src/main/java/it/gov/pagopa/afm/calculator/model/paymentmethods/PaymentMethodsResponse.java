@@ -11,6 +11,6 @@ import java.util.List;
 @Builder
 public class PaymentMethodsResponse {
     @NotNull
-            @Valid
+    @Valid
     List<PaymentMethodsItem> paymentMethods;
 }

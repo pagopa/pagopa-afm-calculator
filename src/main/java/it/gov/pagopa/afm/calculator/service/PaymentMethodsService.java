@@ -1,14 +1,12 @@
 package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
-import it.gov.pagopa.afm.calculator.exception.AppError;
-import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodRequest;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsResponse;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsItem;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsResponse;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodDisabledReason;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStatus;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
