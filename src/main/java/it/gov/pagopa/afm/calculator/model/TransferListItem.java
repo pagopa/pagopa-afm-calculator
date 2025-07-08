@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 public class TransferListItem {
     @NotNull
     private String creditorInstitution;
-    @NotNull
     private String transferCategory;
     private Boolean digitalStamp;
 }
