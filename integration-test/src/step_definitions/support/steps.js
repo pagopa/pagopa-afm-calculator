@@ -8,6 +8,7 @@ const tableStorageClient = require("./table_storage_client");
 const afm_host = process.env.AFM_HOST;
 const afm_host_V2 = process.env.AFM_HOST_V2;
 const afm_api_extension_V2 = process.env.AFM_API_EXTENSION_V2;
+const afm_marketplace_host = process.env.AFM_MARKETPLACE_HOST;
 
 /*increased the default timeout of the promise to allow
 the correct execution of the smoke tests*/
@@ -82,6 +83,18 @@ Given('the configuration {string}', async function(filePath) {
   let result3 = await post(afm_host + '/configuration/paymenttypes/add',
     paymenttypes);
   assert.strictEqual(result3.status, 201);
+
+  // let paypalpaymentmethod = config["paymentmethods"][0];
+  // let result4 = await post(afm_marketplace_host + '/payment-methods',
+  //       paypalpaymentmethod);
+  //   assert.strictEqual(result4.status, 201);
+  //
+  // let cardspaymentmethod = config["paymentmethods"][1];
+  // let result5 = await post(afm_marketplace_host + '/payment-methods',
+  //     cardspaymentmethod);
+  // assert.strictEqual(result5.status, 201);
+
+
 
 });
 
@@ -207,6 +220,12 @@ AfterAll(async function() {
    let result = await post(afm_host + '/configuration/bundles/delete',
      validBundles);
    assert.strictEqual(result.status, 200);
+
+  // let result2 = await delete(afm_marketplace_host + '/payment-methods/CARDS-test' );
+  // assert.strictEqual(result2.status, 200);
+  //
+  // let result3 = await delete(afm_marketplace_host + '/payment-methods/PAYPAL-test' );
+  // assert.strictEqual(result3.status, 200);
 
   return Promise.resolve()
 });

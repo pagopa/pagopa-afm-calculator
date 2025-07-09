@@ -74,7 +74,7 @@ public class PaymentMethodsController {
                                     schema = @Schema(implementation = ProblemJson.class)))
             })
     @PostMapping(
-            value = "/search",
+            value = "/search/multi",
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public PaymentMethodsResponse searchPaymentMethods(@RequestBody @Valid @NotNull PaymentMethodRequest paymentMethodRequest) {
         return paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
