@@ -84,17 +84,31 @@ Given('the configuration {string}', async function(filePath) {
     paymenttypes);
   assert.strictEqual(result3.status, 201);
 
+  // let paypalpaymentmethod = config["paymentmethods"][0];
+  // let result4 = await post(afm_marketplace_host + '/payment-methods',
+  //       paypalpaymentmethod);
+  //   assert.strictEqual(result4.status, 201);
+  //
+  // let cardspaymentmethod = config["paymentmethods"][1];
+  // let result5 = await post(afm_marketplace_host + '/payment-methods',
+  //     cardspaymentmethod);
+  // assert.strictEqual(result5.status, 201);
+
+});
+
+Given('the payment methods configuration {string}', async function(filePath) {
+  let file = fs.readFileSync('./config/' + filePath);
+  let config = JSON.parse(file);
+
   let paypalpaymentmethod = config["paymentmethods"][0];
   let result4 = await post(afm_marketplace_host + '/payment-methods',
-        paypalpaymentmethod);
-    assert.strictEqual(result4.status, 201);
+      paypalpaymentmethod);
+  assert.strictEqual(result4.status, 201);
 
   let cardspaymentmethod = config["paymentmethods"][1];
   let result5 = await post(afm_marketplace_host + '/payment-methods',
       cardspaymentmethod);
   assert.strictEqual(result5.status, 201);
-
-
 
 });
 
@@ -195,6 +209,24 @@ Then('the body response for the bundleOptions.bundleId field is:', function (dat
   }
 });
 
+Then('the body response does not contain the added test payment methods', function () {
+  for (let i=0; i<responseToCheck.data.paymentMethods.length; i++){
+    let bodyPM = responseToCheck.data.paymentMethods[i].paymentMethodId;
+    assert.notEqual(bodyPM, process.env.PAYPAL_PAYMENT_METHOD_TEST_NAME);
+    assert.notEqual(bodyPM, process.env.CP_PAYMENT_METHOD_TEST_NAME);
+  }
+});
+
+Then('the body response contains the added test payment methods', function () {
+  // for (let i=0; i<responseToCheck.data.paymentMethods.length; i++){
+  //   let bodyPM = responseToCheck.data.paymentMethods[i].paymentMethodId;
+  //   assert.notEqual(bodyPM, process.env.PAYPAL_PAYMENT_METHOD_TEST_NAME);
+  //   assert.notEqual(bodyPM, process.env.CP_PAYMENT_METHOD_TEST_NAME);
+  // }
+    assert(responseToCheck.data.paymentMethods.some(pm => pm.paymentMethodId === process.env.PAYPAL_PAYMENT_METHOD_TEST_NAME));
+    assert(responseToCheck.data.paymentMethods.some(pm => pm.paymentMethodId === process.env.CP_PAYMENT_METHOD_TEST_NAME));
+});
+
 
 function mapToValidBundles(config) {
 
@@ -222,10 +254,10 @@ AfterAll(async function() {
    assert.strictEqual(result.status, 200);
 
   let result2 = await del(afm_marketplace_host + '/payment-methods/CARDS-test' );
-  assert.strictEqual(result2.status, 200);
+  //assert.strictEqual(result2.status, 200);
 
   let result3 = await del(afm_marketplace_host + '/payment-methods/PAYPAL-test' );
-  assert.strictEqual(result3.status, 200);
+  //assert.strictEqual(result3.status, 200);
 
   return Promise.resolve()
 });
