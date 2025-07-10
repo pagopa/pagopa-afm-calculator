@@ -671,7 +671,7 @@
       "metadata": {
         "installments": "true"
       },
-      "paymentMethodAsset": "https://assets.cdn.platform.pagopa.it/apm/paypal.png",
+      "payment_method_asset": "https://assets.cdn.platform.pagopa.it/apm/paypal.png",
       "method_management": "NOT_ONBOARDABLE"
     },
     {
@@ -703,7 +703,7 @@
         "max": 999999999
       },
       "method_management": "ONBOARDABLE",
-      "paymentMethodAsset": "https://assets.cdn.platform.pagopa.it/creditcard/generic.png"
+      "payment_method_asset": "https://assets.cdn.platform.pagopa.it/creditcard/generic.png"
     }
   ]
 }

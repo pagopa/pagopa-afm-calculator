@@ -1,7 +1,7 @@
 const { Given, When, Then, BeforeAll, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber')
 
 const assert = require("assert");
-const { call, post } = require("./common");
+const { call, post, del} = require("./common");
 const fs = require("fs");
 const tableStorageClient = require("./table_storage_client");
 
@@ -84,15 +84,15 @@ Given('the configuration {string}', async function(filePath) {
     paymenttypes);
   assert.strictEqual(result3.status, 201);
 
-  // let paypalpaymentmethod = config["paymentmethods"][0];
-  // let result4 = await post(afm_marketplace_host + '/payment-methods',
-  //       paypalpaymentmethod);
-  //   assert.strictEqual(result4.status, 201);
-  //
-  // let cardspaymentmethod = config["paymentmethods"][1];
-  // let result5 = await post(afm_marketplace_host + '/payment-methods',
-  //     cardspaymentmethod);
-  // assert.strictEqual(result5.status, 201);
+  let paypalpaymentmethod = config["paymentmethods"][0];
+  let result4 = await post(afm_marketplace_host + '/payment-methods',
+        paypalpaymentmethod);
+    assert.strictEqual(result4.status, 201);
+
+  let cardspaymentmethod = config["paymentmethods"][1];
+  let result5 = await post(afm_marketplace_host + '/payment-methods',
+      cardspaymentmethod);
+  assert.strictEqual(result5.status, 201);
 
 
 
@@ -221,11 +221,11 @@ AfterAll(async function() {
      validBundles);
    assert.strictEqual(result.status, 200);
 
-  // let result2 = await delete(afm_marketplace_host + '/payment-methods/CARDS-test' );
-  // assert.strictEqual(result2.status, 200);
-  //
-  // let result3 = await delete(afm_marketplace_host + '/payment-methods/PAYPAL-test' );
-  // assert.strictEqual(result3.status, 200);
+  let result2 = await del(afm_marketplace_host + '/payment-methods/CARDS-test' );
+  assert.strictEqual(result2.status, 200);
+
+  let result3 = await del(afm_marketplace_host + '/payment-methods/PAYPAL-test' );
+  assert.strictEqual(result3.status, 200);
 
   return Promise.resolve()
 });

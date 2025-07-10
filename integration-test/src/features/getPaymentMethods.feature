@@ -31,7 +31,7 @@ Feature: Payment Methods - Get List of Payment Methods
 			"targetKey": "string"
 	  }
 	  """
-	When the client send POST to /payment-methods/search
+	When the client send a V2 POST to /payment-methods/search without parameters
 	Then check statusCode is 200
 #	And check response body is
 #      """
