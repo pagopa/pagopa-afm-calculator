@@ -18,7 +18,7 @@
     "validity_date_from": "1995-01-13",
     "range_amount": {
       "min": 10,
-      "max": 100000
+      "max": 100
     },
     "metadata": {
       "installments": "true"

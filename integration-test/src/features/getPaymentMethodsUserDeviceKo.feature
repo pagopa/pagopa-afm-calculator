@@ -2,14 +2,14 @@ Feature: Payment Methods - Get List of Payment Methods
 
   Background: 
 	Given the configuration "data.json"
-  	Given the payment methods configuration "payment-methods-1.json"
+  	Given the payment methods configuration "payment-methods-user-device-ko.json"
 
-	Scenario: Search payment request using userTouchpoint IO, which is not present in the payment methods configuration
+	Scenario: Search payment request using userDevice WEB, which is not present in the payment methods configuration
 		Given initial json
 		  """
 		  {
 				"userTouchpoint": "IO",
-				"userDevice": "IOS",
+				"userDevice": "WEB",
 				"bin": "string",
 				"totalAmount": 0,
 				"paymentNotice": [
@@ -32,16 +32,16 @@ Feature: Payment Methods - Get List of Payment Methods
 				"targetKey": "string"
 		  }
 		  """
-		When the client send a V2 POST to /payment-methods/search without parameters
+		When the client send POST to /payment-methods/search
 		Then check statusCode is 200
 		And the body response does not contain the added test payment methods
 
-  Scenario: Search payment request using incorrect userTouchpoint value
+  Scenario: Search payment request using incorrect userDevice value
 	Given initial json
 	  """
 	  {
-			"userTouchpoint": "IOp",
-			"userDevice": "IOS",
+			"userTouchpoint": "IO",
+			"userDevice": "IOSs",
 			"bin": "string",
 			"totalAmount": 0,
 			"paymentNotice": [
@@ -64,7 +64,7 @@ Feature: Payment Methods - Get List of Payment Methods
 			"targetKey": "string"
 	  }
 	  """
-	When the client send a V2 POST to /payment-methods/search without parameters
+	When the client send POST to /payment-methods/search
 	Then check statusCode is 400
 	And check response body is
       """
