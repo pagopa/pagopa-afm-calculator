@@ -280,10 +280,10 @@ AfterAll(async function() {
    assert.strictEqual(result.status, 200);
 
   let result2 = await del(afm_marketplace_host + '/payment-methods/CARDS-test' );
-  //assert.strictEqual(result2.status, 200);
+  assert.strictEqual(result2.status, 200);
 
   let result3 = await del(afm_marketplace_host + '/payment-methods/PAYPAL-test' );
-  //assert.strictEqual(result3.status, 200);
+  assert.strictEqual(result3.status, 200);
 
   return Promise.resolve()
 });
