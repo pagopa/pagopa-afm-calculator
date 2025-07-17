@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic - API AFM-Calculator v1 Production",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.11.9-1-PAGOPA-3134-integration-test-metodi-pagamento"
+    "version": "2.11.10-1-PAGOPA-3134-integration-test-metodi-pagamento"
   },
   "servers": [
     {
@@ -34,6 +34,10 @@
     {
       "name": "Calculator",
       "description": "Everything about Calculator business logic"
+    },
+    {
+      "name": "Payment Methods",
+      "description": "Everything about the payment methods"
     }
   ],
   "paths": {
@@ -270,6 +274,136 @@
                 "description": "This header identifies the call",
                 "schema": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Service unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/payment-methods/search": {
+      "post": {
+        "tags": [
+          "Payment Methods"
+        ],
+        "summary": "Advanced search of payment methods",
+        "operationId": "searchPaymentMethods",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentMethodRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethodsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unable to process the request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
@@ -637,6 +771,202 @@
           },
           "pspBusinessName": {
             "type": "string"
+          }
+        }
+      },
+      "PaymentMethodRequest": {
+        "required": [
+          "bin",
+          "paymentNotice",
+          "totalAmount",
+          "userDevice",
+          "userTouchpoint"
+        ],
+        "type": "object",
+        "properties": {
+          "userTouchpoint": {
+            "type": "string",
+            "enum": [
+              "IO",
+              "CHECKOUT",
+              "CHECKOUT_CART"
+            ]
+          },
+          "userDevice": {
+            "type": "string",
+            "enum": [
+              "IOS",
+              "ANDROID",
+              "WEB"
+            ]
+          },
+          "bin": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paymentNotice": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentNoticeItem"
+            }
+          },
+          "allCCp": {
+            "type": "boolean"
+          },
+          "targetKey": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentNoticeItem": {
+        "required": [
+          "paymentAmount",
+          "primaryCreditorInstitution",
+          "transferList"
+        ],
+        "type": "object",
+        "properties": {
+          "paymentAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "primaryCreditorInstitution": {
+            "type": "string"
+          },
+          "transferList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransferListItem"
+            }
+          }
+        }
+      },
+      "FeeRange": {
+        "required": [
+          "max",
+          "min"
+        ],
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "max": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PaymentMethodsItem": {
+        "required": [
+          "description",
+          "feeRange",
+          "group",
+          "methodManagement",
+          "name",
+          "paymentMethodAsset",
+          "paymentMethodId",
+          "status",
+          "validityDateFrom"
+        ],
+        "type": "object",
+        "properties": {
+          "paymentMethodId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ENABLED",
+              "DISABLED",
+              "MAINTENANCE"
+            ]
+          },
+          "validityDateFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "group": {
+            "type": "string",
+            "enum": [
+              "CP",
+              "MYBK",
+              "BPAY",
+              "PPAL",
+              "RPIC",
+              "RBPS",
+              "SATY",
+              "APPL",
+              "RICO"
+            ]
+          },
+          "feeRange": {
+            "$ref": "#/components/schemas/FeeRange"
+          },
+          "paymentMethodAsset": {
+            "type": "string"
+          },
+          "methodManagement": {
+            "type": "string",
+            "enum": [
+              "ONBOARDABLE",
+              "ONBOARDABLE_ONLY",
+              "NOT_ONBOARDABLE",
+              "REDIRECT"
+            ]
+          },
+          "disabledReason": {
+            "type": "string",
+            "enum": [
+              "AMOUNT_OUT_OF_BOUND",
+              "MAINTENANCE_IN_PROGRESS",
+              "METHOD_DISABLED",
+              "NOT_YET_VALID",
+              "TARGET_PREVIEW",
+              "NO_BUNDLE_AVAILABLE"
+            ]
+          },
+          "paymentMethodsBrandAssets": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PaymentMethodsResponse": {
+        "required": [
+          "paymentMethods"
+        ],
+        "type": "object",
+        "properties": {
+          "paymentMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethodsItem"
+            }
           }
         }
       },
