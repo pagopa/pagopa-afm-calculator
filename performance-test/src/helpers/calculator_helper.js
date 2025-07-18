@@ -24,6 +24,12 @@ export function getFeesMulti(rootUrl, cartPathApi, payload, params) {
     return http.post(url, JSON.stringify(payload), params);
 }
 
+export function searchPaymentMethods(rootUrl, payload, params) {
+	const url = `${rootUrl}/payment-methods/search`
+
+    return http.post(url, JSON.stringify(payload), params);
+}
+
 export function addTouchpoints(rootUrl, payload, params) {
 	const url = `${rootUrl}/configuration/touchpoint/add`
 

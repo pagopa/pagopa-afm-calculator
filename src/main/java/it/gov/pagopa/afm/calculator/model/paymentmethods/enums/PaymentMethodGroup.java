@@ -10,4 +10,7 @@ public enum PaymentMethodGroup {
     SATY,
     APPL,
     RICO,
+    RBPB,
+    RBPP,
+    RBPR,
 }
