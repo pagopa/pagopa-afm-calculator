@@ -92,12 +92,12 @@ Given('the payment methods configuration {string}', async function(filePath) {
 
   let paypalpaymentmethod = config["paymentmethods"][0];
   let result4 = await post(afm_marketplace_host + '/payment-methods',
-      paypalpaymentmethod);
+      paypalpaymentmethod, { "headers": {'Ocp-Apim-Subscription-Key': process.env.SUBKEY_AFM_MARKETPLACE }});
   assert.strictEqual(result4.status, 201);
 
   let cardspaymentmethod = config["paymentmethods"][1];
   let result5 = await post(afm_marketplace_host + '/payment-methods',
-      cardspaymentmethod);
+      cardspaymentmethod, { "headers": {'Ocp-Apim-Subscription-Key': process.env.SUBKEY_AFM_MARKETPLACE }});
   assert.strictEqual(result5.status, 201);
 
 });
@@ -279,10 +279,10 @@ AfterAll(async function() {
      validBundles);
    assert.strictEqual(result.status, 200);
 
-  let result2 = await del(afm_marketplace_host + '/payment-methods/CARDS-test' );
+  let result2 = await del(afm_marketplace_host + '/payment-methods/CARDS-test', { "headers": {'Ocp-Apim-Subscription-Key': process.env.SUBKEY_AFM_MARKETPLACE }} );
   assert.strictEqual(result2.status, 200);
 
-  let result3 = await del(afm_marketplace_host + '/payment-methods/PAYPAL-test' );
+  let result3 = await del(afm_marketplace_host + '/payment-methods/PAYPAL-test', { "headers": {'Ocp-Apim-Subscription-Key': process.env.SUBKEY_AFM_MARKETPLACE }} );
   assert.strictEqual(result3.status, 200);
 
   return Promise.resolve()
