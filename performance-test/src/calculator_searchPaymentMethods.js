@@ -56,10 +56,9 @@ export default function calculator() {
 
     let response = searchPaymentMethods(rootUrl, payload, params);
 
-    console.log(response.status)
-
     check(response, {
-        'searchPaymentMethods': (r) => r.status === 200,
+        'check status is 200': (r) => r.status === 200,
+        'check payment method is not null': (r) => JSON.parse(r.body).paymentMethods != null,
     });
 
 }
