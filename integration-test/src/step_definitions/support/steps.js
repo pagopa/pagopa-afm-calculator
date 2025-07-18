@@ -1,13 +1,14 @@
 const { Given, When, Then, BeforeAll, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber')
 
 const assert = require("assert");
-const { call, post } = require("./common");
+const { call, post, del} = require("./common");
 const fs = require("fs");
 const tableStorageClient = require("./table_storage_client");
 
 const afm_host = process.env.AFM_HOST;
 const afm_host_V2 = process.env.AFM_HOST_V2;
 const afm_api_extension_V2 = process.env.AFM_API_EXTENSION_V2;
+const afm_marketplace_host = process.env.AFM_MARKETPLACE_HOST;
 
 /*increased the default timeout of the promise to allow
 the correct execution of the smoke tests*/
@@ -82,6 +83,22 @@ Given('the configuration {string}', async function(filePath) {
   let result3 = await post(afm_host + '/configuration/paymenttypes/add',
     paymenttypes);
   assert.strictEqual(result3.status, 201);
+
+});
+
+Given('the payment methods configuration {string}', async function(filePath) {
+  let file = fs.readFileSync('./config/' + filePath);
+  let config = JSON.parse(file);
+
+  let paypalpaymentmethod = config["paymentmethods"][0];
+  let result4 = await post(afm_marketplace_host + '/payment-methods',
+      paypalpaymentmethod, { "headers": {'Ocp-Apim-Subscription-Key': process.env.SUBKEY_AFM_MARKETPLACE }});
+  assert.strictEqual(result4.status, 201);
+
+  let cardspaymentmethod = config["paymentmethods"][1];
+  let result5 = await post(afm_marketplace_host + '/payment-methods',
+      cardspaymentmethod, { "headers": {'Ocp-Apim-Subscription-Key': process.env.SUBKEY_AFM_MARKETPLACE }});
+  assert.strictEqual(result5.status, 201);
 
 });
 
@@ -182,6 +199,60 @@ Then('the body response for the bundleOptions.bundleId field is:', function (dat
   }
 });
 
+Then('the body response does not contain the added test payment methods', function () {
+  for (let i=0; i<responseToCheck.data.paymentMethods.length; i++){
+    let bodyPM = responseToCheck.data.paymentMethods[i].paymentMethodId;
+    assert.notEqual(bodyPM, process.env.PAYPAL_PAYMENT_METHOD_TEST_NAME);
+    assert.notEqual(bodyPM, process.env.CP_PAYMENT_METHOD_TEST_NAME);
+  }
+});
+
+Then('the body response contains the added test payment methods', function () {
+    assert(responseToCheck.data.paymentMethods.some(pm => pm.paymentMethodId === process.env.PAYPAL_PAYMENT_METHOD_TEST_NAME));
+    assert(responseToCheck.data.paymentMethods.some(pm => pm.paymentMethodId === process.env.CP_PAYMENT_METHOD_TEST_NAME));
+});
+
+Then('the body response contains the added test payment methods but they are both disabled for AMOUNT_OUT_OF_BOUND', function () {
+  const paymentMethods = responseToCheck.data.paymentMethods;
+  const paypal = paymentMethods.find(pm => pm.paymentMethodId === process.env.PAYPAL_PAYMENT_METHOD_TEST_NAME);
+  const cp = paymentMethods.find(pm => pm.paymentMethodId === process.env.CP_PAYMENT_METHOD_TEST_NAME);
+  assert(paypal, 'PAYPAL test payment method not found');
+  assert(cp, 'CP test payment method not found');
+
+  assert.strictEqual(paypal.disabledReason, "AMOUNT_OUT_OF_BOUND");
+  assert.strictEqual(cp.disabledReason, "AMOUNT_OUT_OF_BOUND");
+});
+
+
+
+Then('the body response contains the added test payment methods enabled', function () {
+  const paymentMethods = responseToCheck.data.paymentMethods;
+  const paypal = paymentMethods.find(pm => pm.paymentMethodId === process.env.PAYPAL_PAYMENT_METHOD_TEST_NAME);
+  const cp = paymentMethods.find(pm => pm.paymentMethodId === process.env.CP_PAYMENT_METHOD_TEST_NAME);
+  assert(paypal, 'PAYPAL test payment method not found');
+  assert(cp, 'CP test payment method not found');
+
+  assert.strictEqual(paypal.disabledReason, null);
+  assert.strictEqual(cp.disabledReason, null);
+
+  assert.strictEqual(paypal.status, "ENABLED");
+  assert.strictEqual(cp.status, "ENABLED");
+});
+
+Then('the body response contains the added test payment methods, only PAYPAL-test is disabled for AMOUNT_OUT_OF_BOUND', function () {
+  const paymentMethods = responseToCheck.data.paymentMethods;
+  const paypal = paymentMethods.find(pm => pm.paymentMethodId === process.env.PAYPAL_PAYMENT_METHOD_TEST_NAME);
+  const cp = paymentMethods.find(pm => pm.paymentMethodId === process.env.CP_PAYMENT_METHOD_TEST_NAME);
+  assert(paypal, 'PAYPAL test payment method not found');
+  assert(cp, 'CP test payment method not found');
+
+  assert.strictEqual(paypal.disabledReason, "AMOUNT_OUT_OF_BOUND");
+  assert.strictEqual(cp.disabledReason, null);
+
+  assert.strictEqual(paypal.status, "DISABLED");
+  assert.strictEqual(cp.status, "ENABLED");
+});
+
 
 function mapToValidBundles(config) {
 
@@ -207,6 +278,12 @@ AfterAll(async function() {
    let result = await post(afm_host + '/configuration/bundles/delete',
      validBundles);
    assert.strictEqual(result.status, 200);
+
+  let result2 = await del(afm_marketplace_host + '/payment-methods/CARDS-test', { "headers": {'Ocp-Apim-Subscription-Key': process.env.SUBKEY_AFM_MARKETPLACE }} );
+  assert.strictEqual(result2.status, 200);
+
+  let result3 = await del(afm_marketplace_host + '/payment-methods/PAYPAL-test', { "headers": {'Ocp-Apim-Subscription-Key': process.env.SUBKEY_AFM_MARKETPLACE }} );
+  assert.strictEqual(result3.status, 200);
 
   return Promise.resolve()
 });
