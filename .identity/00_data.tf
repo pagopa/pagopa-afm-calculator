@@ -73,7 +73,7 @@ data "azurerm_key_vault_secret" "key_vault_integration_test_afm_calculator_subke
 data "azurerm_key_vault_secret" "key_vault_integration_test_afm_marketplace_subkey" {
   count        = var.env_short != "p" ? 1 : 0
 
-  name         = integration-test-afm-marketplace-subkey
+  name         = "integration-test-afm-marketplace-subkey"
   key_vault_id = data.azurerm_key_vault.domain_key_vault.id
 }
 
