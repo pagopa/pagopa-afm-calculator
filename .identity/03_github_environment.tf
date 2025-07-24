@@ -28,6 +28,7 @@ locals {
     "AFM_SA_CONNECTION_STRING" : data.azurerm_key_vault_secret.key_vault_sa_connection_string.value,
     "CLIENT_ID" : data.azurerm_user_assigned_identity.identity_cd_01.client_id,
     "SUBKEY" : (var.env_short != "p" ? data.azurerm_key_vault_secret.key_vault_integration_test_afm_calculator_subkey[0].value : "fake"),
+    "SUBKEY_AFM_MARKETPLACE" : (var.env_short != "p" ? data.azurerm_key_vault_secret.key_vault_integration_test_afm_marketplace_subkey[0].value : "fake"),
   }
   env_variables = {
     "CONTAINER_APP_ENVIRONMENT_NAME" : local.container_app_environment.name,
