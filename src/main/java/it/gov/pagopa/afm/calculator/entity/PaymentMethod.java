@@ -46,6 +46,9 @@ public class PaymentMethod {
     private List<UserDevice> userDevice;
     @NotNull
     private PaymentMethodStatus status;
+    @NotNull
+    @JsonProperty("types")
+    private List<PaymentMethodType> types;
 
     @JsonProperty("validity_date_from")
     @NotNull
