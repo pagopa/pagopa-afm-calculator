@@ -76,6 +76,7 @@ jobs:
         id: run_integration_test
         run: |
           export SUBKEY=${{ secrets.SUBKEY }}
+          export SUBKEY_AFM_MARKETPLACE=${{ secrets.SUBKEY_AFM_MARKETPLACE }}
           export CANARY=${{ inputs.canary }}
           export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
           export ISSUER_RANGE_TABLE=${{ vars.ISSUER_RANGE_TABLE }}
