@@ -17,8 +17,8 @@ import java.util.Optional;
 @NoArgsConstructor
 public class IssuerRangeEntity extends TableServiceEntity {
 
-    private String lowRange;
-    private String highRange;
+    private Long lowRange;
+    private Long highRange;
     private String circuit;
     private String productCode;
     private String productType;
@@ -40,11 +40,11 @@ public class IssuerRangeEntity extends TableServiceEntity {
         super.readEntity(properties, opContext);
         this.lowRange =
                 Optional.ofNullable(properties.get("LOW_RANGE"))
-                        .map(EntityProperty::getValueAsString)
+                        .map(EntityProperty::getValueAsLong)
                         .orElse(lowRange);
         this.highRange =
                 Optional.ofNullable(properties.get("HIGH_RANGE"))
-                        .map(EntityProperty::getValueAsString)
+                        .map(EntityProperty::getValueAsLong)
                         .orElse(highRange);
         this.circuit =
                 Optional.ofNullable(properties.get("CIRCUIT"))
