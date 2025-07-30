@@ -133,6 +133,78 @@
         }
       ]
     },
+    "/configuration/issuers/refresh": {
+      "post": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Refresh issuer range table cache",
+        "operationId": "refreshIssuerRangeTableCache",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Service unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
     "/configuration/paymenttypes/add": {
       "post": {
         "tags": [
@@ -940,8 +1012,7 @@
       },
       "TransferListItem": {
         "required": [
-          "creditorInstitution",
-          "transferCategory"
+          "creditorInstitution"
         ],
         "type": "object",
         "properties": {
@@ -1044,7 +1115,6 @@
       },
       "PaymentMethodRequest": {
         "required": [
-          "bin",
           "paymentNotice",
           "totalAmount",
           "userDevice",
@@ -1181,7 +1251,10 @@
               "RBPS",
               "SATY",
               "APPL",
-              "RICO"
+              "RICO",
+              "RBPB",
+              "RBPP",
+              "RBPR"
             ]
           },
           "feeRange": {

@@ -538,8 +538,7 @@
       },
       "TransferListItem": {
         "required": [
-          "creditorInstitution",
-          "transferCategory"
+          "creditorInstitution"
         ],
         "type": "object",
         "properties": {
