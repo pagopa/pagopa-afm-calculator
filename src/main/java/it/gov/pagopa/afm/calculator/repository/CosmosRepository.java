@@ -1,6 +1,5 @@
 package it.gov.pagopa.afm.calculator.repository;
 
-import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
 import com.azure.spring.data.cosmos.core.query.Criteria;
@@ -40,6 +39,10 @@ public class CosmosRepository {
     private static final String CART_PARAM = "cart";
     @Autowired
     CosmosTemplate cosmosTemplate;
+    @Autowired
+    TouchpointRepository touchpointRepository;
+    @Autowired
+    PaymentTypeRepository paymentTypeRepository;
     @Autowired
     UtilityComponent utilityComponent;
     @Value("${pspPoste.id}")
@@ -170,33 +173,31 @@ public class CosmosRepository {
         // add filter by Touch Point: touchpoint=<value> || touchpoint==null
         if (paymentOptionMulti.getTouchpoint() != null
                 && !paymentOptionMulti.getTouchpoint().equalsIgnoreCase("any")) {
-            var touchpointNameFilter = isEqual("name", paymentOptionMulti.getTouchpoint());
-            Iterable<Touchpoint> touchpoint =
-                    cosmosTemplate.find(
-                            new CosmosQuery(touchpointNameFilter), Touchpoint.class, "touchpoints");
+            Optional<Touchpoint> touchpoint = touchpointRepository.findByName(paymentOptionMulti.getTouchpoint());
 
-            checkTouchpointListSize(Iterables.size(touchpoint), paymentOptionMulti.getTouchpoint());
-
-            var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.iterator().next().getName());
+            if (touchpoint.isEmpty()) {
+                throw new AppException(
+                        HttpStatus.NOT_FOUND,
+                        "Touchpoint not found",
+                        "Cannot find touchpont with name: '" + paymentOptionMulti.getTouchpoint() + "'");
+            }
+            var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.get().getName());
             queryResult = and(queryResult, touchpointFilter);
         }
 
         // add filter by Payment Method: paymentMethod=<value> || paymentMethod==null
         if (paymentOptionMulti.getPaymentMethod() != null
                 && !paymentOptionMulti.getPaymentMethod().equalsIgnoreCase("any")) {
-            var paymentTypeNameFilter = isEqualOrNull("name", paymentOptionMulti.getPaymentMethod());
-            Iterable<PaymentType> paymentType =
-                    cosmosTemplate.find(
-                            new CosmosQuery(paymentTypeNameFilter), PaymentType.class, "paymenttypes");
+            Optional<PaymentType> paymentType = paymentTypeRepository.findByName(paymentOptionMulti.getPaymentMethod());
 
-            if (Iterables.size(paymentType) == 0) {
+            if (paymentType.isEmpty()) {
                 throw new AppException(
                         HttpStatus.NOT_FOUND,
                         "PaymentType not found",
                         "Cannot find payment type with name: '" + paymentOptionMulti.getPaymentMethod() + "'");
             }
 
-            var paymentTypeFilter = isEqualOrNull("paymentType", paymentType.iterator().next().getName());
+            var paymentTypeFilter = isEqualOrNull("paymentType", paymentType.get().getName());
             queryResult = and(queryResult, paymentTypeFilter);
         }
 
@@ -265,33 +266,31 @@ public class CosmosRepository {
         // add filter by Touch Point: touchpoint=<value> || touchpoint==null
         if (paymentOption.getTouchpoint() != null
                 && !paymentOption.getTouchpoint().equalsIgnoreCase("any")) {
-            var touchpointNameFilter = isEqual("name", paymentOption.getTouchpoint());
-            Iterable<Touchpoint> touchpoint =
-                    cosmosTemplate.find(
-                            new CosmosQuery(touchpointNameFilter), Touchpoint.class, "touchpoints");
+            Optional<Touchpoint> touchpoint = touchpointRepository.findByName(paymentOption.getTouchpoint());
 
-            checkTouchpointListSize(Iterables.size(touchpoint), paymentOption.getTouchpoint());
-
-            var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.iterator().next().getName());
+            if (touchpoint.isEmpty()) {
+                throw new AppException(
+                        HttpStatus.NOT_FOUND,
+                        "Touchpoint not found",
+                        "Cannot find touchpont with name: '" + paymentOption.getTouchpoint() + "'");
+            }
+            var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.get().getName());
             queryResult = and(queryResult, touchpointFilter);
         }
 
         // add filter by Payment Method: paymentMethod=<value> || paymentMethod==null
         if (paymentOption.getPaymentMethod() != null
                 && !paymentOption.getPaymentMethod().equalsIgnoreCase("any")) {
-            var paymentTypeNameFilter = isEqualOrNull("name", paymentOption.getPaymentMethod());
-            Iterable<PaymentType> paymentType =
-                    cosmosTemplate.find(
-                            new CosmosQuery(paymentTypeNameFilter), PaymentType.class, "paymenttypes");
+            Optional<PaymentType> paymentType = paymentTypeRepository.findByName(paymentOption.getPaymentMethod());
 
-            if (Iterables.size(paymentType) == 0) {
+            if (paymentType.isEmpty()) {
                 throw new AppException(
                         HttpStatus.NOT_FOUND,
                         "PaymentType not found",
                         "Cannot find payment type with name: '" + paymentOption.getPaymentMethod() + "'");
             }
 
-            var paymentTypeFilter = isEqualOrNull("paymentType", paymentType.iterator().next().getName());
+            var paymentTypeFilter = isEqualOrNull("paymentType", paymentType.get().getName());
             queryResult = and(queryResult, paymentTypeFilter);
         }
 
@@ -421,21 +420,5 @@ public class CosmosRepository {
             queryResult = and(queryResult, pspNotIn);
         }
         return queryResult;
-    }
-
-    private void checkTouchpointListSize(int touchpointListSize, String touchpointName) {
-        if (touchpointListSize == 0) {
-            throw new AppException(
-                    HttpStatus.NOT_FOUND,
-                    "Touchpoint not found",
-                    "Cannot find touchpont with name: '" + touchpointName + "'");
-        }
-
-        if (touchpointListSize > 1) {
-            throw new AppException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Too many touchpoints found",
-                    "Too many touchpoints found with name: '" + touchpointName + "', contact technical support");
-        }
     }
 }
