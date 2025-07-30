@@ -686,7 +686,7 @@ public class TestUtil {
         return bundles;
     }
 
-    public static Touchpoint getMockTouchpoints() {
+    public static Touchpoint getMockTouchpoint() {
         return Touchpoint.builder().id("1").name("CHECKOUT").creationDate(LocalDateTime.now()).build();
     }
 

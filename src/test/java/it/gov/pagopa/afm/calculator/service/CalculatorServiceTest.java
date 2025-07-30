@@ -16,6 +16,8 @@ import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
+import it.gov.pagopa.afm.calculator.repository.PaymentTypeRepository;
+import it.gov.pagopa.afm.calculator.repository.TouchpointRepository;
 import org.json.JSONException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -35,6 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,12 +56,16 @@ class CalculatorServiceTest {
 
     @MockBean
     CosmosTemplate cosmosTemplate;
+    @MockBean
+    TouchpointRepository touchpointRepository;
+    @MockBean
+    PaymentTypeRepository paymentTypeRepository;
 
     @BeforeAll
     void setup() throws StorageException {
         IssuerRangeEntity e = new IssuerRangeEntity("403027", "335106");
-        e.setLowRange("4030270000000000000");
-        e.setHighRange("4030279999999999999");
+        e.setLowRange(4030270000000000000L);
+        e.setHighRange(4030279999999999999L);
         e.setCircuit("VISA");
         e.setProductCode("L");
         e.setProductType("1");
@@ -69,8 +76,8 @@ class CalculatorServiceTest {
 
         // two records with same BIN but different ABI --> error
         e = new IssuerRangeEntity("504317", "321133");
-        e.setLowRange("5043170000000000000");
-        e.setHighRange("5043179999999999999");
+        e.setLowRange(5043170000000000000L);
+        e.setHighRange(5043179999999999999L);
         e.setCircuit("MAST");
         e.setProductCode("CIR");
         e.setProductType("1");
@@ -80,8 +87,8 @@ class CalculatorServiceTest {
         Initializer.table.execute(TableOperation.insert(e));
 
         e = new IssuerRangeEntity("504317", "321134");
-        e.setLowRange("5043170000000000000");
-        e.setHighRange("5043179999999999999");
+        e.setLowRange(5043170000000000000L);
+        e.setHighRange(5043179999999999999L);
         e.setCircuit("MAST");
         e.setProductCode("CIR");
         e.setProductType("1");
@@ -92,8 +99,8 @@ class CalculatorServiceTest {
 
         // two records with same BIN and same ABI
         e = new IssuerRangeEntity("1005066", "300000");
-        e.setLowRange("1005066000000000000");
-        e.setHighRange("1005066999999999999");
+        e.setLowRange(1005066000000000000L);
+        e.setHighRange(1005066999999999999L);
         e.setCircuit("DINERS");
         e.setProductCode("N");
         e.setProductType("2");
@@ -103,8 +110,8 @@ class CalculatorServiceTest {
         Initializer.table.execute(TableOperation.insert(e));
 
         e = new IssuerRangeEntity("1005066", "300001");
-        e.setLowRange("1005066000000000000");
-        e.setHighRange("1005066999999999999");
+        e.setLowRange(1005066000000000000L);
+        e.setHighRange(1005066999999999999L);
         e.setCircuit("DINERS");
         e.setProductCode("N");
         e.setProductType("2");
@@ -114,8 +121,8 @@ class CalculatorServiceTest {
         Initializer.table.execute(TableOperation.insert(e));
 
         e = new IssuerRangeEntity("340000", "321087");
-        e.setLowRange("3400000000000000000");
-        e.setHighRange("3499999999999999999");
+        e.setLowRange(3400000000000000000L);
+        e.setHighRange(3499999999999999999L);
         e.setCircuit("AMEX");
         e.setProductCode("99");
         e.setProductType("3");
@@ -123,28 +130,6 @@ class CalculatorServiceTest {
         e.setIssuerId("999999");
         e.setAbi("AMREX");
         Initializer.table.execute(TableOperation.insert(e));
-    }
-
-    @Test
-    @Order(0)
-    void calculateTooManyTouchPointsException() throws IOException {
-        Touchpoint touchpoint1 = TestUtil.getMockTouchpoints();
-        Touchpoint touchpoint2 = TestUtil.getMockTouchpoints();
-        var touchpointList = new ArrayList<>();
-        https:
-//github.com/pagopa/pagopa-afm-calculator/actions/runs/15437046294/job/43445739038
-        touchpointList.add(touchpoint1);
-        touchpointList.add(touchpoint2);
-
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(touchpointList);
-
-        var paymentOptionMulti = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-        AppException exception =
-                assertThrows(
-                        AppException.class, () -> calculatorService.calculateMulti(paymentOptionMulti, 10, true, true, "random"));
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getHttpStatus());
     }
 
     @ParameterizedTest
@@ -156,13 +141,13 @@ class CalculatorServiceTest {
     })
     @Order(1)
     void calculate(String input, String output) throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
         PaymentType paymentType = TestUtil.getMockPaymentType();
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile(input, PaymentOption.class);
@@ -178,13 +163,13 @@ class CalculatorServiceTest {
     void calculate2() throws IOException, JSONException {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         validBundle.setIdPsp("77777777777");
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
         PaymentType paymentType = TestUtil.getMockPaymentType();
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -219,10 +204,10 @@ class CalculatorServiceTest {
         list.add(TestUtil.getMockGlobalValidBundle());
         list.add(TestUtil.getMockValidBundle());
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(TestUtil.getMockTouchpoints()),
-                        Collections.singleton(TestUtil.getMockPaymentType()),
                         list);
 
         var paymentOption =
@@ -252,10 +237,10 @@ class CalculatorServiceTest {
     @Test
     @Order(6)
     void calculate_invalidPaymentMethod() throws IOException {
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.empty());
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(TestUtil.getMockTouchpoints()),
-                        Collections.emptyList(),
                         Collections.singleton(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -270,16 +255,16 @@ class CalculatorServiceTest {
     @Test
     @Order(7)
     void calculate_digitalStamp() throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
         PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setDigitalStamp(true);
         mockValidBundle.setDigitalStampRestriction(true);
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(mockValidBundle));
 
         var paymentOption =
@@ -294,15 +279,15 @@ class CalculatorServiceTest {
     @Test
     @Order(8)
     void calculate_digitalStamp2() throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
         PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setDigitalStamp(true);
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(mockValidBundle));
 
         var paymentOption =
@@ -339,7 +324,7 @@ class CalculatorServiceTest {
     @Test
     @Order(10)
     void calculate_SubThreshold() throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
         PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setMinPaymentAmount(-10L);
@@ -347,10 +332,10 @@ class CalculatorServiceTest {
         mockValidBundle.setIdPsp("111111111111");
         mockValidBundle.setType(BundleType.GLOBAL);
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(mockValidBundle));
 
         var paymentOption =
@@ -365,15 +350,15 @@ class CalculatorServiceTest {
     @Test
     @Order(11)
     void calculate_paymentType_Null() throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
         PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setPaymentType(null);
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -387,15 +372,15 @@ class CalculatorServiceTest {
     @Test
     @Order(12)
     void calculate_digitalStamp3() throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
         PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setDigitalStamp(true);
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(mockValidBundle));
 
         var paymentOption =
@@ -410,12 +395,13 @@ class CalculatorServiceTest {
     @Test
     @Order(11)
     void calculate_allCcpFlagDown() throws IOException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
         PaymentType paymentType = TestUtil.getMockPaymentType();
+
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -427,13 +413,13 @@ class CalculatorServiceTest {
     @Order(12)
     void calculate_amexPayment() throws IOException, JSONException {
         ValidBundle validBundle = TestUtil.getMockAmexValidBundle();
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
         PaymentType paymentType = TestUtil.getMockPaymentType();
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(validBundle));
 
         var paymentOption =
@@ -449,13 +435,10 @@ class CalculatorServiceTest {
     @Test
     @Order(Integer.MAX_VALUE)
     void calculate_multipleTransferCreation() throws IOException {
-
         CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-
         calculatorService.setCosmosRepository(cosmosRepository);
 
         List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundle();
-
         Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOption.class), any(Boolean.class));
 
         var paymentOption =
@@ -479,13 +462,13 @@ class CalculatorServiceTest {
     })
     @Order(13)
     void calculateMulti(String input, String output) throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
         PaymentType paymentType = TestUtil.getMockPaymentType();
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile(input, PaymentOptionMulti.class);
@@ -501,13 +484,13 @@ class CalculatorServiceTest {
     void calculateMulti2() throws IOException, JSONException {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         validBundle.setIdPsp("77777777777");
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
+        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
         PaymentType paymentType = TestUtil.getMockPaymentType();
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -553,10 +536,10 @@ class CalculatorServiceTest {
     @Test
     @Order(17)
     void calculateMulti_invalidPaymentMethod() throws IOException {
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.empty());
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(TestUtil.getMockTouchpoints()),
-                        Collections.emptyList(),
                         Collections.singleton(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -571,16 +554,14 @@ class CalculatorServiceTest {
     @Test
     @Order(18)
     void calculateMulti_digitalStamp() throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-        PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setDigitalStamp(true);
         mockValidBundle.setDigitalStampRestriction(true);
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(mockValidBundle));
 
         var paymentOption =
@@ -595,15 +576,13 @@ class CalculatorServiceTest {
     @Test
     @Order(19)
     void calculateMulti_digitalStamp2() throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-        PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setDigitalStamp(true);
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(mockValidBundle));
 
         var paymentOption =
@@ -640,18 +619,16 @@ class CalculatorServiceTest {
     @Test
     @Order(21)
     void calculateMulti_SubThreshold() throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-        PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setMinPaymentAmount(-10L);
         mockValidBundle.setPaymentAmount(-5L);
         mockValidBundle.setIdPsp("111111111111");
         mockValidBundle.setType(BundleType.GLOBAL);
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(mockValidBundle));
 
         var paymentOption =
@@ -666,15 +643,13 @@ class CalculatorServiceTest {
     @Test
     @Order(22)
     void calculateMulti_paymentType_Null() throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-        PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setPaymentType(null);
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -688,15 +663,13 @@ class CalculatorServiceTest {
     @Test
     @Order(23)
     void calculateMulti_digitalStamp3() throws IOException, JSONException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-        PaymentType paymentType = TestUtil.getMockPaymentType();
         ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
         mockValidBundle.setDigitalStamp(true);
 
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(mockValidBundle));
 
         var paymentOption =
@@ -711,12 +684,10 @@ class CalculatorServiceTest {
     @Test
     @Order(24)
     void calculateMulti_allCcpFlagDown() throws IOException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-        PaymentType paymentType = TestUtil.getMockPaymentType();
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -729,13 +700,10 @@ class CalculatorServiceTest {
     @Order(25)
     void calculateMulti_amexPayment() throws IOException, JSONException {
         ValidBundle validBundle = TestUtil.getMockAmexValidBundle();
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-        PaymentType paymentType = TestUtil.getMockPaymentType();
-
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(validBundle));
 
         var paymentOption =
@@ -751,13 +719,10 @@ class CalculatorServiceTest {
     @Order(26)
     void calculateMultiHighCommission() throws IOException, JSONException {
         ValidBundle validBundle = TestUtil.getHighCommissionValidBundle();
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-        PaymentType paymentType = TestUtil.getMockPaymentType();
-
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(validBundle));
 
         var paymentOption =
@@ -773,13 +738,10 @@ class CalculatorServiceTest {
     @Order(27)
     void calculateMultiFullCommission() throws IOException, JSONException {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
-        Touchpoint touchpoint = TestUtil.getMockTouchpoints();
-        PaymentType paymentType = TestUtil.getMockPaymentType();
-
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
         when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
                 .thenReturn(
-                        Collections.singleton(touchpoint),
-                        Collections.singleton(paymentType),
                         Collections.singleton(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMultiWrongEC.json", PaymentOptionMulti.class);
@@ -811,13 +773,10 @@ class CalculatorServiceTest {
     @Test
     @Order(29)
     void calculateMultipleBundlesRandomOrderOnusFirst() throws IOException {
-
         CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-
         calculatorService.setCosmosRepository(cosmosRepository);
 
         List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-
         Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
 
         var paymentOption =
@@ -835,13 +794,10 @@ class CalculatorServiceTest {
     @Test
     @Order(30)
     void calculateMultipleBundlesFeeOrder() throws IOException {
-
         CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-
         calculatorService.setCosmosRepository(cosmosRepository);
 
         List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-
         Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
 
         var paymentOption =
@@ -861,13 +817,10 @@ class CalculatorServiceTest {
     @Test
     @Order(31)
     void calculateMultipleBundlesFeeOrderOnusFirst() throws IOException {
-
         CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-
         calculatorService.setCosmosRepository(cosmosRepository);
 
         List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-
         Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
 
         var paymentOption =
@@ -900,13 +853,10 @@ class CalculatorServiceTest {
     @Test
     @Order(32)
     void calculateMultipleBundlesPspNameOrder() throws IOException {
-
         CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-
         calculatorService.setCosmosRepository(cosmosRepository);
 
         List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-
         Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
 
         var paymentOption =
@@ -927,13 +877,10 @@ class CalculatorServiceTest {
     @Test
     @Order(33)
     void calculateMultipleBundlesPspNameOrderOnusFirst() throws IOException {
-
         CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-
         calculatorService.setCosmosRepository(cosmosRepository);
 
         List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-
         Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
 
         var paymentOption =
