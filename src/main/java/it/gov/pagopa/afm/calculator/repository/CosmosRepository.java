@@ -25,7 +25,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
@@ -33,22 +32,32 @@ import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
 
 @Repository
 public class CosmosRepository {
-
     private static final String ID_PSP_PARAM = "idPsp";
     private static final String TRANSFER_CATEGORY_LIST = "transferCategoryList";
     private static final String CART_PARAM = "cart";
+    private final CosmosTemplate cosmosTemplate;
+    private final TouchpointRepository touchpointRepository;
+    private final PaymentTypeRepository paymentTypeRepository;
+    private final UtilityComponent utilityComponent;
+    private final String pspPosteId;
+    private final List<String> pspBlacklist;
+
     @Autowired
-    CosmosTemplate cosmosTemplate;
-    @Autowired
-    TouchpointRepository touchpointRepository;
-    @Autowired
-    PaymentTypeRepository paymentTypeRepository;
-    @Autowired
-    UtilityComponent utilityComponent;
-    @Value("${pspPoste.id}")
-    private String pspPosteId;
-    @Value("#{'${psp.blacklist}'.split(',')}")
-    private List<String> pspBlacklist;
+    public CosmosRepository(
+            CosmosTemplate cosmosTemplate,
+            TouchpointRepository touchpointRepository,
+            PaymentTypeRepository paymentTypeRepository,
+            UtilityComponent utilityComponent,
+            @Value("${pspPoste.id}") String pspPosteId,
+            @Value("#{'${psp.blacklist}'.split(',')}") List<String> pspBlacklist
+    ) {
+        this.cosmosTemplate = cosmosTemplate;
+        this.touchpointRepository = touchpointRepository;
+        this.paymentTypeRepository = paymentTypeRepository;
+        this.utilityComponent = utilityComponent;
+        this.pspPosteId = pspPosteId;
+        this.pspBlacklist = pspBlacklist;
+    }
 
     /**
      * @param ciFiscalCode fiscal code of the CI
@@ -358,7 +367,7 @@ public class CosmosRepository {
                 .filter(bundle -> digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
                 // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
                 .filter(bundle -> globalAndRelatedFilter(paymentOptionMulti, bundle))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -381,7 +390,7 @@ public class CosmosRepository {
                 .filter(bundle -> digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
                 // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
                 .filter(bundle -> globalAndRelatedFilter(paymentOption, bundle))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

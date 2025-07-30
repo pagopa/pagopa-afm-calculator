@@ -11,7 +11,6 @@ import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
 import it.gov.pagopa.afm.calculator.service.ConfigurationService;
-import it.gov.pagopa.afm.calculator.service.IssuersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,8 +27,12 @@ import java.util.List;
 @RequestMapping(path = "/configuration")
 public class ConfigurationController {
 
+    private final ConfigurationService configurationService;
+
     @Autowired
-    private ConfigurationService configurationService;
+    public ConfigurationController(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
+    }
 
     @PostMapping("/bundles/add")
     public ResponseEntity<Void> addValidBundles(@RequestBody List<ValidBundle> validBundles) {

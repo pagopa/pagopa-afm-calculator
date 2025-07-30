@@ -4,7 +4,6 @@ import com.microsoft.azure.storage.table.CloudTable;
 import com.microsoft.azure.storage.table.TableQuery;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -37,15 +36,5 @@ public class IssuersService {
     @CacheEvict(value = ISSUER_RANGE_TABLE_CACHE_KEY)
     public void evictIssuerRangeTableCache() {
         // Issuer range table scheduled cache evict
-    }
-
-    public List<IssuerRangeEntity> getIssuersByBIN(String bin) {
-        long paddedBin = Long.parseLong(StringUtils.rightPad(bin, 19, '0'));
-
-        List<IssuerRangeEntity> resultIssuerRangeEntityList = this.getIssuerRangeTableCached();
-
-        return resultIssuerRangeEntityList.parallelStream()
-                .filter(el -> el.getLowRange() <= paddedBin && el.getHighRange() >= paddedBin)
-                .toList();
     }
 }
