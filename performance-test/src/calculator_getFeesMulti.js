@@ -35,16 +35,6 @@ export function setup() {
     // The setup code runs, setting up the test environment (optional) and generating data
     // used to reuse code for the same VU
 
-    for (let i = 0; i < touchpoints.length; i++) {
-        let response = createDocument(cosmosDBURI, databaseID, "touchpoints", cosmosPrimaryKey, touchpoints[i], touchpoints[i]['name']);
-        check(response, { "status is 201": (res) => (res.status === 201) });
-    }
-
-    for (let i = 0; i < paymenttypes.length; i++) {
-        let response = createDocument(cosmosDBURI, databaseID, "paymenttypes", cosmosPrimaryKey, paymenttypes[i], paymenttypes[i]['name']);
-        check(response, { "status is 201": (res) => (res.status === 201) });
-    }
-
     for (let i = 0; i < validBundlesNum; i++) {
         let validBundle = getValidBundle("int-test-"+i);
         let response = createDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundle, validBundle['idPsp']);
@@ -108,16 +98,6 @@ export default function calculator() {
 }
 
 export function teardown() {
-    // After All
-    for (let i = 0; i < touchpoints.length; i++) {
-        let response = deleteDocument(cosmosDBURI, databaseID, "touchpoints", cosmosPrimaryKey, touchpoints[i]['id'], touchpoints[i]["name"]);
-	      check(response, { "status is 204": (res) => (res.status === 204) });
-    }
-
-    for (let i = 0; i < paymenttypes.length; i++) {
-        let response = deleteDocument(cosmosDBURI, databaseID, "paymenttypes", cosmosPrimaryKey, paymenttypes[i]['id'], paymenttypes[i]["name"]);
-        check(response, { "status is 204": (res) => (res.status === 204) });
-    }
 
     for (let i = 0; i < validBundlesNum; i++) {
         let validBundle = getValidBundle("int-test-"+i);
