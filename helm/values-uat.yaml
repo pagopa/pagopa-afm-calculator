@@ -135,3 +135,43 @@ microservice-chart:
         pullPolicy: Always
       envConfig:
       envSecret:
+refresh-cache-cron:
+  namespace: "afm"
+  schedule: "0 1 * * *"
+  timeZone: "Europe/Rome"
+  successfulJobsHistoryLimit: "1"
+  image:
+    repository: "curlimages/curl"
+    tag: "latest"
+    pullPolicy: "Always"
+  command:
+    - "curl"
+    - "-k"
+    - "-m"
+    - "\"300\""
+    - "https://weuuat.afm.internal.uat.platform.pagopa.it/pagopa-afm-calculator-service/configuration/issuers/refresh"
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "150m"
+  serviceAccount:
+    name: "afm-workload-identity"
+  azure:
+    workloadIdentityClientId: <workload-identity-client-id-set-automatically-by-gha>
+  tolerations:
+    - key: dedicated
+      operator: Equal
+      value: "afm"
+      effect: NoSchedule
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node_type
+                operator: In
+                values:
+                  - user

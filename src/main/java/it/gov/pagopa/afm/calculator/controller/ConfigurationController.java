@@ -90,7 +90,7 @@ public class ConfigurationController {
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ProblemJson.class)))
             })
-    @PostMapping("/refresh/issuers")
+    @PostMapping("/issuers/refresh")
     public ResponseEntity<Void> refreshIssuerRangeTableCache() {
         configurationService.refreshIssuerRangeTableCache();
         return ResponseEntity.ok().build();
