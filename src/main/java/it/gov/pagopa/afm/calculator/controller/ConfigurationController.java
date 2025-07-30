@@ -30,8 +30,6 @@ public class ConfigurationController {
 
     @Autowired
     private ConfigurationService configurationService;
-    @Autowired
-    private IssuersService issuersService;
 
     @PostMapping("/bundles/add")
     public ResponseEntity<Void> addValidBundles(@RequestBody List<ValidBundle> validBundles) {
@@ -94,7 +92,7 @@ public class ConfigurationController {
             })
     @PostMapping("/refresh/issuers")
     public ResponseEntity<Void> refreshIssuerRangeTableCache() {
-        issuersService.getIssuerRangeTableCached();
+        configurationService.refreshIssuerRangeTableCache();
         return ResponseEntity.ok().build();
     }
 }

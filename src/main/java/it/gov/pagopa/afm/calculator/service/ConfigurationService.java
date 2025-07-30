@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.calculator.service;
 
+import it.gov.pagopa.afm.calculator.config.CacheConfig;
 import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
@@ -23,6 +24,10 @@ public class ConfigurationService {
 
     @Autowired
     PaymentTypeRepository paymentTypeRepository;
+    @Autowired
+    IssuersService issuersService;
+    @Autowired
+    CacheConfig cacheConfig;
 
     public void addValidBundles(List<ValidBundle> validBundles) {
         validBundleRepository.saveAll(validBundles);
@@ -62,5 +67,10 @@ public class ConfigurationService {
                         .filter(elem -> paymentTypeRepository.findById(elem.getId()).isPresent())
                         .collect(Collectors.toList());
         paymentTypeRepository.deleteAll(filtered);
+    }
+
+    public void refreshIssuerRangeTableCache(){
+        cacheConfig.evictIssuerRangeTableCache();
+        issuersService.getIssuerRangeTableCached();
     }
 }
