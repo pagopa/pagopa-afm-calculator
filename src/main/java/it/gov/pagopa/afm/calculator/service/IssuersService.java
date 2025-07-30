@@ -73,7 +73,7 @@ public class IssuersService {
                     .collect(Collectors.toList());
         } catch (AppException e) {
             // unexpected error
-            log.error("Error in processing get issuers by BIN [bin = {}]", bin, e);
+            log.error("Error in processing get issuers by BIN [bin = {}]", Long.parseLong(bin), e);
             throw e;
         }
     }
