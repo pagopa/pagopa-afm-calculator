@@ -1135,7 +1135,8 @@
             "enum": [
               "IOS",
               "ANDROID",
-              "WEB"
+              "WEB",
+              "SAFARI"
             ]
           },
           "bin": {
@@ -1208,6 +1209,7 @@
           "name",
           "paymentMethodAsset",
           "paymentMethodId",
+          "paymentMethodTypes",
           "status",
           "validityDateFrom"
         ],
@@ -1254,8 +1256,21 @@
               "RICO",
               "RBPB",
               "RBPP",
-              "RBPR"
+              "RBPR",
+              "GOOG",
+              "KLRN"
             ]
+          },
+          "paymentMethodTypes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "CARTE",
+                "CONTO",
+                "APP"
+              ]
+            }
           },
           "feeRange": {
             "$ref": "#/components/schemas/FeeRange"
