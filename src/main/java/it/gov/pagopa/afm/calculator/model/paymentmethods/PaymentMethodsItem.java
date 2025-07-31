@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @Builder
@@ -27,6 +28,8 @@ public class PaymentMethodsItem {
     LocalDate validityDateFrom;
     @NotNull
     PaymentMethodGroup group;
+    @NotNull
+    List<PaymentMethodType> paymentMethodTypes;
     @NotNull
     FeeRange feeRange;
     @NotNull
