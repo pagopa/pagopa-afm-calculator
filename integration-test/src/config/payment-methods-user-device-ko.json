@@ -15,6 +15,7 @@
       "user_touchpoint": ["IO","CHECKOUT"],
       "user_device": ["IOS", "ANDROID"],
       "status": "ENABLED",
+      "payment_method_types": ["APP"],
       "validity_date_from": "1995-01-13",
       "range_amount": {
         "min": 10,
@@ -39,6 +40,7 @@
         "EN": "Debit or Credit card"
       },
       "status": "ENABLED",
+      "payment_method_types": ["CARTE"],
       "metadata": {
         "installments": "true"
       },
