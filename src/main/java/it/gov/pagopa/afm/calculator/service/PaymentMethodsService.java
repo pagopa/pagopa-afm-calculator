@@ -95,6 +95,7 @@ public class PaymentMethodsService {
                     .status(status)
                     .validityDateFrom(candidate.getValidityDateFrom())
                     .group(candidate.getGroup())
+                    .paymentMethodTypes(candidate.getPaymentMethodTypes())
                     .metadata(candidate.getMetadata())
                     .feeRange(feeRange)
                     .disabledReason(disabledReason)
