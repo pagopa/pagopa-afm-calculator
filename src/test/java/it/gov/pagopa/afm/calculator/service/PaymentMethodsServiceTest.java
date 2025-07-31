@@ -11,6 +11,7 @@ import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsResponse;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodDisabledReason;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodGroup;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStatus;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodType;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -50,6 +51,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodId("PAYPAL")
                 .status(PaymentMethodStatus.ENABLED)
                 .group(PaymentMethodGroup.PPAL)
+                .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
@@ -84,6 +86,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodId("PAYPAL")
                 .status(PaymentMethodStatus.ENABLED)
                 .group(PaymentMethodGroup.PPAL)
+                .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(List.of("user"))
                 .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
@@ -114,6 +117,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodId("PAYPAL")
                 .status(PaymentMethodStatus.ENABLED)
                 .group(PaymentMethodGroup.PPAL)
+                .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(List.of("user"))
                 .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
@@ -144,6 +148,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodId("PAYPAL")
                 .status(PaymentMethodStatus.DISABLED)
                 .group(PaymentMethodGroup.PPAL)
+                .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(List.of("user"))
                 .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
@@ -174,6 +179,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodId("PAYPAL")
                 .status(PaymentMethodStatus.MAINTENANCE)
                 .group(PaymentMethodGroup.PPAL)
+                .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(List.of("user"))
                 .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()

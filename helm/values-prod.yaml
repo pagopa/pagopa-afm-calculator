@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.11.12"
+    tag: "2.11.12-2-PAGOPA-3184"
     pullPolicy: Always
   livenessProbe:
     httpGet:
