@@ -39,11 +39,6 @@
             <version>3.27.0</version>
         </dependency>
         <dependency>
-			<groupId>com.microsoft.azure</groupId>
-			<artifactId>azure-storage</artifactId>
-			<version>${azure.storage.table.version}</version>
-		</dependency>
-        <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-data-tables</artifactId>
             <version>12.4.0</version>

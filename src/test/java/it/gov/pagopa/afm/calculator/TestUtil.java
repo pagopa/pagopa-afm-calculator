@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.calculator;
 
+import com.azure.data.tables.models.TableEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.afm.calculator.entity.*;
@@ -709,5 +710,12 @@ public class TestUtil {
                 .transferCategory("TAX1")
                 .transferCategoryRelation(TransferCategoryRelation.EQUAL)
                 .build();
+    }
+
+    public static TableEntity getTableEntity(String key, String lowRange, String highRange, String abi) {
+        return new TableEntity(key, key)
+                .addProperty("LOW_RANGE", lowRange)
+                .addProperty("HIGH_RANGE", highRange)
+                .addProperty("ABI", abi);
     }
 }

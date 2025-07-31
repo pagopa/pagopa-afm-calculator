@@ -1,11 +1,8 @@
 package it.gov.pagopa.afm.calculator.initializer;
 
-import com.microsoft.azure.storage.CloudStorageAccount;
-import com.microsoft.azure.storage.RetryNoRetry;
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.table.CloudTable;
-import com.microsoft.azure.storage.table.CloudTableClient;
-import com.microsoft.azure.storage.table.TableRequestOptions;
+import com.azure.data.tables.TableClient;
+import com.azure.data.tables.TableServiceClient;
+import com.azure.data.tables.TableServiceClientBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.ClassRule;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -15,15 +12,12 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-
 @Slf4j
 public class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     public static String issuerRangeTable = "issuerrangetable";
 
-    public static CloudTable table = null;
+    public static TableClient table = null;
 
     @ClassRule
     @Container
@@ -48,23 +42,14 @@ public class Initializer implements ApplicationContextInitializer<ConfigurableAp
                         azurite.getHost(),
                         azurite.getMappedPort(10000));
 
-        try {
-            CloudStorageAccount cloudStorageAccount = CloudStorageAccount.parse(storageConnectionString);
+        TableServiceClient tableServiceClient = new TableServiceClientBuilder()
+                .connectionString(storageConnectionString)
+                .buildClient();
+        table = tableServiceClient.createTableIfNotExists(issuerRangeTable);
 
-            CloudTableClient cloudTableClient = cloudStorageAccount.createCloudTableClient();
-            TableRequestOptions tableRequestOptions = new TableRequestOptions();
-            tableRequestOptions.setRetryPolicyFactory(RetryNoRetry.getInstance());
-            cloudTableClient.setDefaultRequestOptions(tableRequestOptions);
-            table = cloudTableClient.getTableReference(issuerRangeTable);
-            table.createIfNotExists();
-
-            TestPropertyValues.of(
-                            "azure.storage.connection=" + storageConnectionString,
-                            "table.issuer-range=" + issuerRangeTable)
-                    .applyTo(applicationContext.getEnvironment());
-
-        } catch (InvalidKeyException | URISyntaxException | StorageException e) {
-            log.error("Error in environment initializing", e);
-        }
+        TestPropertyValues.of(
+                        "azure.storage.connection=" + storageConnectionString,
+                        "table.issuer-range=" + issuerRangeTable)
+                .applyTo(applicationContext.getEnvironment());
     }
 }
