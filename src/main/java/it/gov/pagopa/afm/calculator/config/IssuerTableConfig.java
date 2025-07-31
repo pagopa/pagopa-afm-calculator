@@ -1,5 +1,7 @@
 package it.gov.pagopa.afm.calculator.config;
 
+import com.azure.data.tables.TableClient;
+import com.azure.data.tables.TableClientBuilder;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.table.CloudTable;
@@ -24,6 +26,17 @@ public class IssuerTableConfig {
         return CloudStorageAccount.parse(storageConnectionString)
                 .createCloudTableClient()
                 .getTableReference(issuerRangeTable);
+    }
+
+    @Bean
+    TableClient tableClient(
+            @Value("${azure.storage.connection}") String storageConnectionString,
+            @Value("${table.issuer-range}") String issuerRangeTable
+    ) {
+        return new TableClientBuilder()
+                .connectionString(storageConnectionString)
+                .tableName(issuerRangeTable)
+                .buildClient();
     }
 
 }

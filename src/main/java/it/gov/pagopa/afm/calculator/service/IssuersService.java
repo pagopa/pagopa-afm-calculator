@@ -1,7 +1,7 @@
 package it.gov.pagopa.afm.calculator.service;
 
-import com.microsoft.azure.storage.table.CloudTable;
-import com.microsoft.azure.storage.table.TableQuery;
+import com.azure.data.tables.TableClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +10,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Spliterator;
-import java.util.stream.StreamSupport;
 
 import static it.gov.pagopa.afm.calculator.util.Constant.ISSUER_RANGE_TABLE_CACHE_KEY;
 
@@ -19,18 +17,19 @@ import static it.gov.pagopa.afm.calculator.util.Constant.ISSUER_RANGE_TABLE_CACH
 @Slf4j
 public class IssuersService {
 
-    private final CloudTable cloudTable;
+    private final TableClient tableClient;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public IssuersService(CloudTable cloudTable) {
-        this.cloudTable = cloudTable;
+    public IssuersService(TableClient tableClient, ObjectMapper objectMapper) {
+        this.tableClient = tableClient;
+        this.objectMapper = objectMapper;
     }
 
     @Cacheable(value = ISSUER_RANGE_TABLE_CACHE_KEY, unless = "#result == null")
     public List<IssuerRangeEntity> getIssuerRangeTableCached() {
-        Spliterator<IssuerRangeEntity> resultIssuerRangeEntityList = this.cloudTable.execute(TableQuery.from(IssuerRangeEntity.class)).spliterator();
-
-        return StreamSupport.stream(resultIssuerRangeEntityList, false).toList();
+        return this.tableClient.listEntities().stream().parallel().map(el ->
+                objectMapper.convertValue(el.getProperties(), IssuerRangeEntity.class)).toList();
     }
 
     @CacheEvict(value = ISSUER_RANGE_TABLE_CACHE_KEY)
