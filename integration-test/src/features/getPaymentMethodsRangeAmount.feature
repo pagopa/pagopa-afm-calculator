@@ -10,7 +10,7 @@ Feature: Payment Methods - Get List of Payment Methods
 	  {
 			"userTouchpoint": "IO",
 			"userDevice": "IOS",
-			"bin": "string",
+			"bin": "309500",
 			"totalAmount": 1200,
 			"paymentNotice": [
 				{

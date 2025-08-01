@@ -10,19 +10,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ConfigurationService {
+    private final ValidBundleRepository validBundleRepository;
+    private final TouchpointRepository touchpointRepository;
+    private final PaymentTypeRepository paymentTypeRepository;
 
     @Autowired
-    ValidBundleRepository validBundleRepository;
-
-    @Autowired
-    TouchpointRepository touchpointRepository;
-
-    @Autowired
-    PaymentTypeRepository paymentTypeRepository;
+    public ConfigurationService(
+            ValidBundleRepository validBundleRepository,
+            TouchpointRepository touchpointRepository,
+            PaymentTypeRepository paymentTypeRepository
+    ) {
+        this.validBundleRepository = validBundleRepository;
+        this.touchpointRepository = touchpointRepository;
+        this.paymentTypeRepository = paymentTypeRepository;
+    }
 
     public void addValidBundles(List<ValidBundle> validBundles) {
         validBundleRepository.saveAll(validBundles);
@@ -36,7 +40,7 @@ public class ConfigurationService {
         var filtered =
                 touchpoints.stream()
                         .filter(elem -> touchpointRepository.findByName(elem.getName()).isEmpty())
-                        .collect(Collectors.toList());
+                        .toList();
         touchpointRepository.saveAll(filtered);
     }
 
@@ -44,7 +48,7 @@ public class ConfigurationService {
         var filtered =
                 touchpoints.stream()
                         .filter(elem -> touchpointRepository.findById(elem.getId()).isPresent())
-                        .collect(Collectors.toList());
+                        .toList();
         touchpointRepository.deleteAll(filtered);
     }
 
@@ -52,7 +56,7 @@ public class ConfigurationService {
         var filtered =
                 paymentTypes.stream()
                         .filter(elem -> paymentTypeRepository.findByName(elem.getName()).isEmpty())
-                        .collect(Collectors.toList());
+                        .toList();
         paymentTypeRepository.saveAll(filtered);
     }
 
@@ -60,7 +64,7 @@ public class ConfigurationService {
         var filtered =
                 paymentTypes.stream()
                         .filter(elem -> paymentTypeRepository.findById(elem.getId()).isPresent())
-                        .collect(Collectors.toList());
+                        .toList();
         paymentTypeRepository.deleteAll(filtered);
     }
 }
