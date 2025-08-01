@@ -10,4 +10,4 @@ TYPE=$2
 cd ./src || exit
 yarn install
 yarn add @azure/data-tables
-yarn test-"$ENVIRONMENT":"$TYPE"
+yarn test-"$TYPE":"$ENVIRONMENT"
