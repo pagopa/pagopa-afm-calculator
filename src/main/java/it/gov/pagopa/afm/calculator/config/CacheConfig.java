@@ -13,8 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import static it.gov.pagopa.afm.calculator.util.Constant.DEFAULT_CACHE_KEY;
-import static it.gov.pagopa.afm.calculator.util.Constant.ISSUER_RANGE_TABLE_CACHE_KEY;
+import static it.gov.pagopa.afm.calculator.util.Constant.*;
 
 @Configuration
 @ConditionalOnExpression("'${cache.enabled}'=='true'")
@@ -25,8 +24,8 @@ public class CacheConfig {
     public CacheManager cacheManager(
             @Value("${cache.default.evict.seconds}") long defaultCacheEvictSeconds,
             @Value("${cache.default.maximumSize}") long defaultCacheMaximumSize,
-            @Value("${cache.issuerRange.evict.seconds}") long issuerRangeTableCacheEvictSeconds,
-            @Value("${cache.issuerRange.maximumSize}") long issuerRangeTableCacheMaximumSize
+            @Value("${cache.long.evict.hours}") long longCacheEvictHours,
+            @Value("${cache.long.maximumSize}") long longCacheMaximumSize
     ) {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
 
@@ -36,13 +35,19 @@ public class CacheConfig {
                         .maximumSize(defaultCacheMaximumSize)
                         .build());
 
-        CaffeineCache issuerRangeTableCache = new CaffeineCache(ISSUER_RANGE_TABLE_CACHE_KEY,
+        CaffeineCache hourlyCache = new CaffeineCache(HOURLY_CACHE_KEY,
                 Caffeine.newBuilder()
-                        .expireAfterWrite(issuerRangeTableCacheEvictSeconds, TimeUnit.SECONDS)
-                        .maximumSize(issuerRangeTableCacheMaximumSize)
+                        .expireAfterWrite(1, TimeUnit.HOURS)
+                        .maximumSize(defaultCacheMaximumSize)
                         .build());
 
-        cacheManager.setCaches(Arrays.asList(defaultCache, issuerRangeTableCache));
+        CaffeineCache longCache = new CaffeineCache(LONG_CACHE_KEY,
+                Caffeine.newBuilder()
+                        .expireAfterWrite(longCacheEvictHours, TimeUnit.HOURS)
+                        .maximumSize(longCacheMaximumSize)
+                        .build());
+
+        cacheManager.setCaches(Arrays.asList(defaultCache, hourlyCache, longCache));
         return cacheManager;
     }
 }
