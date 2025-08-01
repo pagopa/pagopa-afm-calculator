@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.stream.StreamSupport;
 
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
+import static it.gov.pagopa.afm.calculator.util.Constant.DEFAULT_CACHE_KEY;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
 
 @Repository
@@ -153,13 +154,13 @@ public class CosmosRepository {
                 && !bundle.getCiBundleList().isEmpty();
     }
 
-    @Cacheable(value = "findValidBundles")
+    @Cacheable(value = DEFAULT_CACHE_KEY)
     public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption, boolean allCcp) {
         Iterable<ValidBundle> validBundles = findValidBundles(paymentOption, allCcp);
         return getFilteredBundles(paymentOption, validBundles);
     }
 
-    @Cacheable(value = "findValidBundlesMulti")
+    @Cacheable(value = DEFAULT_CACHE_KEY)
     public List<ValidBundle> findByPaymentOption(PaymentOptionMulti paymentOption, boolean allCcp) {
         Iterable<ValidBundle> validBundles = findValidBundlesMulti(paymentOption, allCcp);
         return getFilteredBundlesMulti(paymentOption, validBundles);

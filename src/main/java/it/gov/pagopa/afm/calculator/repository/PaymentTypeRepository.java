@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static it.gov.pagopa.afm.calculator.util.Constant.PAYMENT_TYPES_CACHE_KEY;
+import static it.gov.pagopa.afm.calculator.util.Constant.DEFAULT_CACHE_KEY;
 
 @Repository
 public interface PaymentTypeRepository extends CosmosRepository<PaymentType, String> {
-    @Cacheable(value=PAYMENT_TYPES_CACHE_KEY)
+    @Cacheable(value = DEFAULT_CACHE_KEY)
     Optional<PaymentType> findByName(String name);
 }

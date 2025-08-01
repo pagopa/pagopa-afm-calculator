@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static it.gov.pagopa.afm.calculator.util.Constant.DEFAULT_CACHE_KEY;
+
 /**
  * {@link Cacheable} methods are ignored when called from within the same class
  */
@@ -72,7 +74,7 @@ public class UtilityComponent {
      * @param paymentOption request
      * @return list of string about transfer categories
      */
-    @Cacheable(value = "getTransferCategoryList")
+    @Cacheable(value = DEFAULT_CACHE_KEY)
     public List<String> getTransferCategoryList(PaymentOption paymentOption) {
         log.debug("getTransferCategoryList");
         return paymentOption.getTransferList() != null
@@ -92,7 +94,7 @@ public class UtilityComponent {
      * @param paymentOptionMulti request
      * @return list of string about transfer categories
      */
-    @Cacheable(value = "getTransferCategoryListMulti")
+    @Cacheable(value = DEFAULT_CACHE_KEY)
     public List<String> getTransferCategoryList(PaymentOptionMulti paymentOptionMulti) {
         List<TransferListItem> transferList = new ArrayList<>();
         paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> transferList.addAll(paymentNoticeItem.getTransferList()));
@@ -115,7 +117,7 @@ public class UtilityComponent {
      * @param primaryCreditorInstitution fiscal code fo the CI
      * @return list of string about transfer categories of primary creditor institution
      */
-    @Cacheable(value = "getPrimaryTransferCategoryList")
+    @Cacheable(value = DEFAULT_CACHE_KEY)
     public List<String> getPrimaryTransferCategoryList(
             PaymentOption paymentOption, String primaryCreditorInstitution) {
         log.debug("getPrimaryTransferCategoryList {} ", primaryCreditorInstitution);
@@ -138,7 +140,7 @@ public class UtilityComponent {
      * @param primaryCreditorInstitution fiscal code fo the CI
      * @return list of string about transfer categories of primary creditor institution
      */
-    @Cacheable(value = "getPrimaryTransferCategoryListMulti")
+    @Cacheable(value = DEFAULT_CACHE_KEY)
     public List<String> getPrimaryTransferCategoryListMulti(
             PaymentNoticeItem paymentNoticeItem, String primaryCreditorInstitution) {
         log.debug("getPrimaryTransferCategoryList {} ", primaryCreditorInstitution);

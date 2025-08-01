@@ -80,8 +80,10 @@ microservice-chart:
     WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
     ENV: 'prod'
     APP_LOGGING_LEVEL: 'INFO'
-    CACHE_SIZE: '1000'
-    CACHE_EXPIRATION_TIME: '3m'
+    CACHE_DEFAULT_SIZE: '1000'
+    CACHE_DEFAULT_EVICT_SECONDS: '180'
+    CACHE_ISSUER_RANGE_SIZE: '1000'
+    CACHE_ISSUER_RANGE_EVICT_SECONDS: '43200'
     CACHE_ENABLED: 'true'
     COSMOS_URI: https://pagopa-p-weu-afm-marketplace-cosmos-account.documents.azure.com:443/
     ISSUER_RANGE_TABLE: 'pagopapweuafmsaissuerrangetable'
@@ -144,43 +146,3 @@ microservice-chart:
         pullPolicy: Always
       envConfig:
       envSecret:
-refresh-cache-cron:
-  namespace: "afm"
-  schedule: "0 1 * * *"
-  timeZone: "Europe/Rome"
-  successfulJobsHistoryLimit: "1"
-  image:
-    repository: "curlimages/curl"
-    tag: "latest"
-    pullPolicy: "Always"
-  command:
-    - "curl"
-    - "-k"
-    - "-m"
-    - "\"300\""
-    - "https://weuprod.afm.internal.platform.pagopa.it/pagopa-afm-calculator-service/configuration/issuers/refresh"
-  resources:
-    requests:
-      memory: "256Mi"
-      cpu: "100m"
-    limits:
-      memory: "512Mi"
-      cpu: "150m"
-  serviceAccount:
-    name: "afm-workload-identity"
-  azure:
-    workloadIdentityClientId: <workload-identity-client-id-set-automatically-by-gha>
-  tolerations:
-    - key: dedicated
-      operator: Equal
-      value: "afm"
-      effect: NoSchedule
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: node_type
-                operator: In
-                values:
-                  - user
