@@ -1,24 +1,14 @@
 package it.gov.pagopa.afm.calculator.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.model.ProblemJson;
 import it.gov.pagopa.afm.calculator.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -67,35 +57,6 @@ public class ConfigurationController {
     @PostMapping("/paymenttypes/delete")
     public ResponseEntity<Void> deletePaymentTypes(@RequestBody List<PaymentType> paymentTypes) {
         configurationService.deletePaymentTypes(paymentTypes);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "Refresh issuer range table cache")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Ok",
-                            content = @Content(schema = @Schema())),
-                    @ApiResponse(
-                            responseCode = "401",
-                            description = "Unauthorized",
-                            content = @Content(schema = @Schema())),
-                    @ApiResponse(
-                            responseCode = "429",
-                            description = "Too many requests",
-                            content = @Content(schema = @Schema())),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Service unavailable",
-                            content =
-                            @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ProblemJson.class)))
-            })
-    @PostMapping("/issuers/refresh")
-    public ResponseEntity<Void> refreshIssuerRangeTableCache() {
-        configurationService.refreshIssuerRangeTableCache();
         return ResponseEntity.ok().build();
     }
 }

@@ -16,19 +16,16 @@ public class ConfigurationService {
     private final ValidBundleRepository validBundleRepository;
     private final TouchpointRepository touchpointRepository;
     private final PaymentTypeRepository paymentTypeRepository;
-    private final IssuersService issuersService;
 
     @Autowired
     public ConfigurationService(
             ValidBundleRepository validBundleRepository,
             TouchpointRepository touchpointRepository,
-            PaymentTypeRepository paymentTypeRepository,
-            IssuersService issuersService
+            PaymentTypeRepository paymentTypeRepository
     ) {
         this.validBundleRepository = validBundleRepository;
         this.touchpointRepository = touchpointRepository;
         this.paymentTypeRepository = paymentTypeRepository;
-        this.issuersService = issuersService;
     }
 
     public void addValidBundles(List<ValidBundle> validBundles) {
@@ -69,10 +66,5 @@ public class ConfigurationService {
                         .filter(elem -> paymentTypeRepository.findById(elem.getId()).isPresent())
                         .toList();
         paymentTypeRepository.deleteAll(filtered);
-    }
-
-    public void refreshIssuerRangeTableCache() {
-        issuersService.evictIssuerRangeTableCache();
-        issuersService.getIssuerRangeTableCached();
     }
 }

@@ -7,10 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static it.gov.pagopa.afm.calculator.util.Constant.HOURLY_CACHE_KEY;
-
 @Repository
 public interface TouchpointRepository extends CosmosRepository<Touchpoint, String> {
-    @Cacheable(value = HOURLY_CACHE_KEY)
+    @Cacheable(value = "touchpoint")
     Optional<Touchpoint> findByName(String name);
 }

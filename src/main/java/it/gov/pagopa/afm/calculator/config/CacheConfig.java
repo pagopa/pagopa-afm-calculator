@@ -1,53 +1,59 @@
 package it.gov.pagopa.afm.calculator.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import org.springframework.beans.factory.annotation.Value;
+import it.gov.pagopa.afm.calculator.model.CacheProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCache;
-import org.springframework.cache.support.SimpleCacheManager;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
-import static it.gov.pagopa.afm.calculator.util.Constant.*;
 
 @Configuration
 @ConditionalOnExpression("'${cache.enabled}'=='true'")
 @EnableCaching
+@EnableConfigurationProperties(CacheProperties.class)
 public class CacheConfig {
 
     @Bean
-    public CacheManager cacheManager(
-            @Value("${cache.default.evict.seconds}") long defaultCacheEvictSeconds,
-            @Value("${cache.default.maximumSize}") long defaultCacheMaximumSize,
-            @Value("${cache.long.evict.hours}") long longCacheEvictHours,
-            @Value("${cache.long.maximumSize}") long longCacheMaximumSize
-    ) {
-        SimpleCacheManager cacheManager = new SimpleCacheManager();
+    public CacheManager caffeineCacheManager(CacheProperties cacheProperties) {
+        return new CustomCaffeineCacheManager(cacheProperties);
+    }
 
-        CaffeineCache defaultCache = new CaffeineCache(DEFAULT_CACHE_KEY,
-                Caffeine.newBuilder()
-                        .expireAfterWrite(defaultCacheEvictSeconds, TimeUnit.SECONDS)
-                        .maximumSize(defaultCacheMaximumSize)
-                        .build());
+    public static class CustomCaffeineCacheManager extends CaffeineCacheManager {
+        private final CacheProperties cacheProperties;
 
-        CaffeineCache hourlyCache = new CaffeineCache(HOURLY_CACHE_KEY,
-                Caffeine.newBuilder()
-                        .expireAfterWrite(1, TimeUnit.HOURS)
-                        .maximumSize(defaultCacheMaximumSize)
-                        .build());
+        public CustomCaffeineCacheManager(CacheProperties cacheProperties) {
+            this.cacheProperties = cacheProperties;
+        }
 
-        CaffeineCache longCache = new CaffeineCache(LONG_CACHE_KEY,
-                Caffeine.newBuilder()
-                        .expireAfterWrite(longCacheEvictHours, TimeUnit.HOURS)
-                        .maximumSize(longCacheMaximumSize)
-                        .build());
+        @NonNull
+        @Override
+        protected Cache createCaffeineCache(@NonNull String name) {
+            Map<String, Long> ttlMap = Optional.ofNullable(cacheProperties.getTtl()).orElse(Collections.emptyMap());
+            Map<String, Long> maxSizeMap = Optional.ofNullable(cacheProperties.getMaxSize()).orElse(Collections.emptyMap());
 
-        cacheManager.setCaches(Arrays.asList(defaultCache, hourlyCache, longCache));
-        return cacheManager;
+            long ttl = ttlMap.getOrDefault(name,
+                    ttlMap.getOrDefault("default", 60L));
+
+
+            long maxSize = maxSizeMap.getOrDefault(name,
+                    ttlMap.getOrDefault("default", 100L));
+
+            Caffeine<Object, Object> builder = Caffeine.newBuilder()
+                    .expireAfterWrite(ttl, TimeUnit.SECONDS)
+                    .maximumSize(maxSize);
+
+            return new CaffeineCache(name, builder.build());
+        }
     }
 }

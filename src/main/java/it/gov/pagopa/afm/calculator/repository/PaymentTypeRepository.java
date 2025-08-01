@@ -7,10 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static it.gov.pagopa.afm.calculator.util.Constant.HOURLY_CACHE_KEY;
-
 @Repository
 public interface PaymentTypeRepository extends CosmosRepository<PaymentType, String> {
-    @Cacheable(value = HOURLY_CACHE_KEY)
+    @Cacheable(value = "paymentType")
     Optional<PaymentType> findByName(String name);
 }
