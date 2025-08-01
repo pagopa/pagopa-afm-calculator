@@ -25,6 +25,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
@@ -391,7 +392,7 @@ public class CosmosRepository {
                 .filter(bundle -> digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
                 // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
                 .filter(bundle -> globalAndRelatedFilter(paymentOption, bundle))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     /**
