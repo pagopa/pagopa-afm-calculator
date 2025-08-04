@@ -144,7 +144,7 @@ public class CalculatorService {
         // 1.a: get issuers by BIN
         List<IssuerRangeEntity> issuers =
                 StringUtils.isNotBlank(paymentOption.getBin())
-                        ? issuersService.getIssuersByBIN(paymentOption.getBin())
+                        ? getIssuersByBIN(paymentOption.getBin())
                         : new ArrayList<>();
 
         // 1.b: all records extracted via a specific BIN must have the same ABI otherwise the exception
@@ -204,7 +204,7 @@ public class CalculatorService {
         // 1.a: get issuers by BIN
         List<IssuerRangeEntity> issuers =
                 StringUtils.isNotBlank(paymentOption.getBin())
-                        ? issuersService.getIssuersByBIN(paymentOption.getBin())
+                        ? getIssuersByBIN(paymentOption.getBin())
                         : new ArrayList<>();
 
         // 1.b: all records extracted via a specific BIN must have the same ABI otherwise the exception
@@ -582,6 +582,16 @@ public class CalculatorService {
                 pspTransferMap.put(transfer.getIdPsp(), transfer);
             }
         }
+    }
+
+    private List<IssuerRangeEntity> getIssuersByBIN(String bin) {
+        long paddedBin = Long.parseLong(StringUtils.rightPad(bin, 19, '0'));
+
+        List<IssuerRangeEntity> resultIssuerRangeEntityList = this.issuersService.getIssuerRangeTableCached();
+
+        return resultIssuerRangeEntityList.parallelStream()
+                .filter(el -> el.getLowRange() <= paddedBin && el.getHighRange() >= paddedBin)
+                .toList();
     }
 
 }
