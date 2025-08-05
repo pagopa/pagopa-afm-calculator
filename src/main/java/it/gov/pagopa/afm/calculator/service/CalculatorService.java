@@ -143,7 +143,7 @@ public class CalculatorService {
 
         // 1.a: get issuers by BIN
         List<IssuerRangeEntity> issuers =
-                StringUtils.isNotBlank(paymentOption.getBin())
+                checkValidityBin(paymentOption.getBin())
                         ? getIssuersByBIN(paymentOption.getBin())
                         : new ArrayList<>();
 
@@ -203,7 +203,7 @@ public class CalculatorService {
 
         // 1.a: get issuers by BIN
         List<IssuerRangeEntity> issuers =
-                StringUtils.isNotBlank(paymentOption.getBin())
+                checkValidityBin(paymentOption.getBin())
                         ? getIssuersByBIN(paymentOption.getBin())
                         : new ArrayList<>();
 
@@ -591,7 +591,18 @@ public class CalculatorService {
 
         return resultIssuerRangeEntityList.parallelStream()
                 .filter(el -> el.getLowRange() <= paddedBin && el.getHighRange() >= paddedBin)
-                .toList();
+                .collect(Collectors.toList());
     }
 
+    private boolean checkValidityBin(String bin) {
+        if(StringUtils.isNotBlank(bin)) {
+            try{
+                Long.parseLong(bin);
+                return true;
+            } catch (Exception e) {
+                // Doing nothing if bin is not a long
+            }
+        }
+        return false;
+    }
 }

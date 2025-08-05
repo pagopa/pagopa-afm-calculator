@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.calculator.service;
 
+import com.azure.data.tables.models.TableEntity;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
 import it.gov.pagopa.afm.calculator.TestUtil;
@@ -843,5 +844,46 @@ class CalculatorServiceTest {
                 assertTrue(prevPspName.compareTo(currPspName) <= 0, "Psp Names are not in ascending order: " + prevPspName + " > " + currPspName);
             }
         }
+    }
+
+    @Test
+    @Order(34)
+    void calculateMultipleBundlesBinNotParsable() throws IOException {
+        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
+        calculatorService.setCosmosRepository(cosmosRepository);
+
+        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+
+        var paymentOption =
+                TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+        paymentOption.setBin("test");
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
+        var options = result.getBundleOptions();
+        for (it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer option : options) {
+            assertFalse(option.getOnUs());
+        }
+    }
+
+    @Test
+    @Order(35)
+    void calculateMultipleBundlesMultipleIssuers() throws IOException {
+        TableEntity duplicateIssuer = getTableEntity("7", "1005066000000000000", "1005066999999999999", "11111");
+        Initializer.table.createEntity(duplicateIssuer);
+
+        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
+        calculatorService.setCosmosRepository(cosmosRepository);
+
+        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+
+        var paymentOption =
+                TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
+        var options = result.getBundleOptions();
+        for (it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer option : options) {
+            assertFalse(option.getOnUs());
+        }
+        Initializer.table.deleteEntity(duplicateIssuer);
     }
 }
