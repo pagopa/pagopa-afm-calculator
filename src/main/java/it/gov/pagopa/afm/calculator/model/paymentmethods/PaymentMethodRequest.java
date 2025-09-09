@@ -29,7 +29,7 @@ public class PaymentMethodRequest {
     String bin;
 
     @NotNull
-    Integer totalAmount;
+    Long totalAmount;
 
     @NotNull
     @NotEmpty
