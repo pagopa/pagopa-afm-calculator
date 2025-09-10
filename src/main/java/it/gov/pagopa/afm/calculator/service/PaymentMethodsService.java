@@ -1,6 +1,8 @@
 package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
+import it.gov.pagopa.afm.calculator.exception.AppError;
+import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
@@ -108,6 +110,17 @@ public class PaymentMethodsService {
         return PaymentMethodsResponse.builder()
                 .paymentMethods(paymentMethodsItems)
                 .build();
+    }
+    
+    public PaymentMethod getPaymentMethod(String paymentMethodId) {
+        List<PaymentMethod> result = paymentMethodRepository.findByPaymentMethodId(paymentMethodId);
+        if (result.isEmpty()) {
+            throw new AppException(AppError.PAYMENT_METHOD_NOT_FOUND, paymentMethodId);
+        }
+        if (result.size() > 1) {
+            throw new AppException(AppError.PAYMENT_METHOD_MULTIPLE_FOUND, paymentMethodId);
+        }
+        return result.get(0);
     }
 
 }
