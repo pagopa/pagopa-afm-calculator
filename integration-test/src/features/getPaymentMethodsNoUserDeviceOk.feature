@@ -9,7 +9,6 @@ Feature: Payment Methods - Get List of Payment Methods
 	  """
 	  {
 			"userTouchpoint": "IO",
-			"bin": "309500",
 			"totalAmount": 0,
 			"paymentNotice": [
 				{
