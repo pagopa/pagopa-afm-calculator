@@ -68,7 +68,6 @@ public class PaymentMethodsService {
             BundleOption bundles = calculatorService.calculateMulti(PaymentOptionMulti.builder()
                             .paymentMethod(candidate.getGroup().name())
                             .touchpoint(request.getUserTouchpoint().name())
-                            .bin(request.getBin())
                             .idPspList(null)
                             .paymentNotice(request.getPaymentNotice())
                             .build(),
