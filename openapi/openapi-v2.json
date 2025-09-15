@@ -52,7 +52,7 @@
         }, {
           "name" : "onUsFirst",
           "in" : "query",
-          "description" : "Affects the sorting logic [default = true]. true â?? if the onus bundle is present, it is returned in the first position, regardless of the chosen sorting logic. false â?? the sorting logic is also applied to the onus bundle, which may therefore appear in positions other than the first",
+          "description" : "Affects the sorting logic [default = true]. true ï¿½?? if the onus bundle is present, it is returned in the first position, regardless of the chosen sorting logic. false ï¿½?? the sorting logic is also applied to the onus bundle, which may therefore appear in positions other than the first",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -61,7 +61,7 @@
         }, {
           "name" : "orderBy",
           "in" : "query",
-          "description" : "Sorting logic to be applied to the bundles [default = RANDOM]. random â?? bundles are sorted randomly. fee â?? sorted by increasing fee, if fees are equal then by PSP name. pspname â?? sorted by PSP name.",
+          "description" : "Sorting logic to be applied to the bundles [default = RANDOM]. random ï¿½?? bundles are sorted randomly. fee ï¿½?? sorted by increasing fee, if fees are equal then by PSP name. pspname ï¿½?? sorted by PSP name.",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -347,7 +347,7 @@
         }, {
           "name" : "onUsFirst",
           "in" : "query",
-          "description" : "Affects the sorting logic [default = true]. true â?? if the onus bundle is present, it is returned in the first position, regardless of the chosen sorting logic. false â?? the sorting logic is also applied to the onus bundle, which may therefore appear in positions other than the first",
+          "description" : "Affects the sorting logic [default = true]. true ï¿½?? if the onus bundle is present, it is returned in the first position, regardless of the chosen sorting logic. false ï¿½?? the sorting logic is also applied to the onus bundle, which may therefore appear in positions other than the first",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -356,7 +356,7 @@
         }, {
           "name" : "orderBy",
           "in" : "query",
-          "description" : "Sorting logic to be applied to the bundles [default = RANDOM]. random â?? bundles are sorted randomly. fee â?? sorted by increasing fee, if fees are equal then by PSP name. pspname â?? sorted by PSP name.",
+          "description" : "Sorting logic to be applied to the bundles [default = RANDOM]. random ï¿½?? bundles are sorted randomly. fee ï¿½?? sorted by increasing fee, if fees are equal then by PSP name. pspname ï¿½?? sorted by PSP name.",
           "required" : false,
           "schema" : {
             "type" : "string",
