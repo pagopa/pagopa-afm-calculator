@@ -78,6 +78,34 @@ class PaymentMethodsServiceTest {
     }
 
     @Test
+    void searchPaymentMethods_noUserDevice_OK() throws IOException {
+        when(paymentMethodRepository
+                .findByTouchpoint(anyString())).thenReturn(List.of(PaymentMethod.builder()
+                .paymentMethodId("PAYPAL")
+                .status(PaymentMethodStatus.ENABLED)
+                .group(PaymentMethodGroup.PPAL)
+                .paymentMethodTypes(List.of(PaymentMethodType.APP))
+                .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(0L)
+                        .max(1000L)
+                        .build())
+                .build()));
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                        .belowThreshold(false)
+                        .bundleOptions(List.of(Transfer.builder().build()))
+                        .build());
+
+        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearchNoUserDevice.json", PaymentMethodRequest.class);
+
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(1, response.getPaymentMethods().size());
+        assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
+    }
+
+    @Test
     void searchPaymentMethods_Target() throws IOException {
 
         when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
@@ -92,7 +120,7 @@ class PaymentMethodsServiceTest {
                 .status(PaymentMethodStatus.ENABLED)
                 .group(PaymentMethodGroup.PPAL)
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
-                .target(List.of("user"))
+                .target(List.of("wrongTarget"))
                 .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
                         .min(0L)
@@ -157,7 +185,7 @@ class PaymentMethodsServiceTest {
                 .target(List.of("user"))
                 .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
-                        .min(5L)
+                        .min(0L)
                         .max(1000L)
                         .build())
                 .build()));
@@ -188,7 +216,7 @@ class PaymentMethodsServiceTest {
                 .target(List.of("user"))
                 .validityDateFrom(LocalDate.now().minusDays(1))
                 .rangeAmount(FeeRange.builder()
-                        .min(5L)
+                        .min(0L)
                         .max(1000L)
                         .build())
                 .build()));
@@ -197,10 +225,10 @@ class PaymentMethodsServiceTest {
         PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
         assertEquals(1, response.getPaymentMethods().size());
         assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
-        assertEquals(PaymentMethodStatus.DISABLED, response.getPaymentMethods().get(0).getStatus());
+        assertEquals(PaymentMethodStatus.MAINTENANCE, response.getPaymentMethods().get(0).getStatus());
         assertEquals(PaymentMethodDisabledReason.MAINTENANCE_IN_PROGRESS, response.getPaymentMethods().get(0).getDisabledReason());
     }
-    
+
     @Test
     void whenPaymentMethodExists_thenReturnIt() {
         PaymentMethod method = new PaymentMethod();

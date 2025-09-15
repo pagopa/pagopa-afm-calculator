@@ -13,6 +13,7 @@ import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodDisa
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStatus;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import lombok.AllArgsConstructor;
+import org.modelmapper.internal.Pair;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,48 +30,14 @@ public class PaymentMethodsService {
     public PaymentMethodsResponse searchPaymentMethods(PaymentMethodRequest request) {
         List<PaymentMethodsItem> paymentMethodsItems = new ArrayList<>();
 
-        List<PaymentMethod> candidates = paymentMethodRepository
-                .findByTouchpointAndDevice(request.getUserTouchpoint().name(), request.getUserDevice().name());
-
+        List<PaymentMethod> candidates = getPaymentMethodsCandidates(request);
 
         for (PaymentMethod candidate : candidates) {
-            PaymentMethodDisabledReason disabledReason = null;
-            PaymentMethodStatus status = candidate.getStatus();
-
-            // Target filtering
-            List<String> targetRegex = candidate.getTarget();
-            if (targetRegex != null && !targetRegex.contains(request.getTargetKey())) {
-                disabledReason = PaymentMethodDisabledReason.TARGET_PREVIEW;
-                status = PaymentMethodStatus.DISABLED;
-            }
-
-            // amount filtering
-            if (request.getTotalAmount() < candidate.getRangeAmount().getMin() || request.getTotalAmount() > candidate.getRangeAmount().getMax()) {
-                disabledReason = PaymentMethodDisabledReason.AMOUNT_OUT_OF_BOUND;
-                status = PaymentMethodStatus.DISABLED;
-            }
-
-            // validity date filtering
-            if (candidate.getValidityDateFrom().isAfter(LocalDate.now())) {
-                disabledReason = PaymentMethodDisabledReason.NOT_YET_VALID;
-                status = PaymentMethodStatus.DISABLED;
-            }
-
-            // disabled filtering
-            if (candidate.getStatus() == PaymentMethodStatus.DISABLED) {
-                disabledReason = PaymentMethodDisabledReason.METHOD_DISABLED;
-            }
-
-            // maintenance filtering
-            if (candidate.getStatus() == PaymentMethodStatus.MAINTENANCE) {
-                disabledReason = PaymentMethodDisabledReason.MAINTENANCE_IN_PROGRESS;
-            }
-
+            Pair<PaymentMethodDisabledReason, PaymentMethodStatus> filterReason = filterByCandidateProperties(candidate, request);
 
             BundleOption bundles = calculatorService.calculateMulti(PaymentOptionMulti.builder()
                             .paymentMethod(candidate.getGroup().name())
                             .touchpoint(request.getUserTouchpoint().name())
-                            .bin(request.getBin())
                             .idPspList(null)
                             .paymentNotice(request.getPaymentNotice())
                             .build(),
@@ -79,8 +46,7 @@ public class PaymentMethodsService {
             // filter by bundles
             FeeRange feeRange = null;
             if (bundles == null || bundles.getBundleOptions() == null || bundles.getBundleOptions().isEmpty()) {
-                disabledReason = PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE;
-                status = PaymentMethodStatus.DISABLED;
+                filterReason = Pair.of(PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE, PaymentMethodStatus.DISABLED) ;
             } else {
                 int last = bundles.getBundleOptions().size() - 1;
                 Long minFee = bundles.getBundleOptions().get(0).getTaxPayerFee();
@@ -94,16 +60,16 @@ public class PaymentMethodsService {
                     .paymentMethodId(candidate.getPaymentMethodId())
                     .name(candidate.getName())
                     .description(candidate.getDescription())
-                    .status(status)
                     .validityDateFrom(candidate.getValidityDateFrom())
                     .group(candidate.getGroup())
                     .paymentMethodTypes(candidate.getPaymentMethodTypes())
                     .metadata(candidate.getMetadata())
                     .feeRange(feeRange)
-                    .disabledReason(disabledReason)
                     .paymentMethodAsset(candidate.getPaymentMethodAsset())
                     .methodManagement(candidate.getMethodManagement())
                     .paymentMethodsBrandAssets(candidate.getPaymentMethodsBrandAssets())
+                    .disabledReason(filterReason.getLeft())
+                    .status(filterReason.getRight())
                     .build();
             paymentMethodsItems.add(item);
         }
@@ -111,7 +77,7 @@ public class PaymentMethodsService {
                 .paymentMethods(paymentMethodsItems)
                 .build();
     }
-    
+
     public PaymentMethod getPaymentMethod(String paymentMethodId) {
         List<PaymentMethod> result = paymentMethodRepository.findByPaymentMethodId(paymentMethodId);
         if (result.isEmpty()) {
@@ -123,4 +89,43 @@ public class PaymentMethodsService {
         return result.get(0);
     }
 
+    private List<PaymentMethod> getPaymentMethodsCandidates(PaymentMethodRequest request) {
+        if (request.getUserDevice() == null) {
+            return paymentMethodRepository
+                    .findByTouchpoint(request.getUserTouchpoint().name());
+        }
+
+        return paymentMethodRepository
+                .findByTouchpointAndDevice(request.getUserTouchpoint().name(), request.getUserDevice().name());
+    }
+
+    private Pair<PaymentMethodDisabledReason, PaymentMethodStatus> filterByCandidateProperties(PaymentMethod candidate, PaymentMethodRequest request){
+        // Target filtering
+        List<String> targetRegex = candidate.getTarget();
+        if (targetRegex != null && !targetRegex.contains(request.getTargetKey())) {
+            return Pair.of(PaymentMethodDisabledReason.TARGET_PREVIEW, PaymentMethodStatus.DISABLED) ;
+        }
+
+        // amount filtering
+        if (request.getTotalAmount() < candidate.getRangeAmount().getMin() || request.getTotalAmount() > candidate.getRangeAmount().getMax()) {
+            return Pair.of(PaymentMethodDisabledReason.AMOUNT_OUT_OF_BOUND, PaymentMethodStatus.DISABLED) ;
+        }
+
+        // validity date filtering
+        if (candidate.getValidityDateFrom().isAfter(LocalDate.now())) {
+            return Pair.of(PaymentMethodDisabledReason.NOT_YET_VALID, PaymentMethodStatus.DISABLED) ;
+        }
+
+        // disabled filtering
+        if (candidate.getStatus() == PaymentMethodStatus.DISABLED) {
+            return Pair.of(PaymentMethodDisabledReason.METHOD_DISABLED, PaymentMethodStatus.DISABLED) ;
+        }
+
+        // maintenance filtering
+        if (candidate.getStatus() == PaymentMethodStatus.MAINTENANCE) {
+            return Pair.of(PaymentMethodDisabledReason.MAINTENANCE_IN_PROGRESS, PaymentMethodStatus.MAINTENANCE) ;
+        }
+
+        return Pair.of(null, candidate.getStatus());
+    }
 }
