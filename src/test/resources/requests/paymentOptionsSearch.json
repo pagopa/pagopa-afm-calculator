@@ -1,7 +1,6 @@
 {
   "userTouchpoint": "IO",
   "userDevice": "IOS",
-  "bin": "string",
   "totalAmount": 0,
   "paymentNotice": [
     {
