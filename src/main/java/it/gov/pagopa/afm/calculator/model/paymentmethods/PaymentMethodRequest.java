@@ -25,8 +25,6 @@ public class PaymentMethodRequest {
 
     UserDevice userDevice;
 
-    String bin;
-
     @NotNull
     Integer totalAmount;
 
