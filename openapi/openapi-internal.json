@@ -1421,9 +1421,6 @@
             "type" : "string",
             "enum" : [ "IOS", "ANDROID", "WEB", "SAFARI" ]
           },
-          "bin" : {
-            "type" : "string"
-          },
           "totalAmount" : {
             "type" : "integer",
             "format" : "int32"
