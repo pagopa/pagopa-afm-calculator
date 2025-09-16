@@ -3,6 +3,8 @@ package it.gov.pagopa.afm.calculator.service;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import it.gov.pagopa.afm.calculator.TestUtil;
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
+import it.gov.pagopa.afm.calculator.exception.AppError;
+import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
@@ -21,9 +23,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -222,6 +227,45 @@ class PaymentMethodsServiceTest {
         assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
         assertEquals(PaymentMethodStatus.MAINTENANCE, response.getPaymentMethods().get(0).getStatus());
         assertEquals(PaymentMethodDisabledReason.MAINTENANCE_IN_PROGRESS, response.getPaymentMethods().get(0).getDisabledReason());
+    }
+
+    @Test
+    void whenPaymentMethodExists_thenReturnIt() {
+        PaymentMethod method = new PaymentMethod();
+        method.setId("pm1");
+
+        when(paymentMethodRepository.findByPaymentMethodId("pm1"))
+                .thenReturn(List.of(method));
+
+        PaymentMethod result = paymentMethodsService.getPaymentMethod("pm1");
+
+        assertNotNull(result);
+        assertEquals("pm1", result.getId());
+    }
+
+    @Test
+    void whenPaymentMethodNotFound_thenThrowException() {
+        when(paymentMethodRepository.findByPaymentMethodId("notFound"))
+                .thenReturn(Collections.emptyList());
+
+        AppException ex = assertThrows(AppException.class,
+                () -> paymentMethodsService.getPaymentMethod("notFound"));
+
+        assertEquals(AppError.PAYMENT_METHOD_NOT_FOUND.httpStatus, ex.getHttpStatus());
+    }
+
+    @Test
+    void whenMultiplePaymentMethodsFound_thenThrowException() {
+        PaymentMethod m1 = new PaymentMethod();
+        PaymentMethod m2 = new PaymentMethod();
+
+        when(paymentMethodRepository.findByPaymentMethodId("dup"))
+                .thenReturn(List.of(m1, m2));
+
+        AppException ex = assertThrows(AppException.class,
+                () -> paymentMethodsService.getPaymentMethod("dup"));
+
+        assertEquals(AppError.PAYMENT_METHOD_MULTIPLE_FOUND.httpStatus, ex.getHttpStatus());
     }
 
 }
