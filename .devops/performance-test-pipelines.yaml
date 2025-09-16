@@ -29,6 +29,7 @@ parameters:
       - calculator_getFeesMulti
       - calculator_getFeesByPspMulti
       - calculator_searchPaymentMethods
+      - calculator_getPaymentMethodById
 
 variables:
   ${{ if eq(parameters['ENVIRONMENT'], 'dev') }}:
