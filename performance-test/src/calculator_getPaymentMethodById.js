@@ -3,8 +3,7 @@
 
 import {check} from 'k6';
 import {SharedArray} from 'k6/data';
-import {searchPaymentMethods} from './helpers/calculator_helper.js';
-import { createDocument, deleteDocument } from "./helpers/cosmosdb_client.js";
+import {getPaymentMethodById} from './helpers/calculator_helper.js';
 
 export let options = JSON.parse(open(__ENV.TEST_TYPE));
 
