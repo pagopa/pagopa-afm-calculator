@@ -26,7 +26,7 @@ public class PaymentMethodRequest {
     UserDevice userDevice;
 
     @NotNull
-    Integer totalAmount;
+    Long totalAmount;
 
     @NotNull
     @NotEmpty
