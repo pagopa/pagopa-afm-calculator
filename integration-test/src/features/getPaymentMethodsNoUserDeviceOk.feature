@@ -2,15 +2,14 @@ Feature: Payment Methods - Get List of Payment Methods
 
   Background: 
 	Given the configuration "data.json"
-  	Given the payment methods configuration "payment-methods-range-amount.json"
+  	Given the payment methods configuration "payment-methods-user-device-ok.json"
 
-	Scenario: Search payment request for range amount
+	Scenario: Search payment request using no userDevice
 		Given initial json
 	  """
 	  {
 			"userTouchpoint": "IO",
-			"userDevice": "IOS",
-			"totalAmount": 1200,
+			"totalAmount": 0,
 			"paymentNotice": [
 				{
 					"paymentAmount": 1200,
@@ -33,4 +32,4 @@ Feature: Payment Methods - Get List of Payment Methods
 	  """
 		When the client send POST to /payment-methods/search
 		Then check statusCode is 200
-		And the body response contains the added test payment methods, only PAYPAL-test is disabled for AMOUNT_OUT_OF_BOUND
+		And the body response contains the added test payment methods

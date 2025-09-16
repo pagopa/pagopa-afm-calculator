@@ -23,10 +23,7 @@ public class PaymentMethodRequest {
     @NotNull
     UserTouchpoint userTouchpoint;
 
-    @NotNull
     UserDevice userDevice;
-
-    String bin;
 
     @NotNull
     Long totalAmount;
