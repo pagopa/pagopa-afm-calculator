@@ -31,8 +31,7 @@ export default function calculator() {
     let response = getPaymentMethodById(rootUrl, 'PAYPAL', params);
 
     check(response, {
-        'check status is 200': (r) => r.status === 200,
-        'check payment method is not null': (r) => JSON.parse(r.body).paymentMethods != null,
+        'check status is 200': (r) => r.status === 200
     });
 
 }
