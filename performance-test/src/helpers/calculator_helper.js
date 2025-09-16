@@ -30,6 +30,12 @@ export function searchPaymentMethods(rootUrl, payload, params) {
     return http.post(url, JSON.stringify(payload), params);
 }
 
+export function getPaymentMethodById(rootUrl, methodId, params) {
+	const url = `${rootUrl}/payment-methods/${methodId}`
+
+    return http.get(url, params);
+}
+
 export function addTouchpoints(rootUrl, payload, params) {
 	const url = `${rootUrl}/configuration/touchpoint/add`
 
