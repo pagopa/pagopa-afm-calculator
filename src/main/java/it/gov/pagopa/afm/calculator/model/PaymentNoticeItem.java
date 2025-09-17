@@ -15,5 +15,6 @@ public class PaymentNoticeItem {
     private Long paymentAmount;
     @NotNull
     private String primaryCreditorInstitution;
+    @NotNull
     private List<TransferListItem> transferList;
 }
