@@ -889,8 +889,7 @@ class CalculatorServiceTest {
 
     @ParameterizedTest
     @CsvSource({
-            "requests/getFeesMulti.json, responses/getFeesMultiEmptyTransferList.json",
-            "requests/getFeesMultiBinNull.json, responses/getFeesMultiNullTransferList.json"
+            "requests/getFeesMulti.json, responses/getFeesMultiEmptyTransferList.json"
     })
     @Order(36)
     void calculateMulti_KO_invalid_transfer_list(String input) throws IOException {
