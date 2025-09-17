@@ -30,7 +30,6 @@ public class PaymentMethodsItem {
     PaymentMethodGroup group;
     @NotNull
     List<PaymentMethodType> paymentMethodTypes;
-    @NotNull
     FeeRange feeRange;
     @NotNull
     String paymentMethodAsset;
