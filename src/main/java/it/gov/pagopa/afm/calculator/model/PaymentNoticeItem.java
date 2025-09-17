@@ -2,6 +2,7 @@ package it.gov.pagopa.afm.calculator.model;
 
 import lombok.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class PaymentNoticeItem {
     private Long paymentAmount;
     @NotNull
     private String primaryCreditorInstitution;
+    @Valid
     @NotNull
     private List<TransferListItem> transferList;
 }
