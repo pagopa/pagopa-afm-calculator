@@ -41,7 +41,7 @@ public class PaymentMethodsService {
                             .idPspList(null)
                             .paymentNotice(request.getPaymentNotice())
                             .build(),
-                    Integer.MAX_VALUE, Boolean.TRUE.equals(request.getAllCCp()), false, "fee");
+                    Integer.MAX_VALUE, Boolean.TRUE.equals(request.getAllCCp()), false, "fee", false);
 
             // filter by bundles
             FeeRange feeRange = null;

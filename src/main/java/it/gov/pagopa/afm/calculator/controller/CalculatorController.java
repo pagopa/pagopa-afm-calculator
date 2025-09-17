@@ -256,6 +256,7 @@ public class CalculatorController {
                                     " fee → sorted by increasing fee, if fees are equal then by PSP name." +
                                     " pspname → sorted by PSP name.")
             String orderBy) {
+
         PaymentOptionMulti paymentOption =
                 PaymentOptionMulti.builder()
                         .paymentMethod(paymentOptionByPsp.getPaymentMethod())
@@ -271,7 +272,7 @@ public class CalculatorController {
                         .paymentNotice(paymentOptionByPsp.getPaymentNotice())
                         .build();
         return calculatorService.calculateMulti(
-                paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy));
+                paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy), true);
     }
 
     @Operation(
@@ -352,7 +353,7 @@ public class CalculatorController {
                                     " pspname → sorted by PSP name.")
             String orderBy) {
         return calculatorService.calculateMulti(
-                paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy));
+                paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy), true);
     }
 
 

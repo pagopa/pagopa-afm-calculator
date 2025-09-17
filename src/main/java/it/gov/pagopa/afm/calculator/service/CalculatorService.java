@@ -3,10 +3,9 @@ package it.gov.pagopa.afm.calculator.service;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
-import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
-import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
+import it.gov.pagopa.afm.calculator.exception.AppError;
+import it.gov.pagopa.afm.calculator.exception.AppException;
+import it.gov.pagopa.afm.calculator.model.*;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Fee;
@@ -116,7 +115,11 @@ public class CalculatorService {
                 .build();
     }
 
-    public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp, boolean onUsFirst, String orderType) {
+    public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp, boolean onUsFirst, String orderType, boolean transferListRequired) {
+        if(transferListRequired && paymentOption.getPaymentNotice().stream().anyMatch(el -> el.getTransferList() == null || el.getTransferList().isEmpty())){
+            throw new AppException(AppError.TRANSFER_LIST_REQUIRED);
+        }
+
         List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
 
         return it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
