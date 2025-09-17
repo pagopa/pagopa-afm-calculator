@@ -106,6 +106,34 @@ class PaymentMethodsServiceTest {
     }
 
     @Test
+    void searchPaymentMethods_OK_EmptyTransferList() throws IOException {
+        when(paymentMethodRepository
+                .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
+                .paymentMethodId("PAYPAL")
+                .status(PaymentMethodStatus.ENABLED)
+                .group(PaymentMethodGroup.PPAL)
+                .paymentMethodTypes(List.of(PaymentMethodType.APP))
+                .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(0L)
+                        .max(1000L)
+                        .build())
+                .build()));
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString(), anyBoolean()))
+                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                        .belowThreshold(false)
+                        .bundleOptions(List.of(Transfer.builder().build()))
+                        .build());
+
+        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearchEmptyTransferList.json", PaymentMethodRequest.class);
+
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(1, response.getPaymentMethods().size());
+        assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
+    }
+
+    @Test
     void searchPaymentMethods_Target() throws IOException {
 
         when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString(), anyBoolean()))

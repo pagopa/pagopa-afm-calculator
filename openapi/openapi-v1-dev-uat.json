@@ -1142,7 +1142,7 @@
         }
       },
       "PaymentNoticeItem" : {
-        "required" : [ "paymentAmount", "primaryCreditorInstitution" ],
+        "required" : [ "paymentAmount", "primaryCreditorInstitution", "transferList" ],
         "type" : "object",
         "properties" : {
           "paymentAmount" : {

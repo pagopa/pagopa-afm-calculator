@@ -1,0 +1,14 @@
+{
+  "userTouchpoint": "IO",
+  "userDevice": "IOS",
+  "totalAmount": 0,
+  "paymentNotice": [
+    {
+      "paymentAmount": 120,
+      "primaryCreditorInstitution": "BPPIITRRZZZ",
+      "transferList": []
+    }
+  ],
+  "allCCp": true,
+  "targetKey": "user"
+}
