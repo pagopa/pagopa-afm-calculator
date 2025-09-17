@@ -18,6 +18,9 @@ public class PaymentOptionMulti {
     private String paymentMethod;
     private String touchpoint;
     private List<PspSearchCriteria> idPspList;
+    @Valid
+    @NotNull
+    @NotEmpty
     private List<PaymentNoticeItem> paymentNotice;
 
     @JsonIgnore
