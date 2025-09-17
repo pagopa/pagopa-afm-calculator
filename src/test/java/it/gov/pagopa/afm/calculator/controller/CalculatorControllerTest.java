@@ -18,8 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.IOException;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -41,7 +40,7 @@ class CalculatorControllerTest {
         it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption resultMulti =
                 TestUtil.readObjectFromFile("responses/getFeesMulti.json", it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.class);
         when(calculatorService.calculate(any(), anyInt(), any(Boolean.class))).thenReturn(result);
-        when(calculatorService.calculateMulti(any(), anyInt(), any(Boolean.class), any(Boolean.class), any())).thenReturn(resultMulti);
+        when(calculatorService.calculateMulti(any(), anyInt(), any(Boolean.class), any(Boolean.class), any(), anyBoolean())).thenReturn(resultMulti);
     }
 
     @Test

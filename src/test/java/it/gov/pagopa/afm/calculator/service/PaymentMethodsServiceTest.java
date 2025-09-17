@@ -64,7 +64,7 @@ class PaymentMethodsServiceTest {
                         .max(1000L)
                         .build())
                 .build()));
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString(), anyBoolean()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
@@ -92,7 +92,7 @@ class PaymentMethodsServiceTest {
                         .max(1000L)
                         .build())
                 .build()));
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString(), anyBoolean()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
@@ -108,7 +108,7 @@ class PaymentMethodsServiceTest {
     @Test
     void searchPaymentMethods_Target() throws IOException {
 
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString(), anyBoolean()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
@@ -139,7 +139,7 @@ class PaymentMethodsServiceTest {
     @Test
     void searchPaymentMethods_Amount() throws IOException {
 
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString(), anyBoolean()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
@@ -170,7 +170,7 @@ class PaymentMethodsServiceTest {
     @Test
     void searchPaymentMethods_Disabled() throws IOException {
 
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString(), anyBoolean()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
@@ -201,7 +201,7 @@ class PaymentMethodsServiceTest {
     @Test
     void searchPaymentMethods_Maintenance() throws IOException {
 
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString(), anyBoolean()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))

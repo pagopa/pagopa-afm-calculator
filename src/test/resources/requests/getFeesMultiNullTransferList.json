@@ -1,0 +1,13 @@
+{
+  "bin": "1005066",
+  "paymentMethod": "CP",
+  "touchpoint": "CHECKOUT",
+  "idPspList": [],
+  "paymentNotice": [
+    {
+      "primaryCreditorInstitution": "77777777777",
+      "paymentAmount": 70,
+      "transferList": null
+    }
+  ]
+}
