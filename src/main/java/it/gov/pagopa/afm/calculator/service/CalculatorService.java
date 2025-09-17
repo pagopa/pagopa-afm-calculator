@@ -116,7 +116,7 @@ public class CalculatorService {
     }
 
     public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, boolean allCcp, boolean onUsFirst, String orderType, boolean transferListRequired) {
-        if(transferListRequired && paymentOption.getPaymentNotice().stream().anyMatch(el -> el.getTransferList() == null || el.getTransferList().isEmpty())){
+        if(transferListRequired && paymentOption.getPaymentNotice().stream().anyMatch(el -> el.getTransferList().isEmpty())){
             throw new AppException(AppError.TRANSFER_LIST_REQUIRED);
         }
 
