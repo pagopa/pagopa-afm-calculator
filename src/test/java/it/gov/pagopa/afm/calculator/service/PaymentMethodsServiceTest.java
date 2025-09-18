@@ -16,6 +16,8 @@ import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStat
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodType;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,8 +51,13 @@ class PaymentMethodsServiceTest {
     CalculatorService calculatorService;
 
 
-    @Test
-    void searchPaymentMethods_OK() throws IOException {
+    @ParameterizedTest
+    @CsvSource({
+            "requests/paymentOptionsSearch.json",
+            "requests/paymentOptionsSearchEmptyTransferList.json",
+            "requests/paymentOptionsSearchNullTransferList.json"
+    })
+    void searchPaymentMethods_OK(String input) throws IOException {
         when(paymentMethodRepository
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
                 .paymentMethodId("PAYPAL")
@@ -70,7 +77,7 @@ class PaymentMethodsServiceTest {
                         .bundleOptions(List.of(Transfer.builder().build()))
                         .build());
 
-        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
+        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
 
         PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
         assertEquals(1, response.getPaymentMethods().size());
@@ -99,62 +106,6 @@ class PaymentMethodsServiceTest {
                         .build());
 
         PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearchNoUserDevice.json", PaymentMethodRequest.class);
-
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
-        assertEquals(1, response.getPaymentMethods().size());
-        assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
-    }
-
-    @Test
-    void searchPaymentMethods_OK_EmptyTransferList() throws IOException {
-        when(paymentMethodRepository
-                .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
-                .paymentMethodId("PAYPAL")
-                .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.PPAL)
-                .paymentMethodTypes(List.of(PaymentMethodType.APP))
-                .target(null)
-                .validityDateFrom(LocalDate.now().minusDays(1))
-                .rangeAmount(FeeRange.builder()
-                        .min(0L)
-                        .max(1000L)
-                        .build())
-                .build()));
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().build()))
-                        .build());
-
-        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearchEmptyTransferList.json", PaymentMethodRequest.class);
-
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
-        assertEquals(1, response.getPaymentMethods().size());
-        assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
-    }
-
-    @Test
-    void searchPaymentMethods_OK_NullTransferList() throws IOException {
-        when(paymentMethodRepository
-                .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
-                .paymentMethodId("PAYPAL")
-                .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.PPAL)
-                .paymentMethodTypes(List.of(PaymentMethodType.APP))
-                .target(null)
-                .validityDateFrom(LocalDate.now().minusDays(1))
-                .rangeAmount(FeeRange.builder()
-                        .min(0L)
-                        .max(1000L)
-                        .build())
-                .build()));
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().build()))
-                        .build());
-
-        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearchNullTransferList.json", PaymentMethodRequest.class);
 
         PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
         assertEquals(1, response.getPaymentMethods().size());
