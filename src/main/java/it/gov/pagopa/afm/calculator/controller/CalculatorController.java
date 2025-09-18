@@ -272,7 +272,7 @@ public class CalculatorController {
                         .paymentNotice(paymentOptionByPsp.getPaymentNotice())
                         .build();
         return calculatorService.calculateMulti(
-                paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy), true);
+                paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy));
     }
 
     @Operation(
@@ -353,7 +353,7 @@ public class CalculatorController {
                                     " pspname → sorted by PSP name.")
             String orderBy) {
         return calculatorService.calculateMulti(
-                paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy), true);
+                paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy));
     }
 
 

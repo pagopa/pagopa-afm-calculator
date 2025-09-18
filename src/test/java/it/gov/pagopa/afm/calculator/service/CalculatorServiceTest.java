@@ -415,7 +415,7 @@ class CalculatorServiceTest {
                         Collections.singleton(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile(input, PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile(output);
@@ -437,7 +437,7 @@ class CalculatorServiceTest {
                         Collections.singleton(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile("responses/getFeesMulti2.json");
@@ -454,7 +454,7 @@ class CalculatorServiceTest {
                 .thenReturn(Collections.singleton(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti2.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile("responses/getFeesMulti3.json");
@@ -471,7 +471,7 @@ class CalculatorServiceTest {
 
         AppException exception =
                 assertThrows(
-                        AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true));
+                        AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true, true, "random"));
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
     }
@@ -489,7 +489,7 @@ class CalculatorServiceTest {
 
         AppException exception =
                 assertThrows(
-                        AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true));
+                        AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true, true, "random"));
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
     }
@@ -509,7 +509,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile("responses/getFeesMulti.json");
@@ -530,7 +530,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp2.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile("responses/getFeesMulti.json");
@@ -554,7 +554,7 @@ class CalculatorServiceTest {
 //
 //    AppException exception =
 //        assertThrows(
-//            AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true));
+//            AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10));
 //
 //    assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getHttpStatus());
 //  }
@@ -576,7 +576,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiSubThreshold.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile("responses/getFeesMultiSubThreshold.json");
@@ -596,7 +596,7 @@ class CalculatorServiceTest {
                         Collections.singleton(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile("responses/getFeesMultiPaymentTypeNull.json");
@@ -617,7 +617,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp3.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile("responses/getFeesMulti.json");
@@ -635,7 +635,7 @@ class CalculatorServiceTest {
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption result =
-                calculatorService.calculateMulti(paymentOption, 10, false, true, "random", true);
+                calculatorService.calculateMulti(paymentOption, 10, false, true, "random");
         assertEquals(1, result.getBundleOptions().size());
     }
 
@@ -651,7 +651,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getAmexFeesMulti.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile("responses/getAmexFeesMulti.json");
@@ -670,7 +670,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile("responses/getFeesMultiHighCommission.json");
@@ -688,7 +688,7 @@ class CalculatorServiceTest {
                         Collections.singleton(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMultiWrongEC.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile("responses/getFeesMultiWrongEC.json");
@@ -705,7 +705,7 @@ class CalculatorServiceTest {
         Mockito.doReturn(validBundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMultiSamePsp.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         String actual = TestUtil.toJson(result);
 
         String expected = TestUtil.readStringFromFile("responses/getFeesMultiSamePsp.json");
@@ -724,7 +724,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         assertEquals(10, result.getBundleOptions().size());
 
         // Check that the first element has onUs == true, the other elements have set to false
@@ -745,7 +745,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "fee", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "fee");
         assertEquals(10, result.getBundleOptions().size());
 
         // Check that the fees are in ascending order
@@ -768,7 +768,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "fee", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "fee");
         assertEquals(10, result.getBundleOptions().size());
 
         // Check that the fees are in ascending order
@@ -804,7 +804,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "pspname", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "pspname");
         assertEquals(10, result.getBundleOptions().size());
 
         // Check that the Psp Names are in ascending order
@@ -828,7 +828,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "pspname", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "pspname");
         assertEquals(10, result.getBundleOptions().size());
 
         // Check that the Psp Names are in ascending order and the first element has onUs == true
@@ -858,7 +858,7 @@ class CalculatorServiceTest {
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         paymentOption.setBin("test");
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         var options = result.getBundleOptions();
         for (it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer option : options) {
             assertFalse(option.getOnUs());
@@ -879,7 +879,7 @@ class CalculatorServiceTest {
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
-        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
         var options = result.getBundleOptions();
         for (it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer option : options) {
             assertFalse(option.getOnUs());
@@ -903,6 +903,6 @@ class CalculatorServiceTest {
                         Collections.singleton(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile(input, PaymentOptionMulti.class);
-        assertThrows(AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true, true, "random", true));
+        assertThrows(AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true, true, "random"));
     }
 }

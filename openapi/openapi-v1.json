@@ -887,7 +887,7 @@
           "paymentNotice" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/PaymentNoticeItem"
+              "$ref" : "#/components/schemas/PaymentNoticeItemOptionalTransferList"
             }
           },
           "allCCp" : {
@@ -898,8 +898,8 @@
           }
         }
       },
-      "PaymentNoticeItem" : {
-        "required" : [ "paymentAmount", "primaryCreditorInstitution", "transferList" ],
+      "PaymentNoticeItemOptionalTransferList" : {
+        "required" : [ "paymentAmount", "primaryCreditorInstitution" ],
         "type" : "object",
         "properties" : {
           "paymentAmount" : {

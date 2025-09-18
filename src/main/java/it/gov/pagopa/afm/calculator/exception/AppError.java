@@ -10,10 +10,6 @@ public enum AppError {
             HttpStatus.UNPROCESSABLE_ENTITY,
             "Issuers BIN with different ABI values found",
             "Found ABI with different value for BIN %s"),
-    TRANSFER_LIST_REQUIRED(
-            HttpStatus.BAD_REQUEST,
-            "Transfer list is required",
-            "Found a payment notice without transfers"),
     INTERNAL_SERVER_ERROR(
             HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", "Something was wrong"), 
     PAYMENT_METHOD_NOT_FOUND(

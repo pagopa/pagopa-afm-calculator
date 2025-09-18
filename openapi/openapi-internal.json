@@ -1568,7 +1568,7 @@
           "paymentNotice" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/PaymentNoticeItem"
+              "$ref" : "#/components/schemas/PaymentNoticeItemOptionalTransferList"
             }
           },
           "allCCp" : {
@@ -1576,6 +1576,25 @@
           },
           "targetKey" : {
             "type" : "string"
+          }
+        }
+      },
+      "PaymentNoticeItemOptionalTransferList" : {
+        "required" : [ "paymentAmount", "primaryCreditorInstitution" ],
+        "type" : "object",
+        "properties" : {
+          "paymentAmount" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "primaryCreditorInstitution" : {
+            "type" : "string"
+          },
+          "transferList" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TransferListItem"
+            }
           }
         }
       },

@@ -1,7 +1,7 @@
 package it.gov.pagopa.afm.calculator.model.paymentmethods;
 
 
-import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
+import it.gov.pagopa.afm.calculator.model.PaymentNoticeItemOptionalTransferList;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.UserDevice;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.UserTouchpoint;
 import lombok.AllArgsConstructor;
@@ -31,7 +31,7 @@ public class PaymentMethodRequest {
     @NotNull
     @NotEmpty
     @Valid
-    List<PaymentNoticeItem> paymentNotice;
+    List<PaymentNoticeItemOptionalTransferList> paymentNotice;
 
     Boolean allCCp;
 
