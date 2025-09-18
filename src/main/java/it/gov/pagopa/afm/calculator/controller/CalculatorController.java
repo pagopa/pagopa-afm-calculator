@@ -256,7 +256,6 @@ public class CalculatorController {
                                     " fee → sorted by increasing fee, if fees are equal then by PSP name." +
                                     " pspname → sorted by PSP name.")
             String orderBy) {
-
         PaymentOptionMulti paymentOption =
                 PaymentOptionMulti.builder()
                         .paymentMethod(paymentOptionByPsp.getPaymentMethod())

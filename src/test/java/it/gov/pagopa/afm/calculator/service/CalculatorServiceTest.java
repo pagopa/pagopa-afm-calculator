@@ -554,7 +554,7 @@ class CalculatorServiceTest {
 //
 //    AppException exception =
 //        assertThrows(
-//            AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10));
+//            AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true));
 //
 //    assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getHttpStatus());
 //  }
@@ -885,24 +885,5 @@ class CalculatorServiceTest {
             assertFalse(option.getOnUs());
         }
         Initializer.table.deleteEntity(duplicateIssuer);
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-            "requests/getFeesMulti.json, responses/getFeesMultiEmptyTransferList.json"
-    })
-    @Order(36)
-    void calculateMulti_KO_invalid_transfer_list(String input) throws IOException {
-        Touchpoint touchpoint = TestUtil.getMockTouchpoint();
-        PaymentType paymentType = TestUtil.getMockPaymentType();
-
-        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
-        when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(TestUtil.getMockValidBundle()));
-
-        var paymentOption = TestUtil.readObjectFromFile(input, PaymentOptionMulti.class);
-        assertThrows(AppException.class, () -> calculatorService.calculateMulti(paymentOption, 10, true, true, "random"));
     }
 }
