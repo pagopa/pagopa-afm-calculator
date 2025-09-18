@@ -16,6 +16,8 @@ import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStat
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodType;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,8 +51,13 @@ class PaymentMethodsServiceTest {
     CalculatorService calculatorService;
 
 
-    @Test
-    void searchPaymentMethods_OK() throws IOException {
+    @ParameterizedTest
+    @CsvSource({
+            "requests/paymentOptionsSearch.json",
+            "requests/paymentOptionsSearchEmptyTransferList.json",
+            "requests/paymentOptionsSearchNullTransferList.json"
+    })
+    void searchPaymentMethods_OK(String input) throws IOException {
         when(paymentMethodRepository
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
                 .paymentMethodId("PAYPAL")
@@ -70,7 +77,7 @@ class PaymentMethodsServiceTest {
                         .bundleOptions(List.of(Transfer.builder().build()))
                         .build());
 
-        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
+        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
 
         PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
         assertEquals(1, response.getPaymentMethods().size());

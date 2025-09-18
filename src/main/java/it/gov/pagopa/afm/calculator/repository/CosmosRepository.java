@@ -356,7 +356,11 @@ public class CosmosRepository {
 
         // marca da bollo digitale check
         List<TransferListItem> transferList = new ArrayList<>();
-        paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> transferList.addAll(paymentNoticeItem.getTransferList()));
+        paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> {
+            if (paymentNoticeItem.getTransferList() != null) {
+                transferList.addAll(paymentNoticeItem.getTransferList());
+            }
+        });
         var onlyMarcaBolloDigitale =
                 transferList.stream()
                         .filter(Objects::nonNull)
