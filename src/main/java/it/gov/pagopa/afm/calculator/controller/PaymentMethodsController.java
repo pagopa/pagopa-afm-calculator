@@ -35,6 +35,7 @@ public class PaymentMethodsController {
 
     @Operation(
             summary = "Advanced search of payment methods",
+            description = "GET with body payload - no resources created",
             security = {@SecurityRequirement(name = "ApiKey")},
             tags = {"Payment Methods"})
     @ApiResponses(
