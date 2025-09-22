@@ -3,6 +3,7 @@ package it.gov.pagopa.afm.calculator.service;
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
 import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
+import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
@@ -13,6 +14,7 @@ import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodDisa
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStatus;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.modelmapper.internal.Pair;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,7 @@ public class PaymentMethodsService {
 
     private final PaymentMethodRepository paymentMethodRepository;
     private final CalculatorService calculatorService;
+    private final ModelMapper modelMapper;
 
     public PaymentMethodsResponse searchPaymentMethods(PaymentMethodRequest request) {
         List<PaymentMethodsItem> paymentMethodsItems = new ArrayList<>();
@@ -39,9 +42,9 @@ public class PaymentMethodsService {
                             .paymentMethod(candidate.getGroup().name())
                             .touchpoint(request.getUserTouchpoint().name())
                             .idPspList(null)
-                            .paymentNotice(request.getPaymentNotice())
+                            .paymentNotice(request.getPaymentNotice().stream().map(el -> modelMapper.map(el, PaymentNoticeItem.class)).toList())
                             .build(),
-                    Integer.MAX_VALUE, request.getAllCCp(), false, "fee");
+                    Integer.MAX_VALUE, Boolean.TRUE.equals(request.getAllCCp()), false, "fee");
 
             // filter by bundles
             FeeRange feeRange = null;

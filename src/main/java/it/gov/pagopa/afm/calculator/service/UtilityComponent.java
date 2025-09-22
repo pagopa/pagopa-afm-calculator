@@ -95,7 +95,12 @@ public class UtilityComponent {
     @Cacheable(value = "getTransferCategoryListMulti")
     public List<String> getTransferCategoryList(PaymentOptionMulti paymentOptionMulti) {
         List<TransferListItem> transferList = new ArrayList<>();
-        paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> transferList.addAll(paymentNoticeItem.getTransferList()));
+        paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> {
+                    if (paymentNoticeItem.getTransferList() != null) {
+                        transferList.addAll(paymentNoticeItem.getTransferList());
+                    }
+                }
+        );
         log.debug("getTransferCategoryList");
         return !transferList.isEmpty()
                 ? transferList.parallelStream()
