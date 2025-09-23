@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.11.25"
+    tag: "2.11.25-1-PIDM-977-gmp-integrazione-con-touchpoint"
     pullPolicy: Always
   livenessProbe:
     httpGet:
