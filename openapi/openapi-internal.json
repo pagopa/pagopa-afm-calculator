@@ -872,7 +872,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PaymentMethod"
+                  "$ref" : "#/components/schemas/PaymentMethodResponse"
                 }
               }
             }
@@ -1912,11 +1912,14 @@
           }
         }
       },
-      "PaymentMethod" : {
-        "required" : [ "description", "group", "method_management", "name", "payment_method_asset", "payment_method_id", "payment_method_types", "range_amount", "status", "user_device", "user_touchpoint", "validity_date_from" ],
+      "PaymentMethodResponse" : {
+        "required" : [ "description", "group", "id", "methodManagement", "name", "paymentMethodAsset", "paymentMethodId", "paymentMethodTypes", "rangeAmount", "status", "userDevice", "userTouchpoint", "validityDateFrom" ],
         "type" : "object",
         "properties" : {
           "id" : {
+            "type" : "string"
+          },
+          "paymentMethodId" : {
             "type" : "string"
           },
           "group" : {
@@ -1935,9 +1938,34 @@
               "type" : "string"
             }
           },
+          "userTouchpoint" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "IO", "CHECKOUT", "CHECKOUT_CART" ]
+            }
+          },
+          "userDevice" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "IOS", "ANDROID", "WEB", "SAFARI" ]
+            }
+          },
           "status" : {
             "type" : "string",
             "enum" : [ "ENABLED", "DISABLED", "MAINTENANCE" ]
+          },
+          "paymentMethodTypes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "CARTE", "CONTO", "APP" ]
+            }
+          },
+          "validityDateFrom" : {
+            "type" : "string",
+            "format" : "date"
           },
           "target" : {
             "type" : "array",
@@ -1945,51 +1973,23 @@
               "type" : "string"
             }
           },
+          "rangeAmount" : {
+            "$ref" : "#/components/schemas/FeeRange"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
           },
-          "payment_method_id" : {
+          "paymentMethodAsset" : {
             "type" : "string"
           },
-          "user_touchpoint" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "enum" : [ "IO", "CHECKOUT", "CHECKOUT_CART" ]
-            }
-          },
-          "user_device" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "enum" : [ "IOS", "ANDROID", "WEB", "SAFARI" ]
-            }
-          },
-          "payment_method_types" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "enum" : [ "CARTE", "CONTO", "APP" ]
-            }
-          },
-          "validity_date_from" : {
-            "type" : "string",
-            "format" : "date"
-          },
-          "range_amount" : {
-            "$ref" : "#/components/schemas/FeeRange"
-          },
-          "payment_method_asset" : {
-            "type" : "string"
-          },
-          "method_management" : {
+          "methodManagement" : {
             "type" : "string",
             "enum" : [ "ONBOARDABLE", "ONBOARDABLE_ONLY", "NOT_ONBOARDABLE", "REDIRECT" ]
           },
-          "payment_methods_brand_assets" : {
+          "paymentMethodsBrandAssets" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"

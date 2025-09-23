@@ -97,7 +97,7 @@ public class PaymentMethodsController {
                             content =
                             @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = PaymentMethod.class))),
+                                    schema = @Schema(implementation = PaymentMethodResponse.class))),
                     @ApiResponse(
                             responseCode = "400",
                             description = "Bad Request",

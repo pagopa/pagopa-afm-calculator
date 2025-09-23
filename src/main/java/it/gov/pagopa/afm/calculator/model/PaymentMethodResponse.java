@@ -19,14 +19,10 @@ import java.util.Map;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder(toBuilder = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentMethodResponse {
 
-    @Id
-    @GeneratedValue
+    @NotNull
     private String id;
-
     @NotNull
     private String paymentMethodId;
     @NotNull
@@ -52,7 +48,7 @@ public class PaymentMethodResponse {
     @NotNull
     private FeeRange rangeAmount;
 
-    private Map<String, String> metadata;
+    private Map<Metadata, String> metadata;
 
     @NotNull
     private String paymentMethodAsset;
