@@ -5,6 +5,7 @@ import it.gov.pagopa.afm.calculator.TestUtil;
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
 import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
+import it.gov.pagopa.afm.calculator.model.PaymentMethodResponse;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
@@ -244,7 +245,7 @@ class PaymentMethodsServiceTest {
         when(paymentMethodRepository.findByPaymentMethodId("pm1"))
                 .thenReturn(List.of(method));
 
-        PaymentMethod result = paymentMethodsService.getPaymentMethod("pm1");
+        PaymentMethodResponse result = paymentMethodsService.getPaymentMethod("pm1");
 
         assertNotNull(result);
         assertEquals("pm1", result.getId());

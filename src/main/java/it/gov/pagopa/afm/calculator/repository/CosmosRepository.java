@@ -88,7 +88,11 @@ public class CosmosRepository {
                 bundle.getDigitalStampRestriction() != null
                         ? bundle.getDigitalStampRestriction()
                         : Boolean.FALSE;
-        if (onlyMarcaBolloDigitale == transferListSize) {
+        if(transferListSize == 0 && onlyMarcaBolloDigitale == 0){
+            // skip this filter
+            return true;
+        }
+        else if (onlyMarcaBolloDigitale == transferListSize) {
             // if marcaBolloDigitale is present in all paymentOptions
             return digitalStamp;
         } else if (onlyMarcaBolloDigitale >= 1 && onlyMarcaBolloDigitale < transferListSize) {
