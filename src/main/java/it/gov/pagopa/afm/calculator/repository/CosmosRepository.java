@@ -80,7 +80,7 @@ public class CosmosRepository {
      * @param bundle                 a valid bundle to filter
      * @return True if the valid bundle meets the criteria.
      */
-    private static boolean digitalStampFilter(
+    protected static boolean digitalStampFilter(
             long transferListSize, long onlyMarcaBolloDigitale, ValidBundle bundle) {
         boolean digitalStamp =
                 bundle.getDigitalStamp() != null ? bundle.getDigitalStamp() : Boolean.FALSE;
@@ -88,7 +88,11 @@ public class CosmosRepository {
                 bundle.getDigitalStampRestriction() != null
                         ? bundle.getDigitalStampRestriction()
                         : Boolean.FALSE;
-        if (onlyMarcaBolloDigitale == transferListSize) {
+        if(transferListSize == 0 && onlyMarcaBolloDigitale == 0){
+            // skip this filter
+            return true;
+        }
+        else if (onlyMarcaBolloDigitale == transferListSize) {
             // if marcaBolloDigitale is present in all paymentOptions
             return digitalStamp;
         } else if (onlyMarcaBolloDigitale >= 1 && onlyMarcaBolloDigitale < transferListSize) {
