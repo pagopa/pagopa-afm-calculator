@@ -80,7 +80,7 @@ public class CosmosRepository {
      * @param bundle                 a valid bundle to filter
      * @return True if the valid bundle meets the criteria.
      */
-    private static boolean digitalStampFilter(
+    protected static boolean digitalStampFilter(
             long transferListSize, long onlyMarcaBolloDigitale, ValidBundle bundle) {
         boolean digitalStamp =
                 bundle.getDigitalStamp() != null ? bundle.getDigitalStamp() : Boolean.FALSE;
