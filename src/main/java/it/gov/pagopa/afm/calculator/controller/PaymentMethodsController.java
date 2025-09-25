@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
+import it.gov.pagopa.afm.calculator.model.PaymentMethodResponse;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodRequest;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsResponse;
@@ -83,7 +84,7 @@ public class PaymentMethodsController {
     public PaymentMethodsResponse searchPaymentMethods(@RequestBody @Valid @NotNull PaymentMethodRequest paymentMethodRequest) {
         return paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
     }
-    
+
     @Operation(
             summary = "Find payment method by id",
             security = {@SecurityRequirement(name = "ApiKey")},
@@ -96,7 +97,7 @@ public class PaymentMethodsController {
                             content =
                             @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = PaymentMethod.class))),
+                                    schema = @Schema(implementation = PaymentMethodResponse.class))),
                     @ApiResponse(
                             responseCode = "400",
                             description = "Bad Request",
@@ -135,7 +136,7 @@ public class PaymentMethodsController {
                                     schema = @Schema(implementation = ProblemJson.class)))
             })
     @GetMapping(value = "/{paymentMethodId}")
-    public PaymentMethod getPaymentMethod(@PathVariable String paymentMethodId) {
+    public PaymentMethodResponse getPaymentMethod(@PathVariable String paymentMethodId) {
         return paymentMethodsService.getPaymentMethod(paymentMethodId);
     }
 
