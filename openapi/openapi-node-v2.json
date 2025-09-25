@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic - API AFM-Calculator for node v2",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.11.25-1-PIDM-977-gmp-integrazione-con-touchpoint"
+    "version": "2.11.27"
   },
   "servers": [
     {
