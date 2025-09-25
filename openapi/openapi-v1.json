@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic - API AFM-Calculator v1 Production",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.11.26"
+    "version": "2.11.26-1-hotfix-allccp"
   },
   "servers": [
     {

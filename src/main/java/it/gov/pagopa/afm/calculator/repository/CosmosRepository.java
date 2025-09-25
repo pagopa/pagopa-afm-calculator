@@ -165,7 +165,7 @@ public class CosmosRepository {
     }
 
     @Cacheable(value = "findValidBundlesMulti")
-    public List<ValidBundle> findByPaymentOption(PaymentOptionMulti paymentOption, boolean allCcp) {
+    public List<ValidBundle> findByPaymentOption(PaymentOptionMulti paymentOption, Boolean allCcp) {
         Iterable<ValidBundle> validBundles = findValidBundlesMulti(paymentOption, allCcp);
         return getFilteredBundlesMulti(paymentOption, validBundles);
     }
@@ -176,7 +176,7 @@ public class CosmosRepository {
      * @param paymentOptionMulti Get the Body of the Request
      * @return the filtered bundles
      */
-    private Iterable<ValidBundle> findValidBundlesMulti(PaymentOptionMulti paymentOptionMulti, boolean allCcp) {
+    private Iterable<ValidBundle> findValidBundlesMulti(PaymentOptionMulti paymentOptionMulti, Boolean allCcp) {
 
         // add filter by Payment Amount: minPaymentAmount <= paymentAmount < maxPaymentAmount
         var minFilter =
@@ -193,7 +193,7 @@ public class CosmosRepository {
                 throw new AppException(
                         HttpStatus.NOT_FOUND,
                         "Touchpoint not found",
-                        "Cannot find touchpont with name: '" + paymentOptionMulti.getTouchpoint() + "'");
+                        "Cannot find touchpoint with name: '" + paymentOptionMulti.getTouchpoint() + "'");
             }
             var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.get().getName());
             queryResult = and(queryResult, touchpointFilter);
@@ -243,7 +243,7 @@ public class CosmosRepository {
         }
 
         // add filter for Poste bundles
-        if (!allCcp) {
+        if (Boolean.FALSE.equals(allCcp)) {
             var allCcpFilter = isNotEqual(ID_PSP_PARAM, pspPosteId);
             queryResult = and(queryResult, allCcpFilter);
         }
