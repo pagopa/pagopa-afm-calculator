@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic - API AFM-Calculator internal",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.11.26"
+    "version": "2.11.28"
   },
   "servers": [
     {
@@ -945,7 +945,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentMethod"
+                  "$ref": "#/components/schemas/PaymentMethodResponse"
                 }
               }
             }
@@ -2113,24 +2113,28 @@
           }
         }
       },
-      "PaymentMethod": {
+      "PaymentMethodResponse": {
         "required": [
           "description",
           "group",
-          "method_management",
+          "id",
+          "methodManagement",
           "name",
-          "payment_method_asset",
-          "payment_method_id",
-          "payment_method_types",
-          "range_amount",
+          "paymentMethodAsset",
+          "paymentMethodId",
+          "paymentMethodTypes",
+          "rangeAmount",
           "status",
-          "user_device",
-          "user_touchpoint",
-          "validity_date_from"
+          "userDevice",
+          "userTouchpoint",
+          "validityDateFrom"
         ],
         "type": "object",
         "properties": {
           "id": {
+            "type": "string"
+          },
+          "paymentMethodId": {
             "type": "string"
           },
           "group": {
@@ -2164,30 +2168,7 @@
               "type": "string"
             }
           },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ENABLED",
-              "DISABLED",
-              "MAINTENANCE"
-            ]
-          },
-          "target": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "metadata": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "payment_method_id": {
-            "type": "string"
-          },
-          "user_touchpoint": {
+          "userTouchpoint": {
             "type": "array",
             "items": {
               "type": "string",
@@ -2198,7 +2179,7 @@
               ]
             }
           },
-          "user_device": {
+          "userDevice": {
             "type": "array",
             "items": {
               "type": "string",
@@ -2210,7 +2191,15 @@
               ]
             }
           },
-          "payment_method_types": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ENABLED",
+              "DISABLED",
+              "MAINTENANCE"
+            ]
+          },
+          "paymentMethodTypes": {
             "type": "array",
             "items": {
               "type": "string",
@@ -2221,17 +2210,29 @@
               ]
             }
           },
-          "validity_date_from": {
+          "validityDateFrom": {
             "type": "string",
             "format": "date"
           },
-          "range_amount": {
+          "target": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rangeAmount": {
             "$ref": "#/components/schemas/FeeRange"
           },
-          "payment_method_asset": {
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "paymentMethodAsset": {
             "type": "string"
           },
-          "method_management": {
+          "methodManagement": {
             "type": "string",
             "enum": [
               "ONBOARDABLE",
@@ -2240,7 +2241,7 @@
               "REDIRECT"
             ]
           },
-          "payment_methods_brand_assets": {
+          "paymentMethodsBrandAssets": {
             "type": "object",
             "additionalProperties": {
               "type": "string"

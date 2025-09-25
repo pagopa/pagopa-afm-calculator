@@ -3,6 +3,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import it.gov.pagopa.afm.calculator.model.PaymentMethodResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,7 +27,7 @@ class PaymentMethodsControllerTest {
 
     @Test
     void givenValidId_whenGetPaymentMethod_thenReturn200() throws Exception {
-        PaymentMethod method = new PaymentMethod();
+        PaymentMethodResponse method = new PaymentMethodResponse();
         method.setId("pm1");
 
         when(paymentMethodsService.getPaymentMethod("pm1")).thenReturn(method);
@@ -54,4 +55,3 @@ class PaymentMethodsControllerTest {
                 .andExpect(status().isInternalServerError());
     }
 }
-
