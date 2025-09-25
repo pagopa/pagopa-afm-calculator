@@ -193,7 +193,7 @@ public class CosmosRepository {
                 throw new AppException(
                         HttpStatus.NOT_FOUND,
                         "Touchpoint not found",
-                        "Cannot find touchpont with name: '" + paymentOptionMulti.getTouchpoint() + "'");
+                        "Cannot find touchpoint with name: '" + paymentOptionMulti.getTouchpoint() + "'");
             }
             var touchpointFilter = isEqualOrAny("touchpoint", touchpoint.get().getName());
             queryResult = and(queryResult, touchpointFilter);
@@ -243,7 +243,7 @@ public class CosmosRepository {
         }
 
         // add filter for Poste bundles
-        if (allCcp != null && !allCcp) {
+        if (Boolean.FALSE.equals(allCcp)) {
             var allCcpFilter = isNotEqual(ID_PSP_PARAM, pspPosteId);
             queryResult = and(queryResult, allCcpFilter);
         }
