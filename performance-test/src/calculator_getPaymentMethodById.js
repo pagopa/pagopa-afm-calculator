@@ -3,8 +3,7 @@
 
 import {check} from 'k6';
 import {SharedArray} from 'k6/data';
-import {searchPaymentMethods} from './helpers/calculator_helper.js';
-import { createDocument, deleteDocument } from "./helpers/cosmosdb_client.js";
+import {getPaymentMethodById} from './helpers/calculator_helper.js';
 
 export let options = JSON.parse(open(__ENV.TEST_TYPE));
 
@@ -29,11 +28,10 @@ export default function calculator() {
         },
     };
 
-    let response = getPaymentMethodById(rootUrl, 'PAYPAL', params);
+    let response = getPaymentMethodById(rootUrl, '139ee578-3684-43ca-bd82-3ab95b0f7604', params);
 
     check(response, {
-        'check status is 200': (r) => r.status === 200,
-        'check payment method is not null': (r) => JSON.parse(r.body).paymentMethods != null,
+        'check status is 200': (r) => r.status === 200
     });
 
 }
