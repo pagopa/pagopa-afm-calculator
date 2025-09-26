@@ -143,5 +143,5 @@ microservice-chart:
         repository: ghcr.io/pagopa/pagopa-afm-calculator
         tag: "2.11.28"
         pullPolicy: Always
-      envConfig:
-      envSecret:
+      envConfig: {}
+      envSecret: {}
