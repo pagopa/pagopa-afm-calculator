@@ -129,13 +129,13 @@ microservice-chart:
   canaryDelivery:
     create: true
     ingress:
-        type: header
-        headerName: X-Canary
-        headerValue: canary
-        weightPercent: 0
+      type: header
+      headerName: X-Canary
+      headerValue: canary
+      weightPercent: 0
     image:
-        repository: ghcr.io/pagopa/pagopa-afm-calculator
-        tag: "2.11.28"
-        pullPolicy: Always
+      repository: ghcr.io/pagopa/pagopa-afm-calculator
+      tag: "2.11.29"
+      pullPolicy: Always
     envConfig: {}
     envSecret: {}

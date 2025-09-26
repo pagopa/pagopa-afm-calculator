@@ -118,7 +118,7 @@ microservice-chart:
                 values:
                   - user
   canaryDelivery:
-    create: false
+    create: true
     ingress:
       create: true
       canary:
@@ -136,3 +136,5 @@ microservice-chart:
         pullPolicy: Always
       envConfig:
       envSecret:
+    image:
+      tag: 2.11.29
