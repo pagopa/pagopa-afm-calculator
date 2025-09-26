@@ -137,4 +137,4 @@ microservice-chart:
       envConfig:
       envSecret:
     image:
-      tag: 2.11.29
+      tag: 2.11.30
