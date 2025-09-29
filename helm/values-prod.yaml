@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.11.25"
+    tag: "2.11.31"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -127,7 +127,7 @@ microservice-chart:
             namespaces: ["afm"]
             topologyKey: topology.kubernetes.io/zone
   canaryDelivery:
-    create: true
+    create: false
     ingress:
       type: header
       headerName: X-Canary
