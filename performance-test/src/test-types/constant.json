@@ -7,7 +7,7 @@
       "rate": 600,
       "timeUnit": "1s",
       "preAllocatedVUs": 100,
-      "maxVUs": 10000
+      "maxVUs": 15000
     }
   },
   "setupTimeout": "360s",
