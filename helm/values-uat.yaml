@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.11.31-2-PAGOPA-3276-gmp-test-performance-nuova-api-get-payment-method-by-id"
+    tag: "2.11.32"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -53,16 +53,16 @@ microservice-chart:
     allowPrivilegeEscalation: false
   resources:
     requests:
-      memory: "1024Mi"
-      cpu: "0.4"
+      memory: "512Mi"
+      cpu: "0.5"
     limits:
-      memory: "1540Mi"
-      cpu: "0.8"
+      memory: "1024Mi"
+      cpu: "1.0"
   autoscaling:
     enable: true
-    minReplica: 3
-    maxReplica: 6
-    pollingInterval: 30 # seconds
+    minReplica: 1
+    maxReplica: 1
+    pollingInterval: 10 # seconds
     cooldownPeriod: 60 # seconds
     triggers:
       - type: cpu
