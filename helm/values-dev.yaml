@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.11.32-1-PAGOPA-3276-gmp-test-performance-nuova-api-get-payment-method-by-id"
+    tag: "2.11.32-2-PAGOPA-3276-gmp-test-performance-nuova-api-get-payment-method-by-id"
     pullPolicy: Always
   livenessProbe:
     httpGet:

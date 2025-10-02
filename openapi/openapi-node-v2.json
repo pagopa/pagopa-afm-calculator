@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic - API AFM-Calculator for node v2",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.11.32-1-PAGOPA-3276-gmp-test-performance-nuova-api-get-payment-method-by-id"
+    "version": "2.11.32-2-PAGOPA-3276-gmp-test-performance-nuova-api-get-payment-method-by-id"
   },
   "servers": [
     {
