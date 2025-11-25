@@ -3,7 +3,7 @@
 
 import {check} from 'k6';
 import {SharedArray} from 'k6/data';
-import {searchPaymentMethods} from './helpers/calculator_helper.js';
+import {searchPaymentMethods, getValidBundle} from './helpers/calculator_helper.js';
 import { createDocument, deleteDocument } from "./helpers/cosmosdb_client.js";
 
 export let options = JSON.parse(open(__ENV.TEST_TYPE));
@@ -20,6 +20,8 @@ const rootUrl = `${vars.hostV1}`;
 const cosmosDBURI = `${vars.cosmosDBURI}`;
 const databaseID = `${vars.databaseID}`;
 const validBundlesNum = `${vars.validBundlesNum}`;
+
+const cosmosPrimaryKey = `${__ENV.COSMOS_SUBSCRIPTION_KEY}`;
 
 export function setup() {
     for (let i = 0; i < validBundlesNum; i++) {
