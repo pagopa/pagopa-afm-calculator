@@ -56,6 +56,7 @@ class PaymentMethodsServiceTest {
     @CsvSource({
             "requests/paymentOptionsSearch.json",
             "requests/paymentOptionsSearchEmptyTransferList.json",
+            "requests/paymentOptionsSearchNullFiscalCodeNullTransferList.json",
             "requests/paymentOptionsSearchNullTransferList.json"
     })
     void searchPaymentMethods_OK(String input) throws IOException {
