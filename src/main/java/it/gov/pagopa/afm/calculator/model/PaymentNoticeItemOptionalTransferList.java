@@ -13,7 +13,6 @@ import java.util.List;
 public class PaymentNoticeItemOptionalTransferList {
     @NotNull
     private Long paymentAmount;
-    @NotNull
     private String primaryCreditorInstitution;
     private List<TransferListItem> transferList;
 }
