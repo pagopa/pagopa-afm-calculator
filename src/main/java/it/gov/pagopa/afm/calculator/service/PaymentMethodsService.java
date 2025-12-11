@@ -91,87 +91,122 @@ public class PaymentMethodsService {
      * @param paymentMethodsItems the list of payment methods items to sort
      */
     private static void sortMethods(PaymentMethodRequest request, List<PaymentMethodsItem> paymentMethodsItems) {
-        // create the comparator based on priority groups
-        Comparator<PaymentMethodsItem> comparator = comparatorPriorityGroups(request);
-        // adjust the comparator based on sortBy
-        comparator = comparatorSortBy(comparator, request);
-        // adjust the comparator based on sortOrder
-        comparator = comparatorSortOrder(request.getSortOrder(), comparator);
+        // build the comparator based on request parameters
+        Comparator<PaymentMethodsItem> comparator = buildPaymentMethodsItemComparator(request);
 
         // sort the payment methods items
         paymentMethodsItems.sort(comparator);
     }
 
     /**
-     * This method adjusts the comparator based on the sort order.
+     * This method builds a comparator for PaymentMethodsItem based on the sorting criteria specified in the request.
      *
-     * @param sortOrder  the desired sort order (ASC or DESC)
-     * @param comparator the final comparator
-     * @return a comparator that sorts in the specified order
+     * @param request the payment method request containing sorting criteria
+     * @return a comparator for PaymentMethodsItem
      */
-    private static Comparator<PaymentMethodsItem> comparatorSortOrder(SortOrder sortOrder, Comparator<PaymentMethodsItem> comparator) {
-        if (sortOrder == SortOrder.DESC) {
-            comparator = comparator.reversed();
-        }
-        return comparator;
-    }
+    private static Comparator<PaymentMethodsItem> buildPaymentMethodsItemComparator(PaymentMethodRequest request) {
+        return (a, b) -> {
 
-    /**
-     * This method returns a comparator based on the sortBy parameter in the request.
-     *
-     * @param comparator the initial comparator
-     * @param request    the payment method request containing the sortBy parameter
-     * @return a comparator that sorts payment methods based on the specified attribute
-     */
-    private static Comparator<PaymentMethodsItem> comparatorSortBy(Comparator<PaymentMethodsItem> comparator, PaymentMethodRequest request) {
+            // check priority groups first
+            Integer priority = comparePriorityGroup(request, a, b);
+            if (priority != null) {
+                return priority;
+            }
 
-        if (request.getSortBy() == SortBy.NAME) {
-            // comparator for name in the requested language, defaulting to IT if not available
-            comparator = Comparator.comparing(
-                    (PaymentMethodsItem a) -> {
-                        Map<Language, String> name = a.getName();
-                        return name.getOrDefault(request.getLanguage(), name.get(Language.IT));
-                    }
-            );
-        } else if (request.getSortBy() == SortBy.DESCRIPTION) {
-            // comparator for description in the requested language, defaulting to IT if not available
-            comparator = Comparator.comparing(
-                    a -> {
-                        Map<Language, String> description = a.getDescription();
-                        return description.getOrDefault(request.getLanguage(), description.get(Language.IT));
-                    }
-            );
-        } else if (request.getSortBy() == SortBy.FEE) {
-            // comparator for fee range min value, placing items without fee range at the end
-            comparator = Comparator.comparingLong(a -> a.getFeeRange() != null ? a.getFeeRange().getMin() : Long.MAX_VALUE);
-        }
-
-        return comparator;
-    }
-
-    /**
-     * Comparator to prioritize specific groups of payment methods
-     *
-     * @param request the payment method request containing priority groups
-     * @return a comparator that prioritizes payment methods based on specified groups
-     */
-    private static Comparator<PaymentMethodsItem> comparatorPriorityGroups(PaymentMethodRequest request) {
-        // get priority groups from request, default to empty list if null
-        List<PaymentMethodGroup> priorityGroups = request.getPriorityGroups() != null ? request.getPriorityGroups() : List.of();
-
-        return (a, b) ->
-        {
-            // a has higher priority than b
-            if (priorityGroups.contains(a.getGroup()) && !priorityGroups.contains(b.getGroup())) return -1;
-
-            // b has higher priority than a
-            if (!priorityGroups.contains(a.getGroup()) && priorityGroups.contains(b.getGroup())) return 1;
-
-            // both have same priority
-            return 0;
-
+            // neither a nor b have priority
+            return compareAndSort(request, a, b);
         };
     }
+
+    /**
+     *
+     * This method compares two PaymentMethodsItem based on the sorting criteria specified in the request.
+     *
+     * @param request the payment method request containing sorting criteria
+     * @param a       the first payment methods item to compare
+     * @param b       the second payment methods item to compare
+     * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second
+     */
+    private static int compareAndSort(PaymentMethodRequest request, PaymentMethodsItem a, PaymentMethodsItem b) {
+        int result = 0;
+
+        SortBy sortBy = request.getSortBy() != null ? request.getSortBy() : SortBy.DESCRIPTION;
+        SortOrder sortOrder = request.getSortOrder() != null ? request.getSortOrder() : SortOrder.ASC;
+        Language language = request.getLanguage() != null ? request.getLanguage() : Language.IT;
+
+        if (sortBy == SortBy.NAME) {
+            // comparator for name in the requested language, defaulting to IT if not available
+            Map<Language, String> nameA = a.getName();
+            Map<Language, String> nameB = b.getName();
+            String nameALocalized = nameA.get(language);
+            String nameBLocalized = nameB.get(language);
+
+            result = nameALocalized.compareTo(nameBLocalized);
+
+        } else if (sortBy == SortBy.DESCRIPTION) {
+            // comparator for description in the requested language, defaulting to IT if not available
+            Map<Language, String> descriptionA = a.getDescription();
+            Map<Language, String> descriptionB = b.getDescription();
+            String descriptionALocalized = descriptionA.get(language);
+            String descriptionBLocalized = descriptionB.get(language);
+
+            result = descriptionALocalized.compareTo(descriptionBLocalized);
+
+        } else if (sortBy == SortBy.FEE) {
+            // comparator for fee range min value, placing items without fee range at the end
+            Long descriptionA = a.getFeeRange() != null ? a.getFeeRange().getMin() : Long.MAX_VALUE;
+            Long descriptionB = b.getFeeRange() != null ? b.getFeeRange().getMin() : Long.MAX_VALUE;
+
+            result = descriptionA.compareTo(descriptionB);
+        }
+
+        // adjust for sort order
+        if (sortOrder == SortOrder.DESC) {
+            result = result * -1;
+        }
+
+        return result;
+    }
+
+    /**
+     * This method compares two PaymentMethodsItem based on their priority groups defined in the request.
+     *
+     * @param request the payment method request containing priority groups
+     * @param a       the first payment methods item to compare
+     * @param b       the second payment methods item to compare
+     * @return -1 if a has higher priority, 1 if b has higher priority, or null if neither has priority
+     */
+    private static Integer comparePriorityGroup(PaymentMethodRequest request, PaymentMethodsItem a, PaymentMethodsItem b) {
+        List<PaymentMethodGroup> priorityGroups = request.getPriorityGroups() != null ? request.getPriorityGroups() : List.of(PaymentMethodGroup.CP);
+
+        PaymentMethodGroup groupA = a.getGroup();
+        PaymentMethodGroup groupB = b.getGroup();
+
+        boolean aIsPriority = priorityGroups.contains(groupA);
+        boolean bIsPriority = priorityGroups.contains(groupB);
+
+        // Check if both groups are in the priority list
+        if (aIsPriority && bIsPriority) {
+            // Both are priority, compare their indices in the priority list
+            int indexA = priorityGroups.indexOf(groupA);
+            int indexB = priorityGroups.indexOf(groupB);
+
+            // Both are priority but have different indices, sort by their index in the priority list
+            return Integer.compare(indexA, indexB);
+        }
+
+        if (aIsPriority) {
+            // a has priority over b
+            return -1;
+        }
+
+        if (bIsPriority) {
+            // b has priority over a
+            return 1;
+        }
+        return null;
+    }
+
 
     public PaymentMethodResponse getPaymentMethod(String paymentMethodId) {
         List<PaymentMethod> result = paymentMethodRepository.findByPaymentMethodId(paymentMethodId);
