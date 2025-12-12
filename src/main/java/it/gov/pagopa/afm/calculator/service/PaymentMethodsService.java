@@ -138,8 +138,10 @@ public class PaymentMethodsService {
             // comparator for name in the requested language, defaulting to IT if not available
             Map<Language, String> nameA = a.getName();
             Map<Language, String> nameB = b.getName();
-            String nameALocalized = nameA.get(language);
-            String nameBLocalized = nameB.get(language);
+            String fallbackA = nameA.get(Language.IT);
+            String fallbackB = nameB.get(Language.IT);
+            String nameALocalized = nameA.getOrDefault(language, fallbackA);
+            String nameBLocalized = nameB.getOrDefault(language, fallbackB);
 
             result = nameALocalized.compareTo(nameBLocalized);
 
@@ -147,8 +149,10 @@ public class PaymentMethodsService {
             // comparator for description in the requested language, defaulting to IT if not available
             Map<Language, String> descriptionA = a.getDescription();
             Map<Language, String> descriptionB = b.getDescription();
-            String descriptionALocalized = descriptionA.get(language);
-            String descriptionBLocalized = descriptionB.get(language);
+            String fallbackA = descriptionA.get(Language.IT);
+            String fallbackB = descriptionB.get(Language.IT);
+            String descriptionALocalized = descriptionA.getOrDefault(language, fallbackA);
+            String descriptionBLocalized = descriptionB.getOrDefault(language, fallbackB);
 
             result = descriptionALocalized.compareTo(descriptionBLocalized);
 
