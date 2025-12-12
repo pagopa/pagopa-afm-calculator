@@ -11,7 +11,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>calculator</artifactId>
-    <version>2.12.2</version>
+    <version>2.12.2-1-PAGOPA-3436-gmp-implementazione-logica-di-ordinamento</version>
     <name>afm-calculator</name>
     <description>Calculator Logic microservice for pagoPA AFM</description>
 
