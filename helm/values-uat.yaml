@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.12.2-1-PAGOPA-3436-gmp-implementazione-logica-di-ordinamento"
+    tag: "2.12.2-2-PAGOPA-3436-gmp-implementazione-logica-di-ordinamento"
     pullPolicy: Always
   livenessProbe:
     httpGet:
