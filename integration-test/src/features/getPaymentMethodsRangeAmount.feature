@@ -34,3 +34,4 @@ Feature: Payment Methods - Get List of Payment Methods
 		When the client send POST to /payment-methods/search
 		Then check statusCode is 200
 		And the body response contains the added test payment methods, only PAYPAL-test is disabled for AMOUNT_OUT_OF_BOUND
+		And the the cart is first and others in alphabetic order
