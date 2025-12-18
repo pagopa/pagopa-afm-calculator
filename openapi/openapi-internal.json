@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic - API AFM-Calculator internal",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.12.2"
+    "version": "2.12.2-2-PAGOPA-3436-gmp-implementazione-logica-di-ordinamento"
   },
   "servers": [
     {
@@ -1699,6 +1699,53 @@
           },
           "targetKey": {
             "type": "string"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "IT",
+              "EN",
+              "FR",
+              "DE",
+              "SL"
+            ]
+          },
+          "sortBy": {
+            "type": "string",
+            "enum": [
+              "NAME",
+              "DESCRIPTION",
+              "FEE"
+            ]
+          },
+          "sortOrder": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "priorityGroups": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "CP",
+                "MYBK",
+                "BPAY",
+                "PPAL",
+                "RPIC",
+                "RBPS",
+                "SATY",
+                "APPL",
+                "RICO",
+                "RBPB",
+                "RBPP",
+                "RBPR",
+                "GOOG",
+                "KLRN"
+              ]
+            }
           }
         }
       },
