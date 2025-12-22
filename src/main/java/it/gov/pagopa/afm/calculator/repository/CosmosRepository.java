@@ -211,7 +211,7 @@ public class CosmosRepository {
                         "Cannot find payment type with name: '" + paymentOptionMulti.getPaymentMethod() + "'");
             }
 
-            var paymentTypeFilter = isEqualOrNull("paymentType", paymentType.get().getName());
+            var paymentTypeFilter = isEqualOrAny("paymentType", paymentType.get().getName());
             queryResult = and(queryResult, paymentTypeFilter);
         }
 
@@ -304,7 +304,7 @@ public class CosmosRepository {
                         "Cannot find payment type with name: '" + paymentOption.getPaymentMethod() + "'");
             }
 
-            var paymentTypeFilter = isEqualOrNull("paymentType", paymentType.get().getName());
+            var paymentTypeFilter = isEqualOrAny("paymentType", paymentType.get().getName());
             queryResult = and(queryResult, paymentTypeFilter);
         }
 
