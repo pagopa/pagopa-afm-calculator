@@ -7,14 +7,13 @@ import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentMethodResponse;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
+import it.gov.pagopa.afm.calculator.model.calculatormulti.Fee;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodRequest;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsResponse;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodDisabledReason;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodGroup;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStatus;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodType;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.SortOrder;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.*;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,6 +27,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -56,6 +56,7 @@ class PaymentMethodsServiceTest {
     @CsvSource({
             "requests/paymentOptionsSearch.json",
             "requests/paymentOptionsSearchEmptyTransferList.json",
+            "requests/paymentOptionsSearchNullFiscalCodeNullTransferList.json",
             "requests/paymentOptionsSearchNullTransferList.json"
     })
     void searchPaymentMethods_OK(String input) throws IOException {
@@ -275,5 +276,252 @@ class PaymentMethodsServiceTest {
 
         assertEquals(AppError.PAYMENT_METHOD_MULTIPLE_FOUND.httpStatus, ex.getHttpStatus());
     }
+
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "requests/paymentOptionsSearchSorting.json",
+            "requests/paymentOptionsSearchSortingDefault.json"
+    })
+    void searchPaymentMethods_sorting(String input) throws IOException {
+        PaymentMethod paypal = PaymentMethod.builder()
+                .paymentMethodId("PAYPAL")
+                .description(Map.of(Language.IT, "Paypal", Language.EN, "Paypal"))
+                .status(PaymentMethodStatus.ENABLED)
+                .group(PaymentMethodGroup.PPAL)
+                .paymentMethodTypes(List.of(PaymentMethodType.APP))
+                .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(0L)
+                        .max(1000L)
+                        .build())
+                .build();
+        PaymentMethod google = PaymentMethod.builder()
+                .paymentMethodId("GOOGLEPAY")
+                .description(Map.of(Language.IT, "Google Pay", Language.EN, "Google Pay"))
+                .status(PaymentMethodStatus.ENABLED)
+                .group(PaymentMethodGroup.GOOG)
+                .paymentMethodTypes(List.of(PaymentMethodType.APP))
+                .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(0L)
+                        .max(1000L)
+                        .build())
+                .build();
+        PaymentMethod banca = PaymentMethod.builder()
+                .paymentMethodId("BBB")
+                .description(Map.of(Language.IT, "Banca instesa", Language.EN, "intesa bank"))
+                .status(PaymentMethodStatus.ENABLED)
+                .group(PaymentMethodGroup.RBPS)
+                .paymentMethodTypes(List.of(PaymentMethodType.CONTO))
+                .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(0L)
+                        .max(1000L)
+                        .build())
+                .build();
+        PaymentMethod cart = PaymentMethod.builder()
+                .paymentMethodId("CART")
+                .description(Map.of(Language.IT, "Carte", Language.EN, "Cards"))
+                .status(PaymentMethodStatus.ENABLED)
+                .group(PaymentMethodGroup.CP)
+                .paymentMethodTypes(List.of(PaymentMethodType.CARTE))
+                .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(0L)
+                        .max(1000L)
+                        .build())
+                .build();
+        when(paymentMethodRepository
+                .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(paypal, google, banca, cart));
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                        .belowThreshold(false)
+                        .bundleOptions(List.of(Transfer.builder().build()))
+                        .build());
+
+        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
+
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(4, response.getPaymentMethods().size());
+        assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
+        assertEquals("CART", response.getPaymentMethods().get(0).getPaymentMethodId());
+        assertEquals("BBB", response.getPaymentMethods().get(1).getPaymentMethodId());
+        assertEquals("GOOGLEPAY", response.getPaymentMethods().get(2).getPaymentMethodId());
+        assertEquals("PAYPAL", response.getPaymentMethods().get(3).getPaymentMethodId());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "requests/paymentOptionsSearchSorting.json"
+    })
+    void searchPaymentMethods_sortingAsc(String input) throws IOException {
+
+        when(paymentMethodRepository
+                .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(getMethodList());
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                        .belowThreshold(false)
+                        .bundleOptions(List.of(Transfer.builder().build()))
+                        .build());
+
+        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
+        paymentMethodRequest.setSortOrder(SortOrder.ASC);
+        paymentMethodRequest.setPriorityGroups(List.of(PaymentMethodGroup.PPAL, PaymentMethodGroup.CP));
+
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(4, response.getPaymentMethods().size());
+        assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
+        assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
+        assertEquals("CART", response.getPaymentMethods().get(1).getPaymentMethodId());
+        assertEquals("BBB", response.getPaymentMethods().get(2).getPaymentMethodId());
+        assertEquals("GOOGLEPAY", response.getPaymentMethods().get(3).getPaymentMethodId());
+    }
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "requests/paymentOptionsSearchSorting.json"
+    })
+    void searchPaymentMethods_sortingDesc(String input) throws IOException {
+        when(paymentMethodRepository
+                .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(getMethodList());
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                        .belowThreshold(false)
+                        .bundleOptions(List.of(Transfer.builder().build()))
+                        .build());
+
+        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
+        paymentMethodRequest.setSortOrder(SortOrder.DESC);
+        paymentMethodRequest.setPriorityGroups(List.of(PaymentMethodGroup.PPAL, PaymentMethodGroup.CP));
+
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(4, response.getPaymentMethods().size());
+        assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
+        assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
+        assertEquals("CART", response.getPaymentMethods().get(1).getPaymentMethodId());
+        assertEquals("GOOGLEPAY", response.getPaymentMethods().get(2).getPaymentMethodId());
+        assertEquals("BBB", response.getPaymentMethods().get(3).getPaymentMethodId());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "requests/paymentOptionsSearchSorting.json"
+    })
+    void searchPaymentMethods_sortingName(String input) throws IOException {
+        when(paymentMethodRepository
+                .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(getMethodList());
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                        .belowThreshold(false)
+                        .bundleOptions(List.of(Transfer.builder().build()))
+                        .build());
+
+        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
+        paymentMethodRequest.setSortBy(SortBy.NAME);
+
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(4, response.getPaymentMethods().size());
+        assertEquals("CART", response.getPaymentMethods().get(0).getPaymentMethodId());
+        assertEquals("BBB", response.getPaymentMethods().get(1).getPaymentMethodId());
+        assertEquals("GOOGLEPAY", response.getPaymentMethods().get(2).getPaymentMethodId());
+        assertEquals("PAYPAL", response.getPaymentMethods().get(3).getPaymentMethodId());
+    }
+
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "requests/paymentOptionsSearchSorting.json"
+    })
+    void searchPaymentMethods_sortingFee(String input) throws IOException {
+        when(paymentMethodRepository
+                .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(getMethodList());
+        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                        .belowThreshold(false)
+                        .bundleOptions(List.of(Transfer.builder()
+                                        .taxPayerFee(10L)
+                                .build()))
+                        .build());
+
+        PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
+        paymentMethodRequest.setSortBy(SortBy.FEE);
+
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        assertEquals(4, response.getPaymentMethods().size());
+        assertEquals("CART", response.getPaymentMethods().get(0).getPaymentMethodId());
+        assertEquals("PAYPAL", response.getPaymentMethods().get(1).getPaymentMethodId());
+        assertEquals("GOOGLEPAY", response.getPaymentMethods().get(2).getPaymentMethodId());
+        assertEquals("BBB", response.getPaymentMethods().get(3).getPaymentMethodId());
+    }
+
+    private static List<PaymentMethod> getMethodList() {
+        PaymentMethod paypal = PaymentMethod.builder()
+                .paymentMethodId("PAYPAL")
+                .name(Map.of(Language.IT, "Paypal", Language.EN, "Paypal"))
+                .description(Map.of(Language.IT, "Paypal", Language.EN, "Paypal"))
+                .status(PaymentMethodStatus.ENABLED)
+                .group(PaymentMethodGroup.PPAL)
+                .paymentMethodTypes(List.of(PaymentMethodType.APP))
+                .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(0L)
+                        .max(1000L)
+                        .build())
+                .build();
+        PaymentMethod google = PaymentMethod.builder()
+                .paymentMethodId("GOOGLEPAY")
+                .name(Map.of(Language.IT, "Google Pay"))
+                .description(Map.of(Language.IT, "Google Pay"))
+                .status(PaymentMethodStatus.ENABLED)
+                .group(PaymentMethodGroup.GOOG)
+                .paymentMethodTypes(List.of(PaymentMethodType.APP))
+                .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(1L)
+                        .max(1000L)
+                        .build())
+                .build();
+        PaymentMethod banca = PaymentMethod.builder()
+                .paymentMethodId("BBB")
+                .name(Map.of(Language.IT, "Banca instesa", Language.EN, "intesa bank"))
+                .description(Map.of(Language.IT, "Banca instesa", Language.EN, "intesa bank"))
+                .status(PaymentMethodStatus.ENABLED)
+                .group(PaymentMethodGroup.RBPS)
+                .paymentMethodTypes(List.of(PaymentMethodType.CONTO))
+                .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(10L)
+                        .max(1000L)
+                        .build())
+                .build();
+        PaymentMethod cart = PaymentMethod.builder()
+                .paymentMethodId("CART")
+                .name(Map.of(Language.IT, "Carte", Language.EN, "Cards"))
+                .description(Map.of(Language.IT, "Carte", Language.EN, "Cards"))
+                .status(PaymentMethodStatus.ENABLED)
+                .group(PaymentMethodGroup.CP)
+                .paymentMethodTypes(List.of(PaymentMethodType.CARTE))
+                .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder()
+                        .min(20L)
+                        .max(1000L)
+                        .build())
+                .build();
+        return List.of(paypal, google, banca, cart);
+    }
+
+
 
 }
