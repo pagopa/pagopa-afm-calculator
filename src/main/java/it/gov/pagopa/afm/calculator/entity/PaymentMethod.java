@@ -33,7 +33,7 @@ public class PaymentMethod {
     @NotNull
     private String paymentMethodId;
     @NotNull
-    private PaymentMethodGroup group;
+    private String group;
     @NotNull
     private Map<Language, String> name;
     @NotNull
