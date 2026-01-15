@@ -1,10 +1,10 @@
 {
-  "openapi" : "3.0.1",
-  "info" : {
-    "title" : "PagoPA API Calculator Logic - API AFM-Calculator for node v1",
-    "description" : "Calculator Logic microservice for pagoPA AFM",
-    "termsOfService" : "https://www.pagopa.gov.it/",
-    "version" : "2.12.4"
+  "openapi": "3.0.1",
+  "info": {
+    "title": "PagoPA API Calculator Logic - API AFM-Calculator for node v1",
+    "description": "Calculator Logic microservice for pagoPA AFM",
+    "termsOfService": "https://www.pagopa.gov.it/",
+    "version": "2.12.5"
   },
   "servers" : [ {
     "url" : "http://localhost:8080"
