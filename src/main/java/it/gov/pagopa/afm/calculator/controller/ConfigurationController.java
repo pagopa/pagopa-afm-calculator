@@ -6,11 +6,13 @@ import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController()
 @Tag(name = "Configuration", description = "Utility Services")
@@ -18,10 +20,12 @@ import java.util.List;
 public class ConfigurationController {
 
     private final ConfigurationService configurationService;
+    private final CacheManager cacheManager;
 
     @Autowired
-    public ConfigurationController(ConfigurationService configurationService) {
+    public ConfigurationController(ConfigurationService configurationService, org.springframework.cache.CacheManager cacheManager) {
         this.configurationService = configurationService;
+        this.cacheManager = cacheManager;
     }
 
     @PostMapping("/bundles/add")
@@ -57,6 +61,13 @@ public class ConfigurationController {
     @PostMapping("/paymenttypes/delete")
     public ResponseEntity<Void> deletePaymentTypes(@RequestBody List<PaymentType> paymentTypes) {
         configurationService.deletePaymentTypes(paymentTypes);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/cache/refresh")
+    public ResponseEntity<Void> clearCaches() {
+        cacheManager.getCacheNames()
+                .forEach(cacheName -> Objects.requireNonNull(cacheManager.getCache(cacheName)).clear());
         return ResponseEntity.ok().build();
     }
 }

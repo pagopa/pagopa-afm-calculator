@@ -2,20 +2,20 @@
   "belowThreshold": true,
   "bundleOptions": [
     {
-    "taxPayerFee": -5,
-    "primaryCiIncurredFee": 0,
-    "paymentMethod": "CP",
-    "touchpoint": "1",
-    "idBundle": "1",
-    "bundleName": "bundle1",
-    "bundleDescription": null,
-    "idCiBundle": null,
-    "idPsp": "111111111111",
-    "idChannel": "13212880150_07_ONUS",
-    "idBrokerPsp": null,
-    "onUs": false,
-    "abi": "14156",
-    "pspBusinessName": "psp business name 1"
+      "taxPayerFee": -5,
+      "primaryCiIncurredFee": 0,
+      "paymentMethod": "CP",
+      "touchpoint": "CHECKOUT",
+      "idBundle": "1",
+      "bundleName": "bundle1",
+      "bundleDescription": null,
+      "idCiBundle": null,
+      "idPsp": "111111111111",
+      "idChannel": "123_01",
+      "idBrokerPsp": "123",
+      "onUs": false,
+      "abi": "14156",
+      "pspBusinessName": "psp business name 1"
     }
   ]
 }

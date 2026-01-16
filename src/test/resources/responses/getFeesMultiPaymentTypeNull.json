@@ -5,7 +5,7 @@
       "taxPayerFee": 1,
       "actualPayerFee": 0,
       "paymentMethod": "ANY",
-      "touchpoint": "1",
+      "touchpoint": "CHECKOUT",
       "idBundle": "1",
       "bundleName": "bundle1",
       "bundleDescription": null,
@@ -13,15 +13,15 @@
         "1"
       ],
       "idPsp": "ABC",
-      "idChannel": "13212880150_07_ONUS",
-      "idBrokerPsp": null,
+      "idChannel": "123_01",
+      "idBrokerPsp": "123",
       "onUs": false,
       "abi": "14156",
       "pspBusinessName": "psp business name 1",
       "fees": [
         {
-          "creditorInstitution" : "77777777777",
-          "primaryCiIncurredFee": 10,
+          "creditorInstitution": "77777777777",
+          "primaryCiIncurredFee": 1000,
           "actualCiIncurredFee": 1
         }
       ]
