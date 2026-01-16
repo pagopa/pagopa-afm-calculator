@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import com.azure.spring.data.cosmos.core.CosmosTemplate;
+import org.springframework.cache.annotation.Cacheable;
+
 import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -24,7 +27,7 @@ import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 
 @Repository
 public class CosmosRepository {
-    private final ValidBundlesProvider validBundlesProvider;
+    private final CosmosTemplate cosmosTemplate;
     private final TouchpointRepository touchpointRepository;
     private final PaymentTypeRepository paymentTypeRepository;
     private final UtilityComponent utilityComponent;
@@ -33,13 +36,13 @@ public class CosmosRepository {
 
     @Autowired
     public CosmosRepository(
-            ValidBundlesProvider validBundlesProvider,
+            CosmosTemplate cosmosTemplate,
             TouchpointRepository touchpointRepository,
             PaymentTypeRepository paymentTypeRepository,
             UtilityComponent utilityComponent,
             @Value("${pspPoste.id}") String pspPosteId,
             @Value("#{'${psp.blacklist}'.split(',')}") List<String> pspBlacklist) {
-        this.validBundlesProvider = validBundlesProvider;
+        this.cosmosTemplate = cosmosTemplate;
         this.touchpointRepository = touchpointRepository;
         this.paymentTypeRepository = paymentTypeRepository;
         this.utilityComponent = utilityComponent;
@@ -55,8 +58,8 @@ public class CosmosRepository {
     private static List<CiBundle> filterByCI(String ciFiscalCode, ValidBundle bundle) {
         return bundle.getCiBundleList() != null
                 ? bundle.getCiBundleList().parallelStream()
-                .filter(ciBundle -> ciFiscalCode.equals(ciBundle.getCiFiscalCode()))
-                .toList()
+                        .filter(ciBundle -> ciFiscalCode.equals(ciBundle.getCiFiscalCode()))
+                        .toList()
                 : null;
     }
 
@@ -153,14 +156,25 @@ public class CosmosRepository {
     }
 
     /**
+     * @return all valid bundles
+     */
+    @Cacheable(value = "validBundles")
+    public List<ValidBundle> getAllValidBundles() {
+        return StreamSupport.stream(
+                cosmosTemplate.findAll(ValidBundle.class).spliterator(), true)
+                .toList();
+    }
+
+    /**
      * Null value are ignored -> they are skipped when building the filters
      *
      * @param paymentOptionMulti Get the Body of the Request
      * @return the filtered bundles
      */
     private List<ValidBundle> findValidBundlesMulti(PaymentOptionMulti paymentOptionMulti, Boolean allCcp) {
-        List<ValidBundle> bundles = validBundlesProvider.getAllValidBundles();
-        Stream<ValidBundle> stream = bundles.stream();
+        List<ValidBundle> bundles = getAllValidBundles();
+        Stream<ValidBundle> stream = bundles.stream()
+                .map(bundle -> bundle.toBuilder().build());
 
         stream = filterBundles(stream, paymentOptionMulti.getPaymentAmount(), paymentOptionMulti.getTouchpoint(),
                 paymentOptionMulti.getPaymentMethod(), paymentOptionMulti.getIdPspList(),
@@ -181,8 +195,9 @@ public class CosmosRepository {
      * @return the filtered bundles
      */
     private List<ValidBundle> findValidBundles(PaymentOption paymentOption, boolean allCcp) {
-        List<ValidBundle> bundles = validBundlesProvider.getAllValidBundles();
-        Stream<ValidBundle> stream = bundles.stream();
+        List<ValidBundle> bundles = getAllValidBundles();
+        Stream<ValidBundle> stream = bundles.stream()
+                .map(bundle -> bundle.toBuilder().build());
 
         stream = filterBundles(stream, paymentOption.getPaymentAmount(), paymentOption.getTouchpoint(),
                 paymentOption.getPaymentMethod(), paymentOption.getIdPspList(),
