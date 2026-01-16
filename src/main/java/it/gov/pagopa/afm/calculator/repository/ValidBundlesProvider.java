@@ -1,4 +1,4 @@
-package it.gov.pagopa.afm.calculator.service;
+package it.gov.pagopa.afm.calculator.repository;
 
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;

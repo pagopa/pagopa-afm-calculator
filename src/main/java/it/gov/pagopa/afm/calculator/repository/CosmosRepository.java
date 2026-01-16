@@ -10,7 +10,6 @@ import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.model.TransferListItem;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
-import it.gov.pagopa.afm.calculator.service.ValidBundlesProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -143,13 +142,11 @@ public class CosmosRepository {
                 && !bundle.getCiBundleList().isEmpty();
     }
 
-    // @Cacheable(value = "findValidBundles")
     public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption, boolean allCcp) {
         Iterable<ValidBundle> validBundles = findValidBundles(paymentOption, allCcp);
         return getFilteredBundles(paymentOption, validBundles);
     }
 
-    // @Cacheable(value = "findValidBundlesMulti")
     public List<ValidBundle> findByPaymentOption(PaymentOptionMulti paymentOption, Boolean allCcp) {
         Iterable<ValidBundle> validBundles = findValidBundlesMulti(paymentOption, allCcp);
         return getFilteredBundlesMulti(paymentOption, validBundles);
