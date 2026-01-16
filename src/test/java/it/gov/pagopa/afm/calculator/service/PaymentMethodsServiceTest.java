@@ -7,7 +7,6 @@ import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentMethodResponse;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
-import it.gov.pagopa.afm.calculator.model.calculatormulti.Fee;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodRequest;
