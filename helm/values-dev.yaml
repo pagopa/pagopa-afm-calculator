@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.12.5"
+    tag: "2.12.5-1-PIDM-1406-cache-pm"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -88,7 +88,7 @@ microservice-chart:
     CACHE_DEFAULT_SIZE: '1000'
     CACHE_DEFAULT_EVICT_SECONDS: '180'
     CACHE_ISSUER_RANGE_TABLE_EVICT_SECONDS: '43200'
-    CACHE_ENABLED: 'true'
+    CACHE_ENABLED: 'false'
     COSMOS_URI: https://pagopa-d-weu-afm-marketplace-cosmos-account.documents.azure.com:443/
     ISSUER_RANGE_TABLE: 'pagopadweuafmsaissuerrangetable'
     AMOUNT_THRESHOLD: '0'

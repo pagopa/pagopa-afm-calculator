@@ -7,7 +7,6 @@ import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentMethodResponse;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
-import it.gov.pagopa.afm.calculator.model.calculatormulti.Fee;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodRequest;
@@ -64,7 +63,7 @@ class PaymentMethodsServiceTest {
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
                 .paymentMethodId("PAYPAL")
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.PPAL)
+                .group("PPAL")
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -92,7 +91,7 @@ class PaymentMethodsServiceTest {
                 .findByTouchpoint(anyString())).thenReturn(List.of(PaymentMethod.builder()
                 .paymentMethodId("PAYPAL")
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.PPAL)
+                .group("PPAL")
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -127,7 +126,7 @@ class PaymentMethodsServiceTest {
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
                 .paymentMethodId("PAYPAL")
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.PPAL)
+                .group("PPAL")
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(List.of("wrongTarget"))
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -158,7 +157,7 @@ class PaymentMethodsServiceTest {
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
                 .paymentMethodId("PAYPAL")
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.PPAL)
+                .group("PPAL")
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(List.of("user"))
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -189,7 +188,7 @@ class PaymentMethodsServiceTest {
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
                 .paymentMethodId("PAYPAL")
                 .status(PaymentMethodStatus.DISABLED)
-                .group(PaymentMethodGroup.PPAL)
+                .group("PPAL")
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(List.of("user"))
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -220,7 +219,7 @@ class PaymentMethodsServiceTest {
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
                 .paymentMethodId("PAYPAL")
                 .status(PaymentMethodStatus.MAINTENANCE)
-                .group(PaymentMethodGroup.PPAL)
+                .group("PPAL")
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(List.of("user"))
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -289,7 +288,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodId("PAYPAL")
                 .description(Map.of(Language.IT, "Paypal", Language.EN, "Paypal"))
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.PPAL)
+                .group("PPAL")
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -302,7 +301,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodId("GOOGLEPAY")
                 .description(Map.of(Language.IT, "Google Pay", Language.EN, "Google Pay"))
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.GOOG)
+                .group("GOOG")
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -315,7 +314,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodId("BBB")
                 .description(Map.of(Language.IT, "Banca instesa", Language.EN, "intesa bank"))
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.RBPS)
+                .group("RBPS")
                 .paymentMethodTypes(List.of(PaymentMethodType.CONTO))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -328,7 +327,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodId("CART")
                 .description(Map.of(Language.IT, "Carte", Language.EN, "Cards"))
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.CP)
+                .group("CP")
                 .paymentMethodTypes(List.of(PaymentMethodType.CARTE))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -372,7 +371,7 @@ class PaymentMethodsServiceTest {
 
         PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
         paymentMethodRequest.setSortOrder(SortOrder.ASC);
-        paymentMethodRequest.setPriorityGroups(List.of(PaymentMethodGroup.PPAL, PaymentMethodGroup.CP));
+        paymentMethodRequest.setPriorityGroups(List.of("PPAL", "CP"));
 
         PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
         assertEquals(4, response.getPaymentMethods().size());
@@ -399,7 +398,7 @@ class PaymentMethodsServiceTest {
 
         PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
         paymentMethodRequest.setSortOrder(SortOrder.DESC);
-        paymentMethodRequest.setPriorityGroups(List.of(PaymentMethodGroup.PPAL, PaymentMethodGroup.CP));
+        paymentMethodRequest.setPriorityGroups(List.of("PPAL", "CP"));
 
         PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
         assertEquals(4, response.getPaymentMethods().size());
@@ -468,7 +467,7 @@ class PaymentMethodsServiceTest {
                 .name(Map.of(Language.IT, "Paypal", Language.EN, "Paypal"))
                 .description(Map.of(Language.IT, "Paypal", Language.EN, "Paypal"))
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.PPAL)
+                .group("PPAL")
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -482,7 +481,7 @@ class PaymentMethodsServiceTest {
                 .name(Map.of(Language.IT, "Google Pay"))
                 .description(Map.of(Language.IT, "Google Pay"))
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.GOOG)
+                .group("GOOG")
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -496,7 +495,7 @@ class PaymentMethodsServiceTest {
                 .name(Map.of(Language.IT, "Banca instesa", Language.EN, "intesa bank"))
                 .description(Map.of(Language.IT, "Banca instesa", Language.EN, "intesa bank"))
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.RBPS)
+                .group("RBPS")
                 .paymentMethodTypes(List.of(PaymentMethodType.CONTO))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
@@ -510,7 +509,7 @@ class PaymentMethodsServiceTest {
                 .name(Map.of(Language.IT, "Carte", Language.EN, "Cards"))
                 .description(Map.of(Language.IT, "Carte", Language.EN, "Cards"))
                 .status(PaymentMethodStatus.ENABLED)
-                .group(PaymentMethodGroup.CP)
+                .group("CP")
                 .paymentMethodTypes(List.of(PaymentMethodType.CARTE))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
