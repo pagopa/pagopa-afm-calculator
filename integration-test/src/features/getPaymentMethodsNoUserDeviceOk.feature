@@ -33,3 +33,4 @@ Feature: Payment Methods - Get List of Payment Methods
 		When the client send POST to /payment-methods/search
 		Then check statusCode is 200
 		And the body response contains the added test payment methods
+		And the the cart is first and others in alphabetic order

@@ -15,4 +15,5 @@ public enum PaymentMethodGroup {
     RBPR,
     GOOG,
     KLRN,
+    RFPB
 }

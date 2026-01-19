@@ -253,6 +253,23 @@ Then('the body response contains the added test payment methods, only PAYPAL-tes
   assert.strictEqual(cp.status, "ENABLED");
 });
 
+Then(/^the the cart is first and others in alphabetic order$/, function () {
+    const paymentMethods = responseToCheck.data.paymentMethods;
+
+    assert.strictEqual(paymentMethods[0].group, "CP");
+
+    const otherMethodsNames = paymentMethods
+        .slice(1)
+        .map(method => (method.name ? String(method.name) : ""));
+
+    const sortedNames = [...otherMethodsNames].sort((a, b) => a.localeCompare(b));
+
+    assert.strictEqual(
+        JSON.stringify(otherMethodsNames),
+        JSON.stringify(sortedNames)
+    );
+});
+
 
 function mapToValidBundles(config) {
 

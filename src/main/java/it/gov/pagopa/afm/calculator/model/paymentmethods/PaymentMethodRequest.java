@@ -2,8 +2,7 @@ package it.gov.pagopa.afm.calculator.model.paymentmethods;
 
 
 import it.gov.pagopa.afm.calculator.model.PaymentNoticeItemOptionalTransferList;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.UserDevice;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.UserTouchpoint;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,5 +35,10 @@ public class PaymentMethodRequest {
     Boolean allCCp;
 
     String targetKey;
+
+    Language language;
+    SortBy sortBy;
+    SortOrder sortOrder;
+    List<PaymentMethodGroup> priorityGroups;
 
 }
