@@ -13,6 +13,7 @@ import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
@@ -33,6 +34,10 @@ public class CosmosRepository {
     private final UtilityComponent utilityComponent;
     private final String pspPosteId;
     private final List<String> pspBlacklist;
+
+    @Autowired
+    @Lazy
+    private CosmosRepository self;
 
     @Autowired
     public CosmosRepository(
@@ -172,7 +177,7 @@ public class CosmosRepository {
      * @return the filtered bundles
      */
     private List<ValidBundle> findValidBundlesMulti(PaymentOptionMulti paymentOptionMulti, Boolean allCcp) {
-        List<ValidBundle> bundles = getAllValidBundles();
+        List<ValidBundle> bundles = self.getAllValidBundles();
         Stream<ValidBundle> stream = bundles.stream()
                 .map(bundle -> bundle.toBuilder().build());
 
@@ -195,7 +200,7 @@ public class CosmosRepository {
      * @return the filtered bundles
      */
     private List<ValidBundle> findValidBundles(PaymentOption paymentOption, boolean allCcp) {
-        List<ValidBundle> bundles = getAllValidBundles();
+        List<ValidBundle> bundles = self.getAllValidBundles();
         Stream<ValidBundle> stream = bundles.stream()
                 .map(bundle -> bundle.toBuilder().build());
 
