@@ -27,7 +27,7 @@ public class PaymentMethodsItem {
     @NotNull
     LocalDate validityDateFrom;
     @NotNull
-    PaymentMethodGroup group;
+    String group;
     @NotNull
     List<PaymentMethodType> paymentMethodTypes;
     FeeRange feeRange;
