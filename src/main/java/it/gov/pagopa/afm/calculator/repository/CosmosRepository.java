@@ -21,6 +21,7 @@ import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -208,7 +209,7 @@ public class CosmosRepository {
                 paymentOption.getPaymentMethod(), paymentOption.getIdPspList(),
                 utilityComponent.getTransferCategoryList(paymentOption), allCcp);
 
-        return stream.toList();
+        return stream.collect(Collectors.toList());
     }
 
     private Stream<ValidBundle> filterBundles(Stream<ValidBundle> stream, Long paymentAmount, String touchpoint,
