@@ -6,13 +6,11 @@ import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController()
 @Tag(name = "Configuration", description = "Utility Services")
@@ -20,12 +18,10 @@ import java.util.Objects;
 public class ConfigurationController {
 
     private final ConfigurationService configurationService;
-    private final CacheManager cacheManager;
 
     @Autowired
-    public ConfigurationController(ConfigurationService configurationService, org.springframework.cache.CacheManager cacheManager) {
+    public ConfigurationController(ConfigurationService configurationService) {
         this.configurationService = configurationService;
-        this.cacheManager = cacheManager;
     }
 
     @PostMapping("/bundles/add")
@@ -66,8 +62,7 @@ public class ConfigurationController {
 
     @GetMapping("/cache/refresh")
     public ResponseEntity<Void> clearCaches() {
-        cacheManager.getCacheNames()
-                .forEach(cacheName -> Objects.requireNonNull(cacheManager.getCache(cacheName)).clear());
+        configurationService.refreshGlobalCaches();
         return ResponseEntity.ok().build();
     }
 }

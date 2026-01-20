@@ -25,10 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
@@ -54,8 +52,6 @@ class CalculatorServiceTest {
         CalculatorService calculatorService;
         @SpyBean
         CosmosRepository cosmosRepository;
-        @Autowired
-        CacheManager cacheManager;
 
         @MockBean
         CosmosTemplate cosmosTemplate;
@@ -83,14 +79,6 @@ class CalculatorServiceTest {
 
                 Initializer.table.createEntity(
                                 getTableEntity("6", "3400000000000000000", "3499999999999999999", "AMREX"));
-        }
-
-        @BeforeEach
-        void init() {
-                ReflectionTestUtils.setField(cosmosRepository, "self", cosmosRepository);
-                if (cacheManager.getCache("validBundles") != null) {
-                        cacheManager.getCache("validBundles").clear();
-                }
         }
 
         @ParameterizedTest
