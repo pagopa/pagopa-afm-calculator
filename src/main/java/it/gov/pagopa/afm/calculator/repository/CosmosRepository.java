@@ -342,11 +342,12 @@ public class CosmosRepository {
                 .count();
         var transferListSize = paymentOption.getTransferList().size();
 
-        return StreamSupport.stream(validBundles.spliterator(), true)
+        Stream<ValidBundle> stream = StreamSupport.stream(validBundles.spliterator(), true)
                 .filter(bundle -> digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
                 // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
-                .filter(bundle -> globalAndRelatedFilter(paymentOption, bundle))
-                .toList();
+                .filter(bundle -> globalAndRelatedFilter(paymentOption, bundle));
+
+        return stream.collect(Collectors.toList());
     }
 
 }
