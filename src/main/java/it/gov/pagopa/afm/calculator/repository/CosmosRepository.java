@@ -200,7 +200,7 @@ public class CosmosRepository {
      * @param paymentOption Get the Body of the Request
      * @return the filtered bundles
      */
-    private List<ValidBundle> findValidBundles(PaymentOption paymentOption, boolean allCcp) {
+    private List<ValidBundle> findValidBundles(PaymentOption paymentOption, Boolean allCcp) {
         List<ValidBundle> bundles = self.getAllValidBundles();
         Stream<ValidBundle> stream = bundles.stream()
                 .map(bundle -> bundle.toBuilder().build());
@@ -213,7 +213,7 @@ public class CosmosRepository {
     }
 
     private Stream<ValidBundle> filterBundles(Stream<ValidBundle> stream, Long paymentAmount, String touchpoint,
-                                              String paymentMethod, List<PspSearchCriteria> pspList, List<String> transferCategoryList, boolean allCcp) {
+                                              String paymentMethod, List<PspSearchCriteria> pspList, List<String> transferCategoryList, Boolean allCcp) {
         stream = filterByPaymentAmount(stream, paymentAmount);
         stream = filterByTouchpoint(stream, touchpoint);
         stream = filterByPaymentMethod(stream, paymentMethod);
@@ -283,7 +283,7 @@ public class CosmosRepository {
         return stream;
     }
 
-    private Stream<ValidBundle> filterByPoste(Stream<ValidBundle> stream, boolean allCcp) {
+    private Stream<ValidBundle> filterByPoste(Stream<ValidBundle> stream, Boolean allCcp) {
         if (Boolean.FALSE.equals(allCcp)) {
             return stream.filter(bundle -> !bundle.getIdPsp().equalsIgnoreCase(pspPosteId));
         }
