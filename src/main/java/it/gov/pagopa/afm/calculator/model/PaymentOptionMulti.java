@@ -17,6 +17,7 @@ public class PaymentOptionMulti {
     private String bin;
     private String paymentMethod;
     private String touchpoint;
+    @Valid
     private List<PspSearchCriteria> idPspList;
     @Valid
     @NotNull
