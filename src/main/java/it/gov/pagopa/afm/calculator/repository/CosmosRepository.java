@@ -266,11 +266,11 @@ public class CosmosRepository {
         if (pspList != null && !pspList.isEmpty()) {
             return stream
                     .filter(bundle -> pspList.stream()
-                            .anyMatch(criteria -> bundle.getIdPsp().equalsIgnoreCase(criteria.getIdPsp())
+                            .anyMatch(criteria -> bundle.getIdPsp().equals(criteria.getIdPsp())
                                     && (StringUtils.isEmpty(criteria.getIdChannel())
-                                    || bundle.getIdChannel().equalsIgnoreCase(criteria.getIdChannel()))
+                                    || bundle.getIdChannel().equals(criteria.getIdChannel()))
                                     && (StringUtils.isEmpty(criteria.getIdBrokerPsp())
-                                    || bundle.getIdBrokerPsp().equalsIgnoreCase(criteria.getIdBrokerPsp()))));
+                                    || bundle.getIdBrokerPsp().equals(criteria.getIdBrokerPsp()))));
         }
         return stream;
     }
