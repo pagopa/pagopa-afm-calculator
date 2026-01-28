@@ -6,12 +6,15 @@ import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.repository.PaymentTypeRepository;
 import it.gov.pagopa.afm.calculator.repository.TouchpointRepository;
 import it.gov.pagopa.afm.calculator.repository.ValidBundleRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class ConfigurationService {
     private final ValidBundleRepository validBundleRepository;
     private final TouchpointRepository touchpointRepository;
@@ -66,5 +69,21 @@ public class ConfigurationService {
                         .filter(elem -> paymentTypeRepository.findById(elem.getId()).isPresent())
                         .toList();
         paymentTypeRepository.deleteAll(filtered);
+    }
+
+    @CacheEvict(cacheNames = {
+            "touchpoint",
+            "paymentType",
+            "paymentMethodTouchpoint",
+            "paymentMethodTouchpointDevice",
+            "issuerRangeTable",
+            "validBundles",
+            "getTransferCategoryList",
+            "getTransferCategoryListMulti",
+            "getPrimaryTransferCategoryList",
+            "getPrimaryTransferCategoryListMulti"
+    }, allEntries = true)
+    public void refreshGlobalCaches() {
+        log.info("Requested refresh of all application caches via API");
     }
 }

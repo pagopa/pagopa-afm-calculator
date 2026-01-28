@@ -59,4 +59,10 @@ public class ConfigurationController {
         configurationService.deletePaymentTypes(paymentTypes);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/cache/refresh")
+    public ResponseEntity<Void> clearCaches() {
+        configurationService.refreshGlobalCaches();
+        return ResponseEntity.ok().build();
+    }
 }

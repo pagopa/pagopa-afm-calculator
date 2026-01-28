@@ -34,9 +34,9 @@ public class CalculatorService {
             Comparator.comparing((it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs), Comparator.reverseOrder());
     private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byFeeComparator =
             Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee)
-                    .thenComparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName);
+                    .thenComparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName, Comparator.nullsLast(String::compareTo));
     private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byPspNameComparator =
-            Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName)
+            Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName, Comparator.nullsLast(String::compareTo))
                     .thenComparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee);
     private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> randomComparator =
             (t1, t2) -> Integer.compare(new SecureRandom().nextInt(3) - 1, 0);
@@ -240,6 +240,10 @@ public class CalculatorService {
             transfers =
                     transfers.stream().filter(abiPredicate.and(onusPredicate)).collect(Collectors.toList());
         }
+
+        Collections.sort(transfers, onUsFirstComparator);
+
+        Collections.sort(transfers, byFeeComparator);
 
         Collections.sort(transfers, getDynamicComparator(orderType, onUsFirst));
 
