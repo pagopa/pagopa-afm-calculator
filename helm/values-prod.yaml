@@ -132,7 +132,7 @@ microservice-chart:
             namespaces: ["afm"]
             topologyKey: topology.kubernetes.io/zone
   canaryDelivery:
-    create: false
+    create: true
     ingress:
       type: header
       headerName: X-Canary
@@ -140,7 +140,7 @@ microservice-chart:
       weightPercent: 0
     image:
       repository: ghcr.io/pagopa/pagopa-afm-calculator
-      tag: "2.11.30"
+      tag: "2.12.6-1-canary-deploy"
       pullPolicy: Always
     envConfig: {}
     envSecret: {}
