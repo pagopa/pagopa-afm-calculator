@@ -140,4 +140,4 @@ microservice-chart:
       envConfig: {}
       envSecret: {}
     image:
-      tag: 2.12.6-1-canary-deploy
+      tag: 2.12.6-2-canary-deploy
