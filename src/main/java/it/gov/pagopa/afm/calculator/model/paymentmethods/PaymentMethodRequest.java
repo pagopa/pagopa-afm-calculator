@@ -39,6 +39,6 @@ public class PaymentMethodRequest {
     Language language;
     SortBy sortBy;
     SortOrder sortOrder;
-    List<PaymentMethodGroup> priorityGroups;
+    List<String> priorityGroups;
 
 }

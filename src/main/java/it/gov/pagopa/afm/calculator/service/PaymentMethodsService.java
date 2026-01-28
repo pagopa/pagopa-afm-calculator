@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -39,7 +37,7 @@ public class PaymentMethodsService {
             Pair<PaymentMethodDisabledReason, PaymentMethodStatus> filterReason = filterByCandidateProperties(candidate, request);
 
             BundleOption bundles = calculatorService.calculateMulti(PaymentOptionMulti.builder()
-                            .paymentMethod(candidate.getGroup().name())
+                            .paymentMethod(candidate.getGroup())
                             .touchpoint(request.getUserTouchpoint().name())
                             .idPspList(null)
                             .paymentNotice(request.getPaymentNotice().stream().map(el -> modelMapper.map(el, PaymentNoticeItem.class)).toList())

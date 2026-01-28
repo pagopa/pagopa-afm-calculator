@@ -113,10 +113,10 @@ public class PaymentMethodComparatorUtil {
      * @return -1 if a has higher priority, 1 if b has higher priority, or null if neither has priority
      */
     private static Integer comparePriorityGroup(PaymentMethodRequest request, PaymentMethodsItem a, PaymentMethodsItem b) {
-        List<PaymentMethodGroup> priorityGroups = request.getPriorityGroups() != null ? request.getPriorityGroups() : List.of(PaymentMethodGroup.CP);
+        List<String> priorityGroups = request.getPriorityGroups() != null ? request.getPriorityGroups() : List.of("CP");
 
-        PaymentMethodGroup groupA = a.getGroup();
-        PaymentMethodGroup groupB = b.getGroup();
+        String groupA = a.getGroup();
+        String groupB = b.getGroup();
 
         boolean aIsPriority = priorityGroups.contains(groupA);
         boolean bIsPriority = priorityGroups.contains(groupB);
