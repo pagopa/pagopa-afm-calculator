@@ -125,7 +125,6 @@ microservice-chart:
   canaryDelivery:
     create: true
     ingress:
-      canary:
       type: header
       headerName: X-Canary
       headerValue: canary
