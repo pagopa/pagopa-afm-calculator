@@ -140,7 +140,7 @@ microservice-chart:
       weightPercent: 0
     image:
       repository: ghcr.io/pagopa/pagopa-afm-calculator
-      tag: "2.12.6-3-canary-deploy"
+      tag: "2.12.6"
       pullPolicy: Always
     envConfig: {}
     envSecret: {}
