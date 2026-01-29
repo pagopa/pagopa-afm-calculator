@@ -132,7 +132,7 @@ microservice-chart:
             namespaces: ["afm"]
             topologyKey: topology.kubernetes.io/zone
   canaryDelivery:
-    create: true
+    create: false
     ingress:
       type: header
       headerName: X-Canary

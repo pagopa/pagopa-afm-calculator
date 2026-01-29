@@ -123,7 +123,7 @@ microservice-chart:
                 values:
                   - user
   canaryDelivery:
-    create: true
+    create: false
     ingress:
       type: header
       headerName: X-Canary
