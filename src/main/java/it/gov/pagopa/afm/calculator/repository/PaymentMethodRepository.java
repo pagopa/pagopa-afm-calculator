@@ -12,11 +12,11 @@ import java.util.List;
 @Repository
 public interface PaymentMethodRepository extends CosmosRepository<PaymentMethod, String> {
 
-    @Cacheable(value = "paymentMethodTouchpoint")
+    @Cacheable(value = "paymentMethodTouchpoint", sync = true)
     @Query("SELECT * FROM c WHERE ARRAY_CONTAINS(c.user_touchpoint, @touchpoint)")
     List<PaymentMethod> findByTouchpoint(@Param("touchpoint") String touchpoint);
 
-    @Cacheable(value = "paymentMethodTouchpointDevice")
+    @Cacheable(value = "paymentMethodTouchpointDevice", sync = true)
     @Query("SELECT * FROM c WHERE ARRAY_CONTAINS(c.user_touchpoint, @touchpoint) AND ARRAY_CONTAINS(c.user_device, @device)")
     List<PaymentMethod> findByTouchpointAndDevice(@Param("touchpoint") String touchpoint, @Param("device") String device);
 

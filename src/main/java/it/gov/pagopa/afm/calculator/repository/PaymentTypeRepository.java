@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface PaymentTypeRepository extends CosmosRepository<PaymentType, String> {
-    @Cacheable(value = "paymentType")
+    @Cacheable(value = "paymentType", sync = true)
     Optional<PaymentType> findByName(String name);
 }

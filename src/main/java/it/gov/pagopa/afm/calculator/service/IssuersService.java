@@ -23,7 +23,7 @@ public class IssuersService {
         this.objectMapper = objectMapper;
     }
 
-    @Cacheable(value = "issuerRangeTable", unless = "#result == null")
+    @Cacheable(value = "issuerRangeTable", unless = "#result == null", sync = true)
     public List<IssuerRangeEntity> getIssuerRangeTableCached() {
         return this.tableClient.listEntities().stream().parallel().map(el ->
                 objectMapper.convertValue(el.getProperties(), IssuerRangeEntity.class)).toList();

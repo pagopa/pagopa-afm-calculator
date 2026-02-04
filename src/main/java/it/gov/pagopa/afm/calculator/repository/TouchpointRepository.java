@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface TouchpointRepository extends CosmosRepository<Touchpoint, String> {
-    @Cacheable(value = "touchpoint")
+    @Cacheable(value = "touchpoint", sync = true)
     Optional<Touchpoint> findByName(String name);
 }

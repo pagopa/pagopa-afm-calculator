@@ -164,7 +164,7 @@ public class CosmosRepository {
     /**
      * @return all valid bundles
      */
-    @Cacheable(value = "validBundles")
+    @Cacheable(value = "validBundles", sync = true)
     public List<ValidBundle> getAllValidBundles() {
         return StreamSupport.stream(
                 cosmosTemplate.findAll(ValidBundle.class).spliterator(), true)
