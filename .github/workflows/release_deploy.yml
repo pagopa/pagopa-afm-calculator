@@ -28,12 +28,15 @@ on:
           - promote
           - new_release
           - breaking_change
-
-      beta:
-        required: false
+      is_canary:
         type: boolean
-        description: deploy beta version on AKS
+        description: 'Mark the release as canary on AKS'
         default: false
+      traffic_weight:
+        required: false
+        type: number
+        default: 0
+        description: 'The percentage of traffic to be sent to the canary version'
 
 
 permissions:
@@ -102,11 +105,11 @@ jobs:
     steps:
       - name: Make Release
         id: release
-        uses: pagopa/github-actions-template/maven-release@d91a1fd0b913c9830589be5d86cdb71c90813fae # v1.5.4
+        uses: pagopa/github-actions-template/maven-release@38203c7599bcac41a743237ccb17c733ff9c2eee # v1.12.0
         with:
           semver: ${{ needs.setup.outputs.semver }}
           github_token: ${{ secrets.BOT_TOKEN_GITHUB }}
-          beta: ${{ inputs.beta }}
+          beta: ${{ inputs.is_canary }}
           skip_ci: false
 
   image:
@@ -130,6 +133,8 @@ jobs:
     uses: ./.github/workflows/deploy_with_github_runner.yml
     with:
       environment: ${{ needs.setup.outputs.environment }}
+      suffix_name: ${{ inputs.is_canary && '-canary' || '' }}
+      is_canary: ${{ inputs.is_canary }}
     secrets: inherit
 
   notify:
