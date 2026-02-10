@@ -1,5 +1,4 @@
 const { Given, When, Then, BeforeAll, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber')
-const { setDefaultTimeout } = require('@cucumber/cucumber');
 const assert = require("assert");
 const { call, post, del} = require("./common");
 const fs = require("fs");
