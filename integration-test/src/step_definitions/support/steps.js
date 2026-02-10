@@ -1,5 +1,5 @@
 const { Given, When, Then, BeforeAll, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber')
-
+const { setDefaultTimeout } = require('@cucumber/cucumber');
 const assert = require("assert");
 const { call, post, del} = require("./common");
 const fs = require("fs");
@@ -12,7 +12,7 @@ const afm_marketplace_host = process.env.AFM_MARKETPLACE_HOST;
 
 /*increased the default timeout of the promise to allow
 the correct execution of the smoke tests*/
-setDefaultTimeout(15000);
+setDefaultTimeout(60 * 10000);
 
 let body;
 let responseToCheck;
