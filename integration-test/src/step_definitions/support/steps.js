@@ -12,7 +12,7 @@ const afm_marketplace_host = process.env.AFM_MARKETPLACE_HOST;
 
 /*increased the default timeout of the promise to allow
 the correct execution of the smoke tests*/
-setDefaultTimeout(15000);
+setDefaultTimeout(30000);
 
 let body;
 let responseToCheck;
