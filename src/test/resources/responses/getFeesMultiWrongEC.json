@@ -5,7 +5,7 @@
       "taxPayerFee": 1,
       "actualPayerFee": 1,
       "paymentMethod": "CP",
-      "touchpoint": "1",
+      "touchpoint": "CHECKOUT",
       "idBundle": "1",
       "bundleName": "bundle1",
       "bundleDescription": null,

@@ -5,7 +5,7 @@
     "taxPayerFee": 2,
     "primaryCiIncurredFee": 0,
     "paymentMethod": "CP",
-    "touchpoint": "1",
+    "touchpoint": "CHECKOUT",
     "idBundle": "2",
     "bundleName": "bundle2",
     "bundleDescription": null,
