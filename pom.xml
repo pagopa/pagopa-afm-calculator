@@ -19,7 +19,7 @@
         <java.version>17</java.version>
         <hibernate-version>6.1.1.Final</hibernate-version>
         <azure.storage.table.version>8.6.6</azure.storage.table.version>
-        <testcontainers.version>1.17.2</testcontainers.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
     </properties>
 
     <dependencies>
@@ -141,12 +141,13 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>azure</artifactId>
-            <version>1.17.2</version>
+            <version>1.21.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
+            <version>1.21.4</version>
 			<scope>test</scope>
 		</dependency>
 
