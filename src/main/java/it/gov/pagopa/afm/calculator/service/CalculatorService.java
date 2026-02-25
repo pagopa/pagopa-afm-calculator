@@ -241,10 +241,6 @@ public class CalculatorService {
                     transfers.stream().filter(abiPredicate.and(onusPredicate)).collect(Collectors.toList());
         }
 
-        Collections.sort(transfers, onUsFirstComparator);
-
-        Collections.sort(transfers, byFeeComparator);
-
         Collections.sort(transfers, getDynamicComparator(orderType, onUsFirst));
 
         return transfers.stream().limit(limit).toList();
