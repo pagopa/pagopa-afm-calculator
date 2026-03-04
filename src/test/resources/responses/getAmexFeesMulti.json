@@ -20,8 +20,8 @@
       "pspBusinessName": "psp business name amex",
       "fees": [
         {
-          "creditorInstitution" : "77777777777",
-          "primaryCiIncurredFee": 10,
+          "creditorInstitution": "77777777777",
+          "primaryCiIncurredFee": 1000,
           "actualCiIncurredFee": 1
         }
       ]

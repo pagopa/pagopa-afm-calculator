@@ -11,8 +11,8 @@
     "bundleDescription": null,
     "idCiBundle": "1",
     "idPsp": "ABC",
-    "idChannel": "13212880150_07_ONUS",
-    "idBrokerPsp": null,
+    "idChannel": "123_01",
+    "idBrokerPsp": "123",
     "onUs": true,
     "abi": "14156",
     "pspBusinessName": "psp business name 1"

@@ -80,7 +80,8 @@ public class ConfigurationService {
             "getTransferCategoryList",
             "getTransferCategoryListMulti",
             "getPrimaryTransferCategoryList",
-            "getPrimaryTransferCategoryListMulti"
+            "getPrimaryTransferCategoryListMulti",
+            "validBundles"
     }, allEntries = true)
     public void refreshGlobalCaches() {
         log.info("Requested refresh of all application caches via API");
