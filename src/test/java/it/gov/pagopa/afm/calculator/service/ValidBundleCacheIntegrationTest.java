@@ -1,0 +1,159 @@
+package it.gov.pagopa.afm.calculator.service;
+
+import com.azure.spring.data.cosmos.core.CosmosTemplate;
+import it.gov.pagopa.afm.calculator.entity.ValidBundle;
+import it.gov.pagopa.afm.calculator.model.BundleType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cache.CacheManager;
+import org.springframework.test.context.TestPropertySource;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+/**
+ * Integration test to verify that Spring Cache is working correctly
+ * for ValidBundleCacheService.
+ */
+@SpringBootTest
+@TestPropertySource(properties = {
+        "cache.enabled=true",
+        "cache.ttl.validBundles=300",
+        "cache.maxSize.validBundles=1000"
+})
+class ValidBundleCacheIntegrationTest {
+
+    @Autowired
+    private ValidBundleCacheService validBundleCacheService;
+
+    @MockBean
+    private CosmosTemplate cosmosTemplate;
+
+    @Autowired
+    private CacheManager cacheManager;
+
+    @BeforeEach
+    void setUp() {
+        // Clear cache before each test
+        if (cacheManager.getCache("validBundles") != null) {
+            cacheManager.getCache("validBundles").clear();
+        }
+    }
+
+    @Test
+    void testCacheIsWorking_shouldCallCosmosOnlyOnce() {
+        // Arrange
+        ValidBundle bundle1 = ValidBundle.builder()
+                .id("1")
+                .idPsp("PSP1")
+                .type(BundleType.GLOBAL)
+                .build();
+        ValidBundle bundle2 = ValidBundle.builder()
+                .id("2")
+                .idPsp("PSP2")
+                .type(BundleType.GLOBAL)
+                .build();
+        List<ValidBundle> expectedBundles = Arrays.asList(bundle1, bundle2);
+
+        when(cosmosTemplate.findAll(ValidBundle.class))
+                .thenReturn(expectedBundles);
+
+        // Act - Call the method multiple times
+        List<ValidBundle> result1 = validBundleCacheService.getAllValidBundles();
+        List<ValidBundle> result2 = validBundleCacheService.getAllValidBundles();
+        List<ValidBundle> result3 = validBundleCacheService.getAllValidBundles();
+
+        // Assert
+        assertNotNull(result1);
+        assertNotNull(result2);
+        assertNotNull(result3);
+        assertEquals(2, result1.size());
+        assertEquals(2, result2.size());
+        assertEquals(2, result3.size());
+
+        // Verify that cosmosTemplate.findAll was called only ONCE (cache hit on subsequent calls)
+        verify(cosmosTemplate, times(1)).findAll(ValidBundle.class);
+
+        // Verify results are the same (from cache)
+        assertSame(result1, result2);
+        assertSame(result2, result3);
+    }
+
+    @Test
+    void testCacheEviction_shouldCallCosmosAgainAfterClear() {
+        // Arrange
+        ValidBundle bundle = ValidBundle.builder()
+                .id("1")
+                .idPsp("PSP1")
+                .type(BundleType.GLOBAL)
+                .build();
+        List<ValidBundle> expectedBundles = Arrays.asList(bundle);
+
+        when(cosmosTemplate.findAll(ValidBundle.class))
+                .thenReturn(expectedBundles);
+
+        // Act - First call
+        List<ValidBundle> result1 = validBundleCacheService.getAllValidBundles();
+        verify(cosmosTemplate, times(1)).findAll(ValidBundle.class);
+
+        // Clear cache
+        cacheManager.getCache("validBundles").clear();
+
+        // Second call after cache clear
+        List<ValidBundle> result2 = validBundleCacheService.getAllValidBundles();
+
+        // Assert
+        assertNotNull(result1);
+        assertNotNull(result2);
+        assertEquals(1, result1.size());
+        assertEquals(1, result2.size());
+
+        // Verify that cosmosTemplate.findAll was called TWICE (once before clear, once after)
+        verify(cosmosTemplate, times(2)).findAll(ValidBundle.class);
+    }
+
+    @Test
+    void testCacheManagerIsConfigured() {
+        // Verify that cache manager is properly configured
+        assertNotNull(cacheManager);
+        assertNotNull(cacheManager.getCache("validBundles"));
+    }
+
+    @Test
+    void testCacheStoresCorrectData() {
+        // Arrange
+        ValidBundle bundle1 = ValidBundle.builder()
+                .id("1")
+                .idPsp("PSP1")
+                .type(BundleType.GLOBAL)
+                .build();
+        List<ValidBundle> expectedBundles = Arrays.asList(bundle1);
+
+        when(cosmosTemplate.findAll(ValidBundle.class))
+                .thenReturn(expectedBundles);
+
+        // Act
+        validBundleCacheService.getAllValidBundles();
+
+        // Assert - Check cache directly
+        var cache = cacheManager.getCache("validBundles");
+        assertNotNull(cache);
+        
+        // The cache key is generated by Spring based on method signature
+        // For a method with no parameters, the key is typically SimpleKey.EMPTY
+        var cachedValue = cache.get(org.springframework.cache.interceptor.SimpleKey.EMPTY);
+        assertNotNull(cachedValue, "Cache should contain the value");
+        
+        @SuppressWarnings("unchecked")
+        List<ValidBundle> cachedBundles = (List<ValidBundle>) cachedValue.get();
+        assertNotNull(cachedBundles);
+        assertEquals(1, cachedBundles.size());
+        assertEquals("PSP1", cachedBundles.get(0).getIdPsp());
+    }
+}

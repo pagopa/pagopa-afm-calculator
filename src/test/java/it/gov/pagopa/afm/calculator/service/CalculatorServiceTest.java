@@ -824,11 +824,15 @@ class CalculatorServiceTest {
                 Initializer.table.deleteEntity(duplicateIssuer);
         }
 
-        @Test
-        @Order(36)
-        void calculate_touchpointAny() throws IOException {
+        @ParameterizedTest
+        @CsvSource({
+                "ANY, 1",
+                "CHECKOUT, 1",
+                ", 1"
+        })
+        void calculate_touchpointFiltering(String bundleTouchpoint, int expectedBundles) throws IOException {
                 ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
-                mockValidBundle.setTouchpoint("ANY");
+                mockValidBundle.setTouchpoint(bundleTouchpoint);
 
                 when(touchpointRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
@@ -841,7 +845,7 @@ class CalculatorServiceTest {
                 var result = calculatorService.calculate(paymentOption, 10, true);
                 
                 assertNotNull(result);
-                assertEquals(1, result.getBundleOptions().size());
+                assertEquals(expectedBundles, result.getBundleOptions().size());
         }
 
         @Test
@@ -1028,26 +1032,6 @@ class CalculatorServiceTest {
         }
 
         @Test
-        @Order(46)
-        void calculate_touchpointNullInBundle() throws IOException {
-                ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
-                mockValidBundle.setTouchpoint(null);
-
-                when(touchpointRepository.findByName(anyString()))
-                                .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
-                when(paymentTypeRepository.findByName(anyString()))
-                                .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
-                                .thenReturn(Collections.singletonList(mockValidBundle));
-
-                var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-                var result = calculatorService.calculate(paymentOption, 10, true);
-                
-                assertNotNull(result);
-                assertEquals(1, result.getBundleOptions().size());
-        }
-
-        @Test
         @Order(47)
         void calculate_paymentTypeNotMatching() throws IOException {
                 ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
@@ -1168,26 +1152,6 @@ class CalculatorServiceTest {
                 var result = calculatorService.calculate(paymentOption, 10, true);
                 
                 assertEquals(0, result.getBundleOptions().size());
-        }
-
-        @Test
-        @Order(53)
-        void calculate_touchpointExactMatch() throws IOException {
-                ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
-                mockValidBundle.setTouchpoint("CHECKOUT");
-
-                when(touchpointRepository.findByName(anyString()))
-                                .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
-                when(paymentTypeRepository.findByName(anyString()))
-                                .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
-                                .thenReturn(Collections.singletonList(mockValidBundle));
-
-                var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
-                var result = calculatorService.calculate(paymentOption, 10, true);
-                
-                assertNotNull(result);
-                assertEquals(1, result.getBundleOptions().size());
         }
 
         @Test
