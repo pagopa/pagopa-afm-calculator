@@ -1194,8 +1194,8 @@ class CalculatorServiceTest {
         @Order(54)
         void calculate_pspListWithEmptyBroker() throws IOException {
                 ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
-                mockValidBundle.setIdPsp("ABC");
-                mockValidBundle.setIdChannel("123_01");
+                mockValidBundle.setIdPsp("ABC ");
+                mockValidBundle.setIdChannel("");
                 mockValidBundle.setIdBrokerPsp("ANY_BROKER");
 
                 when(touchpointRepository.findByName(anyString()))
