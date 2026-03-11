@@ -1,7 +1,7 @@
 package it.gov.pagopa.afm.calculator.service;
 
-import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
+import it.gov.pagopa.afm.calculator.repository.ValidBundleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class ValidBundleCacheServiceTest {
 
     @Mock
-    private CosmosTemplate cosmosTemplate;
+    private ValidBundleRepository validBundleRepository;
 
     private ValidBundleCacheService validBundleCacheService;
 
@@ -41,7 +41,7 @@ class ValidBundleCacheServiceTest {
 
     @BeforeEach
     void setUp() {
-        validBundleCacheService = new ValidBundleCacheService(cosmosTemplate);
+        validBundleCacheService = new ValidBundleCacheService(validBundleRepository);
     }
 
     @Test
@@ -51,7 +51,7 @@ class ValidBundleCacheServiceTest {
         ValidBundle bundle2 = ValidBundle.builder().idPsp("PSP2").build();
         List<ValidBundle> expectedBundles = Arrays.asList(bundle1, bundle2);
         
-        when(cosmosTemplate.findAll(ValidBundle.class))
+        when(validBundleRepository.findAll())
                 .thenReturn(expectedBundles);
 
         // Act
@@ -62,13 +62,13 @@ class ValidBundleCacheServiceTest {
         assertEquals(2, result.size());
         assertEquals("PSP1", result.get(0).getIdPsp());
         assertEquals("PSP2", result.get(1).getIdPsp());
-        verify(cosmosTemplate, times(1)).findAll(ValidBundle.class);
+        verify(validBundleRepository, times(1)).findAll();
     }
 
     @Test
     void getAllValidBundles_shouldReturnEmptyListWhenNoData() {
         // Arrange
-        when(cosmosTemplate.findAll(ValidBundle.class))
+        when(validBundleRepository.findAll())
                 .thenReturn(Arrays.asList());
 
         // Act
@@ -77,6 +77,6 @@ class ValidBundleCacheServiceTest {
         // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(cosmosTemplate, times(1)).findAll(ValidBundle.class);
+        verify(validBundleRepository, times(1)).findAll();
     }
 }

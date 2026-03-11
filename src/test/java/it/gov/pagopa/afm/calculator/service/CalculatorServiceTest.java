@@ -1,7 +1,6 @@
 package it.gov.pagopa.afm.calculator.service;
 
 import com.azure.data.tables.models.TableEntity;
-import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import it.gov.pagopa.afm.calculator.TestUtil;
 import it.gov.pagopa.afm.calculator.entity.*;
 import it.gov.pagopa.afm.calculator.exception.AppException;
@@ -54,7 +53,7 @@ class CalculatorServiceTest {
         CosmosRepository cosmosRepository;
 
         @MockBean
-        CosmosTemplate cosmosTemplate;
+        ValidBundleCacheService validBundleCacheService;
         @MockBean
         TouchpointRepository touchpointRepository;
         @MockBean
@@ -93,7 +92,7 @@ class CalculatorServiceTest {
 
                 when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(TestUtil.getMockValidBundle()));
 
@@ -115,7 +114,7 @@ class CalculatorServiceTest {
 
                 when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(validBundle));
 
@@ -133,7 +132,7 @@ class CalculatorServiceTest {
                 ValidBundle validBundle = TestUtil.getMockValidBundle();
                 validBundle.setIdPsp("77777777777");
 
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(validBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees2.json", PaymentOption.class);
@@ -155,7 +154,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 list);
 
@@ -171,7 +170,7 @@ class CalculatorServiceTest {
         @Test
         @Order(5)
         void calculate_invalidTouchpoint() throws IOException {
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(TestUtil.getMockValidBundle()));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -188,7 +187,7 @@ class CalculatorServiceTest {
                 when(touchpointRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.empty());
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(TestUtil.getMockValidBundle()));
 
@@ -211,7 +210,7 @@ class CalculatorServiceTest {
 
                 when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(mockValidBundle));
 
@@ -234,7 +233,7 @@ class CalculatorServiceTest {
 
                 when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(mockValidBundle));
 
@@ -261,7 +260,7 @@ class CalculatorServiceTest {
 
                 when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-                when(cosmosTemplate.findAll(ValidBundle.class)).thenReturn(Collections.singletonList(mockValidBundle));
+                when(validBundleCacheService.getAllValidBundles()).thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesSubThreshold.json",
                                 PaymentOption.class);
@@ -283,7 +282,7 @@ class CalculatorServiceTest {
 
                 when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-                when(cosmosTemplate.findAll(ValidBundle.class)).thenReturn(Collections.singletonList(mockValidBundle));
+                when(validBundleCacheService.getAllValidBundles()).thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
                 var result = calculatorService.calculate(paymentOption, 10, true);
@@ -303,7 +302,7 @@ class CalculatorServiceTest {
 
                 when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(mockValidBundle));
 
@@ -324,7 +323,7 @@ class CalculatorServiceTest {
 
                 when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(TestUtil.getMockValidBundle()));
 
@@ -342,7 +341,7 @@ class CalculatorServiceTest {
 
                 when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(validBundle));
 
@@ -388,7 +387,7 @@ class CalculatorServiceTest {
 
                 when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(TestUtil.getMockValidBundle()));
 
@@ -410,7 +409,7 @@ class CalculatorServiceTest {
 
                 when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(validBundle));
 
@@ -428,7 +427,7 @@ class CalculatorServiceTest {
                 ValidBundle validBundle = TestUtil.getMockValidBundle();
                 validBundle.setIdPsp("77777777777");
 
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(validBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti2.json",
@@ -443,7 +442,7 @@ class CalculatorServiceTest {
         @Test
         @Order(16)
         void calculateMulti_invalidTouchpoint() throws IOException {
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(TestUtil.getMockValidBundle()));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -461,7 +460,7 @@ class CalculatorServiceTest {
                 when(touchpointRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.empty());
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(TestUtil.getMockValidBundle()));
 
@@ -485,7 +484,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(mockValidBundle));
 
@@ -508,7 +507,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(mockValidBundle));
 
@@ -536,7 +535,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(mockValidBundle));
 
@@ -559,7 +558,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(mockValidBundle));
 
@@ -581,7 +580,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(mockValidBundle));
 
@@ -601,7 +600,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(TestUtil.getMockValidBundle()));
 
@@ -619,7 +618,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(validBundle));
 
@@ -640,7 +639,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(
                                                 Collections.singletonList(validBundle));
 
@@ -838,7 +837,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -858,7 +857,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -880,7 +879,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesPspList.json", PaymentOption.class);
@@ -900,7 +899,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -920,7 +919,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -942,7 +941,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -961,7 +960,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -981,7 +980,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesPspList.json", PaymentOption.class);
@@ -1000,7 +999,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -1021,7 +1020,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -1041,7 +1040,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -1062,7 +1061,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesPspList.json", PaymentOption.class);
@@ -1081,7 +1080,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -1101,7 +1100,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -1122,7 +1121,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -1144,7 +1143,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -1166,7 +1165,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesPspList.json", PaymentOption.class);
@@ -1188,7 +1187,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFeesPspList.json", PaymentOption.class);
@@ -1207,7 +1206,7 @@ class CalculatorServiceTest {
                                 touchpointRepository,
                                 paymentTypeRepository,
                                 new UtilityComponent(),
-                                new ValidBundleCacheService(cosmosTemplate),
+                                validBundleCacheService,
                                 "testIdPspPoste",
                                 List.of("BLACKLISTED_PSP")
                 );
@@ -1220,7 +1219,7 @@ class CalculatorServiceTest {
                                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
                 when(paymentTypeRepository.findByName(anyString()))
                                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-                when(cosmosTemplate.findAll(ValidBundle.class))
+                when(validBundleCacheService.getAllValidBundles())
                                 .thenReturn(Collections.singletonList(mockValidBundle));
 
                 var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
@@ -1231,3 +1230,4 @@ class CalculatorServiceTest {
                 calculatorService.setCosmosRepository(cosmosRepository);
         }
 }
+

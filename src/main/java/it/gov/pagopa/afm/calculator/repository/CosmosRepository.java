@@ -346,7 +346,7 @@ public class CosmosRepository {
         }
         return bundle.getTouchpoint() == null 
                 || "ANY".equalsIgnoreCase(bundle.getTouchpoint())
-                || touchpointName.equals(bundle.getTouchpoint());
+                || touchpointName.equalsIgnoreCase(bundle.getTouchpoint());
     }
 
     /**
@@ -356,7 +356,7 @@ public class CosmosRepository {
         if (paymentTypeName == null) {
             return true;
         }
-        return bundle.getPaymentType() == null || paymentTypeName.equals(bundle.getPaymentType());
+        return bundle.getPaymentType() == null || paymentTypeName.equalsIgnoreCase(bundle.getPaymentType());
     }
 
     /**
@@ -367,11 +367,11 @@ public class CosmosRepository {
             return true;
         }
         return pspList.stream().anyMatch(pspSearch -> {
-            boolean matchPsp = pspSearch.getIdPsp().equals(bundle.getIdPsp());
+            boolean matchPsp = pspSearch.getIdPsp().equalsIgnoreCase(bundle.getIdPsp());
             boolean matchChannel = StringUtils.isEmpty(pspSearch.getIdChannel()) 
-                    || pspSearch.getIdChannel().equals(bundle.getIdChannel());
+                    || pspSearch.getIdChannel().equalsIgnoreCase(bundle.getIdChannel());
             boolean matchBroker = StringUtils.isEmpty(pspSearch.getIdBrokerPsp()) 
-                    || pspSearch.getIdBrokerPsp().equals(bundle.getIdBrokerPsp());
+                    || pspSearch.getIdBrokerPsp().equalsIgnoreCase(bundle.getIdBrokerPsp());
             return matchPsp && matchChannel && matchBroker;
         });
     }
@@ -397,7 +397,7 @@ public class CosmosRepository {
      */
     private boolean filterByAllCcp(ValidBundle bundle, Boolean allCcp) {
         if (Boolean.FALSE.equals(allCcp)) {
-            return !pspPosteId.equals(bundle.getIdPsp());
+            return !pspPosteId.equalsIgnoreCase(bundle.getIdPsp());
         }
         return true;
     }

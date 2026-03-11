@@ -1,8 +1,8 @@
 package it.gov.pagopa.afm.calculator.service;
 
-import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.BundleType;
+import it.gov.pagopa.afm.calculator.repository.ValidBundleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ class ValidBundleCacheIntegrationTest {
     private ValidBundleCacheService validBundleCacheService;
 
     @MockBean
-    private CosmosTemplate cosmosTemplate;
+    private ValidBundleRepository validBundleRepository;
 
     @Autowired
     private CacheManager cacheManager;
@@ -61,7 +61,7 @@ class ValidBundleCacheIntegrationTest {
                 .build();
         List<ValidBundle> expectedBundles = Arrays.asList(bundle1, bundle2);
 
-        when(cosmosTemplate.findAll(ValidBundle.class))
+        when(validBundleRepository.findAll())
                 .thenReturn(expectedBundles);
 
         // Act - Call the method multiple times
@@ -78,7 +78,7 @@ class ValidBundleCacheIntegrationTest {
         assertEquals(2, result3.size());
 
         // Verify that cosmosTemplate.findAll was called only ONCE (cache hit on subsequent calls)
-        verify(cosmosTemplate, times(1)).findAll(ValidBundle.class);
+        verify(validBundleRepository, times(1)).findAll();
 
         // Verify results are the same (from cache)
         assertSame(result1, result2);
@@ -95,12 +95,12 @@ class ValidBundleCacheIntegrationTest {
                 .build();
         List<ValidBundle> expectedBundles = Arrays.asList(bundle);
 
-        when(cosmosTemplate.findAll(ValidBundle.class))
+        when(validBundleRepository.findAll())
                 .thenReturn(expectedBundles);
 
         // Act - First call
         List<ValidBundle> result1 = validBundleCacheService.getAllValidBundles();
-        verify(cosmosTemplate, times(1)).findAll(ValidBundle.class);
+        verify(validBundleRepository, times(1)).findAll();
 
         // Clear cache
         cacheManager.getCache("validBundles").clear();
@@ -115,7 +115,7 @@ class ValidBundleCacheIntegrationTest {
         assertEquals(1, result2.size());
 
         // Verify that cosmosTemplate.findAll was called TWICE (once before clear, once after)
-        verify(cosmosTemplate, times(2)).findAll(ValidBundle.class);
+        verify(validBundleRepository, times(2)).findAll();
     }
 
     @Test
@@ -135,7 +135,7 @@ class ValidBundleCacheIntegrationTest {
                 .build();
         List<ValidBundle> expectedBundles = Arrays.asList(bundle1);
 
-        when(cosmosTemplate.findAll(ValidBundle.class))
+        when(validBundleRepository.findAll())
                 .thenReturn(expectedBundles);
 
         // Act
@@ -157,3 +157,4 @@ class ValidBundleCacheIntegrationTest {
         assertEquals("PSP1", cachedBundles.get(0).getIdPsp());
     }
 }
+

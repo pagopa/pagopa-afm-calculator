@@ -54,8 +54,6 @@ max_attempts=50
 until $(curl --output /dev/null --silent --head --fail http://localhost:8080/actuator/info); do
     if [ ${attempt_counter} -eq ${max_attempts} ];then
       echo "Max attempts reached"
-      echo "Showing container logs:"
-      docker compose -p "${stack_name}" logs
       exit 1
     fi
 

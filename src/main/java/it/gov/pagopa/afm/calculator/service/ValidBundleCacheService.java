@@ -1,7 +1,7 @@
 package it.gov.pagopa.afm.calculator.service;
 
-import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
+import it.gov.pagopa.afm.calculator.repository.ValidBundleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -18,11 +18,11 @@ import java.util.stream.StreamSupport;
 @Service
 public class ValidBundleCacheService {
 
-    private final CosmosTemplate cosmosTemplate;
+    private final ValidBundleRepository validBundleRepository;
 
     @Autowired
-    public ValidBundleCacheService(CosmosTemplate cosmosTemplate) {
-        this.cosmosTemplate = cosmosTemplate;
+    public ValidBundleCacheService(ValidBundleRepository validBundleRepository) {
+        this.validBundleRepository = validBundleRepository;
     }
 
     /**
@@ -35,8 +35,7 @@ public class ValidBundleCacheService {
      */
     @Cacheable(value = "validBundles")
     public List<ValidBundle> getAllValidBundles() {
-        Iterable<ValidBundle> result = cosmosTemplate.findAll(ValidBundle.class);
-        return StreamSupport.stream(result.spliterator(), false)
-                .toList();
+        Iterable<ValidBundle> result = validBundleRepository.findAll();
+        return StreamSupport.stream(result.spliterator(), false).toList();
     }
 }
