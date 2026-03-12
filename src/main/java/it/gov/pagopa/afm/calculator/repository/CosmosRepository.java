@@ -200,6 +200,14 @@ public class CosmosRepository {
         List<PspSearchCriteria> pspList = Optional.ofNullable(paymentOptionMulti.getIdPspList())
                 .orElse(Collections.emptyList());
         List<String> categoryListMulti = utilityComponent.getTransferCategoryList(paymentOptionMulti);
+        
+        // Pre-filter categoryList to avoid filtering for each bundle
+        final List<String> filteredCategoryList = categoryListMulti != null 
+                ? categoryListMulti.stream()
+                        .filter(Objects::nonNull)
+                        .filter(elem -> !elem.isEmpty())
+                        .toList()
+                : null;
 
         // Apply filters in memory
         final String finalTouchpointName = touchpointName;
@@ -210,7 +218,7 @@ public class CosmosRepository {
                 .filter(bundle -> filterByTouchpoint(bundle, finalTouchpointName))
                 .filter(bundle -> filterByPaymentType(bundle, finalPaymentTypeName))
                 .filter(bundle -> filterByPspList(bundle, pspList))
-                .filter(bundle -> filterByTransferCategory(bundle, categoryListMulti))
+                .filter(bundle -> filterByTransferCategory(bundle, filteredCategoryList))
                 .filter(bundle -> filterByAllCcp(bundle, allCcp))
                 .filter(this::filterByPspBlacklist)
                 .filter(bundle -> filterByCart(bundle, paymentOptionMulti.getPaymentNotice().size() > 1))
@@ -259,6 +267,14 @@ public class CosmosRepository {
         List<PspSearchCriteria> pspList = Optional.ofNullable(paymentOption.getIdPspList())
                 .orElse(Collections.emptyList());
         List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
+        
+        // Pre-filter categoryList to avoid filtering for each bundle
+        final List<String> filteredCategoryList = categoryList != null 
+                ? categoryList.stream()
+                        .filter(Objects::nonNull)
+                        .filter(elem -> !elem.isEmpty())
+                        .toList()
+                : null;
 
         // Apply filters in memory
         final String finalTouchpointName = touchpointName;
@@ -269,7 +285,7 @@ public class CosmosRepository {
                 .filter(bundle -> filterByTouchpoint(bundle, finalTouchpointName))
                 .filter(bundle -> filterByPaymentType(bundle, finalPaymentTypeName))
                 .filter(bundle -> filterByPspList(bundle, pspList))
-                .filter(bundle -> filterByTransferCategory(bundle, categoryList))
+                .filter(bundle -> filterByTransferCategory(bundle, filteredCategoryList))
                 .filter(bundle -> filterByAllCcp(bundle, allCcp))
                 .filter(this::filterByPspBlacklist)
                 .toList();
@@ -380,15 +396,13 @@ public class CosmosRepository {
      * Filter bundle by transfer category
      */
     private boolean filterByTransferCategory(ValidBundle bundle, List<String> categoryList) {
-        if (categoryList == null) {
-            return bundle.getTransferCategoryList() == null;
+        if (categoryList == null || categoryList.isEmpty()) {
+            return true;
         }
         if (bundle.getTransferCategoryList() == null) {
             return true;
         }
         return categoryList.stream()
-                .filter(Objects::nonNull)
-                .filter(elem -> !elem.isEmpty())
                 .anyMatch(category -> bundle.getTransferCategoryList().contains(category));
     }
 
@@ -409,7 +423,8 @@ public class CosmosRepository {
         if (CollectionUtils.isEmpty(pspBlacklist)) {
             return true;
         }
-        return !pspBlacklist.contains(bundle.getIdPsp());
+        return pspBlacklist.stream()
+                     .noneMatch(s -> s.equalsIgnoreCase(bundle.getIdPsp()))
     }
 
     /**
