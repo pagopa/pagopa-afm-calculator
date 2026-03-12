@@ -13,6 +13,7 @@ const afm_marketplace_host = process.env.AFM_MARKETPLACE_HOST;
 the correct execution of the smoke tests*/
 setDefaultTimeout(60 * 10000);
 
+
 let body;
 let responseToCheck;
 let validBundles = [];

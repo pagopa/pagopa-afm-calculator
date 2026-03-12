@@ -77,7 +77,6 @@ public class ConfigurationService {
             "paymentMethodTouchpoint",
             "paymentMethodTouchpointDevice",
             "issuerRangeTable",
-            "validBundles",
             "getTransferCategoryList",
             "getTransferCategoryListMulti",
             "getPrimaryTransferCategoryList",
