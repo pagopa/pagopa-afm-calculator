@@ -424,7 +424,7 @@ public class CosmosRepository {
             return true;
         }
         return pspBlacklist.stream()
-                     .noneMatch(s -> s.equalsIgnoreCase(bundle.getIdPsp()))
+                     .noneMatch(s -> s.equalsIgnoreCase(bundle.getIdPsp()));
     }
 
     /**
