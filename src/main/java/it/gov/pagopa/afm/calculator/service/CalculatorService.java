@@ -95,7 +95,7 @@ public class CalculatorService {
 
         switch (orderType != null ? orderType.toLowerCase() : "") {
             case "fee" -> comparator = byFeeComparator;
-            case "fee_random" -> comparator = byFeeComparator;
+            case "fee_random" -> comparator = byFeeWithRandomOrderOnSameAmountComparator;
             case "pspname" -> comparator = byPspNameComparator;
             case "random" -> comparator = randomComparator;
             default -> comparator = randomComparator;
