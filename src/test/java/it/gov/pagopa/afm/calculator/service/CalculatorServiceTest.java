@@ -886,4 +886,59 @@ class CalculatorServiceTest {
         }
         Initializer.table.deleteEntity(duplicateIssuer);
     }
+
+    @Test
+    @Order(36)
+    void calculateMultipleBundlesFeeRandomOrder() throws IOException {
+        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
+        calculatorService.setCosmosRepository(cosmosRepository);
+
+        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+
+        var paymentOption =
+            TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+
+        for (int i = 0; i < 100; i++) {
+            var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "feerandom");
+            assertEquals(10, result.getBundleOptions().size());
+
+            var options = result.getBundleOptions();
+            for (int j = 1; j < options.size(); j++) {
+                long prevFee = options.get(j - 1).getActualPayerFee();
+                long currFee = options.get(j).getActualPayerFee();
+                assertTrue(prevFee <= currFee,
+                    "Fees are not in ascending order at iteration " + i + ": " + prevFee + " > " + currFee);
+            }
+        }
+    }
+
+    @Test
+    @Order(37)
+    void calculateMultipleBundlesFeeRandomOrderOnusFirst() throws IOException {
+        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
+        calculatorService.setCosmosRepository(cosmosRepository);
+
+        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+
+        var paymentOption =
+            TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+
+        for (int i = 0; i < 100; i++) {
+            var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "feerandom");
+            assertEquals(10, result.getBundleOptions().size());
+
+            assertEquals(true, result.getBundleOptions().get(0).getOnUs(),
+                "First element should be onUs at iteration " + i);
+
+            var options = result.getBundleOptions();
+            for (int j = 2; j < options.size(); j++) {
+                long prevFee = options.get(j - 1).getActualPayerFee();
+                long currFee = options.get(j).getActualPayerFee();
+                assertTrue(prevFee <= currFee,
+                    "Fees are not in ascending order at iteration " + i + ": " + prevFee + " > " + currFee);
+            }
+        }
+    }
 }
