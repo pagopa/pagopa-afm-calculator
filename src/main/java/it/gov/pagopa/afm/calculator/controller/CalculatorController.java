@@ -253,6 +253,7 @@ public class CalculatorController {
                     description =
                             "Sorting logic to be applied to the bundles [default = RANDOM]." +
                                     " random → bundles are sorted randomly." +
+                                    " feerandom → sorted by increasing fee, if fees are equal then randomly sorted" +
                                     " fee → sorted by increasing fee, if fees are equal then by PSP name." +
                                     " pspname → sorted by PSP name.")
             String orderBy) {
@@ -348,6 +349,7 @@ public class CalculatorController {
                     description =
                             "Sorting logic to be applied to the bundles [default = RANDOM]." +
                                     " random → bundles are sorted randomly." +
+                                    " feerandom → sorted by increasing fee, if fees are equal then randomly sorted" +
                                     " fee → sorted by increasing fee, if fees are equal then by PSP name." +
                                     " pspname → sorted by PSP name.")
             String orderBy) {

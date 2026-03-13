@@ -40,6 +40,10 @@ public class CalculatorService {
                     .thenComparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee);
     private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> randomComparator =
             (t1, t2) -> Integer.compare(new SecureRandom().nextInt(3) - 1, 0);
+    private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byFeeWithRandomOrderOnSameAmountComparator =
+        Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee)
+            .thenComparing(randomComparator);
+
     private final String amountThreshold;
     private final UtilityComponent utilityComponent;
     private final IssuersService issuersService;
@@ -91,6 +95,7 @@ public class CalculatorService {
 
         switch (orderType != null ? orderType.toLowerCase() : "") {
             case "fee" -> comparator = byFeeComparator;
+            case "feerandom" -> comparator = byFeeWithRandomOrderOnSameAmountComparator;
             case "pspname" -> comparator = byPspNameComparator;
             case "random" -> comparator = randomComparator;
             default -> comparator = randomComparator;
