@@ -168,55 +168,19 @@ public class CosmosRepository {
         // Get all valid bundles from cache via service
         List<ValidBundle> allBundles = validBundleCacheService.getAllValidBundles();
 
-        // Validate touchpoint if provided
-        String touchpointName = null;
-        if (paymentOptionMulti.getTouchpoint() != null
-                && !paymentOptionMulti.getTouchpoint().equalsIgnoreCase("any")) {
-            Optional<Touchpoint> touchpoint = touchpointRepository.findByName(paymentOptionMulti.getTouchpoint());
-            if (touchpoint.isEmpty()) {
-                throw new AppException(
-                        HttpStatus.NOT_FOUND,
-                        "Touchpoint not found",
-                        "Cannot find touchpoint with name: '" + paymentOptionMulti.getTouchpoint() + "'");
-            }
-            touchpointName = touchpoint.get().getName();
-        }
-
-        // Validate payment type if provided
-        String paymentTypeName = null;
-        if (paymentOptionMulti.getPaymentMethod() != null
-                && !paymentOptionMulti.getPaymentMethod().equalsIgnoreCase("any")) {
-            Optional<PaymentType> paymentType = paymentTypeRepository.findByName(paymentOptionMulti.getPaymentMethod());
-            if (paymentType.isEmpty()) {
-                throw new AppException(
-                        HttpStatus.NOT_FOUND,
-                        "PaymentType not found",
-                        "Cannot find payment type with name: '" + paymentOptionMulti.getPaymentMethod() + "'");
-            }
-            paymentTypeName = paymentType.get().getName();
-        }
+        String touchpointName = resolveTouchpointName(paymentOptionMulti.getTouchpoint());
+        String paymentTypeName = resolvePaymentTypeName(paymentOptionMulti.getPaymentMethod());
 
         // Get PSP list and transfer categories
         List<PspSearchCriteria> pspList = Optional.ofNullable(paymentOptionMulti.getIdPspList())
                 .orElse(Collections.emptyList());
-        List<String> categoryListMulti = utilityComponent.getTransferCategoryList(paymentOptionMulti);
-        
-        // Pre-filter categoryList to avoid filtering for each bundle
-        final List<String> filteredCategoryList = categoryListMulti != null 
-                ? categoryListMulti.stream()
-                        .filter(Objects::nonNull)
-                        .filter(elem -> !elem.isEmpty())
-                        .toList()
-                : null;
+        List<String> filteredCategoryList = filterCategoryList(utilityComponent.getTransferCategoryList(paymentOptionMulti));
 
         // Apply filters in memory
-        final String finalTouchpointName = touchpointName;
-        final String finalPaymentTypeName = paymentTypeName;
-        
         return allBundles.parallelStream()
                 .filter(bundle -> filterByPaymentAmount(bundle, paymentOptionMulti.getPaymentAmount()))
-                .filter(bundle -> filterByTouchpoint(bundle, finalTouchpointName))
-                .filter(bundle -> filterByPaymentType(bundle, finalPaymentTypeName))
+                .filter(bundle -> filterByTouchpoint(bundle, touchpointName))
+                .filter(bundle -> filterByPaymentType(bundle, paymentTypeName))
                 .filter(bundle -> filterByPspList(bundle, pspList))
                 .filter(bundle -> filterByTransferCategory(bundle, filteredCategoryList))
                 .filter(bundle -> filterByAllCcp(bundle, allCcp))
@@ -235,55 +199,19 @@ public class CosmosRepository {
         // Get all valid bundles from cache via service
         List<ValidBundle> allBundles = validBundleCacheService.getAllValidBundles();
 
-        // Validate touchpoint if provided
-        String touchpointName = null;
-        if (paymentOption.getTouchpoint() != null
-                && !paymentOption.getTouchpoint().equalsIgnoreCase("any")) {
-            Optional<Touchpoint> touchpoint = touchpointRepository.findByName(paymentOption.getTouchpoint());
-            if (touchpoint.isEmpty()) {
-                throw new AppException(
-                        HttpStatus.NOT_FOUND,
-                        "Touchpoint not found",
-                        "Cannot find touchpont with name: '" + paymentOption.getTouchpoint() + "'");
-            }
-            touchpointName = touchpoint.get().getName();
-        }
-
-        // Validate payment type if provided
-        String paymentTypeName = null;
-        if (paymentOption.getPaymentMethod() != null
-                && !paymentOption.getPaymentMethod().equalsIgnoreCase("any")) {
-            Optional<PaymentType> paymentType = paymentTypeRepository.findByName(paymentOption.getPaymentMethod());
-            if (paymentType.isEmpty()) {
-                throw new AppException(
-                        HttpStatus.NOT_FOUND,
-                        "PaymentType not found",
-                        "Cannot find payment type with name: '" + paymentOption.getPaymentMethod() + "'");
-            }
-            paymentTypeName = paymentType.get().getName();
-        }
+        String touchpointName = resolveTouchpointName(paymentOption.getTouchpoint());
+        String paymentTypeName = resolvePaymentTypeName(paymentOption.getPaymentMethod());
 
         // Get PSP list and transfer categories
         List<PspSearchCriteria> pspList = Optional.ofNullable(paymentOption.getIdPspList())
                 .orElse(Collections.emptyList());
-        List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
-        
-        // Pre-filter categoryList to avoid filtering for each bundle
-        final List<String> filteredCategoryList = categoryList != null 
-                ? categoryList.stream()
-                        .filter(Objects::nonNull)
-                        .filter(elem -> !elem.isEmpty())
-                        .toList()
-                : null;
+        List<String> filteredCategoryList = filterCategoryList(utilityComponent.getTransferCategoryList(paymentOption));
 
         // Apply filters in memory
-        final String finalTouchpointName = touchpointName;
-        final String finalPaymentTypeName = paymentTypeName;
-        
         return allBundles.parallelStream()
                 .filter(bundle -> filterByPaymentAmount(bundle, paymentOption.getPaymentAmount()))
-                .filter(bundle -> filterByTouchpoint(bundle, finalTouchpointName))
-                .filter(bundle -> filterByPaymentType(bundle, finalPaymentTypeName))
+                .filter(bundle -> filterByTouchpoint(bundle, touchpointName))
+                .filter(bundle -> filterByPaymentType(bundle, paymentTypeName))
                 .filter(bundle -> filterByPspList(bundle, pspList))
                 .filter(bundle -> filterByTransferCategory(bundle, filteredCategoryList))
                 .filter(bundle -> filterByAllCcp(bundle, allCcp))
@@ -349,8 +277,8 @@ public class CosmosRepository {
      * Filter bundle by payment amount range
      */
     private boolean filterByPaymentAmount(ValidBundle bundle, Long paymentAmount) {
-        return bundle.getMinPaymentAmount() <= paymentAmount 
-                && bundle.getMaxPaymentAmount() > paymentAmount;
+        return bundle.getMinPaymentAmount() < paymentAmount 
+                && bundle.getMaxPaymentAmount() >= paymentAmount;
     }
 
     /**
@@ -435,6 +363,53 @@ public class CosmosRepository {
             return Boolean.TRUE.equals(bundle.getCart());
         }
         return true;
+    }
+
+    /**
+     * Resolve touchpoint name from input, validating against repository
+     */
+    private String resolveTouchpointName(String touchpoint) {
+        if (touchpoint == null || touchpoint.equalsIgnoreCase("any")) {
+            return null;
+        }
+        Optional<Touchpoint> result = touchpointRepository.findByName(touchpoint);
+        if (result.isEmpty()) {
+            throw new AppException(
+                    HttpStatus.NOT_FOUND,
+                    "Touchpoint not found",
+                    "Cannot find touchpoint with name: '" + touchpoint + "'");
+        }
+        return result.get().getName();
+    }
+
+    /**
+     * Resolve payment type name from input, validating against repository
+     */
+    private String resolvePaymentTypeName(String paymentMethod) {
+        if (paymentMethod == null || paymentMethod.equalsIgnoreCase("any")) {
+            return null;
+        }
+        Optional<PaymentType> result = paymentTypeRepository.findByName(paymentMethod);
+        if (result.isEmpty()) {
+            throw new AppException(
+                    HttpStatus.NOT_FOUND,
+                    "PaymentType not found",
+                    "Cannot find payment type with name: '" + paymentMethod + "'");
+        }
+        return result.get().getName();
+    }
+
+    /**
+     * Pre-filter category list removing null and empty values
+     */
+    private List<String> filterCategoryList(List<String> categoryList) {
+        if (categoryList == null) {
+            return null;
+        }
+        return categoryList.stream()
+                .filter(Objects::nonNull)
+                .filter(elem -> !elem.isEmpty())
+                .toList();
     }
 
 }
