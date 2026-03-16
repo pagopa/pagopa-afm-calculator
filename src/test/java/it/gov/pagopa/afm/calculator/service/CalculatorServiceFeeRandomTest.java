@@ -1,66 +1,48 @@
 package it.gov.pagopa.afm.calculator.service;
 
-import static it.gov.pagopa.afm.calculator.TestUtil.getTableEntity;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
-import com.azure.data.tables.models.TableEntity;
-import com.azure.spring.data.cosmos.core.CosmosTemplate;
-import com.azure.spring.data.cosmos.core.query.CosmosQuery;
 import it.gov.pagopa.afm.calculator.TestUtil;
-import it.gov.pagopa.afm.calculator.entity.PaymentType;
-import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.exception.AppException;
-import it.gov.pagopa.afm.calculator.initializer.Initializer;
-import it.gov.pagopa.afm.calculator.model.BundleType;
-import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
-import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
-import it.gov.pagopa.afm.calculator.repository.PaymentTypeRepository;
-import it.gov.pagopa.afm.calculator.repository.TouchpointRepository;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.json.JSONException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ContextConfiguration;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
-@SpringBootTest
-@Testcontainers
-@ContextConfiguration(initializers = {Initializer.class})
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestMethodOrder(OrderAnnotation.class)
+import org.mockito.junit.jupiter.MockitoExtension;
+@ExtendWith(MockitoExtension.class)
+@Slf4j
 class CalculatorServiceFeeRandomTest {
 
-    @Autowired
+    @Mock
+    UtilityComponent utilityComponent;
+
+    @Mock
+    CosmosRepository cosmosRepository;
+
+    @Mock
+    IssuersService issuersService;
+
     CalculatorService calculatorService;
+
+    @BeforeEach
+    void setup() {
+        calculatorService = new CalculatorService(
+            "100000",
+            cosmosRepository,
+            utilityComponent,
+            issuersService,
+            "AMREX"
+        );
+    }
 
     @Test
     void calculateMultiBundlesAndVerifyRandomOrderOnSameFee() throws IOException {
@@ -93,7 +75,7 @@ class CalculatorServiceFeeRandomTest {
                 .map(t -> t.getActualPayerFee() + ":" + t.getIdPsp())
                 .collect(Collectors.joining(","));
             observedOrders.add(orderSignature);
-
+            log.info(orderSignature);
             i++;
         }
 
