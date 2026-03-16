@@ -40,6 +40,14 @@ jobs:
       - name: Build the Docker image
         run: docker build . --file ${{ env.DOCKERFILE }} --tag localbuild/testimage:latest
 
+      - name: Run Grype scan (table output)
+        uses: anchore/scan-action@7037fa011853d5a11690026fb85feee79f4c946c # v7.3.2
+        with:
+          image: "localbuild/testimage:latest"
+          output-format: table
+          fail-build: false
+          severity-cutoff: "high"
+
       - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
         uses: anchore/scan-action@7037fa011853d5a11690026fb85feee79f4c946c # v7.3.2
         id: scan
@@ -48,6 +56,8 @@ jobs:
           output-format: sarif
           fail-build: true
           severity-cutoff: "high"
+          only-fixed: true
+
       - name: Upload Anchore Scan Report
         uses: github/codeql-action/upload-sarif@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # v3.28.13
         if: always()
