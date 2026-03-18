@@ -105,8 +105,7 @@ public class CalculatorService {
             case "fee" -> comparator = byFeeComparator;
             case "feerandom" -> comparator = byFeeWithRandomOrderOnSameAmountComparator.thenComparing(buildRandomWeightComparator(transfers));
             case "pspname" -> comparator = byPspNameComparator;
-            case "random"    -> comparator = buildRandomWeightComparator(transfers);
-            default -> comparator = buildRandomWeightComparator(transfers);
+            default ->  comparator = (t1, t2) -> 0;
         }
 
         return onUsFirst
@@ -255,9 +254,7 @@ public class CalculatorService {
         }
 
         Collections.shuffle(transfers, RANDOM);
-        if ("random".equalsIgnoreCase(orderType) && !onUsFirst) {
-            return transfers.stream().limit(limit).toList();
-        }
+
         transfers.sort(getDynamicComparator(orderType, onUsFirst, transfers));
 
         return transfers.stream().limit(limit).toList();
