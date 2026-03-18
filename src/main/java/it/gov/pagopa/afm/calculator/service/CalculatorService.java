@@ -30,6 +30,9 @@ import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 public class CalculatorService {
 
     private static final String ONUS_BUNDLE_SUFFIX = "_ONUS";
+
+    private static final Random RANDOM = new Random();
+
     private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> onUsFirstComparator =
             Comparator.comparing((it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs), Comparator.reverseOrder());
     private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byFeeComparator =
@@ -38,11 +41,9 @@ public class CalculatorService {
     private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byPspNameComparator =
             Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName, Comparator.nullsLast(String::compareTo))
                     .thenComparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee);
-    private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> randomComparator =
-            (t1, t2) -> Integer.compare(new SecureRandom().nextInt(3) - 1, 0);
     private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byFeeWithRandomOrderOnSameAmountComparator =
-        Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee)
-            .thenComparing(randomComparator);
+        Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee);
+
 
     private final String amountThreshold;
     private final UtilityComponent utilityComponent;
@@ -81,6 +82,13 @@ public class CalculatorService {
                 });
     }
 
+    private static Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer>
+    buildRandomWeightComparator(List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers) {
+        Map<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer, Integer> weights = new IdentityHashMap<>();
+        transfers.forEach(t -> weights.put(t, RANDOM.nextInt()));
+        return Comparator.comparingInt(weights::get);
+    }
+
     /**
      * Returns a dynamic comparator for {@code it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer}
      * based on the specified order type and whether to prioritize OnUs transfers.
@@ -89,16 +97,16 @@ public class CalculatorService {
      * @param onUsFirst if true, OnUs transfers are sorted before others
      * @return a comparator for {@code it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer}
      */
-    private static Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> getDynamicComparator(String orderType, boolean onUsFirst) {
+    private static Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> getDynamicComparator(String orderType, boolean onUsFirst, List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers) {
 
         Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> comparator;
 
         switch (orderType != null ? orderType.toLowerCase() : "") {
             case "fee" -> comparator = byFeeComparator;
-            case "feerandom" -> comparator = byFeeWithRandomOrderOnSameAmountComparator;
+            case "feerandom" -> comparator = byFeeWithRandomOrderOnSameAmountComparator.thenComparing(buildRandomWeightComparator(transfers));
             case "pspname" -> comparator = byPspNameComparator;
-            case "random" -> comparator = randomComparator;
-            default -> comparator = randomComparator;
+            case "random"    -> comparator = buildRandomWeightComparator(transfers);
+            default -> comparator = buildRandomWeightComparator(transfers);
         }
 
         return onUsFirst
@@ -246,7 +254,11 @@ public class CalculatorService {
                     transfers.stream().filter(abiPredicate.and(onusPredicate)).collect(Collectors.toList());
         }
 
-        Collections.sort(transfers, getDynamicComparator(orderType, onUsFirst));
+        Collections.shuffle(transfers, RANDOM);
+        if ("random".equalsIgnoreCase(orderType) && !onUsFirst) {
+            return transfers.stream().limit(limit).toList();
+        }
+        transfers.sort(getDynamicComparator(orderType, onUsFirst, transfers));
 
         return transfers.stream().limit(limit).toList();
     }
