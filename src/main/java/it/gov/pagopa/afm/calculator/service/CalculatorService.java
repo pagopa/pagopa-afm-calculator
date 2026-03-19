@@ -9,6 +9,7 @@ import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Fee;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.inTransferList;
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 
+@Slf4j
 @Service
 @Setter
 public class CalculatorService {
@@ -70,7 +72,7 @@ public class CalculatorService {
                 (t1, t2) -> {
                     int primarySort = t1.getIdPsp().compareTo(t2.getIdPsp());
                     if (primarySort == 0) {
-                        // if two bundles are of the same PSP we'll sort by fees
+// if two bundles are of the same PSP we'll sort by fees
                         return t1.getTaxPayerFee().compareTo(t2.getTaxPayerFee());
                     }
                     return 0; // fixed to 0 because we don't want to sort by PSP name.
@@ -366,7 +368,7 @@ public class CalculatorService {
                 transfers.addAll(
                         cibundle
                                 .getAttributes()
-                                .parallelStream()
+                                .stream()
                                 .filter(
                                         attribute ->
                                                 (attribute.getTransferCategory() != null
@@ -381,7 +383,7 @@ public class CalculatorService {
                 transfers.addAll(
                         cibundle
                                 .getAttributes()
-                                .parallelStream()
+                                .stream()
                                 .filter(
                                         attribute ->
                                                 (attribute.getTransferCategory() == null
@@ -441,7 +443,7 @@ public class CalculatorService {
                 fees.addAll(
                         cibundle
                                 .getAttributes()
-                                .parallelStream()
+                                .stream()
                                 .filter(
                                         attribute ->
                                                 (attribute.getTransferCategory() == null
@@ -586,7 +588,7 @@ public class CalculatorService {
 
         List<IssuerRangeEntity> resultIssuerRangeEntityList = this.issuersService.getIssuerRangeTableCached();
 
-        return resultIssuerRangeEntityList.parallelStream()
+        return resultIssuerRangeEntityList.stream()
                 .filter(el -> el.getLowRange() <= paddedBin && el.getHighRange() >= paddedBin)
                 .collect(Collectors.toList());
     }
