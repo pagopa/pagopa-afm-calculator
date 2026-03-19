@@ -168,9 +168,9 @@ public class CosmosRepository {
 
         // Build transfer category set
         List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
-        Set<String> categorySet = toCategorySet(categoryList);
         boolean hasCategoryFilter = categoryList != null;
-        boolean hasNonEmptyCategories = categorySet != null && !categorySet.isEmpty();
+        Set<String> categorySet = toCategorySet(categoryList);
+        boolean hasNonEmptyCategories = !categorySet.isEmpty();
 
         // PSP list
         List<PspSearchCriteria> pspList = Optional.ofNullable(paymentOption.getIdPspList())
@@ -198,9 +198,9 @@ public class CosmosRepository {
         String resolvedPaymentType = resolvePaymentType(paymentOption.getPaymentMethod());
 
         List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
-        Set<String> categorySet = toCategorySet(categoryList);
         boolean hasCategoryFilter = categoryList != null;
-        boolean hasNonEmptyCategories = categorySet != null && !categorySet.isEmpty();
+        Set<String> categorySet = toCategorySet(categoryList);
+        boolean hasNonEmptyCategories = !categorySet.isEmpty();
 
         List<PspSearchCriteria> pspList = Optional.ofNullable(paymentOption.getIdPspList())
                 .orElse(Collections.emptyList());
@@ -303,7 +303,7 @@ public class CosmosRepository {
 
     private Set<String> toCategorySet(List<String> categoryList) {
         if (categoryList == null) {
-            return null;
+            return Collections.emptySet();
         }
         return categoryList.stream()
             .filter(cat -> cat != null && !cat.isEmpty())
