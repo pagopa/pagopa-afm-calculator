@@ -74,43 +74,30 @@ public class CalculatorService {
 
 
     private static List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> sortList(List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers, String orderType, boolean onUsFirst) {
-        Map<Long, List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer>> bundleMap = new TreeMap<>();
+
         Optional<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> onUsBundle = Optional.of(transfers)
                 .filter(ignored -> onUsFirst)
                 .flatMap(t -> t.stream()
                         .filter(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs)
                         .findFirst());
-        Optional.of(transfers)
-                .filter(ignored -> FEE_ORDERING_TYPES.contains(orderType))
-                .ifPresent(t ->
-                        transfers
-                                .stream()
-                                .filter(Predicate.not(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs))
-                                .forEach(bundle -> {
-                                    Long fees = bundle.getActualPayerFee();
-                                    List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> bundlesPerFee = bundleMap
-                                            .getOrDefault(fees, new ArrayList<>());
-                                    bundlesPerFee.add(bundle);
-                                    bundleMap.put(fees, bundlesPerFee);
-                                })
-                );
+
         LinkedList<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> orderedBundles = new LinkedList<>();
         switch (orderType != null ? orderType.toLowerCase() : "") {
-            case "fee" -> bundleMap.values().forEach(bundlesPerFee -> {
+            case "fee" -> groupByFee(transfers, onUsFirst).values().forEach(bundlesPerFee -> {
                 bundlesPerFee.sort(Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee));
                 orderedBundles.addAll(bundlesPerFee);
             });
 
-            case "feerandom" -> bundleMap.values().forEach(bundlesPerFee -> {
+            case "feerandom" -> groupByFee(transfers, onUsFirst).values().forEach(bundlesPerFee -> {
                 Collections.shuffle(bundlesPerFee);
                 orderedBundles.addAll(bundlesPerFee);
             });
             case "pspname" -> {
-                orderedBundles.addAll(transfers);
+                orderedBundles.addAll(applyOnUsFilter(transfers, onUsFirst));
                 orderedBundles.sort(Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName));
             }
             default -> {
-                orderedBundles.addAll(transfers);
+                orderedBundles.addAll(applyOnUsFilter(transfers, onUsFirst));
                 Collections.shuffle(orderedBundles);
             }
         }
@@ -118,6 +105,34 @@ public class CalculatorService {
         onUsBundle.ifPresent(orderedBundles::addFirst);
         return orderedBundles.stream().toList();
     }
+
+    private static List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> applyOnUsFilter(
+            List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers,
+            boolean onUsFirst) {
+        return transfers.stream().filter(element -> !onUsFirst || !element.getOnUs()).toList();
+    }
+
+    private static Map<Long, List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer>> groupByFee(
+            List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers,
+            boolean onUsFirst
+    ) {
+        Map<Long, List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer>> transfersGroupedByFee = new TreeMap<>();
+        Optional.of(transfers)
+                .ifPresent(t ->
+                        transfers
+                                .stream()
+                                .filter(element -> !onUsFirst || !element.getOnUs())
+                                .forEach(bundle -> {
+                                    Long fees = bundle.getActualPayerFee();
+                                    List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> bundlesPerFee = transfersGroupedByFee
+                                            .getOrDefault(fees, new ArrayList<>());
+                                    bundlesPerFee.add(bundle);
+                                    transfersGroupedByFee.put(fees, bundlesPerFee);
+                                })
+                );
+        return transfersGroupedByFee;
+    }
+
 
     public BundleOption calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
         List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
