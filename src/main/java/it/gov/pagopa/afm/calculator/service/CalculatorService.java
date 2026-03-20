@@ -109,8 +109,7 @@ public class CalculatorService {
                 orderedBundles.addAll(transfers);
                 orderedBundles.sort(Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName));
             }
-            case "random",
-                 default -> {
+            default -> {
                 orderedBundles.addAll(transfers);
                 Collections.shuffle(orderedBundles);
             }
