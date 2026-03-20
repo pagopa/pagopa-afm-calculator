@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.calculator.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
@@ -40,6 +41,9 @@ public class CalculatorService {
                     .thenComparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee);
     private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> randomComparator =
             (t1, t2) -> Integer.compare(new SecureRandom().nextInt(3) - 1, 0);
+    private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byFeeWithRandomOrderOnSameAmountComparator =
+            Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee)
+                    .thenComparing(randomComparator);
     private final String amountThreshold;
     private final UtilityComponent utilityComponent;
     private final IssuersService issuersService;
@@ -91,6 +95,7 @@ public class CalculatorService {
 
         switch (orderType != null ? orderType.toLowerCase() : "") {
             case "fee" -> comparator = byFeeComparator;
+            case "fee_random" -> comparator = byFeeWithRandomOrderOnSameAmountComparator;
             case "pspname" -> comparator = byPspNameComparator;
             case "random" -> comparator = randomComparator;
             default -> comparator = randomComparator;
@@ -601,5 +606,253 @@ public class CalculatorService {
             }
         }
         return false;
+    }
+
+    public static void main(String[] args) throws Exception {
+        String response = """
+                {
+                    "belowThreshold": false,
+                    "bundleOptions": [
+                        {
+                            "taxPayerFee": 200,
+                            "actualPayerFee": 200,
+                            "paymentMethod": "CP",
+                            "touchpoint": "CHECKOUT",
+                            "idBundle": "16867e4d-1a0a-49b4-b246-ba2f0f4aa604",
+                            "bundleName": "Nexi",
+                            "bundleDescription": "Il Servizio consente di eseguire pagamenti a favore delle PA con carte Nexi sui circuiti Visa, VPAY, Mastercard e Maestro.",
+                            "idsCiBundle": [],
+                            "idPsp": "CIPBITMM",
+                            "idChannel": "13212880150_02_ONUS",
+                            "idBrokerPsp": "13212880150",
+                            "onUs": true,
+                            "abi": "32875",
+                            "pspBusinessName": "Nexi",
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 50,
+                            "actualPayerFee": 50,
+                            "paymentMethod": "CP",
+                            "touchpoint": "ANY",
+                            "idBundle": "277fe1f0-e471-4a4b-be46-8c4fb39d733a",
+                            "bundleName": "sella test ",
+                            "bundleDescription": "sella test ",
+                            "idsCiBundle": [],
+                            "idPsp": "SELBIT2B",
+                            "idChannel": "02224410023_02",
+                            "idBrokerPsp": "02224410023",
+                            "onUs": false,
+                            "abi": "03268",
+                            "pspBusinessName": "BANCA SELLA - S.P.A.",
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 50,
+                            "actualPayerFee": 50,
+                            "paymentMethod": "CP",
+                            "touchpoint": "ANY",
+                            "idBundle": "0caacf7f-e833-4906-ad2e-dd149a0c3232",
+                            "bundleName": "Test MIL",
+                            "bundleDescription": "TestMil desc",
+                            "idsCiBundle": [],
+                            "idPsp": "TMIL0101",
+                            "idChannel": "pagopamil01_01",
+                            "idBrokerPsp": "pagopamil01",
+                            "onUs": false,
+                            "abi": "test9",
+                            "pspBusinessName": "TestMil",
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 95,
+                            "actualPayerFee": 95,
+                            "paymentMethod": "CP",
+                            "touchpoint": "CHECKOUT",
+                            "idBundle": "98d24e9a-ab8b-48e3-ae84-f0c16c64db3b",
+                            "bundleName": "Worldline Merchant Services Italia S.p.A.",
+                            "bundleDescription": "Pagamenti con carte",
+                            "idsCiBundle": [],
+                            "idPsp": "BNLIITRR",
+                            "idChannel": "05963231005_01",
+                            "idBrokerPsp": "05963231005",
+                            "onUs": false,
+                            "abi": "33111",
+                            "pspBusinessName": "Worldline",
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 100,
+                            "actualPayerFee": 100,
+                            "paymentMethod": "CP",
+                            "touchpoint": "CHECKOUT",
+                            "idBundle": "06208d5f-9a3e-4cfb-bdac-b3f3d8e79dcb",
+                            "bundleName": "07CP fascia 2 - Checkout",
+                            "bundleDescription": "07CP fascia 2 - Checkout",
+                            "idsCiBundle": [],
+                            "idPsp": "IFSPIT21",
+                            "idChannel": "14847241008_07",
+                            "idBrokerPsp": "14847241008",
+                            "onUs": false,
+                            "abi": "36042",
+                            "pspBusinessName": "ICONTO SRL",
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 100,
+                            "actualPayerFee": 100,
+                            "paymentMethod": "CP",
+                            "touchpoint": "CHECKOUT",
+                            "idBundle": "fbde6612-aa57-4985-9557-8a1c9284add4",
+                            "bundleName": "Intesa Sanpaolo S.p.A",
+                            "bundleDescription": "Clienti e non delle Banche del Gruppo Intesa Sanpaolo possono disporre pagamenti con carte di pagamento VISA-MASTERCARD",
+                            "idsCiBundle": [],
+                            "idPsp": "BCITITMM",
+                            "idChannel": "00799960158_07",
+                            "idBrokerPsp": "00799960158",
+                            "onUs": false,
+                            "abi": "03069",
+                            "pspBusinessName": "Intesa Sanpaolo S.p.A",
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 100,
+                            "actualPayerFee": 100,
+                            "paymentMethod": "CP",
+                            "touchpoint": "CHECKOUT",
+                            "idBundle": "189073b8-7b25-4296-a38d-774f286f3823",
+                            "bundleName": "WP 100-500",
+                            "bundleDescription": "Pacchetto test 500",
+                            "idsCiBundle": [],
+                            "idPsp": "WOLLNLB1",
+                            "idChannel": "NL853935051B01_02",
+                            "idBrokerPsp": "NL853935051B01",
+                            "onUs": false,
+                            "abi": "WOLLN",
+                            "pspBusinessName": "Worldpay BV",
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 120,
+                            "actualPayerFee": 120,
+                            "paymentMethod": "CP",
+                            "touchpoint": "CHECKOUT",
+                            "idBundle": "ecc13c88-5f2e-4a6c-9195-35bd44ea7737",
+                            "bundleName": "Unicredit S.p.A",
+                            "bundleDescription": "commisionale carte",
+                            "idsCiBundle": [],
+                            "idPsp": "UNCRITMM",
+                            "idChannel": "00348170101_01",
+                            "idBrokerPsp": "00348170101",
+                            "onUs": false,
+                            "abi": "02008",
+                            "pspBusinessName": "UniCredit S.p.A.",
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 130,
+                            "actualPayerFee": 130,
+                            "paymentMethod": "CP",
+                            "touchpoint": "CHECKOUT",
+                            "idBundle": "340a17c8-6761-402c-a7d2-a432d138b313",
+                            "bundleName": "CheckOut Bper Fascia 100,01 - 150",
+                            "bundleDescription": "CheckOut Bper Fascia 100,01 - 150",
+                            "idsCiBundle": [],
+                            "idPsp": "BPMOIT22",
+                            "idChannel": "01153230360_06",
+                            "idBrokerPsp": "01153230360",
+                            "onUs": false,
+                            "abi": "05387",
+                            "pspBusinessName": "BPER Banca S.p.A.",
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 130,
+                            "actualPayerFee": 130,
+                            "paymentMethod": "CP",
+                            "touchpoint": "CHECKOUT",
+                            "idBundle": "972d57ec-de85-42d8-84fb-7f76340c2b29",
+                            "bundleName": "CheckOut Bper Fascia 100,01 - 150,00",
+                            "bundleDescription": "CheckOut Bper Fascia 100,01 - 150,00",
+                            "idsCiBundle": [],
+                            "idPsp": "SARDIT31",
+                            "idChannel": "01153230360_05",
+                            "idBrokerPsp": "ca1a717b-4460-4051-9db1-2fd00e1420d2",
+                            "onUs": false,
+                            "abi": "01015",
+                            "pspBusinessName": "Banco di Sardegna S.p.A.",
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 150,
+                            "actualPayerFee": 150,
+                            "paymentMethod": "CP",
+                            "touchpoint": "CHECKOUT",
+                            "idBundle": "0d61a17c-bbf6-4006-9baa-26d68bc1a727",
+                            "bundleName": "Postepay",
+                            "bundleDescription": "Il servizio Paga con Postepay consente di effettuare pagamenti ai titolari di Postepay senza necessariamente inserire i dati della carta.",
+                            "idsCiBundle": [],
+                            "idPsp": "PPAYITR1XXX",
+                            "idChannel": "06874351007_07",
+                            "idBrokerPsp": "06874351007",
+                            "onUs": false,
+                            "abi": "36081",
+                            "pspBusinessName": "Postepay",
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 150,
+                            "actualPayerFee": 150,
+                            "paymentMethod": "CP",
+                            "touchpoint": "CHECKOUT",
+                            "idBundle": "a16976fa-bcec-4517-8978-4d1db04ab24a",
+                            "bundleName": "Poste Italiane",
+                            "bundleDescription": "Il servizio consente ai titolari di Carte di Credito Visa e MasterCard pagamenti di bollettini.",
+                            "idsCiBundle": [],
+                            "idPsp": "BPPIITRRXXX",
+                            "idChannel": "97103880585_07",
+                            "idBrokerPsp": "97103880585",
+                            "onUs": false,
+                            "abi": "07601",
+                            "pspBusinessName": null,
+                            "fees": []
+                        },
+                        {
+                            "taxPayerFee": 200,
+                            "actualPayerFee": 200,
+                            "paymentMethod": "CP",
+                            "touchpoint": "CHECKOUT",
+                            "idBundle": "3fb25abb-5b20-4dac-b98d-7f801c6d35e4",
+                            "bundleName": "Fascia2uat",
+                            "bundleDescription": "CANALE04NPG",
+                            "idsCiBundle": [],
+                            "idPsp": "PASCITMM",
+                            "idChannel": "00884060526_04",
+                            "idBrokerPsp": "00884060526",
+                            "onUs": false,
+                            "abi": "01030",
+                            "pspBusinessName": "Banca Monte dei Paschi di Siena S.p.A",
+                            "fees": []
+                        }
+                    ]
+                }
+                """;
+        ObjectMapper mapper = new ObjectMapper();
+        it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption options = mapper.readValue(response, it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.class);
+
+        for(int i=0;i<20000;i++) {
+            options.getBundleOptions().sort(onUsFirstComparator.thenComparing(byFeeWithRandomOrderOnSameAmountComparator));
+            System.out.println(mapper.writeValueAsString(options));
+            long lastFee = 0;
+            for(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer t : options.getBundleOptions()){
+                if(!t.getOnUs()) {
+                    if (t.getActualPayerFee() >= lastFee) {
+                        lastFee = t.getActualPayerFee();
+                    } else {
+                        throw new RuntimeException("found wrong order: " + t.getIdBundle());
+                    }
+                }
+            }
+        }
     }
 }
