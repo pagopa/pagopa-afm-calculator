@@ -85,9 +85,8 @@ public class CalculatorService {
         switch (orderType != null ? orderType.toLowerCase() : "") {
             case "fee" -> groupByFee(transfers, onUsFirst).values().forEach(bundlesPerFee -> {
                 bundlesPerFee.sort(
-                    Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee)
-                        .thenComparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName,
-                            Comparator.nullsLast(String::compareTo))
+                        Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName,
+                                Comparator.nullsLast(String::compareTo))
                 );
                 orderedBundles.addAll(bundlesPerFee);
             });
