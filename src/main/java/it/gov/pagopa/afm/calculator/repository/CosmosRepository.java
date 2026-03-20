@@ -357,6 +357,10 @@ public class CosmosRepository {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Shallow copy to prevent globalAndRelatedFilter from mutating cached bundle instances.
+     * Without this, setCiBundleList() would corrupt the shared cache across concurrent requests.
+     */
     private ValidBundle shallowCopy(ValidBundle original) {
         ValidBundle copy = original.toBuilder().build();
         if (original.getCiBundleList() != null) {

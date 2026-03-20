@@ -1252,4 +1252,33 @@ class CalculatorServiceTest {
 
         assertEquals(0, result.getBundleOptions().size());
     }
+
+    @Test
+    @Order(57)
+    void calculate_pspEmptyBlacklist() throws IOException {
+        CosmosRepository cosmosRepositoryWithEmptyBlacklist = new CosmosRepository(
+                touchpointRepository,
+                paymentTypeRepository,
+                new UtilityComponent(),
+                validBundleCacheService,
+                "testIdPspPoste",
+                Collections.emptyList()
+        );
+        calculatorService.setCosmosRepository(cosmosRepositoryWithEmptyBlacklist);
+
+        ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+
+        when(touchpointRepository.findByName(anyString()))
+                .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString()))
+                .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
+        when(validBundleCacheService.getAllValidBundles())
+                .thenReturn(Collections.singletonList(mockValidBundle));
+
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+        var result = calculatorService.calculate(paymentOption, 10, true);
+
+        assertNotNull(result);
+        assertEquals(1, result.getBundleOptions().size());
+    }
 }
