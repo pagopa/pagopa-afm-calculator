@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.12.9"
+    tag: "2.12.8-4-PIDM-1674-random-order-same-fee-refactoring"
     pullPolicy: Always
   livenessProbe:
     httpGet:
