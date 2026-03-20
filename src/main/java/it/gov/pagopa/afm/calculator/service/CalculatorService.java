@@ -87,7 +87,7 @@ public class CalculatorService {
                                 .stream()
                                 .filter(Predicate.not(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs))
                                 .forEach(bundle -> {
-                                    Long fees = bundle.getTaxPayerFee();
+                                    Long fees = bundle.getActualPayerFee();
                                     List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> bundlesPerFee = bundleMap
                                             .getOrDefault(fees, new ArrayList<>());
                                     bundlesPerFee.add(bundle);
@@ -258,9 +258,7 @@ public class CalculatorService {
                     transfers.stream().filter(abiPredicate.and(onusPredicate)).collect(Collectors.toList());
         }
 
-        sortList(transfers, orderType, onUsFirst);
-
-        return transfers.stream().limit(limit).toList();
+        return sortList(transfers, orderType, onUsFirst).stream().limit(limit).toList();
     }
 
     private boolean isOnusBundle(ValidBundle bundle) {
