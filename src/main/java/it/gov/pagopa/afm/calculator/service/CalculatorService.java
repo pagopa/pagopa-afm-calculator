@@ -84,7 +84,11 @@ public class CalculatorService {
         LinkedList<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> orderedBundles = new LinkedList<>();
         switch (orderType != null ? orderType.toLowerCase() : "") {
             case "fee" -> groupByFee(transfers, onUsFirst).values().forEach(bundlesPerFee -> {
-                bundlesPerFee.sort(Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee));
+                bundlesPerFee.sort(
+                    Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee)
+                        .thenComparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName,
+                            Comparator.nullsLast(String::compareTo))
+                );
                 orderedBundles.addAll(bundlesPerFee);
             });
 
