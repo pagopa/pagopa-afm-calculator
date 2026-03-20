@@ -3,7 +3,10 @@ package it.gov.pagopa.afm.calculator.service;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.model.*;
+import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
+import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
+import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Fee;
@@ -16,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.validation.Valid;
-import java.security.SecureRandom;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -30,25 +32,14 @@ import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 public class CalculatorService {
 
     private static final String ONUS_BUNDLE_SUFFIX = "_ONUS";
-    private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> onUsFirstComparator =
-            Comparator.comparing((it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs), Comparator.reverseOrder());
-    private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byFeeComparator =
-            Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee)
-                    .thenComparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName, Comparator.nullsLast(String::compareTo));
-    private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byPspNameComparator =
-            Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName, Comparator.nullsLast(String::compareTo))
-                    .thenComparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee);
-    private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> randomComparator =
-            (t1, t2) -> Integer.compare(new SecureRandom().nextInt(3) - 1, 0);
-    private static final Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> byFeeWithRandomOrderOnSameAmountComparator =
-        Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee)
-            .thenComparing(randomComparator);
 
     private final String amountThreshold;
     private final UtilityComponent utilityComponent;
     private final IssuersService issuersService;
     private final String amexABI;
     private CosmosRepository cosmosRepository;
+
+    private static final Set<String> FEE_ORDERING_TYPES = Set.of("fee", "feerandom");
 
     public CalculatorService(
             @Value("${payment.amount.threshold}") String amountThreshold,
@@ -81,30 +72,52 @@ public class CalculatorService {
                 });
     }
 
-    /**
-     * Returns a dynamic comparator for {@code it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer}
-     * based on the specified order type and whether to prioritize OnUs transfers.
-     *
-     * @param orderType the sorting algorithm to apply (random, fee, pspname)
-     * @param onUsFirst if true, OnUs transfers are sorted before others
-     * @return a comparator for {@code it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer}
-     */
-    private static Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> getDynamicComparator(String orderType, boolean onUsFirst) {
 
-        Comparator<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> comparator;
-
+    private static List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> sortList(List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers, String orderType, boolean onUsFirst) {
+        Map<Long, List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer>> bundleMap = new TreeMap<>();
+        Optional<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> onUsBundle = Optional.of(transfers)
+                .filter(ignored -> onUsFirst)
+                .flatMap(t -> t.stream()
+                        .filter(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs)
+                        .findFirst());
+        Optional.of(transfers)
+                .filter(ignored -> FEE_ORDERING_TYPES.contains(orderType))
+                .ifPresent(t ->
+                        transfers
+                                .stream()
+                                .filter(Predicate.not(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs))
+                                .forEach(bundle -> {
+                                    Long fees = bundle.getTaxPayerFee();
+                                    List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> bundlesPerFee = bundleMap
+                                            .getOrDefault(fees, new ArrayList<>());
+                                    bundlesPerFee.add(bundle);
+                                    bundleMap.put(fees, bundlesPerFee);
+                                })
+                );
+        LinkedList<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> orderedBundles = new LinkedList<>();
         switch (orderType != null ? orderType.toLowerCase() : "") {
-            case "fee" -> comparator = byFeeComparator;
-            case "feerandom" -> comparator = byFeeWithRandomOrderOnSameAmountComparator;
-            case "pspname" -> comparator = byPspNameComparator;
-            case "random" -> comparator = randomComparator;
-            default -> comparator = randomComparator;
+            case "fee" -> bundleMap.values().forEach(bundlesPerFee -> {
+                bundlesPerFee.sort(Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee));
+                orderedBundles.addAll(bundlesPerFee);
+            });
+
+            case "feerandom" -> bundleMap.values().forEach(bundlesPerFee -> {
+                Collections.shuffle(bundlesPerFee);
+                orderedBundles.addAll(bundlesPerFee);
+            });
+            case "pspname" -> {
+                orderedBundles.addAll(transfers);
+                orderedBundles.sort(Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName));
+            }
+            case "random",
+                 default -> {
+                orderedBundles.addAll(transfers);
+                Collections.shuffle(orderedBundles);
+            }
         }
 
-        return onUsFirst
-                ? onUsFirstComparator.thenComparing(comparator)
-                : comparator;
-
+        onUsBundle.ifPresent(orderedBundles::addFirst);
+        return orderedBundles.stream().toList();
     }
 
     public BundleOption calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
@@ -246,7 +259,7 @@ public class CalculatorService {
                     transfers.stream().filter(abiPredicate.and(onusPredicate)).collect(Collectors.toList());
         }
 
-        Collections.sort(transfers, getDynamicComparator(orderType, onUsFirst));
+        sortList(transfers, orderType, onUsFirst);
 
         return transfers.stream().limit(limit).toList();
     }
@@ -597,8 +610,8 @@ public class CalculatorService {
     }
 
     private boolean checkValidityBin(String bin) {
-        if(StringUtils.isNotBlank(bin)) {
-            try{
+        if (StringUtils.isNotBlank(bin)) {
+            try {
                 Long.parseLong(bin);
                 return true;
             } catch (Exception e) {
@@ -607,4 +620,6 @@ public class CalculatorService {
         }
         return false;
     }
+
+
 }
