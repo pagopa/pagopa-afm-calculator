@@ -922,6 +922,26 @@ public class TestUtil {
             .onUs(false)
             .build());
 
+        bundles.add(ValidBundle.builder()
+            .id("11")
+            .idChannel("channel_11_ONUS")
+            .name("bundle11")
+            .idPsp("PSP_K")
+            .pspBusinessName("psp K")
+            .abi("14156")
+            .paymentAmount(30L)
+            .minPaymentAmount(0L)
+            .maxPaymentAmount(1000L)
+            .type(BundleType.GLOBAL)
+            .touchpoint("CHECKOUT")
+            .paymentType("CP")
+            .transferCategoryList(List.of("TAX1"))
+            .ciBundleList(new ArrayList<>())
+            .digitalStamp(false)
+            .digitalStampRestriction(false)
+            .onUs(true)
+            .build());
+
         return bundles;
     }
 }
