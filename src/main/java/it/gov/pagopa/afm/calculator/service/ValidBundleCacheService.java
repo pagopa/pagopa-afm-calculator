@@ -12,20 +12,24 @@ import java.util.stream.StreamSupport;
 
 /**
  * Service for caching all valid bundles from Cosmos DB.
+ * On cache miss, also rebuilds the in-memory index for fast lookups.
  */
 @Slf4j
 @Service
 public class ValidBundleCacheService {
 
     private final ValidBundleRepository validBundleRepository;
+    private final BundleIndexService bundleIndexService;
 
     @Autowired
-    public ValidBundleCacheService(ValidBundleRepository validBundleRepository) {
+    public ValidBundleCacheService(ValidBundleRepository validBundleRepository,
+                                   BundleIndexService bundleIndexService) {
         this.validBundleRepository = validBundleRepository;
+        this.bundleIndexService = bundleIndexService;
     }
 
     /**
-     * Retrieve all valid bundles from Cosmos DB and cache them.
+     * Retrieve all valid bundles from Cosmos DB, cache them, and rebuild index.
      */
     @Cacheable(value = "validBundles")
     public List<ValidBundle> getAllValidBundles() {
@@ -33,6 +37,10 @@ public class ValidBundleCacheService {
         Iterable<ValidBundle> result = validBundleRepository.findAll();
         List<ValidBundle> bundles = StreamSupport.stream(result.spliterator(), false).toList();
         log.info("[CACHE MISS] Loaded {} valid bundles from Cosmos DB", bundles.size());
+
+        // Rebuild in-memory index for fast touchpoint-based lookups
+        bundleIndexService.rebuildIndex(bundles);
+
         return bundles;
     }
 }

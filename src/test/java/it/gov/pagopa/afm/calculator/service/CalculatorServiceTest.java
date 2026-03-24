@@ -62,10 +62,20 @@ class CalculatorServiceTest {
     TouchpointRepository touchpointRepository;
     @MockBean
     PaymentTypeRepository paymentTypeRepository;
+    @Autowired
+    BundleIndexService bundleIndexService;
 
     @BeforeEach
     void resetCosmosRepository() {
         calculatorService.setCosmosRepository(originalCosmosRepository);
+    }
+
+    /**
+     * Helper: configures the mock AND rebuilds the index so that lookups work in tests.
+     */
+    private void mockValidBundles(java.util.List<it.gov.pagopa.afm.calculator.entity.ValidBundle> bundles) {
+        when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
+        bundleIndexService.rebuildIndex(bundles);
     }
 
     @BeforeAll
@@ -97,9 +107,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(TestUtil.getMockValidBundle()));
+        mockValidBundles(Collections.singletonList(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile(input, PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -119,9 +127,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(validBundle));
+        mockValidBundles(Collections.singletonList(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -137,8 +143,7 @@ class CalculatorServiceTest {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         validBundle.setIdPsp("77777777777");
 
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(validBundle));
+        mockValidBundles(Collections.singletonList(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees2.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -157,9 +162,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        list);
+        mockValidBundles(list);
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesNoInTransfer.json", PaymentOption.class);
@@ -173,7 +176,7 @@ class CalculatorServiceTest {
     @Test
     @Order(5)
     void calculate_invalidTouchpoint() throws IOException {
-        when(validBundleCacheService.getAllValidBundles()).thenReturn(Collections.emptyList());
+        mockValidBundles(Collections.emptyList());
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
@@ -189,9 +192,7 @@ class CalculatorServiceTest {
     void calculate_invalidPaymentMethod() throws IOException {
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.empty());
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(TestUtil.getMockValidBundle()));
+        mockValidBundles(Collections.singletonList(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
@@ -213,9 +214,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesDigitalStamp.json", PaymentOption.class);
@@ -236,9 +235,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesDigitalStamp2.json", PaymentOption.class);
@@ -262,9 +259,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesSubThreshold.json", PaymentOption.class);
@@ -285,9 +280,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -307,9 +300,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesDigitalStamp3.json", PaymentOption.class);
@@ -328,9 +319,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(TestUtil.getMockValidBundle()));
+        mockValidBundles(Collections.singletonList(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         BundleOption result = calculatorService.calculate(paymentOption, 10, false);
@@ -346,9 +335,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(validBundle));
+        mockValidBundles(Collections.singletonList(validBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getAmexFees.json", PaymentOption.class);
@@ -394,9 +381,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(TestUtil.getMockValidBundle()));
+        mockValidBundles(Collections.singletonList(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile(input, PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -416,9 +401,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(validBundle));
+        mockValidBundles(Collections.singletonList(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -434,8 +417,7 @@ class CalculatorServiceTest {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         validBundle.setIdPsp("77777777777");
 
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(validBundle));
+        mockValidBundles(Collections.singletonList(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti2.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -448,7 +430,7 @@ class CalculatorServiceTest {
     @Test
     @Order(16)
     void calculateMulti_invalidTouchpoint() throws IOException {
-        when(validBundleCacheService.getAllValidBundles()).thenReturn(Collections.emptyList());
+        mockValidBundles(Collections.emptyList());
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
 
@@ -464,9 +446,7 @@ class CalculatorServiceTest {
     void calculateMulti_invalidPaymentMethod() throws IOException {
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.empty());
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(TestUtil.getMockValidBundle()));
+        mockValidBundles(Collections.singletonList(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
 
@@ -486,9 +466,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp.json", PaymentOptionMulti.class);
@@ -507,9 +485,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp2.json", PaymentOptionMulti.class);
@@ -531,9 +507,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiSubThreshold.json", PaymentOptionMulti.class);
@@ -552,9 +526,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -572,9 +544,7 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp3.json", PaymentOptionMulti.class);
@@ -590,9 +560,7 @@ class CalculatorServiceTest {
     void calculateMulti_allCcpFlagDown() throws IOException {
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(TestUtil.getMockValidBundle()));
+        mockValidBundles(Collections.singletonList(TestUtil.getMockValidBundle()));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption result =
@@ -606,9 +574,7 @@ class CalculatorServiceTest {
         ValidBundle validBundle = TestUtil.getMockAmexValidBundle();
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(validBundle));
+        mockValidBundles(Collections.singletonList(validBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getAmexFeesMulti.json", PaymentOptionMulti.class);
@@ -625,9 +591,7 @@ class CalculatorServiceTest {
         ValidBundle validBundle = TestUtil.getHighCommissionValidBundle();
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(validBundle));
+        mockValidBundles(Collections.singletonList(validBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -644,9 +608,7 @@ class CalculatorServiceTest {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(
-                        Collections.singletonList(validBundle));
+        mockValidBundles(Collections.singletonList(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMultiWrongEC.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -862,8 +824,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -882,8 +843,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         paymentOption.getTransferList().forEach(t -> t.setTransferCategory(null));
@@ -904,8 +864,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesPspList.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -924,8 +883,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         paymentOption.getPaymentNotice().add(paymentOption.getPaymentNotice().get(0));
@@ -944,8 +902,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -966,8 +923,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -985,8 +941,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         paymentOption.getTransferList().forEach(t -> t.setTransferCategory(""));
@@ -1005,8 +960,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesPspList.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -1024,8 +978,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -1045,8 +998,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         paymentOption.setPaymentAmount(50L);
@@ -1065,8 +1017,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -1086,8 +1037,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesPspList.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -1105,8 +1055,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -1125,8 +1074,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, false);
@@ -1146,8 +1094,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         paymentOption.getPaymentNotice().get(0).setTransferList(null);
@@ -1168,8 +1115,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         paymentOption.setPaymentAmount(150L);
@@ -1190,8 +1136,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesPspList.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -1212,8 +1157,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesPspList.json", PaymentOption.class);
 
@@ -1232,6 +1176,7 @@ class CalculatorServiceTest {
                 paymentTypeRepository,
                 new UtilityComponent(),
                 validBundleCacheService,
+                bundleIndexService,
                 "testIdPspPoste",
                 List.of("BLACKLISTED_PSP")
         );
@@ -1244,8 +1189,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -1261,6 +1205,7 @@ class CalculatorServiceTest {
                 paymentTypeRepository,
                 new UtilityComponent(),
                 validBundleCacheService,
+                bundleIndexService,
                 "testIdPspPoste",
                 Collections.emptyList()
         );
@@ -1272,8 +1217,7 @@ class CalculatorServiceTest {
                 .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString()))
                 .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(validBundleCacheService.getAllValidBundles())
-                .thenReturn(Collections.singletonList(mockValidBundle));
+        mockValidBundles(Collections.singletonList(mockValidBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);

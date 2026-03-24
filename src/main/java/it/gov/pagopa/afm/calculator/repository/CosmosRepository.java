@@ -9,6 +9,7 @@ import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.model.TransferListItem;
+import it.gov.pagopa.afm.calculator.service.BundleIndexService;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.service.ValidBundleCacheService;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,7 @@ public class CosmosRepository {
     private final PaymentTypeRepository paymentTypeRepository;
     private final UtilityComponent utilityComponent;
     private final ValidBundleCacheService validBundleCacheService;
+    private final BundleIndexService bundleIndexService;
     private final String pspPosteId;
     private final List<String> pspBlacklist;
 
@@ -38,6 +40,7 @@ public class CosmosRepository {
             PaymentTypeRepository paymentTypeRepository,
             UtilityComponent utilityComponent,
             ValidBundleCacheService validBundleCacheService,
+            BundleIndexService bundleIndexService,
             @Value("${pspPoste.id}") String pspPosteId,
             @Value("#{'${psp.blacklist}'.split(',')}") List<String> pspBlacklist
     ) {
@@ -45,6 +48,7 @@ public class CosmosRepository {
         this.paymentTypeRepository = paymentTypeRepository;
         this.utilityComponent = utilityComponent;
         this.validBundleCacheService = validBundleCacheService;
+        this.bundleIndexService = bundleIndexService;
         this.pspPosteId = pspPosteId;
         this.pspBlacklist = pspBlacklist;
     }
@@ -155,35 +159,32 @@ public class CosmosRepository {
         return getFilteredBundlesMulti(paymentOption, filtered);
     }
 
-    // ---- In-memory filtering (replaces Cosmos Criteria queries) ----
+    // ---- Indexed in-memory filtering ----
 
     private List<ValidBundle> findValidBundles(PaymentOption paymentOption, Boolean allCcp) {
-        List<ValidBundle> allBundles = validBundleCacheService.getAllValidBundles();
+        // Ensure cache and index are populated
+        validBundleCacheService.getAllValidBundles();
 
-        // Resolve touchpoint name
         String resolvedTouchpoint = resolveTouchpoint(paymentOption.getTouchpoint());
-
-        // Resolve payment type name
         String resolvedPaymentType = resolvePaymentType(paymentOption.getPaymentMethod());
 
-        // Build transfer category set
+        // Start from composite-indexed subset (touchpoint + paymentType)
+        List<ValidBundle> candidates = bundleIndexService.getBundlesByTouchpointAndPaymentType(
+                resolvedTouchpoint, resolvedPaymentType);
+
         List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
         boolean hasCategoryFilter = categoryList != null;
         Set<String> categorySet = toCategorySet(categoryList);
         boolean hasNonEmptyCategories = !categorySet.isEmpty();
 
-        // PSP list
         List<PspSearchCriteria> pspList = Optional.ofNullable(paymentOption.getIdPspList())
                 .orElse(Collections.emptyList());
 
-        // add filter for PSP blacklist
         Set<String> blacklistSet = toBlacklistSet();
 
-        return allBundles.stream()
+        return candidates.stream()
                 .filter(b -> b.getMinPaymentAmount() < paymentOption.getPaymentAmount())
                 .filter(b -> b.getMaxPaymentAmount() >= paymentOption.getPaymentAmount())
-                .filter(b -> matchesTouchpoint(b, resolvedTouchpoint))
-                .filter(b -> matchesPaymentType(b, resolvedPaymentType))
                 .filter(b -> matchesPspList(b, pspList))
                 .filter(b -> matchesTransferCategory(b, hasCategoryFilter, hasNonEmptyCategories, categorySet))
                 .filter(b -> !Boolean.FALSE.equals(allCcp) || !pspPosteId.equals(b.getIdPsp()))
@@ -192,10 +193,14 @@ public class CosmosRepository {
     }
 
     private List<ValidBundle> findValidBundlesMulti(PaymentOptionMulti paymentOption, Boolean allCcp) {
-        List<ValidBundle> allBundles = validBundleCacheService.getAllValidBundles();
+        validBundleCacheService.getAllValidBundles();
 
         String resolvedTouchpoint = resolveTouchpoint(paymentOption.getTouchpoint());
         String resolvedPaymentType = resolvePaymentType(paymentOption.getPaymentMethod());
+
+        // Start from composite-indexed subset (touchpoint + paymentType)
+        List<ValidBundle> candidates = bundleIndexService.getBundlesByTouchpointAndPaymentType(
+                resolvedTouchpoint, resolvedPaymentType);
 
         List<String> categoryList = utilityComponent.getTransferCategoryList(paymentOption);
         boolean hasCategoryFilter = categoryList != null;
@@ -208,11 +213,9 @@ public class CosmosRepository {
         Set<String> blacklistSet = toBlacklistSet();
         boolean isCart = paymentOption.getPaymentNotice().size() > 1;
 
-        return allBundles.stream()
+        return candidates.stream()
                 .filter(b -> b.getMinPaymentAmount() < paymentOption.getPaymentAmount())
                 .filter(b -> b.getMaxPaymentAmount() >= paymentOption.getPaymentAmount())
-                .filter(b -> matchesTouchpoint(b, resolvedTouchpoint))
-                .filter(b -> matchesPaymentType(b, resolvedPaymentType))
                 .filter(b -> matchesPspList(b, pspList))
                 .filter(b -> matchesTransferCategory(b, hasCategoryFilter, hasNonEmptyCategories, categorySet))
                 .filter(b -> !Boolean.FALSE.equals(allCcp) || !pspPosteId.equals(b.getIdPsp()))
@@ -223,7 +226,6 @@ public class CosmosRepository {
 
     // ---- Predicate helpers ----
 
-    /** Resolve touchpoint name, throwing if not found. Returns null if "any" or null. */
     private String resolveTouchpoint(String touchpointName) {
         if (touchpointName != null && !touchpointName.equalsIgnoreCase("any")) {
             Optional<Touchpoint> touchpoint = touchpointRepository.findByName(touchpointName);
@@ -235,10 +237,9 @@ public class CosmosRepository {
             }
             return touchpoint.get().getName();
         }
-        return null; // no filter
+        return null;
     }
 
-    /** Resolve payment type name, throwing if not found. Returns null if "any" or null. */
     private String resolvePaymentType(String paymentMethodName) {
         if (paymentMethodName != null && !paymentMethodName.equalsIgnoreCase("any")) {
             Optional<PaymentType> paymentType = paymentTypeRepository.findByName(paymentMethodName);
@@ -253,34 +254,20 @@ public class CosmosRepository {
         return null;
     }
 
-    /** touchpoint matches value OR bundle touchpoint is "ANY" */
-    private boolean matchesTouchpoint(ValidBundle bundle, String resolvedTouchpoint) {
-        if (resolvedTouchpoint == null) return true;
-        String bt = bundle.getTouchpoint();
-        return resolvedTouchpoint.equalsIgnoreCase(bt) || "ANY".equalsIgnoreCase(bt);
-    }
+    /** touchpoint and paymentType filters are handled by the composite index */
 
-    /** paymentType matches value OR bundle paymentType is null */
-    private boolean matchesPaymentType(ValidBundle bundle, String resolvedPaymentType) {
-        if (resolvedPaymentType == null) return true;
-        return bundle.getPaymentType() == null || resolvedPaymentType.equalsIgnoreCase(bundle.getPaymentType());
-    }
-
-    /** PSP list filter: if list is empty, all pass. Otherwise bundle must match one of the criteria. */
     private boolean matchesPspList(ValidBundle bundle, List<PspSearchCriteria> pspList) {
         if (pspList.isEmpty()) {
             return true;
         }
-        
         return pspList.stream()
-                .anyMatch(psc -> 
-                    Objects.equals(psc.getIdPsp(), bundle.getIdPsp()) 
+                .anyMatch(psc ->
+                    Objects.equals(psc.getIdPsp(), bundle.getIdPsp())
                     && (StringUtils.isEmpty(psc.getIdChannel()) || Objects.equals(psc.getIdChannel(), bundle.getIdChannel()))
                     && (StringUtils.isEmpty(psc.getIdBrokerPsp()) || Objects.equals(psc.getIdBrokerPsp(), bundle.getIdBrokerPsp()))
                 );
     }
 
-    /** Transfer category filter: replicates the Cosmos ARRAY_CONTAINS OR IS_NULL logic. */
     private boolean matchesTransferCategory(ValidBundle bundle, boolean hasCategoryFilter,
                                             boolean hasNonEmptyCategories, Set<String> categorySet) {
         if (!hasCategoryFilter) {
@@ -289,15 +276,11 @@ public class CosmosRepository {
         List<String> bundleCategories = bundle.getTransferCategoryList();
         boolean bundleHasNoCategory = bundleCategories == null;
         if (!hasNonEmptyCategories) {
-            // request had no valid categories -> only bundles with null transferCategoryList
             return bundleHasNoCategory;
         }
-        // bundle has no category -> passes (OR IS_NULL)
         if (bundleHasNoCategory) {
             return true;
         }
-        
-        // bundle has categories -> at least one must be in the request set
         return bundleCategories.stream().anyMatch(categorySet::contains);
     }
 

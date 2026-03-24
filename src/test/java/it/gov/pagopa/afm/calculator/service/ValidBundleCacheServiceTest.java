@@ -28,6 +28,9 @@ class ValidBundleCacheServiceTest {
     @Mock
     private ValidBundleRepository validBundleRepository;
 
+    @Mock
+    private BundleIndexService bundleIndexService;
+
     private ValidBundleCacheService validBundleCacheService;
 
     @Configuration
@@ -41,7 +44,7 @@ class ValidBundleCacheServiceTest {
 
     @BeforeEach
     void setUp() {
-        validBundleCacheService = new ValidBundleCacheService(validBundleRepository);
+        validBundleCacheService = new ValidBundleCacheService(validBundleRepository, bundleIndexService);
     }
 
     @Test
