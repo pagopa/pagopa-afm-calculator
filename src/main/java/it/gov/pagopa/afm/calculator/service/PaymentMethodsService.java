@@ -33,35 +33,30 @@ public class PaymentMethodsService {
 
         List<PaymentMethod> candidates = getPaymentMethodsCandidates(request);
 
-        // Pre-map payment notices once (avoid repeated mapping per candidate)
-        List<PaymentNoticeItem> mappedNotices = request.getPaymentNotice().stream()
-                .map(el -> modelMapper.map(el, PaymentNoticeItem.class)).toList();
-
         for (PaymentMethod candidate : candidates) {
             Pair<PaymentMethodDisabledReason, PaymentMethodStatus> filterReason = filterByCandidateProperties(candidate, request);
 
-            // Skip expensive calculateMulti for already-disabled candidates
+            BundleOption bundles = calculatorService.calculateMulti(PaymentOptionMulti.builder()
+                            .paymentMethod(candidate.getGroup())
+                            .touchpoint(request.getUserTouchpoint().name())
+                            .idPspList(null)
+                            .paymentNotice(request.getPaymentNotice().stream().map(el -> modelMapper.map(el, PaymentNoticeItem.class)).toList())
+                            .build(),
+                    Integer.MAX_VALUE, request.getAllCCp(), false, "fee");
+
+            // filter by bundles
             FeeRange feeRange = null;
-            if (filterReason.getRight() == PaymentMethodStatus.ENABLED) {
-                BundleOption bundles = calculatorService.calculateMulti(PaymentOptionMulti.builder()
-                                .paymentMethod(candidate.getGroup())
-                                .touchpoint(request.getUserTouchpoint().name())
-                                .idPspList(null)
-                                .paymentNotice(mappedNotices)
-                                .build(),
-                        Integer.MAX_VALUE, request.getAllCCp(), false, "fee");
-
-                if (bundles == null || bundles.getBundleOptions() == null || bundles.getBundleOptions().isEmpty()) {
-                    filterReason = Pair.of(PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE, PaymentMethodStatus.DISABLED);
-                } else {
-                    int last = bundles.getBundleOptions().size() - 1;
-                    feeRange = FeeRange.builder()
-                            .min(bundles.getBundleOptions().get(0).getTaxPayerFee())
-                            .max(bundles.getBundleOptions().get(last).getTaxPayerFee())
-                            .build();
-                }
+            if (bundles == null || bundles.getBundleOptions() == null || bundles.getBundleOptions().isEmpty()) {
+                filterReason = Pair.of(PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE, PaymentMethodStatus.DISABLED);
+            } else {
+                int last = bundles.getBundleOptions().size() - 1;
+                Long minFee = bundles.getBundleOptions().get(0).getTaxPayerFee();
+                Long maxFee = bundles.getBundleOptions().get(last).getTaxPayerFee();
+                feeRange = FeeRange.builder()
+                        .min(minFee)
+                        .max(maxFee)
+                        .build();
             }
-
             PaymentMethodsItem item = PaymentMethodsItem.builder()
                     .paymentMethodId(candidate.getPaymentMethodId())
                     .name(candidate.getName())
