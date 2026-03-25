@@ -35,11 +35,11 @@ export function setup() {
     // The setup code runs, setting up the test environment (optional) and generating data
     // used to reuse code for the same VU
 
-    for (let i = 0; i < validBundlesNum; i++) {
-        let validBundle = getValidBundle("int-test-"+i);
-        let response = createDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundle, validBundle['idPsp']);
-        check(response, { "status is 201": (res) => (res.status === 201) });
-    }
+//    for (let i = 0; i < validBundlesNum; i++) {
+//        let validBundle = getValidBundle("int-test-"+i);
+//        let response = createDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundle, validBundle['idPsp']);
+//        check(response, { "status is 201": (res) => (res.status === 201) });
+//    }
 
     // precondition is moved to default fn because in this stage
     // __VU is always 0 and cannot be used to create env properly
@@ -99,9 +99,9 @@ export default function calculator() {
 
 export function teardown() {
 
-    for (let i = 0; i < validBundlesNum; i++) {
-        let validBundle = getValidBundle("int-test-"+i);
-        let response = deleteDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundle['id'], validBundle['idPsp']);
-        check(response, { "status is 204": (res) => (res.status === 204) });
-    }
+//    for (let i = 0; i < validBundlesNum; i++) {
+//        let validBundle = getValidBundle("int-test-"+i);
+//        let response = deleteDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundle['id'], validBundle['idPsp']);
+//        check(response, { "status is 204": (res) => (res.status === 204) });
+//    }
 }
