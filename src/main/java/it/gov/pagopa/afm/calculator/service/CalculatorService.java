@@ -31,15 +31,11 @@ import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 @Setter
 public class CalculatorService {
 
-    private static final String ONUS_BUNDLE_SUFFIX = "_ONUS";
-
     private final String amountThreshold;
     private final UtilityComponent utilityComponent;
     private final IssuersService issuersService;
     private final String amexABI;
     private CosmosRepository cosmosRepository;
-
-    private static final Set<String> FEE_ORDERING_TYPES = Set.of("fee", "feerandom");
 
     public CalculatorService(
             @Value("${payment.amount.threshold}") String amountThreshold,
@@ -116,24 +112,16 @@ public class CalculatorService {
     }
 
     private static Map<Long, List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer>> groupByFee(
-            List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers,
-            boolean onUsFirst
+        List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers,
+        boolean onUsFirst
     ) {
-        Map<Long, List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer>> transfersGroupedByFee = new TreeMap<>();
-        Optional.of(transfers)
-                .ifPresent(t ->
-                        transfers
-                                .stream()
-                                .filter(element -> !onUsFirst || !element.getOnUs())
-                                .forEach(bundle -> {
-                                    Long fees = bundle.getActualPayerFee();
-                                    List<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> bundlesPerFee = transfersGroupedByFee
-                                            .getOrDefault(fees, new ArrayList<>());
-                                    bundlesPerFee.add(bundle);
-                                    transfersGroupedByFee.put(fees, bundlesPerFee);
-                                })
-                );
-        return transfersGroupedByFee;
+        return transfers.stream()
+            .filter(element -> !onUsFirst || !element.getOnUs())
+            .collect(Collectors.groupingBy(
+                it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getActualPayerFee,
+                TreeMap::new,
+                Collectors.toCollection(ArrayList::new)
+            ));
     }
 
 

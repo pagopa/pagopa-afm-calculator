@@ -55,6 +55,9 @@ class CalculatorServiceFeeRandomTest {
     }
 
     @Test
+    /* This test is intentionally non-deterministic: it verifies that bundles with the same fee
+       are shuffled. The high number of iterations increases the chance of observing different orders.
+     */
     void calculateMultiBundlesAndVerifyRandomOrderOnSameFee() throws IOException {
         CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
         calculatorService.setCosmosRepository(cosmosRepository);
@@ -104,6 +107,9 @@ class CalculatorServiceFeeRandomTest {
     }
 
     @Test
+        /* This test is intentionally non-deterministic: it verifies that bundles with the same fee
+       are shuffled. The high number of iterations increases the chance of observing different orders.
+     */
     void calculateMultiBundlesAndVerifyRandomOrderOnSameFeeOnusFirst() throws IOException {
         CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
         calculatorService.setCosmosRepository(cosmosRepository);
