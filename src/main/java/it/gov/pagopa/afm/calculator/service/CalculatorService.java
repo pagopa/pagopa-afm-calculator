@@ -93,7 +93,10 @@ public class CalculatorService {
             });
             case "pspname" -> {
                 orderedBundles.addAll(applyOnUsFilter(transfers, onUsFirst));
-                orderedBundles.sort(Comparator.comparing(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName));
+                orderedBundles.sort(Comparator.comparing(
+                    it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getPspBusinessName,
+                    Comparator.nullsLast(String::compareTo)
+                ));
             }
             default -> {
                 orderedBundles.addAll(applyOnUsFilter(transfers, onUsFirst));
