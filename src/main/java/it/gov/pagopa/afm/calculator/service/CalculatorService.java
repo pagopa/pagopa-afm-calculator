@@ -264,7 +264,7 @@ public class CalculatorService {
             Predicate<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> abiPredicate = t -> amexABI.equalsIgnoreCase(t.getAbi());
             Predicate<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> onusPredicate = t -> Boolean.TRUE.equals(t.getOnUs());
             transfers =
-                    transfers.stream().filter(abiPredicate.and(onusPredicate)).collect(Collectors.toList());
+                    transfers.stream().filter(abiPredicate.and(onusPredicate)).toList();
         }
 
         return sortList(transfers, orderType, onUsFirst).stream().limit(limit).toList();

@@ -59,11 +59,11 @@ class CalculatorServiceFeeRandomTest {
        are shuffled. The high number of iterations increases the chance of observing different orders.
      */
     void calculateMultiBundlesAndVerifyRandomOrderOnSameFee() throws IOException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
+        CosmosRepository cosmosRepositoryMock = Mockito.mock(CosmosRepository.class);
+        calculatorService.setCosmosRepository(cosmosRepositoryMock);
 
         List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPspSameFee();
-        Mockito.doReturn(bundles).when(cosmosRepository)
+        Mockito.doReturn(bundles).when(cosmosRepositoryMock)
             .findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
 
         var paymentOption =
@@ -111,12 +111,12 @@ class CalculatorServiceFeeRandomTest {
        are shuffled. The high number of iterations increases the chance of observing different orders.
      */
     void calculateMultiBundlesAndVerifyRandomOrderOnSameFeeOnusFirst() throws IOException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
+        CosmosRepository cosmosRepositoryMock = Mockito.mock(CosmosRepository.class);
+        calculatorService.setCosmosRepository(cosmosRepositoryMock);
 
         List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPspSameFee();
 
-        Mockito.doReturn(bundles).when(cosmosRepository)
+        Mockito.doReturn(bundles).when(cosmosRepositoryMock)
             .findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
 
         var paymentOption =
