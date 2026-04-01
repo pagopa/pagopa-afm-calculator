@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic - API AFM-Calculator v2",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.12.9"
+    "version": "2.13.0"
   },
   "servers": [
     {
@@ -78,7 +78,7 @@
           {
             "name": "orderBy",
             "in": "query",
-            "description": "Sorting logic to be applied to the bundles [default = RANDOM]. random â bundles are sorted randomly. fee â sorted by increasing fee, if fees are equal then by PSP name. pspname â sorted by PSP name.",
+            "description": "Sorting logic to be applied to the bundles [default = RANDOM]. random â bundles are sorted randomly. fee â sorted by increasing fee, if fees are equal then by PSP name. pspname â sorted by PSP name.feerandom: sorted by increasing fee, if fees are equal then randomly.",
             "required": false,
             "schema": {
               "type": "string",
@@ -391,7 +391,7 @@
           {
             "name": "orderBy",
             "in": "query",
-            "description": "Sorting logic to be applied to the bundles [default = RANDOM]. random â bundles are sorted randomly. fee â sorted by increasing fee, if fees are equal then by PSP name. pspname â sorted by PSP name.",
+            "description": "Sorting logic to be applied to the bundles [default = RANDOM]. random â bundles are sorted randomly. fee â sorted by increasing fee, if fees are equal then by PSP name. pspname â sorted by PSP name.feerandom: sorted by increasing fee, if fees are equal then randomly.",
             "required": false,
             "schema": {
               "type": "string",
