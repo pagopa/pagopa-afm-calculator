@@ -468,6 +468,28 @@
       "pspBusinessName": "EEEEEEEEEEE",
       "cart" : true,
       "onUs" : true
+    },
+    {
+      "id": "int-test-cart-cart-12",
+      "idPsp": "PPAYITR1XXX",
+      "idBrokerPsp": "88888888899",
+      "idChannel": "88888888899_01",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto 12",
+      "description": "pacchetto 12",
+      "paymentAmount": 20,
+      "minPaymentAmount": 0,
+      "maxPaymentAmount": 2000,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "IO",
+      "paymentType": null,
+      "abi": 14156,
+      "pspBusinessName": "EEEEEEEEEEE",
+      "cart" : true,
+      "onUs" : false
     }
   ],
   "ciBundles": [

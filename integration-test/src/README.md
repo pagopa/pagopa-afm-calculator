@@ -7,6 +7,12 @@
 
 ## How to start
 
+- define the following four environment variables
+  - SUBKEY
+  - AFM_SA_CONNECTION_STRING
+  - ISSUER_RANGE_TABLE
+  - SUBKEY_AFM_MARKETPLACE
+  
 - install dependencies: `yarn install`
 - run tests: `yarn test`
 
