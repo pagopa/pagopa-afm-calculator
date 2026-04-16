@@ -1,6 +1,7 @@
 package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
+import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentMethodResponse;
@@ -9,6 +10,7 @@ import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.*;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.*;
+import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import it.gov.pagopa.afm.calculator.util.PaymentMethodComparatorUtil;
 import lombok.AllArgsConstructor;
@@ -19,12 +21,15 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class PaymentMethodsService {
 
     private final PaymentMethodRepository paymentMethodRepository;
+    private final CosmosRepository cosmosRepository;
     private final CalculatorService calculatorService;
     private final ModelMapper modelMapper;
 
@@ -33,16 +38,30 @@ public class PaymentMethodsService {
 
         List<PaymentMethod> candidates = getPaymentMethodsCandidates(request);
 
+        List<ValidBundle> bundlesAllPaymentMethods = cosmosRepository.findByPaymentOption(PaymentOptionMulti.builder()
+                .paymentMethod(null)
+                .touchpoint(request.getUserTouchpoint().name())
+                .idPspList(null)
+                .paymentNotice(request.getPaymentNotice().stream().map(el -> modelMapper.map(el, PaymentNoticeItem.class)).toList())
+                .build()
+            , request.getAllCCp());
+
+        Map<String, List<ValidBundle>> bundleMap = groupingBundlesByPaymentMethods(bundlesAllPaymentMethods);
+
+        List<ValidBundle> wildCardBundle = bundleMap.getOrDefault(null, new ArrayList<>());
+
         for (PaymentMethod candidate : candidates) {
             Pair<PaymentMethodDisabledReason, PaymentMethodStatus> filterReason = filterByCandidateProperties(candidate, request);
 
-            BundleOption bundles = calculatorService.calculateMulti(PaymentOptionMulti.builder()
+            BundleOption bundles = calculatorService.calculateForPaymentMethods(
+                bundleMap.getOrDefault(candidate.getGroup(), wildCardBundle),
+                PaymentOptionMulti.builder()
                             .paymentMethod(candidate.getGroup())
                             .touchpoint(request.getUserTouchpoint().name())
                             .idPspList(null)
                             .paymentNotice(request.getPaymentNotice().stream().map(el -> modelMapper.map(el, PaymentNoticeItem.class)).toList())
                             .build(),
-                    Integer.MAX_VALUE, request.getAllCCp(), false, "fee");
+                    Integer.MAX_VALUE, false, "fee");
 
             // filter by bundles
             FeeRange feeRange = null;
@@ -134,5 +153,32 @@ public class PaymentMethodsService {
         }
 
         return Pair.of(null, candidate.getStatus());
+    }
+
+    private Map<String, List<ValidBundle>> groupingBundlesByPaymentMethods(List<ValidBundle> bundleList){
+      List<ValidBundle> wildcards = new ArrayList<>();
+      List<ValidBundle> specifics = new ArrayList<>();
+
+      for (ValidBundle bundle : bundleList) {
+        if (bundle.getPaymentType() == null || "ANY".equals(bundle.getPaymentType())) {
+          wildcards.add(bundle);
+        } else {
+          specifics.add(bundle);
+        }
+      }
+
+      Map<String, List<ValidBundle>> groupedMap = specifics.stream()
+          .collect(Collectors.groupingBy(ValidBundle::getPaymentType));
+
+      if (!wildcards.isEmpty()) {
+        if (!groupedMap.isEmpty()) {
+          for (List<ValidBundle> groupList : groupedMap.values()) {
+            groupList.addAll(wildcards);
+          }
+        }
+      }
+      groupedMap.put(null, new ArrayList<>(wildcards));
+
+      return groupedMap;
     }
 }
