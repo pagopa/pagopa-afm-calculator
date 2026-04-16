@@ -20,9 +20,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -32,38 +33,111 @@ public class PaymentMethodsService {
     private final CosmosRepository cosmosRepository;
     private final CalculatorService calculatorService;
     private final ModelMapper modelMapper;
+    
+    // Holds method-specific bundles separately from null-paymentType bundles used as wildcards.
+    private static class GroupedValidBundles {
+        private final Map<String, List<ValidBundle>> bundlesByPaymentType;
+        private final List<ValidBundle> wildcardBundles;
+
+        private GroupedValidBundles(
+            Map<String, List<ValidBundle>> bundlesByPaymentType,
+            List<ValidBundle> wildcardBundles
+        ) {
+            this.bundlesByPaymentType = bundlesByPaymentType;
+            this.wildcardBundles = wildcardBundles;
+        }
+
+        public Map<String, List<ValidBundle>> getBundlesByPaymentType() {
+            return bundlesByPaymentType;
+        }
+
+        public List<ValidBundle> getWildcardBundles() {
+            return wildcardBundles;
+        }
+    }
 
     public PaymentMethodsResponse searchPaymentMethods(PaymentMethodRequest request) {
         List<PaymentMethodsItem> paymentMethodsItems = new ArrayList<>();
+        
+        // Map payment notices once and reuse them in all downstream calls.
+        List<PaymentNoticeItem> paymentNoticeItems = request.getPaymentNotice().stream()
+                .map(el -> modelMapper.map(el, PaymentNoticeItem.class))
+                .toList();
 
         List<PaymentMethod> candidates = getPaymentMethodsCandidates(request);
 
-        List<ValidBundle> bundlesAllPaymentMethods = cosmosRepository.findByPaymentOption(PaymentOptionMulti.builder()
-                .paymentMethod(null)
-                .touchpoint(request.getUserTouchpoint().name())
-                .idPspList(null)
-                .paymentNotice(request.getPaymentNotice().stream().map(el -> modelMapper.map(el, PaymentNoticeItem.class)).toList())
-                .build()
-            , request.getAllCCp());
+        // Load bundles once without filtering by payment method.
+        // The candidate-specific filtering is applied later in memory.
+        List<ValidBundle> bundlesAllPaymentMethods = cosmosRepository.findByPaymentOption(
+                PaymentOptionMulti.builder()
+                        .paymentMethod(null)
+                        .touchpoint(request.getUserTouchpoint().name())
+                        .idPspList(null)
+                        .paymentNotice(paymentNoticeItems)
+                        .build(),
+                request.getAllCCp()
+        );
 
-        Map<String, List<ValidBundle>> bundleMap = groupingBundlesByPaymentMethods(bundlesAllPaymentMethods);
-
-        List<ValidBundle> wildCardBundle = bundleMap.getOrDefault(null, new ArrayList<>());
+        GroupedValidBundles groupedBundles = groupingBundlesByPaymentMethods(bundlesAllPaymentMethods);
 
         for (PaymentMethod candidate : candidates) {
             Pair<PaymentMethodDisabledReason, PaymentMethodStatus> filterReason = filterByCandidateProperties(candidate, request);
 
+            // Skip bundle calculation when the payment method is already excluded by static candidate properties.
+            if (filterReason.getLeft() != null) {
+                PaymentMethodsItem item = PaymentMethodsItem.builder()
+                        .paymentMethodId(candidate.getPaymentMethodId())
+                        .name(candidate.getName())
+                        .description(candidate.getDescription())
+                        .validityDateFrom(candidate.getValidityDateFrom())
+                        .group(candidate.getGroup())
+                        .paymentMethodTypes(candidate.getPaymentMethodTypes())
+                        .metadata(candidate.getMetadata())
+                        .feeRange(null)
+                        .paymentMethodAsset(candidate.getPaymentMethodAsset())
+                        .methodManagement(candidate.getMethodManagement())
+                        .paymentMethodsBrandAssets(candidate.getPaymentMethodsBrandAssets())
+                        .disabledReason(filterReason.getLeft())
+                        .status(filterReason.getRight())
+                        .build();
+                paymentMethodsItems.add(item);
+                continue;
+            }
+
+            // Merge method-specific bundles with null-paymentType bundles only for the current candidate.
+            List<ValidBundle> candidateBundles = resolveBundlesForCandidate(candidate, groupedBundles);
+            
+            // Skip fee calculation when no candidate bundle is available after grouping.
+            if (candidateBundles.isEmpty()) {
+            	PaymentMethodsItem item = PaymentMethodsItem.builder()
+            			.paymentMethodId(candidate.getPaymentMethodId())
+            			.name(candidate.getName())
+            			.description(candidate.getDescription())
+            			.validityDateFrom(candidate.getValidityDateFrom())
+            			.group(candidate.getGroup())
+            			.paymentMethodTypes(candidate.getPaymentMethodTypes())
+            			.metadata(candidate.getMetadata())
+            			.feeRange(null)
+            			.paymentMethodAsset(candidate.getPaymentMethodAsset())
+            			.methodManagement(candidate.getMethodManagement())
+            			.paymentMethodsBrandAssets(candidate.getPaymentMethodsBrandAssets())
+            			.disabledReason(PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE)
+            			.status(PaymentMethodStatus.DISABLED)
+            			.build();
+            	paymentMethodsItems.add(item);
+            	continue;
+            }
+
             BundleOption bundles = calculatorService.calculateForPaymentMethods(
-                bundleMap.getOrDefault(candidate.getGroup(), wildCardBundle),
-                PaymentOptionMulti.builder()
+                    candidateBundles,
+                    PaymentOptionMulti.builder()
                             .paymentMethod(candidate.getGroup())
                             .touchpoint(request.getUserTouchpoint().name())
                             .idPspList(null)
-                            .paymentNotice(request.getPaymentNotice().stream().map(el -> modelMapper.map(el, PaymentNoticeItem.class)).toList())
+                            .paymentNotice(paymentNoticeItems)
                             .build(),
                     Integer.MAX_VALUE, false, "fee");
 
-            // filter by bundles
             FeeRange feeRange = null;
             if (bundles == null || bundles.getBundleOptions() == null || bundles.getBundleOptions().isEmpty()) {
                 filterReason = Pair.of(PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE, PaymentMethodStatus.DISABLED);
@@ -76,6 +150,7 @@ public class PaymentMethodsService {
                         .max(maxFee)
                         .build();
             }
+
             PaymentMethodsItem item = PaymentMethodsItem.builder()
                     .paymentMethodId(candidate.getPaymentMethodId())
                     .name(candidate.getName())
@@ -155,30 +230,48 @@ public class PaymentMethodsService {
         return Pair.of(null, candidate.getStatus());
     }
 
-    private Map<String, List<ValidBundle>> groupingBundlesByPaymentMethods(List<ValidBundle> bundleList){
-      List<ValidBundle> wildcards = new ArrayList<>();
-      List<ValidBundle> specifics = new ArrayList<>();
+    private GroupedValidBundles groupingBundlesByPaymentMethods(List<ValidBundle> bundleList) {
+        Map<String, List<ValidBundle>> groupedMap = new HashMap<>();
+        List<ValidBundle> wildcardBundles = new ArrayList<>();
 
-      for (ValidBundle bundle : bundleList) {
-        if (bundle.getPaymentType() == null || "ANY".equals(bundle.getPaymentType())) {
-          wildcards.add(bundle);
-        } else {
-          specifics.add(bundle);
+        for (ValidBundle bundle : bundleList) {
+            // Only null paymentType is considered a wildcard.
+            if (bundle.getPaymentType() == null) {
+                wildcardBundles.add(bundle);
+            } else {
+                groupedMap.computeIfAbsent(bundle.getPaymentType(), key -> new ArrayList<>()).add(bundle);
+            }
         }
-      }
 
-      Map<String, List<ValidBundle>> groupedMap = specifics.stream()
-          .collect(Collectors.groupingBy(ValidBundle::getPaymentType));
-
-      if (!wildcards.isEmpty()) {
-        if (!groupedMap.isEmpty()) {
-          for (List<ValidBundle> groupList : groupedMap.values()) {
-            groupList.addAll(wildcards);
-          }
-        }
-      }
-      groupedMap.put(null, new ArrayList<>(wildcards));
-
-      return groupedMap;
+        return new GroupedValidBundles(groupedMap, wildcardBundles);
     }
+    
+    private List<ValidBundle> resolveBundlesForCandidate(
+    		PaymentMethod candidate,
+    		GroupedValidBundles groupedBundles
+    		) {
+    	// only exact paymentType matches and null-paymentType bundles are allowed.
+    	String paymentType = candidate.getGroup();
+
+    	List<ValidBundle> specificBundles = paymentType == null
+    			? Collections.emptyList()
+    					: groupedBundles.getBundlesByPaymentType().getOrDefault(paymentType, Collections.emptyList());
+
+    	List<ValidBundle> wildcardBundles = groupedBundles.getWildcardBundles();
+
+    	if (specificBundles.isEmpty()) {
+    		return wildcardBundles;
+    	}
+
+    	if (wildcardBundles.isEmpty()) {
+    		return specificBundles;
+    	}
+
+    	List<ValidBundle> resolvedBundles = new ArrayList<>(specificBundles.size() + wildcardBundles.size());
+    	resolvedBundles.addAll(specificBundles);
+    	resolvedBundles.addAll(wildcardBundles);
+
+    	return resolvedBundles;
+    }
+    
 }

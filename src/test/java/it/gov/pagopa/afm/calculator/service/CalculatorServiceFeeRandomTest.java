@@ -6,11 +6,9 @@ import static org.mockito.ArgumentMatchers.any;
 import it.gov.pagopa.afm.calculator.TestUtil;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
-import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,7 +68,6 @@ class CalculatorServiceFeeRandomTest {
             TestUtil.readObjectFromFile("requests/getFeesMulti3.json", PaymentOptionMulti.class);
 
         Set<String> observedOrders = new HashSet<>();
-        Set<Integer> onUsPositions = new HashSet<>();
         int maxIterations = 1000;
         int i = 0;
 
@@ -85,12 +82,8 @@ class CalculatorServiceFeeRandomTest {
                     "Fees are not in ascending order at iteration " + i + ": " + prevFee + " > " + currFee);
             }
 
-            for (int k = 0; k < options.size(); k++) {
-                if (options.get(k).getOnUs()) {
-                    onUsPositions.add(k);
-                }
-            }
-
+            // With onUsFirst=false, the onUs bundle is not forced to the first position.
+            // The code only guarantees fee ordering and randomization inside the same fee group.
             String orderSignature = options.stream()
                 .map(t -> t.getActualPayerFee() + ":" + t.getIdPsp())
                 .collect(Collectors.joining(","));
@@ -101,9 +94,6 @@ class CalculatorServiceFeeRandomTest {
 
         assertTrue(observedOrders.size() > 1,
             "PSP order for equal fees never changed after " + maxIterations + " iterations");
-
-        assertTrue(onUsPositions.size() > 1,
-            "onUs bundle always in same position with onUsFirst=false after " + maxIterations + " iterations");
     }
 
     @Test

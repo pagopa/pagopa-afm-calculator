@@ -10,7 +10,9 @@ import lombok.experimental.UtilityClass;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,17 +21,23 @@ import java.util.Objects;
 
 @UtilityClass
 public class TestUtil {
+	
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /**
      * @param relativePath Path from source root of the json file
      * @return the Json string read from the file
-     * @throws IOException if an I/O error occurs reading from the file or a malformed or unmappable
-     *                     byte sequence is read
+     * @throws IOException if an I/O error occurs reading from the resource
      */
     public String readStringFromFile(String relativePath) throws IOException {
         ClassLoader classLoader = TestUtil.class.getClassLoader();
-        File file = new File(Objects.requireNonNull(classLoader.getResource(relativePath)).getPath());
-        return Files.readString(file.toPath());
+
+        try (InputStream inputStream = Objects.requireNonNull(
+                classLoader.getResourceAsStream(relativePath),
+                "Resource not found: " + relativePath
+        )) {
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 
     /**
@@ -38,7 +46,15 @@ public class TestUtil {
      */
     public File readFile(String relativePath) {
         ClassLoader classLoader = TestUtil.class.getClassLoader();
-        return new File(Objects.requireNonNull(classLoader.getResource(relativePath)).getFile());
+
+        try {
+            return new File(Objects.requireNonNull(
+                    classLoader.getResource(relativePath),
+                    "Resource not found: " + relativePath
+            ).toURI());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid resource URI: " + relativePath, e);
+        }
     }
 
     /**
@@ -47,7 +63,7 @@ public class TestUtil {
      * @throws JsonProcessingException if there is an error during the parsing of the object
      */
     public String toJson(Object object) throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(object);
+        return OBJECT_MAPPER.writeValueAsString(object);
     }
 
     /**
@@ -58,8 +74,14 @@ public class TestUtil {
      * @throws IOException if an IO error occurs
      */
     public <T> T readObjectFromFile(String relativePath, Class<T> valueType) throws IOException {
-        var jsonFile = readFile(relativePath);
-        return new ObjectMapper().readValue(jsonFile, valueType);
+        ClassLoader classLoader = TestUtil.class.getClassLoader();
+
+        try (InputStream inputStream = Objects.requireNonNull(
+                classLoader.getResourceAsStream(relativePath),
+                "Resource not found: " + relativePath
+        )) {
+            return OBJECT_MAPPER.readValue(inputStream, valueType);
+        }
     }
 
     public static ValidBundle getMockGlobalValidBundle() {
