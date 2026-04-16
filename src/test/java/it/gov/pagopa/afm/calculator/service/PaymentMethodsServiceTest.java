@@ -1,8 +1,8 @@
 package it.gov.pagopa.afm.calculator.service;
 
-import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import it.gov.pagopa.afm.calculator.TestUtil;
 import it.gov.pagopa.afm.calculator.entity.PaymentMethod;
+import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.exception.AppError;
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import it.gov.pagopa.afm.calculator.model.PaymentMethodResponse;
@@ -13,6 +13,7 @@ import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodRequest;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.PaymentMethodsResponse;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.SortOrder;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.*;
+import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,7 +43,7 @@ class PaymentMethodsServiceTest {
     PaymentMethodsService paymentMethodsService;
 
     @MockBean
-    CosmosTemplate cosmosTemplate;
+    CosmosRepository cosmosRepository;
 
     @MockBean
     PaymentMethodRepository paymentMethodRepository;
@@ -72,7 +73,10 @@ class PaymentMethodsServiceTest {
                         .max(1000L)
                         .build())
                 .build()));
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean())).thenReturn(List.of(ValidBundle.builder().build()));
+
+        when(calculatorService.calculateForPaymentMethods(any(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
@@ -100,7 +104,10 @@ class PaymentMethodsServiceTest {
                         .max(1000L)
                         .build())
                 .build()));
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean())).thenReturn(List.of(ValidBundle.builder().build()));
+
+        when(calculatorService.calculateForPaymentMethods(any(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
@@ -116,11 +123,13 @@ class PaymentMethodsServiceTest {
     @Test
     void searchPaymentMethods_Target() throws IOException {
 
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+        when(calculatorService.calculateForPaymentMethods(any(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
                         .build());
+
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean())).thenReturn(List.of(ValidBundle.builder().build()));
 
         when(paymentMethodRepository
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
@@ -147,11 +156,13 @@ class PaymentMethodsServiceTest {
     @Test
     void searchPaymentMethods_Amount() throws IOException {
 
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+        when(calculatorService.calculateForPaymentMethods(any(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
                         .build());
+
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean())).thenReturn(List.of(ValidBundle.builder().build()));
 
         when(paymentMethodRepository
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
@@ -178,11 +189,12 @@ class PaymentMethodsServiceTest {
     @Test
     void searchPaymentMethods_Disabled() throws IOException {
 
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+        when(calculatorService.calculateForPaymentMethods(any(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
                         .build());
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean())).thenReturn(List.of(ValidBundle.builder().build()));
 
         when(paymentMethodRepository
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
@@ -209,11 +221,13 @@ class PaymentMethodsServiceTest {
     @Test
     void searchPaymentMethods_Maintenance() throws IOException {
 
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+        when(calculatorService.calculateForPaymentMethods(any(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
                         .build());
+
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean())).thenReturn(List.of(ValidBundle.builder().build()));
 
         when(paymentMethodRepository
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(PaymentMethod.builder()
@@ -338,11 +352,14 @@ class PaymentMethodsServiceTest {
                 .build();
         when(paymentMethodRepository
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(List.of(paypal, google, banca, cart));
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().build()))
-                        .build());
+
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean())).thenReturn(List.of(ValidBundle.builder().build()));
+
+        when(calculatorService.calculateForPaymentMethods(any(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
+                  .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                          .belowThreshold(false)
+                          .bundleOptions(List.of(Transfer.builder().build()))
+                          .build());
 
         PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
 
@@ -363,7 +380,10 @@ class PaymentMethodsServiceTest {
 
         when(paymentMethodRepository
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(getMethodList());
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
+
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean())).thenReturn(List.of(ValidBundle.builder().build()));
+
+        when(calculatorService.calculateForPaymentMethods(any(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
                 .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
                         .belowThreshold(false)
                         .bundleOptions(List.of(Transfer.builder().build()))
@@ -390,11 +410,14 @@ class PaymentMethodsServiceTest {
     void searchPaymentMethods_sortingDesc(String input) throws IOException {
         when(paymentMethodRepository
                 .findByTouchpointAndDevice(anyString(), anyString())).thenReturn(getMethodList());
-        when(calculatorService.calculateMulti(any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().build()))
-                        .build());
+
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean())).thenReturn(List.of(ValidBundle.builder().build()));
+
+        when(calculatorService.calculateForPaymentMethods(any(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
+                  .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                          .belowThreshold(false)
+                          .bundleOptions(List.of(Transfer.builder().build()))
+                          .build());
 
         PaymentMethodRequest paymentMethodRequest = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
         paymentMethodRequest.setSortOrder(SortOrder.DESC);
