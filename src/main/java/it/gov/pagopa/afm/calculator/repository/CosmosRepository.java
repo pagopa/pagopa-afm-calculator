@@ -1,5 +1,7 @@
 package it.gov.pagopa.afm.calculator.repository;
 
+import com.azure.cosmos.CosmosAsyncContainer;
+import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.spring.data.cosmos.core.CosmosTemplate;
 import com.azure.spring.data.cosmos.core.query.CosmosQuery;
 import com.azure.spring.data.cosmos.core.query.Criteria;
@@ -15,6 +17,8 @@ import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.model.TransferListItem;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,10 +36,12 @@ import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
 
 @Repository
+@Slf4j
 public class CosmosRepository {
     private static final String ID_PSP_PARAM = "idPsp";
     private static final String TRANSFER_CATEGORY_LIST = "transferCategoryList";
     private static final String CART_PARAM = "cart";
+    private static final String VALID_BUNDLES_CONTAINER = "validbundles";
     private final CosmosTemplate cosmosTemplate;
     private final TouchpointRepository touchpointRepository;
     private final PaymentTypeRepository paymentTypeRepository;
@@ -43,7 +49,6 @@ public class CosmosRepository {
     private final String pspPosteId;
     private final List<String> pspBlacklist;
 
-    @Autowired
     public CosmosRepository(
             CosmosTemplate cosmosTemplate,
             TouchpointRepository touchpointRepository,
@@ -80,7 +85,7 @@ public class CosmosRepository {
      * @param bundle                 a valid bundle to filter
      * @return True if the valid bundle meets the criteria.
      */
-    protected static boolean digitalStampFilter(
+    public static boolean digitalStampFilter(
             long transferListSize, long onlyMarcaBolloDigitale, ValidBundle bundle) {
         boolean digitalStamp =
                 bundle.getDigitalStamp() != null ? bundle.getDigitalStamp() : Boolean.FALSE;
@@ -157,6 +162,173 @@ public class CosmosRepository {
                 && bundle.getCiBundleList() != null
                 && !bundle.getCiBundleList().isEmpty();
     }
+
+    /*
+    public List<ValidBundle> findAllValidBundles() {
+        // Load the full valid bundles dataset to support in-memory filtering.
+        Iterable<ValidBundle> validBundles = cosmosTemplate.findAll(VALID_BUNDLES_CONTAINER, ValidBundle.class);
+        // Materialize the full snapshot as an immutable list for safe in-memory reuse.
+        return StreamSupport.stream(validBundles.spliterator(), false).toList();
+    }*/
+    
+    public List<ValidBundle> findAllValidBundles() {
+        long start = System.currentTimeMillis();
+        long lastProgressLogTime = start;
+        long lastItemTime = start;
+
+        log.info("Starting full validbundles load from Cosmos container '{}'", VALID_BUNDLES_CONTAINER);
+
+        try {
+            long beforeFindAll = System.currentTimeMillis();
+
+            Iterable<ValidBundle> validBundles =
+                    cosmosTemplate.findAll(VALID_BUNDLES_CONTAINER, ValidBundle.class);
+
+            long afterFindAll = System.currentTimeMillis();
+
+            log.info(
+                    "Cosmos findAll() returned Iterable. findAllDurationMs={}, elapsedMs={}",
+                    afterFindAll - beforeFindAll,
+                    afterFindAll - start
+            );
+
+            long beforeIterator = System.currentTimeMillis();
+            Iterator<ValidBundle> iterator = validBundles.iterator();
+            long afterIterator = System.currentTimeMillis();
+
+            log.info(
+                    "Cosmos Iterable iterator created. iteratorCreationDurationMs={}, elapsedMs={}",
+                    afterIterator - beforeIterator,
+                    afterIterator - start
+            );
+
+            List<ValidBundle> result = new ArrayList<>();
+            int count = 0;
+
+            long slowHasNextCount = 0;
+            long slowNextCount = 0;
+            long maxHasNextMs = 0;
+            long maxNextMs = 0;
+            long totalHasNextMs = 0;
+            long totalNextMs = 0;
+
+            while (true) {
+                long beforeHasNext = System.currentTimeMillis();
+                boolean hasNext = iterator.hasNext();
+                long hasNextMs = System.currentTimeMillis() - beforeHasNext;
+
+                totalHasNextMs += hasNextMs;
+                maxHasNextMs = Math.max(maxHasNextMs, hasNextMs);
+
+                if (hasNextMs > 1_000) {
+                    slowHasNextCount++;
+                    log.warn(
+                            "Slow Cosmos iterator.hasNext(). durationMs={}, itemCount={}, elapsedMs={}",
+                            hasNextMs,
+                            count,
+                            System.currentTimeMillis() - start
+                    );
+                }
+
+                if (!hasNext) {
+                    break;
+                }
+
+                long beforeNext = System.currentTimeMillis();
+                ValidBundle bundle = iterator.next();
+                long nextMs = System.currentTimeMillis() - beforeNext;
+
+                totalNextMs += nextMs;
+                maxNextMs = Math.max(maxNextMs, nextMs);
+
+                if (nextMs > 1_000) {
+                    slowNextCount++;
+                    log.warn(
+                            "Slow Cosmos iterator.next(). durationMs={}, itemCount={}, elapsedMs={}",
+                            nextMs,
+                            count,
+                            System.currentTimeMillis() - start
+                    );
+                }
+
+                if (bundle == null) {
+                    log.warn("Null ValidBundle found at itemCount={}", count);
+                } else if (count < 5) {
+                    log.info(
+                            "Sample validbundle loaded. index={}, id={}, idPsp={}, paymentType={}, touchpoint={}, type={}, minAmount={}, maxAmount={}",
+                            count,
+                            bundle.getId(),
+                            bundle.getIdPsp(),
+                            bundle.getPaymentType(),
+                            bundle.getTouchpoint(),
+                            bundle.getType(),
+                            bundle.getMinPaymentAmount(),
+                            bundle.getMaxPaymentAmount()
+                    );
+                }
+
+                result.add(bundle);
+                count++;
+
+                long now = System.currentTimeMillis();
+
+                if (count % 100 == 0) {
+                    log.info(
+                            "Validbundles materialization progress. count={}, elapsedMs={}, last100ElapsedMs={}, avgItemsPerSecond={}",
+                            count,
+                            now - start,
+                            now - lastProgressLogTime,
+                            count * 1000.0 / Math.max(1, now - start)
+                    );
+                    lastProgressLogTime = now;
+                }
+
+                if (now - lastItemTime > 10_000) {
+                    log.warn(
+                            "Long gap during validbundles materialization. count={}, gapMs={}, elapsedMs={}",
+                            count,
+                            now - lastItemTime,
+                            now - start
+                    );
+                }
+
+                lastItemTime = now;
+            }
+
+            long end = System.currentTimeMillis();
+
+            log.info(
+                    "Completed validbundles materialization. totalItems={}, totalTimeMs={}, avgItemsPerSecond={}, maxHasNextMs={}, maxNextMs={}, slowHasNextCount={}, slowNextCount={}, totalHasNextMs={}, totalNextMs={}",
+                    result.size(),
+                    end - start,
+                    result.size() * 1000.0 / Math.max(1, end - start),
+                    maxHasNextMs,
+                    maxNextMs,
+                    slowHasNextCount,
+                    slowNextCount,
+                    totalHasNextMs,
+                    totalNextMs
+            );
+
+            if (result.isEmpty()) {
+                log.error("Validbundles materialization completed with empty result");
+                throw new IllegalStateException("Valid bundles full load returned an empty dataset");
+            }
+
+            return List.copyOf(result);
+
+        } catch (Exception e) {
+            log.error(
+                    "Failed full validbundles load from Cosmos container '{}'. elapsedMs={}",
+                    VALID_BUNDLES_CONTAINER,
+                    System.currentTimeMillis() - start,
+                    e
+            );
+            throw e;
+        }
+    }
+    
+   
 
     @Cacheable(value = "findValidBundles")
     public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption, boolean allCcp) {
@@ -259,7 +431,7 @@ public class CosmosRepository {
         }
 
         // execute the query
-        return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
+        return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, VALID_BUNDLES_CONTAINER);
     }
 
     /**
@@ -345,7 +517,7 @@ public class CosmosRepository {
         queryResult = blackListCriteria(queryResult);
 
         // execute the query
-        return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
+        return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, VALID_BUNDLES_CONTAINER);
     }
 
     /**

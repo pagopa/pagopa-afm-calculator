@@ -10,7 +10,7 @@ import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.*;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.*;
-import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
+//import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import it.gov.pagopa.afm.calculator.util.PaymentMethodComparatorUtil;
 import lombok.AllArgsConstructor;
@@ -30,7 +30,7 @@ import java.util.Map;
 public class PaymentMethodsService {
 
     private final PaymentMethodRepository paymentMethodRepository;
-    private final CosmosRepository cosmosRepository;
+    //private final CosmosRepository cosmosRepository;
     private final CalculatorService calculatorService;
     private final ModelMapper modelMapper;
     
@@ -66,9 +66,8 @@ public class PaymentMethodsService {
 
         List<PaymentMethod> candidates = getPaymentMethodsCandidates(request);
 
-        // Load bundles once without filtering by payment method.
-        // The candidate-specific filtering is applied later in memory.
-        List<ValidBundle> bundlesAllPaymentMethods = cosmosRepository.findByPaymentOption(
+        // Reuse the same in-memory filtering logic already used by fee calculation endpoints.
+        List<ValidBundle> bundlesAllPaymentMethods = calculatorService.getFilteredValidBundlesForPaymentMethods(
                 PaymentOptionMulti.builder()
                         .paymentMethod(null)
                         .touchpoint(request.getUserTouchpoint().name())
