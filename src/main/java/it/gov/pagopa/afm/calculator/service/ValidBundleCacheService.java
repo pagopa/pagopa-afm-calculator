@@ -6,12 +6,15 @@ import it.gov.pagopa.afm.calculator.service.dto.ValidBundleCacheStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -25,25 +28,29 @@ public class ValidBundleCacheService {
     private final AtomicReference<List<ValidBundle>> cacheRef = new AtomicReference<>();
     private final AtomicReference<Instant> lastSuccessfulRefreshRef = new AtomicReference<>();
     private final AtomicReference<Instant> lastFailedRefreshRef = new AtomicReference<>();
+    private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
 
-    @Value("${validbundles.cache.warmup-on-startup:true}")
+    @Value("${validbundles.cache.warmup-on-startup:false}")
     private boolean warmupOnStartup;
 
     // The cache is preloaded on pod startup.
     // Without this warmup, the first user request would incur the latency of a full load from Cosmos.
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void warmup() {
         if (!warmupOnStartup) {
             log.info("Valid bundles cache warmup on startup disabled");
             return;
         }
 
-        try {
-            refreshAndGetAllValidBundles();
-            log.info("Valid bundles cache warmup completed");
-        } catch (Exception e) {
-            log.error("Valid bundles cache warmup failed. First request will retry lazy loading", e);
-        }
+        CompletableFuture.runAsync(() -> {
+            try {
+                log.info("Starting async valid bundles cache warmup after application startup");
+                refreshAndGetAllValidBundles();
+                log.info("Valid bundles cache warmup completed");
+            } catch (Exception e) {
+                log.error("Valid bundles cache warmup failed. First request will retry lazy loading", e);
+            }
+        });
     }
 
    /*
@@ -56,16 +63,18 @@ public class ValidBundleCacheService {
     */
     public List<ValidBundle> getAllValidBundles() {
         List<ValidBundle> cached = cacheRef.get();
-        if (cached != null) {
+        if (cached != null && !cached.isEmpty()) {
             return cached;
         }
 
         synchronized (this) {
             cached = cacheRef.get();
-            if (cached == null) {
+            if (cached == null || cached.isEmpty()) {
+                log.info("Valid bundles cache is empty. Starting lazy load from Cosmos");
                 cached = loadAllValidBundles();
                 cacheRef.set(cached);
                 lastSuccessfulRefreshRef.set(Instant.now());
+                log.info("Valid bundles cache lazy load completed. Size: {}", cached.size());
             }
             return cached;
         }
@@ -80,6 +89,18 @@ public class ValidBundleCacheService {
      * 00:20 scheduled refresh fails due to Cosmos error -> Keep using current bundles.
      */
     public List<ValidBundle> refreshAndGetAllValidBundles() {
+        if (!refreshInProgress.compareAndSet(false, true)) {
+            List<ValidBundle> currentSnapshot = cacheRef.get();
+
+            if (currentSnapshot != null && !currentSnapshot.isEmpty()) {
+                log.warn("Valid bundles cache refresh already in progress. Returning current snapshot with {} bundles",
+                        currentSnapshot.size());
+                return currentSnapshot;
+            }
+
+            log.warn("Valid bundles cache refresh already in progress and no previous snapshot is available");
+        }
+
         synchronized (this) {
             List<ValidBundle> previousSnapshot = cacheRef.get();
 
@@ -106,6 +127,8 @@ public class ValidBundleCacheService {
 
                 log.error("Valid bundles cache refresh failed and no previous snapshot is available", e);
                 throw e;
+            } finally {
+                refreshInProgress.set(false);
             }
         }
     }
@@ -137,7 +160,7 @@ public class ValidBundleCacheService {
         List<ValidBundle> cached = cacheRef.get();
 
         return ValidBundleCacheStatus.builder()
-                .loaded(cached != null)
+                .loaded(cached != null && !cached.isEmpty())
                 .size(cached != null ? cached.size() : 0)
                 .lastSuccessfulRefresh(lastSuccessfulRefreshRef.get())
                 .lastFailedRefresh(lastFailedRefreshRef.get())
@@ -145,14 +168,20 @@ public class ValidBundleCacheService {
     }
 
     private List<ValidBundle> loadAllValidBundles() {
+        long start = System.currentTimeMillis();
+
         List<ValidBundle> bundles = cosmosRepository.findAllValidBundles();
 
         if (bundles == null || bundles.isEmpty()) {
-            log.error("Valid bundles cache reload returned an empty dataset");
+            log.error("Valid bundles cache reload returned an empty dataset after {} ms",
+                    System.currentTimeMillis() - start);
             throw new IllegalStateException("Valid bundles cache reload returned an empty dataset");
         }
 
-        log.info("Loaded {} valid bundles into in-memory cache", bundles.size());
+        log.info("Loaded {} valid bundles into in-memory cache in {} ms",
+                bundles.size(),
+                System.currentTimeMillis() - start);
+
         return List.copyOf(bundles);
     }
 }
