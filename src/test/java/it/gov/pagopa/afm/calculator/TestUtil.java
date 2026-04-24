@@ -966,4 +966,98 @@ public class TestUtil {
 
         return bundles;
     }
+    
+    public static List<ValidBundle> getMockMultiBundlesWithRealOnUsAndOffUs() {
+        List<ValidBundle> bundles = new ArrayList<>();
+
+        ValidBundle onUsBundle = getMockValidBundle();
+        onUsBundle.setId("1");
+        onUsBundle.setName("bundle-onus");
+        onUsBundle.setIdPsp("PSP_ONUS");
+        onUsBundle.setPspBusinessName("PSP ONUS");
+        onUsBundle.setOnUs(true);
+        onUsBundle.setAbi("14156");
+        onUsBundle.setIdChannel("13212880150_01_ONUS");
+        onUsBundle.setPaymentAmount(30L);
+
+        ValidBundle offUsBundle = getMockValidBundle();
+        offUsBundle.setId("2");
+        offUsBundle.setName("bundle-offus");
+        offUsBundle.setIdPsp("PSP_OFFUS");
+        offUsBundle.setPspBusinessName("PSP OFFUS");
+        offUsBundle.setOnUs(false);
+        offUsBundle.setAbi("99991");
+        offUsBundle.setIdChannel("13212880150_02");
+        offUsBundle.setPaymentAmount(30L);
+
+        bundles.add(offUsBundle);
+        bundles.add(onUsBundle);
+
+        return bundles;
+    }
+    
+    public static List<ValidBundle> getMockFeeRandomBundlesSameFeeOffUs() {
+        List<ValidBundle> source = getMockMultipleValidBundlesMultiPsp();
+        List<ValidBundle> bundles = new ArrayList<>();
+
+        ValidBundle b1 = source.get(0); // DEF - GLOBAL - TAX1
+        b1.setPaymentAmount(30L);
+        b1.setOnUs(false);
+        b1.setAbi("99991");
+        b1.setIdChannel("13212880150_01");
+
+        ValidBundle b2 = source.get(1); // GHI - GLOBAL - TAX1
+        b2.setPaymentAmount(30L);
+        b2.setOnUs(false);
+        b2.setAbi("99992");
+        b2.setIdChannel("13212880150_02");
+
+        ValidBundle b3 = source.get(7); // PQR - GLOBAL - TAX1
+        b3.setPaymentAmount(30L);
+        b3.setOnUs(false);
+        b3.setAbi("99993");
+        b3.setIdChannel("13212880160_02");
+
+        bundles.add(b1);
+        bundles.add(b2);
+        bundles.add(b3);
+
+        return bundles;
+    } 
+    
+    public static List<ValidBundle> getMockFeeRandomBundlesSameFeeWithOnUs() {
+        List<ValidBundle> source = getMockMultipleValidBundlesMultiPsp();
+        List<ValidBundle> bundles = new ArrayList<>();
+
+        ValidBundle onUs = source.get(4); // ABC - GLOBAL - TAX1 - onUs=true
+        onUs.setPaymentAmount(30L);
+        onUs.setOnUs(true);
+        onUs.setAbi("14156");
+        onUs.setIdChannel("13212880150_01_ONUS");
+
+        ValidBundle offUs1 = source.get(0); // DEF - GLOBAL - TAX1
+        offUs1.setPaymentAmount(30L);
+        offUs1.setOnUs(false);
+        offUs1.setAbi("99991");
+        offUs1.setIdChannel("13212880150_01");
+
+        ValidBundle offUs2 = source.get(1); // GHI - GLOBAL - TAX1
+        offUs2.setPaymentAmount(30L);
+        offUs2.setOnUs(false);
+        offUs2.setAbi("99992");
+        offUs2.setIdChannel("13212880150_02");
+
+        ValidBundle offUs3 = source.get(7); // PQR - GLOBAL - TAX1
+        offUs3.setPaymentAmount(30L);
+        offUs3.setOnUs(false);
+        offUs3.setAbi("99993");
+        offUs3.setIdChannel("13212880160_02");
+
+        bundles.add(onUs);
+        bundles.add(offUs1);
+        bundles.add(offUs2);
+        bundles.add(offUs3);
+
+        return bundles;
+    }
 }
