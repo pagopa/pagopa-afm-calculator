@@ -30,7 +30,7 @@ public class ValidBundleCacheService {
     private final AtomicReference<Instant> lastFailedRefreshRef = new AtomicReference<>();
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
 
-    @Value("${validbundles.cache.warmup-on-startup:false}")
+    @Value("${validbundles.cache.warmup-on-startup:true}")
     private boolean warmupOnStartup;
 
     // The cache is preloaded on pod startup.
