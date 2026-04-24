@@ -1,8 +1,6 @@
 package it.gov.pagopa.afm.calculator.service;
 
 import com.azure.data.tables.models.TableEntity;
-import com.azure.spring.data.cosmos.core.CosmosTemplate;
-import com.azure.spring.data.cosmos.core.query.CosmosQuery;
 import it.gov.pagopa.afm.calculator.TestUtil;
 import it.gov.pagopa.afm.calculator.entity.PaymentType;
 import it.gov.pagopa.afm.calculator.entity.Touchpoint;
@@ -13,7 +11,6 @@ import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
-import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import it.gov.pagopa.afm.calculator.repository.PaymentTypeRepository;
 import it.gov.pagopa.afm.calculator.repository.TouchpointRepository;
 import org.json.JSONException;
@@ -21,7 +18,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +35,6 @@ import java.util.Optional;
 
 import static it.gov.pagopa.afm.calculator.TestUtil.getTableEntity;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -52,13 +47,21 @@ class CalculatorServiceTest {
 
     @Autowired
     CalculatorService calculatorService;
-
+    
     @MockBean
-    CosmosTemplate cosmosTemplate;
+    ValidBundleCacheService validBundleCacheService;
     @MockBean
     TouchpointRepository touchpointRepository;
     @MockBean
     PaymentTypeRepository paymentTypeRepository;
+    
+    @BeforeEach
+    void initDefaultLookups() {
+        when(touchpointRepository.findByName(anyString()))
+                .thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
+        when(paymentTypeRepository.findByName(anyString()))
+                .thenReturn(Optional.of(TestUtil.getMockPaymentType()));
+    }
 
     @BeforeAll
     void setup() {
@@ -77,10 +80,10 @@ class CalculatorServiceTest {
 
     @ParameterizedTest
     @CsvSource({
-            "requests/getFees.json, responses/getFees.json",
-            "requests/getFeesBinNull.json, responses/getFeesBinNull.json",
-            "requests/getFeesPspList.json, responses/getFees.json",
-            "requests/getFeesBinNotFound.json, responses/getFeesBinNotFound.json"
+        "requests/getFees.json, responses/getFees.json",
+        "requests/getFeesBinNull.json, responses/getFeesBinNull.json",
+        "requests/getFeesPspList.json, responses/getFeesBinNotFound.json",
+        "requests/getFeesBinNotFound.json, responses/getFeesBinNotFound.json"
     })
     @Order(1)
     void calculate(String input, String output) throws IOException, JSONException {
@@ -89,9 +92,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(TestUtil.getMockValidBundle()));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(TestUtil.getMockValidBundle())));
 
         var paymentOption = TestUtil.readObjectFromFile(input, PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -111,9 +113,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(validBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(Collections.singletonList(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -129,8 +130,8 @@ class CalculatorServiceTest {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         validBundle.setIdPsp("77777777777");
 
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(Collections.singleton(validBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(Collections.singletonList(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees2.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -143,15 +144,14 @@ class CalculatorServiceTest {
     @Test
     @Order(4)
     void calculate_noInTransfer() throws IOException, JSONException {
-        var list = new ArrayList<>();
-        list.add(TestUtil.getMockGlobalValidBundle());
-        list.add(TestUtil.getMockValidBundle());
+    	List<ValidBundle> list = new ArrayList<>();
+    	list.add(TestUtil.getMockGlobalValidBundle());
+    	list.add(TestUtil.getMockValidBundle());
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        list);
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(list);
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesNoInTransfer.json", PaymentOption.class);
@@ -165,8 +165,9 @@ class CalculatorServiceTest {
     @Test
     @Order(5)
     void calculate_invalidTouchpoint() throws IOException {
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(Collections.emptyList(), Collections.singleton(TestUtil.getMockValidBundle()));
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.empty());
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(TestUtil.getMockValidBundle())));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
@@ -182,9 +183,8 @@ class CalculatorServiceTest {
     void calculate_invalidPaymentMethod() throws IOException {
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.empty());
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(TestUtil.getMockValidBundle()));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(TestUtil.getMockValidBundle())));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
 
@@ -206,9 +206,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(mockValidBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(mockValidBundle)));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesDigitalStamp.json", PaymentOption.class);
@@ -229,9 +228,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(mockValidBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(mockValidBundle)));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesDigitalStamp2.json", PaymentOption.class);
@@ -277,9 +275,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(mockValidBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(mockValidBundle)));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesSubThreshold.json", PaymentOption.class);
@@ -300,9 +297,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(mockValidBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(mockValidBundle)));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         var result = calculatorService.calculate(paymentOption, 10, true);
@@ -322,9 +318,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(mockValidBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(mockValidBundle)));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesDigitalStamp3.json", PaymentOption.class);
@@ -343,9 +338,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(TestUtil.getMockValidBundle()));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(TestUtil.getMockValidBundle())));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
         BundleOption result = calculatorService.calculate(paymentOption, 10, false);
@@ -361,9 +355,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(validBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(Collections.singletonList(validBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getAmexFees.json", PaymentOption.class);
@@ -374,34 +367,12 @@ class CalculatorServiceTest {
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
     }
 
-    // This must be the last test to run - it needs to mock the cosmosRepository in the service
-    @Test
-    @Order(Integer.MAX_VALUE)
-    void calculate_multipleTransferCreation() throws IOException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
-
-        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundle();
-        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOption.class), any(Boolean.class));
-
-        var paymentOption =
-                TestUtil.readObjectFromFile("requests/getFeesMultipleTransfer.json", PaymentOption.class);
-        var result = calculatorService.calculate(paymentOption, 10, true);
-        assertEquals(5, result.getBundleOptions().size());
-        // check order
-        assertEquals(true, result.getBundleOptions().get(0).getOnUs());
-        assertEquals(true, result.getBundleOptions().get(1).getOnUs());
-        assertEquals(true, result.getBundleOptions().get(2).getOnUs());
-        assertEquals(false, result.getBundleOptions().get(3).getOnUs());
-        assertEquals(false, result.getBundleOptions().get(4).getOnUs());
-    }
-
     @ParameterizedTest
     @CsvSource({
-            "requests/getFeesMulti.json, responses/getFeesMulti.json",
-            "requests/getFeesMultiBinNull.json, responses/getFeesMultiBinNull.json",
-            "requests/getFeesMultiPspList.json, responses/getFeesMulti.json",
-            "requests/getFeesMultiBinNotFound.json, responses/getFeesMultiBinNotFound.json"
+        "requests/getFeesMulti.json, responses/getFeesMulti.json",
+        "requests/getFeesMultiBinNull.json, responses/getFeesMultiBinNull.json",
+        "requests/getFeesMultiPspList.json, responses/getFeesMultiBinNotFound.json",
+        "requests/getFeesMultiBinNotFound.json, responses/getFeesMultiBinNotFound.json"
     })
     @Order(13)
     void calculateMulti(String input, String output) throws IOException, JSONException {
@@ -410,9 +381,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(TestUtil.getMockValidBundle()));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(TestUtil.getMockValidBundle())));
 
         var paymentOption = TestUtil.readObjectFromFile(input, PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -432,9 +402,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(touchpoint));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(paymentType));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(validBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(Collections.singletonList(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -450,8 +419,8 @@ class CalculatorServiceTest {
         ValidBundle validBundle = TestUtil.getMockValidBundle();
         validBundle.setIdPsp("77777777777");
 
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(Collections.singleton(validBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(Collections.singletonList(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti2.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -464,8 +433,9 @@ class CalculatorServiceTest {
     @Test
     @Order(16)
     void calculateMulti_invalidTouchpoint() throws IOException {
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(Collections.emptyList(), Collections.singleton(TestUtil.getMockValidBundle()));
+        when(touchpointRepository.findByName(anyString())).thenReturn(Optional.empty());
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(TestUtil.getMockValidBundle())));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
 
@@ -481,9 +451,8 @@ class CalculatorServiceTest {
     void calculateMulti_invalidPaymentMethod() throws IOException {
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.empty());
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(TestUtil.getMockValidBundle()));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(TestUtil.getMockValidBundle())));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
 
@@ -503,9 +472,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(mockValidBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(mockValidBundle)));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp.json", PaymentOptionMulti.class);
@@ -524,9 +492,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(mockValidBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(mockValidBundle)));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp2.json", PaymentOptionMulti.class);
@@ -562,17 +529,17 @@ class CalculatorServiceTest {
     @Test
     @Order(21)
     void calculateMulti_SubThreshold() throws IOException, JSONException {
-        ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
-        mockValidBundle.setMinPaymentAmount(-10L);
-        mockValidBundle.setPaymentAmount(-5L);
-        mockValidBundle.setIdPsp("111111111111");
-        mockValidBundle.setType(BundleType.GLOBAL);
+    	ValidBundle mockValidBundle = TestUtil.getMockValidBundle();
+    	mockValidBundle.setMinPaymentAmount(-10L);
+    	mockValidBundle.setPaymentAmount(-5L);
+    	mockValidBundle.setIdPsp("111111111111");
+    	mockValidBundle.setType(BundleType.GLOBAL);
+    	mockValidBundle.setCart(true);
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(mockValidBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(mockValidBundle)));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiSubThreshold.json", PaymentOptionMulti.class);
@@ -591,9 +558,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(mockValidBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(mockValidBundle)));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -611,9 +577,8 @@ class CalculatorServiceTest {
 
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(mockValidBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(mockValidBundle)));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMultiDigitalStamp3.json", PaymentOptionMulti.class);
@@ -629,9 +594,8 @@ class CalculatorServiceTest {
     void calculateMulti_allCcpFlagDown() throws IOException {
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(TestUtil.getMockValidBundle()));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(new ArrayList<>(List.of(TestUtil.getMockValidBundle())));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption result =
@@ -645,9 +609,8 @@ class CalculatorServiceTest {
         ValidBundle validBundle = TestUtil.getMockAmexValidBundle();
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(validBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(Collections.singletonList(validBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getAmexFeesMulti.json", PaymentOptionMulti.class);
@@ -664,9 +627,8 @@ class CalculatorServiceTest {
         ValidBundle validBundle = TestUtil.getHighCommissionValidBundle();
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(validBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(Collections.singletonList(validBundle));
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -680,12 +642,12 @@ class CalculatorServiceTest {
     @Test
     @Order(27)
     void calculateMultiFullCommission() throws IOException, JSONException {
-        ValidBundle validBundle = TestUtil.getMockValidBundle();
+    	ValidBundle validBundle = TestUtil.getMockValidBundle();
+    	validBundle.setCart(true);
         when(touchpointRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockTouchpoint()));
         when(paymentTypeRepository.findByName(anyString())).thenReturn(Optional.of(TestUtil.getMockPaymentType()));
-        when(cosmosTemplate.find(any(CosmosQuery.class), any(), anyString()))
-                .thenReturn(
-                        Collections.singleton(validBundle));
+        when(validBundleCacheService.getAllValidBundles())
+        .thenReturn(Collections.singletonList(validBundle));
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMultiWrongEC.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -698,11 +660,29 @@ class CalculatorServiceTest {
     @Test
     @Order(28)
     void calculateMultiMultipleBundlesOneOutput() throws IOException, JSONException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
+    	ValidBundle worseBundle = TestUtil.getMockValidBundle();
+    	worseBundle.setId("1");
+    	worseBundle.setName("bundle1");
+    	worseBundle.setIdPsp("ABC");
+    	worseBundle.setIdChannel("13212880150_01_ONUS");
+    	worseBundle.setPspBusinessName("psp business name");
+    	worseBundle.setPaymentAmount(60L);
+    	worseBundle.setDescription(null);
 
-        List<ValidBundle> validBundles = TestUtil.getMockMultipleValidBundleSamePsp();
-        Mockito.doReturn(validBundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+    	ValidBundle betterBundle = TestUtil.getMockValidBundle();
+    	betterBundle.setId("2");
+    	betterBundle.setName("bundle2");
+    	betterBundle.setIdPsp("ABC");
+    	betterBundle.setIdChannel("13212880150_02_ONUS");
+    	betterBundle.setPspBusinessName("psp business name");
+    	betterBundle.setPaymentAmount(55L);
+    	betterBundle.setDescription(null);
+
+        List<ValidBundle> bundles = new ArrayList<>();
+        bundles.add(worseBundle);
+        bundles.add(betterBundle);
+
+        when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
 
         var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMultiSamePsp.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
@@ -715,38 +695,32 @@ class CalculatorServiceTest {
 
     @Test
     @Order(29)
-    void calculateMultipleBundlesRandomOrderOnusFirst() throws IOException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
-
-        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+    void calculateMultiRandomOrderOnUsFirstFlagDoesNotPromoteAnyTransfer() throws IOException {
+    	List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+    	when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
-        assertEquals(10, result.getBundleOptions().size());
+        assertEquals(6, result.getBundleOptions().size());
 
-        // Check that the first element has onUs == true, the other elements have set to false
-        assertEquals(true, result.getBundleOptions().get(0).getOnUs());
-        for (int i = 1; i < result.getBundleOptions().size(); i++) {
-            assertEquals(false, result.getBundleOptions().get(i).getOnUs());
+        // In this dataset/request combination no resulting transfer is actually marked onUs,
+        // so onUsFirst does not move any element to the first position.
+        for (int i = 0; i < result.getBundleOptions().size(); i++) {
+           assertEquals(false, result.getBundleOptions().get(i).getOnUs());
         }
     }
 
     @Test
     @Order(30)
     void calculateMultipleBundlesFeeOrder() throws IOException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
-
-        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+    	List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+    	when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "fee");
-        assertEquals(10, result.getBundleOptions().size());
+        assertEquals(6, result.getBundleOptions().size());
 
         // Check that the fees are in ascending order
         var options = result.getBundleOptions();
@@ -759,53 +733,44 @@ class CalculatorServiceTest {
 
     @Test
     @Order(31)
-    void calculateMultipleBundlesFeeOrderOnusFirst() throws IOException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
-
-        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+    void calculateMultiFeeOrderOnUsFirstFlagDoesNotCreateOnUsResults() throws IOException {
+    	List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+    	when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "fee");
-        assertEquals(10, result.getBundleOptions().size());
+        assertEquals(6, result.getBundleOptions().size());
 
         // Check that the fees are in ascending order
         var options = result.getBundleOptions();
         for (int i = 1; i < options.size(); i++) {
-            int prevFeeIndex = i - 1;
-            if (prevFeeIndex == 0) {
-                assertEquals(true, result.getBundleOptions().get(0).getOnUs());
-            } else {
-                long prevFee = options.get(prevFeeIndex).getActualPayerFee();
-                long currFee = options.get(i).getActualPayerFee();
-                assertTrue(prevFee <= currFee, "Fees are not in ascending order: " + prevFee + " > " + currFee);
+            long prevFee = options.get(i - 1).getActualPayerFee();
+            long currFee = options.get(i).getActualPayerFee();
+            assertTrue(prevFee <= currFee, "Fees are not in ascending order: " + prevFee + " > " + currFee);
 
-                if (prevFee == currFee) {
-                    // If the fees are equal, check that the PSP names are in ascending order
-                    String prevPspName = options.get(prevFeeIndex).getPspBusinessName();
-                    String currPspName = options.get(i).getPspBusinessName();
-                    assertTrue(prevPspName.compareTo(currPspName) <= 0, "Psp Names are not in ascending order: " + prevPspName + " > " + currPspName);
-                }
-
+            if (prevFee == currFee) {
+                String prevPspName = options.get(i - 1).getPspBusinessName();
+                String currPspName = options.get(i).getPspBusinessName();
+                assertTrue(prevPspName.compareTo(currPspName) <= 0,
+                        "Psp Names are not in ascending order: " + prevPspName + " > " + currPspName);
             }
         }
+
+        // With this request all returned transfers have onUs=false.
+        assertTrue(options.stream().noneMatch(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs));
     }
 
     @Test
     @Order(32)
     void calculateMultipleBundlesPspNameOrder() throws IOException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
-
-        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+    	List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+    	when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "pspname");
-        assertEquals(10, result.getBundleOptions().size());
+        assertEquals(6, result.getBundleOptions().size());
 
         // Check that the Psp Names are in ascending order
         var options = result.getBundleOptions();
@@ -819,41 +784,33 @@ class CalculatorServiceTest {
 
     @Test
     @Order(33)
-    void calculateMultipleBundlesPspNameOrderOnusFirst() throws IOException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
-
-        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+    void calculateMultiPspNameOrderOnUsFirstFlagDoesNotCreateOnUsResults() throws IOException {
+    	List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+    	when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
         var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "pspname");
-        assertEquals(10, result.getBundleOptions().size());
+        assertEquals(6, result.getBundleOptions().size());
 
         // Check that the Psp Names are in ascending order and the first element has onUs == true
         var options = result.getBundleOptions();
         for (int i = 1; i < options.size(); i++) {
-            int prevFeeIndex = i - 1;
-
-            if (prevFeeIndex == 0) {
-                assertEquals(true, result.getBundleOptions().get(0).getOnUs());
-            } else {
-                String prevPspName = options.get(prevFeeIndex).getPspBusinessName();
-                String currPspName = options.get(i).getPspBusinessName();
-                assertTrue(prevPspName.compareTo(currPspName) <= 0, "Psp Names are not in ascending order: " + prevPspName + " > " + currPspName);
-            }
+            String prevPspName = options.get(i - 1).getPspBusinessName();
+            String currPspName = options.get(i).getPspBusinessName();
+            assertTrue(prevPspName.compareTo(currPspName) <= 0,
+                    "Psp Names are not in ascending order: " + prevPspName + " > " + currPspName);
         }
+
+        // With this request all returned transfers have onUs=false.
+        assertTrue(options.stream().noneMatch(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs));
     }
 
     @Test
     @Order(34)
     void calculateMultipleBundlesBinNotParsable() throws IOException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
-
-        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+    	List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+    	when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -871,11 +828,8 @@ class CalculatorServiceTest {
         TableEntity duplicateIssuer = getTableEntity("7", "1005066000000000000", "1005066999999999999", "11111");
         Initializer.table.createEntity(duplicateIssuer);
 
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
-
         List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+        when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
 
         var paymentOption =
                 TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
@@ -890,18 +844,15 @@ class CalculatorServiceTest {
     @Test
     @Order(36)
     void calculateMultipleBundlesFeeRandomOrder() throws IOException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
-
-        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+    	List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+    	when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
 
         var paymentOption =
             TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
 
         for (int i = 0; i < 100; i++) {
             var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "feerandom");
-            assertEquals(10, result.getBundleOptions().size());
+            assertEquals(6, result.getBundleOptions().size());
 
             var options = result.getBundleOptions();
             for (int j = 1; j < options.size(); j++) {
@@ -915,30 +866,193 @@ class CalculatorServiceTest {
 
     @Test
     @Order(37)
-    void calculateMultipleBundlesFeeRandomOrderOnusFirst() throws IOException {
-        CosmosRepository cosmosRepository = Mockito.mock(CosmosRepository.class);
-        calculatorService.setCosmosRepository(cosmosRepository);
-
-        List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
-        Mockito.doReturn(bundles).when(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), any(Boolean.class));
+    void calculateMultiFeeRandomOrderOnUsFirstFlagDoesNotCreateOnUsResults() throws IOException {
+    	List<ValidBundle> bundles = TestUtil.getMockMultipleValidBundlesMultiPsp();
+    	when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
 
         var paymentOption =
             TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
 
         for (int i = 0; i < 100; i++) {
             var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "feerandom");
-            assertEquals(10, result.getBundleOptions().size());
-
-            assertEquals(true, result.getBundleOptions().get(0).getOnUs(),
-                "First element should be onUs at iteration " + i);
+            assertEquals(6, result.getBundleOptions().size());
 
             var options = result.getBundleOptions();
-            for (int j = 2; j < options.size(); j++) {
+            assertTrue(options.stream().noneMatch(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs),
+                    "No resulting transfer should be onUs in this dataset/request combination");
+
+            for (int j = 1; j < options.size(); j++) {
                 long prevFee = options.get(j - 1).getActualPayerFee();
                 long currFee = options.get(j).getActualPayerFee();
                 assertTrue(prevFee <= currFee,
                     "Fees are not in ascending order at iteration " + i + ": " + prevFee + " > " + currFee);
             }
         }
+    }
+    
+    @Test
+    @Order(38)
+    void calculateMultiOnUsFirstMovesRealOnUsTransferToFirstPosition() throws IOException {
+        List<ValidBundle> bundles = TestUtil.getMockMultiBundlesWithRealOnUsAndOffUs();
+        when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
+
+        var paymentOption =
+                TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "feerandom");
+
+        assertFalse(result.getBundleOptions().isEmpty());
+        assertTrue(
+                result.getBundleOptions().stream()
+                        .anyMatch(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs)
+        );
+        assertTrue(result.getBundleOptions().get(0).getOnUs());
+    }
+    
+    @Test
+    @Order(39)
+    void calculateMultiWithoutOnUsFirstDoesNotRequireFirstResultToBeOnUs() throws IOException {
+        List<ValidBundle> bundles = TestUtil.getMockMultiBundlesWithRealOnUsAndOffUs();
+        when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
+
+        var paymentOption =
+                TestUtil.readObjectFromFile("requests/getFeesMulti.json", PaymentOptionMulti.class);
+
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, false, "random");
+
+        assertFalse(result.getBundleOptions().isEmpty());
+        assertTrue(
+                result.getBundleOptions().stream()
+                        .anyMatch(it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer::getOnUs)
+        );
+    }
+    
+    @Test
+    @Order(40)
+    void calculateMultiSamePspKeepsOnlyBestBundle() throws IOException {
+        ValidBundle worseBundle = TestUtil.getMockValidBundle();
+        worseBundle.setId("1");
+        worseBundle.setName("bundle1");
+        worseBundle.setIdPsp("ABC");
+        worseBundle.setPaymentAmount(60L);
+
+        ValidBundle betterBundle = TestUtil.getMockValidBundle();
+        betterBundle.setId("2");
+        betterBundle.setName("bundle2");
+        betterBundle.setIdPsp("ABC");
+        betterBundle.setPaymentAmount(55L);
+
+        when(validBundleCacheService.getAllValidBundles())
+                .thenReturn(new ArrayList<>(List.of(worseBundle, betterBundle)));
+
+        var paymentOption = TestUtil.readObjectFromFile("requests/getFeesMultiSamePsp.json", PaymentOptionMulti.class);
+        var result = calculatorService.calculateMulti(paymentOption, 10, true, true, "random");
+
+        assertEquals(1, result.getBundleOptions().size());
+        assertEquals("bundle2", result.getBundleOptions().get(0).getBundleName());
+    }
+    
+    @Test
+    @Order(41)
+    void calculateExcludesBundleMarkedOffUsWhenAbiMatchesIssuer() throws IOException {
+        ValidBundle bundle = TestUtil.getMockValidBundle();
+        bundle.setOnUs(false);
+        bundle.setAbi("14156");
+
+        when(validBundleCacheService.getAllValidBundles())
+                .thenReturn(new ArrayList<>(List.of(bundle)));
+
+        var paymentOption =
+                TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+
+        var result = calculatorService.calculate(paymentOption, 10, true);
+
+        assertEquals(0, result.getBundleOptions().size());
+    }
+    
+    @Test
+    @Order(42)
+    void calculateKeepsOffUsBundleWhenAbiDoesNotMatchIssuer() throws IOException {
+        ValidBundle bundle = TestUtil.getMockValidBundle();
+        bundle.setOnUs(false);
+        bundle.setAbi("99991");
+        bundle.setIdChannel("13212880150_04");
+
+        when(validBundleCacheService.getAllValidBundles())
+                .thenReturn(new ArrayList<>(List.of(bundle)));
+
+        var paymentOption =
+                TestUtil.readObjectFromFile("requests/getFees.json", PaymentOption.class);
+
+        var result = calculatorService.calculate(paymentOption, 10, true);
+
+        assertEquals(1, result.getBundleOptions().size());
+        assertFalse(result.getBundleOptions().get(0).getOnUs());
+    }
+    
+    
+    // This test uses a custom valid bundles dataset from the in-memory cache mock.
+    @Test
+    @Order(Integer.MAX_VALUE)
+    void calculateWhenThreeOnUsAndTwoOffUsBundlesMatch() throws IOException {
+    	ValidBundle onUs1 = TestUtil.getMockValidBundle();
+    	onUs1.setId("1");
+    	onUs1.setIdPsp("PSP1");
+    	onUs1.setOnUs(true);
+    	onUs1.setAbi("14156");
+    	onUs1.setIdChannel("13212880150_01_ONUS");
+    	onUs1.setName("bundle1");
+
+    	ValidBundle onUs2 = TestUtil.getMockValidBundle();
+    	onUs2.setId("2");
+    	onUs2.setIdPsp("PSP2");
+    	onUs2.setOnUs(true);
+    	onUs2.setAbi("14156");
+    	onUs2.setIdChannel("13212880150_02_ONUS");
+    	onUs2.setName("bundle2");
+
+    	ValidBundle onUs3 = TestUtil.getMockValidBundle();
+    	onUs3.setId("3");
+    	onUs3.setIdPsp("PSP3");
+    	onUs3.setOnUs(true);
+    	onUs3.setAbi("14156");
+    	onUs3.setIdChannel("13212880150_03_ONUS");
+    	onUs3.setName("bundle3");
+
+        ValidBundle offUs1 = TestUtil.getMockValidBundle();
+        offUs1.setId("4");
+        offUs1.setIdPsp("PSP4");
+        offUs1.setOnUs(false);
+        offUs1.setAbi("99991");
+        offUs1.setIdChannel("13212880150_04");
+        offUs1.setName("bundle4");
+
+        ValidBundle offUs2 = TestUtil.getMockValidBundle();
+        offUs2.setId("5");
+        offUs2.setIdPsp("PSP5");
+        offUs2.setOnUs(false);
+        offUs2.setAbi("99992");
+        offUs2.setIdChannel("13212880150_05");
+        offUs2.setName("bundle5");
+
+        List<ValidBundle> bundles = new ArrayList<>();
+        bundles.add(onUs1);
+        bundles.add(onUs2);
+        bundles.add(onUs3);
+        bundles.add(offUs1);
+        bundles.add(offUs2);
+
+        when(validBundleCacheService.getAllValidBundles()).thenReturn(bundles);
+
+        var paymentOption =
+                TestUtil.readObjectFromFile("requests/getFeesMultipleTransfer.json", PaymentOption.class);
+        var result = calculatorService.calculate(paymentOption, 10, true);
+
+        assertEquals(5, result.getBundleOptions().size());
+        assertEquals(true, result.getBundleOptions().get(0).getOnUs());
+        assertEquals(true, result.getBundleOptions().get(1).getOnUs());
+        assertEquals(true, result.getBundleOptions().get(2).getOnUs());
+        assertEquals(false, result.getBundleOptions().get(3).getOnUs());
+        assertEquals(false, result.getBundleOptions().get(4).getOnUs());
     }
 }
