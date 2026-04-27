@@ -218,7 +218,7 @@ public class CalculatorService {
             List<ValidBundle> filteredBundles,
             @Valid PaymentOptionMulti paymentOption
     ) {
-        Map<String, it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> pspTransfersMap = new HashMap<>();
+        Map<String, FeeRangeCandidate> bestByPsp = new HashMap<>();
 
         List<IssuerRangeEntity> issuers =
                 checkValidityBin(paymentOption.getBin())
@@ -232,29 +232,38 @@ public class CalculatorService {
         for (ValidBundle bundle : filteredBundles) {
             boolean isOnusPaymentType = isOnusPayment(issuers, bundle);
 
-            if (isOnusPaymentType && isOnusBundle(bundle)) {
-                addToPspTransfersMap(pspTransfersMap, this.getTransferList(paymentOption, bundle));
+            if (isOnusPaymentType && !isOnusBundle(bundle)) {
+                continue;
             }
 
-            if (!isOnusPaymentType && !isOnusBundle(bundle)) {
-                addToPspTransfersMap(pspTransfersMap, this.getTransferList(paymentOption, bundle));
+            if (!isOnusPaymentType && isOnusBundle(bundle)) {
+                continue;
             }
-        }
 
-        Collection<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers = pspTransfersMap.values();
+            FeeRangeCandidate candidate = buildFeeRangeCandidate(paymentOption, bundle);
 
-        if (this.isAMEXAbi(issuers)) {
-            transfers = transfers.stream()
-                    .filter(t -> amexABI.equalsIgnoreCase(t.getAbi()))
-                    .filter(t -> Boolean.TRUE.equals(t.getOnUs()))
-                    .toList();
+            if (candidate == null) {
+                continue;
+            }
+
+            if (isAMEXAbi(issuers)
+                    && (!amexABI.equalsIgnoreCase(candidate.abi())
+                    || !Boolean.TRUE.equals(candidate.onUs()))) {
+                continue;
+            }
+
+            FeeRangeCandidate previous = bestByPsp.get(candidate.idPsp());
+
+            if (previous == null || previous.actualPayerFee() > candidate.actualPayerFee()) {
+                bestByPsp.put(candidate.idPsp(), candidate);
+            }
         }
 
         Long minFee = null;
         Long maxFee = null;
 
-        for (it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer transfer : transfers) {
-            Long fee = transfer.getTaxPayerFee();
+        for (FeeRangeCandidate candidate : bestByPsp.values()) {
+            Long fee = candidate.taxPayerFee();
 
             if (fee == null) {
                 continue;
@@ -770,6 +779,7 @@ public class CalculatorService {
         
         String resolvedTouchpoint = resolveTouchpointName(paymentOption.getTouchpoint());
         String resolvedPaymentMethod = resolvePaymentTypeName(paymentOption.getPaymentMethod());
+        List<String> transferCategories = utilityComponent.getTransferCategoryList(paymentOption);
 
         // Apply all repository-level and post-query filters in memory on top of the cached snapshot.
         return cachedBundles.stream()
@@ -777,7 +787,7 @@ public class CalculatorService {
                 .filter(bundle -> matchesTouchpoint(bundle.getTouchpoint(), resolvedTouchpoint))
                 .filter(bundle -> matchesPaymentType(bundle.getPaymentType(), resolvedPaymentMethod))
                 .filter(bundle -> matchesPspList(bundle, paymentOption.getIdPspList()))
-                .filter(bundle -> matchesTransferCategories(bundle, utilityComponent.getTransferCategoryList(paymentOption)))
+                .filter(bundle -> matchesTransferCategories(bundle, transferCategories))
                 .filter(bundle -> matchesAllCcp(bundle, allCcp))
                 .filter(bundle -> matchesPspBlacklist(bundle))
                 .filter(bundle -> CosmosRepository.digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
@@ -804,13 +814,14 @@ public class CalculatorService {
         
         String resolvedTouchpoint = resolveTouchpointName(paymentOption.getTouchpoint());
         String resolvedPaymentMethod = resolvePaymentTypeName(paymentOption.getPaymentMethod());
+        List<String> transferCategories = utilityComponent.getTransferCategoryList(paymentOption);
 
         return cachedBundles.stream()
                 .filter(bundle -> matchesPaymentAmount(bundle, paymentOption.getPaymentAmount()))
                 .filter(bundle -> matchesTouchpoint(bundle.getTouchpoint(), resolvedTouchpoint))
                 .filter(bundle -> matchesPaymentType(bundle.getPaymentType(), resolvedPaymentMethod))
                 .filter(bundle -> matchesPspList(bundle, paymentOption.getIdPspList()))
-                .filter(bundle -> matchesTransferCategories(bundle, utilityComponent.getTransferCategoryList(paymentOption)))
+                .filter(bundle -> matchesTransferCategories(bundle, transferCategories))
                 .filter(bundle -> matchesAllCcp(bundle, allCcp))
                 .filter(bundle -> matchesPspBlacklist(bundle))
                 .filter(bundle -> matchesCart(bundle, paymentOption))
@@ -977,6 +988,93 @@ public class CalculatorService {
 
     private boolean belongsCIInMemory(ValidBundle bundle) {
         return bundle.getCiBundleList() != null && !bundle.getCiBundleList().isEmpty();
+    }
+    
+    private FeeRangeCandidate buildFeeRangeCandidate(PaymentOptionMulti paymentOption, ValidBundle bundle) {
+        Long actualPayerFee = calculateBestActualPayerFeeWithoutCartesianProduct(paymentOption, bundle);
+
+        if (actualPayerFee == null) {
+            return null;
+        }
+
+        return new FeeRangeCandidate(
+                bundle.getIdPsp(),
+                bundle.getPaymentAmount(),
+                actualPayerFee,
+                getOnUsValue(bundle, paymentOption),
+                bundle.getAbi()
+        );
+    }
+    
+    private Long calculateBestActualPayerFeeWithoutCartesianProduct(
+            PaymentOptionMulti paymentOption,
+            ValidBundle bundle
+    ) {
+        if (bundle.getCiBundleList() == null || bundle.getCiBundleList().isEmpty()) {
+            return bundle.getPaymentAmount();
+        }
+
+        long totalBestCiIncurredFee = 0;
+
+        for (PaymentNoticeItem paymentNoticeItem : paymentOption.getPaymentNotice()) {
+            Long bestCiFee = findBestCiIncurredFee(paymentNoticeItem, bundle);
+
+            if (bestCiFee == null) {
+                return bundle.getPaymentAmount();
+            }
+
+            totalBestCiIncurredFee += bestCiFee;
+        }
+
+        return Math.max(0, bundle.getPaymentAmount() - totalBestCiIncurredFee);
+    }
+    
+    private Long findBestCiIncurredFee(PaymentNoticeItem paymentNoticeItem, ValidBundle bundle) {
+        List<String> primaryTransferCategoryList =
+                utilityComponent.getPrimaryTransferCategoryListMulti(
+                        paymentNoticeItem,
+                        paymentNoticeItem.getPrimaryCreditorInstitution()
+                );
+
+        Long bestFee = null;
+
+        for (CiBundle ciBundle : bundle.getCiBundleList()) {
+            if (!paymentNoticeItem.getPrimaryCreditorInstitution().equals(ciBundle.getCiFiscalCode())) {
+                continue;
+            }
+
+            if (ciBundle.getAttributes() == null || ciBundle.getAttributes().isEmpty()) {
+                continue;
+            }
+
+            for (var attribute : ciBundle.getAttributes()) {
+                boolean matches =
+                        attribute.getTransferCategory() == null
+                                || (TransferCategoryRelation.EQUAL.equals(attribute.getTransferCategoryRelation())
+                                && primaryTransferCategoryList.contains(attribute.getTransferCategory()))
+                                || (TransferCategoryRelation.NOT_EQUAL.equals(attribute.getTransferCategoryRelation())
+                                && !primaryTransferCategoryList.contains(attribute.getTransferCategory()));
+
+                if (matches) {
+                    long fee = attribute.getMaxPaymentAmount();
+
+                    if (bestFee == null || fee > bestFee) {
+                        bestFee = fee;
+                    }
+                }
+            }
+        }
+
+        return bestFee;
+    }
+    
+    private record FeeRangeCandidate(
+            String idPsp,
+            Long taxPayerFee,
+            Long actualPayerFee,
+            Boolean onUs,
+            String abi
+    ) {
     }
 
 

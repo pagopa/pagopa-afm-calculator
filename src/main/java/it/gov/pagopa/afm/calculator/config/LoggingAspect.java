@@ -110,6 +110,13 @@ public class LoggingAspect {
             return null;
         }
 
+        if (value instanceof ResponseEntity<?> responseEntity) {
+            Object body = responseEntity.getBody();
+            return "ResponseEntity(status=" + responseEntity.getStatusCodeValue()
+                    + ", bodyType=" + (body != null ? body.getClass().getSimpleName() : "null")
+                    + ")";
+        }
+
         if (value instanceof Collection<?> collection) {
             return value.getClass().getSimpleName() + "(size=" + collection.size() + ")";
         }
@@ -122,7 +129,7 @@ public class LoggingAspect {
             return value.getClass().getComponentType().getSimpleName() + "[]";
         }
 
-        return value;
+        return value.getClass().getSimpleName();
     }
 
     private static String toSafeJsonString(Object value) {
@@ -195,15 +202,19 @@ public class LoggingAspect {
         MDC.put(STATUS, "KO");
         MDC.put(CODE, String.valueOf(result.getStatusCodeValue()));
         MDC.put(RESPONSE_TIME, getExecutionTime());
-        MDC.put(RESPONSE, toJsonString(result));
+        MDC.put(RESPONSE, toSafeJsonString(result));
         MDC.put(FAULT_CODE, getTitle(result));
         MDC.put(FAULT_DETAIL, getDetail(result));
-        log.info("Failed API operation {} - error: {}", MDC.get(METHOD), result);
+        log.info("Failed API operation {} - error: {}", MDC.get(METHOD), toSafeLogValue(result));
         MDC.clear();
     }
 
     @Around(value = "repository() || service() || client()")
     public Object logTrace(ProceedingJoinPoint joinPoint) throws Throwable {
+        if (!log.isDebugEnabled()) {
+            return joinPoint.proceed();
+        }
+
         String params = getParams(joinPoint);
         log.debug("Call method {} - args: {}", joinPoint.getSignature().toShortString(), params);
 
