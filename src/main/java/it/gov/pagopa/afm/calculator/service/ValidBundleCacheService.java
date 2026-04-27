@@ -89,17 +89,25 @@ public class ValidBundleCacheService {
      * 00:20 scheduled refresh fails due to Cosmos error -> Keep using current bundles.
      */
     public List<ValidBundle> refreshAndGetAllValidBundles() {
-        if (!refreshInProgress.compareAndSet(false, true)) {
-            List<ValidBundle> currentSnapshot = cacheRef.get();
+    	if (!refreshInProgress.compareAndSet(false, true)) {
+    	    List<ValidBundle> currentSnapshot = cacheRef.get();
 
-            if (currentSnapshot != null && !currentSnapshot.isEmpty()) {
-                log.warn("Valid bundles cache refresh already in progress. Returning current snapshot with {} bundles",
-                        currentSnapshot.size());
-                return currentSnapshot;
-            }
+    	    if (currentSnapshot != null && !currentSnapshot.isEmpty()) {
+    	        log.warn("Valid bundles cache refresh already in progress. Returning current snapshot with {} bundles",
+    	                currentSnapshot.size());
+    	        return currentSnapshot;
+    	    }
 
-            log.warn("Valid bundles cache refresh already in progress and no previous snapshot is available");
-        }
+    	    log.warn("Valid bundles cache refresh already in progress and no previous snapshot is available. Waiting for current refresh");
+    	    synchronized (this) {
+    	        currentSnapshot = cacheRef.get();
+    	        if (currentSnapshot != null && !currentSnapshot.isEmpty()) {
+    	            return currentSnapshot;
+    	        }
+    	    }
+
+    	    throw new IllegalStateException("Valid bundles cache refresh already in progress and no snapshot is available");
+    	}
 
         synchronized (this) {
             List<ValidBundle> previousSnapshot = cacheRef.get();

@@ -137,7 +137,7 @@ public class PaymentMethodsService {
                             .idPspList(null)
                             .paymentNotice(paymentNoticeItems)
                             .build(),
-                    Integer.MAX_VALUE, false, "fee");
+                    candidateBundles.size(), false, "fee");
 
             FeeRange feeRange = null;
             if (bundles == null || bundles.getBundleOptions() == null || bundles.getBundleOptions().isEmpty()) {
