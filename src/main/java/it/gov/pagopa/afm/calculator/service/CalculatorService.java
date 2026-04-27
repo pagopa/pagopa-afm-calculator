@@ -12,6 +12,7 @@ import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Fee;
+import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import it.gov.pagopa.afm.calculator.repository.PaymentTypeRepository;
 import it.gov.pagopa.afm.calculator.repository.TouchpointRepository;
@@ -211,6 +212,71 @@ public class CalculatorService {
           .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
           .bundleOptions(calculateTaxPayerFeeMulti(paymentOption, limit, filteredBundles, orderType, onUsFirst))
           .build();
+    }
+    
+    public FeeRange calculateFeeRangeForPaymentMethods(
+            List<ValidBundle> filteredBundles,
+            @Valid PaymentOptionMulti paymentOption
+    ) {
+        Map<String, it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> pspTransfersMap = new HashMap<>();
+
+        List<IssuerRangeEntity> issuers =
+                checkValidityBin(paymentOption.getBin())
+                        ? getIssuersByBIN(paymentOption.getBin())
+                        : new ArrayList<>();
+
+        if (isUniqueAbi(issuers)) {
+            issuers.clear();
+        }
+
+        for (ValidBundle bundle : filteredBundles) {
+            boolean isOnusPaymentType = isOnusPayment(issuers, bundle);
+
+            if (isOnusPaymentType && isOnusBundle(bundle)) {
+                addToPspTransfersMap(pspTransfersMap, this.getTransferList(paymentOption, bundle));
+            }
+
+            if (!isOnusPaymentType && !isOnusBundle(bundle)) {
+                addToPspTransfersMap(pspTransfersMap, this.getTransferList(paymentOption, bundle));
+            }
+        }
+
+        Collection<it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer> transfers = pspTransfersMap.values();
+
+        if (this.isAMEXAbi(issuers)) {
+            transfers = transfers.stream()
+                    .filter(t -> amexABI.equalsIgnoreCase(t.getAbi()))
+                    .filter(t -> Boolean.TRUE.equals(t.getOnUs()))
+                    .toList();
+        }
+
+        Long minFee = null;
+        Long maxFee = null;
+
+        for (it.gov.pagopa.afm.calculator.model.calculatormulti.Transfer transfer : transfers) {
+            Long fee = transfer.getTaxPayerFee();
+
+            if (fee == null) {
+                continue;
+            }
+
+            if (minFee == null || fee < minFee) {
+                minFee = fee;
+            }
+
+            if (maxFee == null || fee > maxFee) {
+                maxFee = fee;
+            }
+        }
+
+        if (minFee == null || maxFee == null) {
+            return null;
+        }
+
+        return FeeRange.builder()
+                .min(minFee)
+                .max(maxFee)
+                .build();
     }
     
     private List<Transfer> calculateTaxPayerFee(

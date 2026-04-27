@@ -129,27 +129,18 @@ public class PaymentMethodsService {
             	continue;
             }
 
-            BundleOption bundles = calculatorService.calculateForPaymentMethods(
+            FeeRange feeRange = calculatorService.calculateFeeRangeForPaymentMethods(
                     candidateBundles,
                     PaymentOptionMulti.builder()
                             .paymentMethod(candidate.getGroup())
                             .touchpoint(request.getUserTouchpoint().name())
                             .idPspList(null)
                             .paymentNotice(paymentNoticeItems)
-                            .build(),
-                    candidateBundles.size(), false, "fee");
+                            .build()
+            );
 
-            FeeRange feeRange = null;
-            if (bundles == null || bundles.getBundleOptions() == null || bundles.getBundleOptions().isEmpty()) {
+            if (feeRange == null) {
                 filterReason = Pair.of(PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE, PaymentMethodStatus.DISABLED);
-            } else {
-                int last = bundles.getBundleOptions().size() - 1;
-                Long minFee = bundles.getBundleOptions().get(0).getTaxPayerFee();
-                Long maxFee = bundles.getBundleOptions().get(last).getTaxPayerFee();
-                feeRange = FeeRange.builder()
-                        .min(minFee)
-                        .max(maxFee)
-                        .build();
             }
 
             PaymentMethodsItem item = PaymentMethodsItem.builder()
@@ -274,5 +265,4 @@ public class PaymentMethodsService {
 
     	return resolvedBundles;
     }
-    
 }
