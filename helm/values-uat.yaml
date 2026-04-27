@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.13.1-9-PIDM-1391-refactor-search-pm"
+    tag: "2.13.1-10-PIDM-1391-refactor-search-pm"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -88,9 +88,9 @@ microservice-chart:
     ENV: 'uat'
     APP_LOGGING_LEVEL: 'INFO'
     JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp"
-    SERVER_TOMCAT_THREADS_MAX: '40'
-    SERVER_TOMCAT_THREADS_MIN_SPARE: '5'
-    SERVER_TOMCAT_ACCEPT_COUNT: '50'
+    SERVER_TOMCAT_THREADS_MAX: '20'
+    SERVER_TOMCAT_THREADS_MIN_SPARE: '4'
+    SERVER_TOMCAT_ACCEPT_COUNT: '20'
     CACHE_DEFAULT_SIZE: '1000'
     CACHE_DEFAULT_EVICT_SECONDS: '180'
     CACHE_ISSUER_RANGE_TABLE_EVICT_SECONDS: '43200'
