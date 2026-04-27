@@ -84,13 +84,13 @@ class PaymentMethodsServiceTest {
         when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(List.of(bundleForPaymentType("PPAL")));
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(
-                                Transfer.builder().taxPayerFee(10L).build()
-                        ))
-                        .build());
+        when(calculatorService.calculateFeeRangeForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class)
+        )).thenReturn(FeeRange.builder()
+                .min(10L)
+                .max(10L)
+                .build());
 
         PaymentMethodRequest paymentMethodRequest =
                 TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
@@ -122,13 +122,13 @@ class PaymentMethodsServiceTest {
         when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(List.of(bundleForPaymentType("PPAL")));
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(
-                                Transfer.builder().taxPayerFee(10L).build()
-                        ))
-                        .build());
+        when(calculatorService.calculateFeeRangeForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class)
+        )).thenReturn(FeeRange.builder()
+                .min(10L)
+                .max(10L)
+                .build());
 
         PaymentMethodRequest paymentMethodRequest =
                 TestUtil.readObjectFromFile("requests/paymentOptionsSearchNoUserDevice.json", PaymentMethodRequest.class);
@@ -354,11 +354,13 @@ class PaymentMethodsServiceTest {
         when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(allBundlesForSorting());
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().taxPayerFee(10L).build()))
-                        .build());
+        when(calculatorService.calculateFeeRangeForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class)
+        )).thenReturn(FeeRange.builder()
+                .min(10L)
+                .max(10L)
+                .build());
 
         PaymentMethodRequest paymentMethodRequest =
                 TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
@@ -384,11 +386,13 @@ class PaymentMethodsServiceTest {
         when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(allBundlesForSorting());
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().taxPayerFee(10L).build()))
-                        .build());
+        when(calculatorService.calculateFeeRangeForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class)
+        )).thenReturn(FeeRange.builder()
+                .min(10L)
+                .max(10L)
+                .build());
 
         PaymentMethodRequest paymentMethodRequest =
                 TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
@@ -416,11 +420,13 @@ class PaymentMethodsServiceTest {
         when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(allBundlesForSorting());
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().taxPayerFee(10L).build()))
-                        .build());
+        when(calculatorService.calculateFeeRangeForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class)
+        )).thenReturn(FeeRange.builder()
+                .min(10L)
+                .max(10L)
+                .build());
 
         PaymentMethodRequest paymentMethodRequest =
                 TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
@@ -448,11 +454,13 @@ class PaymentMethodsServiceTest {
         when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(allBundlesForSorting());
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().taxPayerFee(10L).build()))
-                        .build());
+        when(calculatorService.calculateFeeRangeForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class)
+        )).thenReturn(FeeRange.builder()
+                .min(10L)
+                .max(10L)
+                .build());
 
         PaymentMethodRequest paymentMethodRequest =
                 TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
@@ -478,13 +486,13 @@ class PaymentMethodsServiceTest {
         when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(allBundlesForSorting());
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(
-                                Transfer.builder().taxPayerFee(10L).build()
-                        ))
-                        .build());
+        when(calculatorService.calculateFeeRangeForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class)
+        )).thenReturn(FeeRange.builder()
+                .min(10L)
+                .max(10L)
+                .build());
 
         PaymentMethodRequest paymentMethodRequest =
                 TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
@@ -522,17 +530,12 @@ class PaymentMethodsServiceTest {
                 .paymentType("PPAL")
                 .build()));
 
-        when(calculatorService.calculateForPaymentMethods(
+        when(calculatorService.calculateFeeRangeForPaymentMethods(
                 anyList(),
-                any(PaymentOptionMulti.class),
-                anyInt(),
-                anyBoolean(),
-                anyString()
-        )).thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                .belowThreshold(false)
-                .bundleOptions(List.of(Transfer.builder()
-                        .taxPayerFee(100L)
-                        .build()))
+                any(PaymentOptionMulti.class)
+        )).thenReturn(FeeRange.builder()
+                .min(100L)
+                .max(100L)
                 .build());
 
         PaymentMethodRequest request = TestUtil.readObjectFromFile(
@@ -576,17 +579,12 @@ class PaymentMethodsServiceTest {
                 .paymentType("PPAL")
                 .build()));
 
-        when(calculatorService.calculateForPaymentMethods(
+        when(calculatorService.calculateFeeRangeForPaymentMethods(
                 anyList(),
-                any(PaymentOptionMulti.class),
-                anyInt(),
-                anyBoolean(),
-                anyString()
-        )).thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                .belowThreshold(false)
-                .bundleOptions(List.of(Transfer.builder()
-                        .taxPayerFee(100L)
-                        .build()))
+                any(PaymentOptionMulti.class)
+        )).thenReturn(FeeRange.builder()
+                .min(100L)
+                .max(100L)
                 .build());
 
         PaymentMethodRequest request = TestUtil.readObjectFromFile(
@@ -629,17 +627,12 @@ class PaymentMethodsServiceTest {
                 .paymentType("PPAL")
                 .build()));
 
-        when(calculatorService.calculateForPaymentMethods(
+        when(calculatorService.calculateFeeRangeForPaymentMethods(
                 anyList(),
-                any(PaymentOptionMulti.class),
-                anyInt(),
-                anyBoolean(),
-                anyString()
-        )).thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                .belowThreshold(false)
-                .bundleOptions(List.of(Transfer.builder()
-                        .taxPayerFee(100L)
-                        .build()))
+                any(PaymentOptionMulti.class)
+        )).thenReturn(FeeRange.builder()
+                .min(100L)
+                .max(100L)
                 .build());
 
         PaymentMethodRequest request = TestUtil.readObjectFromFile(
