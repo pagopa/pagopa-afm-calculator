@@ -15,8 +15,10 @@ import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.model.TransferListItem;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.repository.query.parser.Part;
@@ -32,10 +34,12 @@ import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
 
 @Repository
+@Slf4j
 public class CosmosRepository {
     private static final String ID_PSP_PARAM = "idPsp";
     private static final String TRANSFER_CATEGORY_LIST = "transferCategoryList";
     private static final String CART_PARAM = "cart";
+    private static final String VALID_BUNDLES_CONTAINER = "validbundles";
     private final CosmosTemplate cosmosTemplate;
     private final TouchpointRepository touchpointRepository;
     private final PaymentTypeRepository paymentTypeRepository;
@@ -43,7 +47,6 @@ public class CosmosRepository {
     private final String pspPosteId;
     private final List<String> pspBlacklist;
 
-    @Autowired
     public CosmosRepository(
             CosmosTemplate cosmosTemplate,
             TouchpointRepository touchpointRepository,
@@ -80,7 +83,7 @@ public class CosmosRepository {
      * @param bundle                 a valid bundle to filter
      * @return True if the valid bundle meets the criteria.
      */
-    protected static boolean digitalStampFilter(
+    public static boolean digitalStampFilter(
             long transferListSize, long onlyMarcaBolloDigitale, ValidBundle bundle) {
         boolean digitalStamp =
                 bundle.getDigitalStamp() != null ? bundle.getDigitalStamp() : Boolean.FALSE;
@@ -111,11 +114,21 @@ public class CosmosRepository {
      * @param bundle        a valid bundle
      * @return True if the valid bundle meets the criteria.
      */
+    /*
     private static boolean globalAndRelatedFilter(PaymentOption paymentOption, ValidBundle bundle) {
         // filter the ci-bundle list
         bundle.setCiBundleList(filterByCI(paymentOption.getPrimaryCreditorInstitution(), bundle));
         return isGlobal(bundle) || belongsCI(bundle);
+    }*/
+    
+    private static ValidBundle filterRelatedBundle(PaymentOption paymentOption, ValidBundle bundle) {
+        ValidBundle copy = new ValidBundle();
+        BeanUtils.copyProperties(bundle, copy);
+        copy.setCiBundleList(filterByCI(paymentOption.getPrimaryCreditorInstitution(), bundle));
+        return copy;
     }
+    
+    
 
     /**
      * Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
@@ -124,10 +137,18 @@ public class CosmosRepository {
      * @param bundle             a valid bundle
      * @return True if the valid bundle meets the criteria.
      */
+    /*
     private static boolean globalAndRelatedFilter(PaymentOptionMulti paymentOptionMulti, ValidBundle bundle) {
         // filter the ci-bundle list
         bundle.setCiBundleList(filteredCiBundles(paymentOptionMulti, bundle));
         return isGlobal(bundle) || belongsCI(bundle);
+    }*/
+    
+    private static ValidBundle filterRelatedBundle(PaymentOptionMulti paymentOptionMulti, ValidBundle bundle) {
+        ValidBundle copy = new ValidBundle();
+        BeanUtils.copyProperties(bundle, copy);
+        copy.setCiBundleList(filteredCiBundles(paymentOptionMulti, bundle));
+        return copy;
     }
 
     /**
@@ -158,6 +179,13 @@ public class CosmosRepository {
                 && !bundle.getCiBundleList().isEmpty();
     }
 
+    public List<ValidBundle> findAllValidBundles() {
+        // Load the full valid bundles dataset to support in-memory filtering.
+        Iterable<ValidBundle> validBundles = cosmosTemplate.findAll(VALID_BUNDLES_CONTAINER, ValidBundle.class);
+        // Materialize the full snapshot as an immutable list for safe in-memory reuse.
+        return StreamSupport.stream(validBundles.spliterator(), false).toList();
+    }
+    
     @Cacheable(value = "findValidBundles")
     public List<ValidBundle> findByPaymentOption(PaymentOption paymentOption, boolean allCcp) {
         Iterable<ValidBundle> validBundles = findValidBundles(paymentOption, allCcp);
@@ -259,7 +287,7 @@ public class CosmosRepository {
         }
 
         // execute the query
-        return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
+        return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, VALID_BUNDLES_CONTAINER);
     }
 
     /**
@@ -345,7 +373,7 @@ public class CosmosRepository {
         queryResult = blackListCriteria(queryResult);
 
         // execute the query
-        return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
+        return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, VALID_BUNDLES_CONTAINER);
     }
 
     /**
@@ -355,6 +383,7 @@ public class CosmosRepository {
      * @param validBundles       the valid bundles
      * @return the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
      */
+    /*
     private List<ValidBundle> getFilteredBundlesMulti(
             PaymentOptionMulti paymentOptionMulti, Iterable<ValidBundle> validBundles) {
 
@@ -377,7 +406,34 @@ public class CosmosRepository {
                 // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
                 .filter(bundle -> globalAndRelatedFilter(paymentOptionMulti, bundle))
                 .toList();
+    }*/
+    
+    private List<ValidBundle> getFilteredBundlesMulti(
+            PaymentOptionMulti paymentOptionMulti, Iterable<ValidBundle> validBundles) {
+
+        // marca da bollo digitale check
+        List<TransferListItem> transferList = new ArrayList<>();
+        paymentOptionMulti.getPaymentNotice().forEach(paymentNoticeItem -> {
+            if (paymentNoticeItem.getTransferList() != null) {
+                transferList.addAll(paymentNoticeItem.getTransferList());
+            }
+        });
+        var onlyMarcaBolloDigitale =
+                transferList.stream()
+                        .filter(Objects::nonNull)
+                        .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
+                        .count();
+        var transferListSize = transferList.size();
+
+        return StreamSupport.stream(validBundles.spliterator(), false)
+                .filter(bundle -> digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
+                // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
+                .map(bundle -> filterRelatedBundle(paymentOptionMulti, bundle))
+                .filter(bundle -> isGlobal(bundle) || belongsCI(bundle))
+                .toList();
     }
+    
+    
 
     /**
      * These filters are done with Java (not with cosmos query)
@@ -386,6 +442,7 @@ public class CosmosRepository {
      * @param validBundles  the valid bundles
      * @return the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
      */
+    /*
     private List<ValidBundle> getFilteredBundles(
             PaymentOption paymentOption, Iterable<ValidBundle> validBundles) {
         var onlyMarcaBolloDigitale =
@@ -400,6 +457,23 @@ public class CosmosRepository {
                 // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
                 .filter(bundle -> globalAndRelatedFilter(paymentOption, bundle))
                 .collect(Collectors.toList());
+    }*/
+    
+    private List<ValidBundle> getFilteredBundles(
+            PaymentOption paymentOption, Iterable<ValidBundle> validBundles) {
+        var onlyMarcaBolloDigitale =
+                paymentOption.getTransferList().stream()
+                        .filter(Objects::nonNull)
+                        .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
+                        .count();
+        var transferListSize = paymentOption.getTransferList().size();
+
+        return StreamSupport.stream(validBundles.spliterator(), false)
+                .filter(bundle -> digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
+                // Gets the GLOBAL bundles and PRIVATE|PUBLIC bundles of the CI
+                .map(bundle -> filterRelatedBundle(paymentOption, bundle))
+                .filter(bundle -> isGlobal(bundle) || belongsCI(bundle))
+                .toList();
     }
 
     /**
