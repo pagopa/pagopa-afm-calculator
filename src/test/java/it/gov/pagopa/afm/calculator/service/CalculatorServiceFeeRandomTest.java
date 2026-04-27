@@ -8,8 +8,7 @@ import it.gov.pagopa.afm.calculator.TestUtil;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.PaymentOptionMulti;
-import it.gov.pagopa.afm.calculator.repository.PaymentTypeRepository;
-import it.gov.pagopa.afm.calculator.repository.TouchpointRepository;
+import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -29,19 +28,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CalculatorServiceFeeRandomTest {
 
     @Mock
+    CosmosRepository cosmosRepository;
+
+    @Mock
     UtilityComponent utilityComponent;
 
     @Mock
     IssuersService issuersService;
-
-    @Mock
-    ValidBundleCacheService validBundleCacheService;
-
-    @Mock
-    TouchpointRepository touchpointRepository;
-
-    @Mock
-    PaymentTypeRepository paymentTypeRepository;
 
     CalculatorService calculatorService;
 
@@ -49,14 +42,10 @@ class CalculatorServiceFeeRandomTest {
     void setup() {
         calculatorService = new CalculatorService(
                 "1",
+                cosmosRepository,
                 utilityComponent,
                 issuersService,
-                "AMREX",
-                "POSTE_ID",
-                List.of(),
-                validBundleCacheService,
-                touchpointRepository,
-                paymentTypeRepository
+                "AMREX"
         );
 
         IssuerRangeEntity issuer = new IssuerRangeEntity();

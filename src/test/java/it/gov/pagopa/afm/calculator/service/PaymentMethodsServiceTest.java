@@ -17,6 +17,7 @@ import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodDisa
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodStatus;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.PaymentMethodType;
 import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.SortBy;
+import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
 import it.gov.pagopa.afm.calculator.repository.PaymentMethodRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -55,6 +56,9 @@ class PaymentMethodsServiceTest {
     PaymentMethodRepository paymentMethodRepository;
 
     @MockBean
+    CosmosRepository cosmosRepository;
+
+    @MockBean
     CalculatorService calculatorService;
 
     @ParameterizedTest
@@ -66,36 +70,22 @@ class PaymentMethodsServiceTest {
     })
     void searchPaymentMethods_OK(String input) throws IOException {
         when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
-                .thenReturn(List.of(
-                        PaymentMethod.builder()
-                                .paymentMethodId("PAYPAL")
-                                .status(PaymentMethodStatus.ENABLED)
-                                .group("PPAL")
-                                .paymentMethodTypes(List.of(PaymentMethodType.APP))
-                                .target(null)
-                                .validityDateFrom(LocalDate.now().minusDays(1))
-                                .rangeAmount(FeeRange.builder()
-                                        .min(0L)
-                                        .max(1000L)
-                                        .build())
-                                .build()
-                ));
+                .thenReturn(List.of(enabledPaymentMethod("PAYPAL", "PPAL", PaymentMethodType.APP)));
 
-        when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(List.of(bundleForPaymentType("PPAL")));
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(
-                                Transfer.builder().taxPayerFee(10L).build()
-                        ))
-                        .build());
+        when(calculatorService.calculateForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class),
+                anyInt(),
+                anyBoolean(),
+                anyString()
+        )).thenReturn(bundleOptionWithFee(10L));
 
-        PaymentMethodRequest paymentMethodRequest =
-                TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
+        PaymentMethodRequest request = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
 
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
 
         assertEquals(1, response.getPaymentMethods().size());
         assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
@@ -104,36 +94,23 @@ class PaymentMethodsServiceTest {
     @Test
     void searchPaymentMethods_noUserDevice_OK() throws IOException {
         when(paymentMethodRepository.findByTouchpoint(anyString()))
-                .thenReturn(List.of(
-                        PaymentMethod.builder()
-                                .paymentMethodId("PAYPAL")
-                                .status(PaymentMethodStatus.ENABLED)
-                                .group("PPAL")
-                                .paymentMethodTypes(List.of(PaymentMethodType.APP))
-                                .target(null)
-                                .validityDateFrom(LocalDate.now().minusDays(1))
-                                .rangeAmount(FeeRange.builder()
-                                        .min(0L)
-                                        .max(1000L)
-                                        .build())
-                                .build()
-                ));
+                .thenReturn(List.of(enabledPaymentMethod("PAYPAL", "PPAL", PaymentMethodType.APP)));
 
-        when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(List.of(bundleForPaymentType("PPAL")));
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(
-                                Transfer.builder().taxPayerFee(10L).build()
-                        ))
-                        .build());
+        when(calculatorService.calculateForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class),
+                anyInt(),
+                anyBoolean(),
+                anyString()
+        )).thenReturn(bundleOptionWithFee(10L));
 
-        PaymentMethodRequest paymentMethodRequest =
+        PaymentMethodRequest request =
                 TestUtil.readObjectFromFile("requests/paymentOptionsSearchNoUserDevice.json", PaymentMethodRequest.class);
 
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
 
         assertEquals(1, response.getPaymentMethods().size());
         assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
@@ -150,17 +127,17 @@ class PaymentMethodsServiceTest {
                                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                                 .target(List.of("wrongTarget"))
                                 .validityDateFrom(LocalDate.now().minusDays(1))
-                                .rangeAmount(FeeRange.builder()
-                                        .min(0L)
-                                        .max(1000L)
-                                        .build())
+                                .rangeAmount(FeeRange.builder().min(0L).max(1000L).build())
                                 .build()
                 ));
 
-        PaymentMethodRequest paymentMethodRequest =
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean()))
+                .thenReturn(Collections.emptyList());
+
+        PaymentMethodRequest request =
                 TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
 
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
 
         assertEquals(1, response.getPaymentMethods().size());
         assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
@@ -179,17 +156,17 @@ class PaymentMethodsServiceTest {
                                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                                 .target(List.of("user"))
                                 .validityDateFrom(LocalDate.now().minusDays(1))
-                                .rangeAmount(FeeRange.builder()
-                                        .min(5L)
-                                        .max(1000L)
-                                        .build())
+                                .rangeAmount(FeeRange.builder().min(5L).max(1000L).build())
                                 .build()
                 ));
 
-        PaymentMethodRequest paymentMethodRequest =
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean()))
+                .thenReturn(Collections.emptyList());
+
+        PaymentMethodRequest request =
                 TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
 
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
 
         assertEquals(1, response.getPaymentMethods().size());
         assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
@@ -208,17 +185,17 @@ class PaymentMethodsServiceTest {
                                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                                 .target(List.of("user"))
                                 .validityDateFrom(LocalDate.now().minusDays(1))
-                                .rangeAmount(FeeRange.builder()
-                                        .min(0L)
-                                        .max(1000L)
-                                        .build())
+                                .rangeAmount(FeeRange.builder().min(0L).max(1000L).build())
                                 .build()
                 ));
 
-        PaymentMethodRequest paymentMethodRequest =
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean()))
+                .thenReturn(Collections.emptyList());
+
+        PaymentMethodRequest request =
                 TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
 
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
 
         assertEquals(1, response.getPaymentMethods().size());
         assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
@@ -237,17 +214,17 @@ class PaymentMethodsServiceTest {
                                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                                 .target(List.of("user"))
                                 .validityDateFrom(LocalDate.now().minusDays(1))
-                                .rangeAmount(FeeRange.builder()
-                                        .min(0L)
-                                        .max(1000L)
-                                        .build())
+                                .rangeAmount(FeeRange.builder().min(0L).max(1000L).build())
                                 .build()
                 ));
 
-        PaymentMethodRequest paymentMethodRequest =
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean()))
+                .thenReturn(Collections.emptyList());
+
+        PaymentMethodRequest request =
                 TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
 
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
 
         assertEquals(1, response.getPaymentMethods().size());
         assertEquals("PAYPAL", response.getPaymentMethods().get(0).getPaymentMethodId());
@@ -304,66 +281,23 @@ class PaymentMethodsServiceTest {
             "requests/paymentOptionsSearchSortingDefault.json"
     })
     void searchPaymentMethods_sorting(String input) throws IOException {
-        PaymentMethod paypal = PaymentMethod.builder()
-                .paymentMethodId("PAYPAL")
-                .description(Map.of(Language.IT, "Paypal", Language.EN, "Paypal"))
-                .status(PaymentMethodStatus.ENABLED)
-                .group("PPAL")
-                .paymentMethodTypes(List.of(PaymentMethodType.APP))
-                .target(null)
-                .validityDateFrom(LocalDate.now().minusDays(1))
-                .rangeAmount(FeeRange.builder().min(0L).max(1000L).build())
-                .build();
-
-        PaymentMethod google = PaymentMethod.builder()
-                .paymentMethodId("GOOGLEPAY")
-                .description(Map.of(Language.IT, "Google Pay", Language.EN, "Google Pay"))
-                .status(PaymentMethodStatus.ENABLED)
-                .group("GOOG")
-                .paymentMethodTypes(List.of(PaymentMethodType.APP))
-                .target(null)
-                .validityDateFrom(LocalDate.now().minusDays(1))
-                .rangeAmount(FeeRange.builder().min(0L).max(1000L).build())
-                .build();
-
-        PaymentMethod banca = PaymentMethod.builder()
-                .paymentMethodId("BBB")
-                .description(Map.of(Language.IT, "Banca instesa", Language.EN, "intesa bank"))
-                .status(PaymentMethodStatus.ENABLED)
-                .group("RBPS")
-                .paymentMethodTypes(List.of(PaymentMethodType.CONTO))
-                .target(null)
-                .validityDateFrom(LocalDate.now().minusDays(1))
-                .rangeAmount(FeeRange.builder().min(0L).max(1000L).build())
-                .build();
-
-        PaymentMethod cart = PaymentMethod.builder()
-                .paymentMethodId("CART")
-                .description(Map.of(Language.IT, "Carte", Language.EN, "Cards"))
-                .status(PaymentMethodStatus.ENABLED)
-                .group("CP")
-                .paymentMethodTypes(List.of(PaymentMethodType.CARTE))
-                .target(null)
-                .validityDateFrom(LocalDate.now().minusDays(1))
-                .rangeAmount(FeeRange.builder().min(0L).max(1000L).build())
-                .build();
-
         when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
-                .thenReturn(List.of(paypal, google, banca, cart));
+                .thenReturn(getMethodList());
 
-        when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(allBundlesForSorting());
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().taxPayerFee(10L).build()))
-                        .build());
+        when(calculatorService.calculateForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class),
+                anyInt(),
+                anyBoolean(),
+                anyString()
+        )).thenReturn(bundleOptionWithFee(10L));
 
-        PaymentMethodRequest paymentMethodRequest =
-                TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
+        PaymentMethodRequest request = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
 
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
 
         assertEquals(4, response.getPaymentMethods().size());
         assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
@@ -381,21 +315,22 @@ class PaymentMethodsServiceTest {
         when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
                 .thenReturn(getMethodList());
 
-        when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(allBundlesForSorting());
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().taxPayerFee(10L).build()))
-                        .build());
+        when(calculatorService.calculateForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class),
+                anyInt(),
+                anyBoolean(),
+                anyString()
+        )).thenReturn(bundleOptionWithFee(10L));
 
-        PaymentMethodRequest paymentMethodRequest =
-                TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
-        paymentMethodRequest.setSortOrder(SortOrder.ASC);
-        paymentMethodRequest.setPriorityGroups(List.of("PPAL", "CP"));
+        PaymentMethodRequest request = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
+        request.setSortOrder(SortOrder.ASC);
+        request.setPriorityGroups(List.of("PPAL", "CP"));
 
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
 
         assertEquals(4, response.getPaymentMethods().size());
         assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
@@ -413,21 +348,22 @@ class PaymentMethodsServiceTest {
         when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
                 .thenReturn(getMethodList());
 
-        when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(allBundlesForSorting());
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().taxPayerFee(10L).build()))
-                        .build());
+        when(calculatorService.calculateForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class),
+                anyInt(),
+                anyBoolean(),
+                anyString()
+        )).thenReturn(bundleOptionWithFee(10L));
 
-        PaymentMethodRequest paymentMethodRequest =
-                TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
-        paymentMethodRequest.setSortOrder(SortOrder.DESC);
-        paymentMethodRequest.setPriorityGroups(List.of("PPAL", "CP"));
+        PaymentMethodRequest request = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
+        request.setSortOrder(SortOrder.DESC);
+        request.setPriorityGroups(List.of("PPAL", "CP"));
 
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
 
         assertEquals(4, response.getPaymentMethods().size());
         assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
@@ -445,20 +381,21 @@ class PaymentMethodsServiceTest {
         when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
                 .thenReturn(getMethodList());
 
-        when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(allBundlesForSorting());
 
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(Transfer.builder().taxPayerFee(10L).build()))
-                        .build());
+        when(calculatorService.calculateForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class),
+                anyInt(),
+                anyBoolean(),
+                anyString()
+        )).thenReturn(bundleOptionWithFee(10L));
 
-        PaymentMethodRequest paymentMethodRequest =
-                TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
-        paymentMethodRequest.setSortBy(SortBy.NAME);
+        PaymentMethodRequest request = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
+        request.setSortBy(SortBy.NAME);
 
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
 
         assertEquals(4, response.getPaymentMethods().size());
         assertEquals("CART", response.getPaymentMethods().get(0).getPaymentMethodId());
@@ -475,52 +412,8 @@ class PaymentMethodsServiceTest {
         when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
                 .thenReturn(getMethodList());
 
-        when(calculatorService.getFilteredValidBundlesForPaymentMethods(any(PaymentOptionMulti.class), anyBoolean()))
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), anyBoolean()))
                 .thenReturn(allBundlesForSorting());
-
-        when(calculatorService.calculateForPaymentMethods(anyList(), any(PaymentOptionMulti.class), anyInt(), anyBoolean(), anyString()))
-                .thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                        .belowThreshold(false)
-                        .bundleOptions(List.of(
-                                Transfer.builder().taxPayerFee(10L).build()
-                        ))
-                        .build());
-
-        PaymentMethodRequest paymentMethodRequest =
-                TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
-        paymentMethodRequest.setSortBy(SortBy.FEE);
-
-        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(paymentMethodRequest);
-
-        assertEquals(4, response.getPaymentMethods().size());
-        assertEquals("CART", response.getPaymentMethods().get(0).getPaymentMethodId());
-        assertEquals("PAYPAL", response.getPaymentMethods().get(1).getPaymentMethodId());
-        assertEquals("GOOGLEPAY", response.getPaymentMethods().get(2).getPaymentMethodId());
-        assertEquals("BBB", response.getPaymentMethods().get(3).getPaymentMethodId());
-    }
-    
-    @Test
-    void searchPaymentMethods_allCcpNull_shouldUseFalseAndNotThrow() throws IOException {
-        when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
-                .thenReturn(List.of(PaymentMethod.builder()
-                        .paymentMethodId("PAYPAL")
-                        .status(PaymentMethodStatus.ENABLED)
-                        .group("PPAL")
-                        .paymentMethodTypes(List.of(PaymentMethodType.APP))
-                        .target(null)
-                        .validityDateFrom(LocalDate.now().minusDays(1))
-                        .rangeAmount(FeeRange.builder()
-                                .min(0L)
-                                .max(100000L)
-                                .build())
-                        .build()));
-
-        when(calculatorService.getFilteredValidBundlesForPaymentMethods(
-                any(PaymentOptionMulti.class),
-                eq(false)
-        )).thenReturn(List.of(ValidBundle.builder()
-                .paymentType("PPAL")
-                .build()));
 
         when(calculatorService.calculateForPaymentMethods(
                 anyList(),
@@ -528,17 +421,38 @@ class PaymentMethodsServiceTest {
                 anyInt(),
                 anyBoolean(),
                 anyString()
-        )).thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                .belowThreshold(false)
-                .bundleOptions(List.of(Transfer.builder()
-                        .taxPayerFee(100L)
-                        .build()))
-                .build());
+        )).thenReturn(bundleOptionWithFee(10L));
 
-        PaymentMethodRequest request = TestUtil.readObjectFromFile(
-                "requests/paymentOptionsSearch.json",
-                PaymentMethodRequest.class
-        );
+        PaymentMethodRequest request = TestUtil.readObjectFromFile(input, PaymentMethodRequest.class);
+        request.setSortBy(SortBy.FEE);
+
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
+
+        assertEquals(4, response.getPaymentMethods().size());
+        assertEquals("CART", response.getPaymentMethods().get(0).getPaymentMethodId());
+        assertEquals("PAYPAL", response.getPaymentMethods().get(1).getPaymentMethodId());
+        assertEquals("GOOGLEPAY", response.getPaymentMethods().get(2).getPaymentMethodId());
+        assertEquals("BBB", response.getPaymentMethods().get(3).getPaymentMethodId());
+    }
+
+    @Test
+    void searchPaymentMethods_allCcpNull_shouldUseFalseAndNotThrow() throws IOException {
+        when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
+                .thenReturn(List.of(enabledPaymentMethod("PAYPAL", "PPAL", PaymentMethodType.APP)));
+
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), eq(false)))
+                .thenReturn(List.of(bundleForPaymentType("PPAL")));
+
+        when(calculatorService.calculateForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class),
+                anyInt(),
+                anyBoolean(),
+                anyString()
+        )).thenReturn(bundleOptionWithFee(100L));
+
+        PaymentMethodRequest request =
+                TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
         request.setAllCCp(null);
 
         PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
@@ -547,34 +461,16 @@ class PaymentMethodsServiceTest {
         assertEquals(1, response.getPaymentMethods().size());
         assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
 
-        verify(calculatorService).getFilteredValidBundlesForPaymentMethods(
-                any(PaymentOptionMulti.class),
-                eq(false)
-        );
+        verify(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), eq(false));
     }
-    
-    @Test
-    void searchPaymentMethods_allCcpTrue_shouldPassTrueToCalculatorService() throws IOException {
-        when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
-                .thenReturn(List.of(PaymentMethod.builder()
-                        .paymentMethodId("PAYPAL")
-                        .status(PaymentMethodStatus.ENABLED)
-                        .group("PPAL")
-                        .paymentMethodTypes(List.of(PaymentMethodType.APP))
-                        .target(null)
-                        .validityDateFrom(LocalDate.now().minusDays(1))
-                        .rangeAmount(FeeRange.builder()
-                                .min(0L)
-                                .max(100000L)
-                                .build())
-                        .build()));
 
-        when(calculatorService.getFilteredValidBundlesForPaymentMethods(
-                any(PaymentOptionMulti.class),
-                eq(true)
-        )).thenReturn(List.of(ValidBundle.builder()
-                .paymentType("PPAL")
-                .build()));
+    @Test
+    void searchPaymentMethods_allCcpTrue_shouldPassTrueToCosmosRepository() throws IOException {
+        when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
+                .thenReturn(List.of(enabledPaymentMethod("PAYPAL", "PPAL", PaymentMethodType.APP)));
+
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), eq(true)))
+                .thenReturn(List.of(bundleForPaymentType("PPAL")));
 
         when(calculatorService.calculateForPaymentMethods(
                 anyList(),
@@ -582,17 +478,10 @@ class PaymentMethodsServiceTest {
                 anyInt(),
                 anyBoolean(),
                 anyString()
-        )).thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                .belowThreshold(false)
-                .bundleOptions(List.of(Transfer.builder()
-                        .taxPayerFee(100L)
-                        .build()))
-                .build());
+        )).thenReturn(bundleOptionWithFee(100L));
 
-        PaymentMethodRequest request = TestUtil.readObjectFromFile(
-                "requests/paymentOptionsSearch.json",
-                PaymentMethodRequest.class
-        );
+        PaymentMethodRequest request =
+                TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
         request.setAllCCp(true);
 
         PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
@@ -600,34 +489,16 @@ class PaymentMethodsServiceTest {
         assertNotNull(response);
         assertEquals(1, response.getPaymentMethods().size());
 
-        verify(calculatorService).getFilteredValidBundlesForPaymentMethods(
-                any(PaymentOptionMulti.class),
-                eq(true)
-        );
-    } 
-    
-    @Test
-    void searchPaymentMethods_allCcpFalse_shouldPassFalseToCalculatorService() throws IOException {
-        when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
-                .thenReturn(List.of(PaymentMethod.builder()
-                        .paymentMethodId("PAYPAL")
-                        .status(PaymentMethodStatus.ENABLED)
-                        .group("PPAL")
-                        .paymentMethodTypes(List.of(PaymentMethodType.APP))
-                        .target(null)
-                        .validityDateFrom(LocalDate.now().minusDays(1))
-                        .rangeAmount(FeeRange.builder()
-                                .min(0L)
-                                .max(100000L)
-                                .build())
-                        .build()));
+        verify(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), eq(true));
+    }
 
-        when(calculatorService.getFilteredValidBundlesForPaymentMethods(
-                any(PaymentOptionMulti.class),
-                eq(false)
-        )).thenReturn(List.of(ValidBundle.builder()
-                .paymentType("PPAL")
-                .build()));
+    @Test
+    void searchPaymentMethods_allCcpFalse_shouldPassFalseToCosmosRepository() throws IOException {
+        when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
+                .thenReturn(List.of(enabledPaymentMethod("PAYPAL", "PPAL", PaymentMethodType.APP)));
+
+        when(cosmosRepository.findByPaymentOption(any(PaymentOptionMulti.class), eq(false)))
+                .thenReturn(List.of(bundleForPaymentType("PPAL")));
 
         when(calculatorService.calculateForPaymentMethods(
                 anyList(),
@@ -635,17 +506,10 @@ class PaymentMethodsServiceTest {
                 anyInt(),
                 anyBoolean(),
                 anyString()
-        )).thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                .belowThreshold(false)
-                .bundleOptions(List.of(Transfer.builder()
-                        .taxPayerFee(100L)
-                        .build()))
-                .build());
+        )).thenReturn(bundleOptionWithFee(100L));
 
-        PaymentMethodRequest request = TestUtil.readObjectFromFile(
-                "requests/paymentOptionsSearch.json",
-                PaymentMethodRequest.class
-        );
+        PaymentMethodRequest request =
+                TestUtil.readObjectFromFile("requests/paymentOptionsSearch.json", PaymentMethodRequest.class);
         request.setAllCCp(false);
 
         PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
@@ -653,13 +517,43 @@ class PaymentMethodsServiceTest {
         assertNotNull(response);
         assertEquals(1, response.getPaymentMethods().size());
 
-        verify(calculatorService).getFilteredValidBundlesForPaymentMethods(
-                any(PaymentOptionMulti.class),
-                eq(false)
-        );
+        verify(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), eq(false));
+    }
+
+    private static PaymentMethod enabledPaymentMethod(
+            String paymentMethodId,
+            String group,
+            PaymentMethodType type
+    ) {
+        return PaymentMethod.builder()
+                .paymentMethodId(paymentMethodId)
+                .status(PaymentMethodStatus.ENABLED)
+                .group(group)
+                .paymentMethodTypes(List.of(type))
+                .target(null)
+                .validityDateFrom(LocalDate.now().minusDays(1))
+                .rangeAmount(FeeRange.builder().min(0L).max(100000L).build())
+                .build();
+    }
+
+    private static it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption bundleOptionWithFee(Long fee) {
+        return it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                .belowThreshold(false)
+                .bundleOptions(List.of(
+                        Transfer.builder()
+                                .taxPayerFee(fee)
+                                .actualPayerFee(fee)
+                                .build()
+                ))
+                .build();
     }
 
     private static List<PaymentMethod> getMethodList() {
+        FeeRange validRange = FeeRange.builder()
+                .min(0L)
+                .max(100000L)
+                .build();
+
         PaymentMethod paypal = PaymentMethod.builder()
                 .paymentMethodId("PAYPAL")
                 .name(Map.of(Language.IT, "Paypal", Language.EN, "Paypal"))
@@ -669,10 +563,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
-                .rangeAmount(FeeRange.builder()
-                        .min(0L)
-                        .max(1000L)
-                        .build())
+                .rangeAmount(validRange)
                 .build();
 
         PaymentMethod google = PaymentMethod.builder()
@@ -684,10 +575,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodTypes(List.of(PaymentMethodType.APP))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
-                .rangeAmount(FeeRange.builder()
-                        .min(1L)
-                        .max(1000L)
-                        .build())
+                .rangeAmount(validRange)
                 .build();
 
         PaymentMethod banca = PaymentMethod.builder()
@@ -699,10 +587,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodTypes(List.of(PaymentMethodType.CONTO))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
-                .rangeAmount(FeeRange.builder()
-                        .min(10L)
-                        .max(1000L)
-                        .build())
+                .rangeAmount(validRange)
                 .build();
 
         PaymentMethod cart = PaymentMethod.builder()
@@ -714,10 +599,7 @@ class PaymentMethodsServiceTest {
                 .paymentMethodTypes(List.of(PaymentMethodType.CARTE))
                 .target(null)
                 .validityDateFrom(LocalDate.now().minusDays(1))
-                .rangeAmount(FeeRange.builder()
-                        .min(20L)
-                        .max(1000L)
-                        .build())
+                .rangeAmount(validRange)
                 .build();
 
         return List.of(paypal, google, banca, cart);

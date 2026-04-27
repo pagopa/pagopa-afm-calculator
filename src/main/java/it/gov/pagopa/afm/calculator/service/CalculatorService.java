@@ -2,8 +2,6 @@ package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.entity.IssuerRangeEntity;
-import it.gov.pagopa.afm.calculator.entity.PaymentType;
-import it.gov.pagopa.afm.calculator.entity.Touchpoint;
 import it.gov.pagopa.afm.calculator.entity.ValidBundle;
 import it.gov.pagopa.afm.calculator.model.PaymentNoticeItem;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
@@ -12,10 +10,7 @@ import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.calculator.BundleOption;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.model.calculatormulti.Fee;
-import it.gov.pagopa.afm.calculator.model.paymentmethods.FeeRange;
 import it.gov.pagopa.afm.calculator.repository.CosmosRepository;
-import it.gov.pagopa.afm.calculator.repository.PaymentTypeRepository;
-import it.gov.pagopa.afm.calculator.repository.TouchpointRepository;
 import lombok.Setter;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,46 +24,31 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import it.gov.pagopa.afm.calculator.exception.AppException;
-import org.springframework.http.HttpStatus;
-
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.inTransferList;
 import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 
 @Service
+@Setter
 public class CalculatorService {
 
     private final String amountThreshold;
     private final UtilityComponent utilityComponent;
     private final IssuersService issuersService;
     private final String amexABI;
-    private final String pspPosteId;
-    private final List<String> pspBlacklist;
-    private final ValidBundleCacheService validBundleCacheService;
-    //private CosmosRepository cosmosRepository;
-    private final TouchpointRepository touchpointRepository;
-    private final PaymentTypeRepository paymentTypeRepository;
-    
+    private CosmosRepository cosmosRepository;
+
     public CalculatorService(
             @Value("${payment.amount.threshold}") String amountThreshold,
+            CosmosRepository cosmosRepository,
             UtilityComponent utilityComponent,
             IssuersService issuersService,
-            @Value("${pspAmex.abi:AMREX}") String amexABI,
-            @Value("${pspPoste.id}") String pspPosteId,
-            @Value("#{'${psp.blacklist}'.split(',')}") List<String> pspBlacklist,
-            ValidBundleCacheService validBundleCacheService,
-            TouchpointRepository touchpointRepository,
-            PaymentTypeRepository paymentTypeRepository
+            @Value("${pspAmex.abi:AMREX}") String amexABI
     ) {
         this.amountThreshold = amountThreshold;
+        this.cosmosRepository = cosmosRepository;
         this.utilityComponent = utilityComponent;
         this.issuersService = issuersService;
         this.amexABI = amexABI;
-        this.pspPosteId = pspPosteId;
-        this.pspBlacklist = pspBlacklist;
-        this.validBundleCacheService = validBundleCacheService;
-        this.touchpointRepository = touchpointRepository;
-        this.paymentTypeRepository = paymentTypeRepository;
     }
 
     /**
@@ -147,7 +127,6 @@ public class CalculatorService {
             ));
     }
 
-    /*
 
     public BundleOption calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
         List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
@@ -159,7 +138,7 @@ public class CalculatorService {
                 .bundleOptions(calculateTaxPayerFee(paymentOption, limit, filteredBundles))
                 .build();
     }
-    
+
     public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption calculateMulti(@Valid PaymentOptionMulti paymentOption, int limit, Boolean allCcp, boolean onUsFirst, String orderType) {
         List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
 
@@ -167,43 +146,6 @@ public class CalculatorService {
                 .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
                 .bundleOptions(calculateTaxPayerFeeMulti(paymentOption, limit, filteredBundles, orderType, onUsFirst))
                 .build();
-    }
-    
-    */
-    
-    public BundleOption calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
-        // Apply the same business filters in memory on top of the cached valid bundles snapshot.
-    	List<ValidBundle> filteredBundles = new ArrayList<>(filterValidBundlesInMemory(paymentOption, allCcp));
-    	Collections.shuffle(filteredBundles, new Random());
-
-        return BundleOption.builder()
-                .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
-                .bundleOptions(calculateTaxPayerFee(paymentOption, limit, filteredBundles))
-                .build();
-    }
-    
-    public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption calculateMulti(
-            @Valid PaymentOptionMulti paymentOption,
-            int limit,
-            Boolean allCcp,
-            boolean onUsFirst,
-            String orderType
-    ) {
-        // Apply the same business filters in memory on top of the cached valid bundles snapshot.
-        List<ValidBundle> filteredBundles = filterValidBundlesInMemory(paymentOption, Boolean.TRUE.equals(allCcp));
-
-        return it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
-                .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
-                .bundleOptions(calculateTaxPayerFeeMulti(paymentOption, limit, filteredBundles, orderType, onUsFirst))
-                .build();
-    }
-    
-    public List<ValidBundle> getFilteredValidBundlesForPaymentMethods(
-            @Valid PaymentOptionMulti paymentOption,
-            boolean allCcp
-    ) {
-        // Reuse the same in-memory filtering logic already used by fee calculation endpoints.
-        return filterValidBundlesInMemory(paymentOption, allCcp);
     }
 
     public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption calculateForPaymentMethods(List<ValidBundle> filteredBundles, @Valid PaymentOptionMulti paymentOption, int limit, boolean onUsFirst, String orderType) {
@@ -213,81 +155,7 @@ public class CalculatorService {
           .bundleOptions(calculateTaxPayerFeeMulti(paymentOption, limit, filteredBundles, orderType, onUsFirst))
           .build();
     }
-    
-    public FeeRange calculateFeeRangeForPaymentMethods(
-            List<ValidBundle> filteredBundles,
-            @Valid PaymentOptionMulti paymentOption
-    ) {
-        Map<String, FeeRangeCandidate> bestByPsp = new HashMap<>();
 
-        List<IssuerRangeEntity> issuers =
-                checkValidityBin(paymentOption.getBin())
-                        ? getIssuersByBIN(paymentOption.getBin())
-                        : new ArrayList<>();
-
-        if (isUniqueAbi(issuers)) {
-            issuers.clear();
-        }
-
-        for (ValidBundle bundle : filteredBundles) {
-            boolean isOnusPaymentType = isOnusPayment(issuers, bundle);
-
-            if (isOnusPaymentType && !isOnusBundle(bundle)) {
-                continue;
-            }
-
-            if (!isOnusPaymentType && isOnusBundle(bundle)) {
-                continue;
-            }
-
-            FeeRangeCandidate candidate = buildFeeRangeCandidate(paymentOption, bundle);
-
-            if (candidate == null) {
-                continue;
-            }
-
-            if (isAMEXAbi(issuers)
-                    && (!amexABI.equalsIgnoreCase(candidate.abi())
-                    || !Boolean.TRUE.equals(candidate.onUs()))) {
-                continue;
-            }
-
-            FeeRangeCandidate previous = bestByPsp.get(candidate.idPsp());
-
-            if (previous == null || previous.actualPayerFee() > candidate.actualPayerFee()) {
-                bestByPsp.put(candidate.idPsp(), candidate);
-            }
-        }
-
-        Long minFee = null;
-        Long maxFee = null;
-
-        for (FeeRangeCandidate candidate : bestByPsp.values()) {
-            Long fee = candidate.taxPayerFee();
-
-            if (fee == null) {
-                continue;
-            }
-
-            if (minFee == null || fee < minFee) {
-                minFee = fee;
-            }
-
-            if (maxFee == null || fee > maxFee) {
-                maxFee = fee;
-            }
-        }
-
-        if (minFee == null || maxFee == null) {
-            return null;
-        }
-
-        return FeeRange.builder()
-                .min(minFee)
-                .max(maxFee)
-                .build();
-    }
-    
     private List<Transfer> calculateTaxPayerFee(
             PaymentOption paymentOption, int limit, List<ValidBundle> bundles) {
 
@@ -765,316 +633,6 @@ public class CalculatorService {
             }
         }
         return false;
-    }
-    
-    
-    private List<ValidBundle> filterValidBundlesInMemory(PaymentOption paymentOption, boolean allCcp) {
-        List<ValidBundle> cachedBundles = validBundleCacheService.getAllValidBundles();
-
-        long onlyMarcaBolloDigitale = paymentOption.getTransferList().stream()
-                .filter(Objects::nonNull)
-                .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
-                .count();
-        long transferListSize = paymentOption.getTransferList().size();
-        
-        String resolvedTouchpoint = resolveTouchpointName(paymentOption.getTouchpoint());
-        String resolvedPaymentMethod = resolvePaymentTypeName(paymentOption.getPaymentMethod());
-        List<String> transferCategories = utilityComponent.getTransferCategoryList(paymentOption);
-
-        // Apply all repository-level and post-query filters in memory on top of the cached snapshot.
-        return cachedBundles.stream()
-                .filter(bundle -> matchesPaymentAmount(bundle, paymentOption.getPaymentAmount()))
-                .filter(bundle -> matchesTouchpoint(bundle.getTouchpoint(), resolvedTouchpoint))
-                .filter(bundle -> matchesPaymentType(bundle.getPaymentType(), resolvedPaymentMethod))
-                .filter(bundle -> matchesPspList(bundle, paymentOption.getIdPspList()))
-                .filter(bundle -> matchesTransferCategories(bundle, transferCategories))
-                .filter(bundle -> matchesAllCcp(bundle, allCcp))
-                .filter(bundle -> matchesPspBlacklist(bundle))
-                .filter(bundle -> CosmosRepository.digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
-                .map(this::copyValidBundleForRuntimeUse)
-                .filter(bundle -> globalAndRelatedFilterInMemory(paymentOption, bundle))
-                .toList();
-    }
-    
-    private List<ValidBundle> filterValidBundlesInMemory(PaymentOptionMulti paymentOption, boolean allCcp) {
-        List<ValidBundle> cachedBundles = validBundleCacheService.getAllValidBundles();
-
-        List<it.gov.pagopa.afm.calculator.model.TransferListItem> transferList = new ArrayList<>();
-        paymentOption.getPaymentNotice().forEach(paymentNoticeItem -> {
-            if (paymentNoticeItem.getTransferList() != null) {
-                transferList.addAll(paymentNoticeItem.getTransferList());
-            }
-        });
-
-        long onlyMarcaBolloDigitale = transferList.stream()
-                .filter(Objects::nonNull)
-                .filter(elem -> Boolean.TRUE.equals(elem.getDigitalStamp()))
-                .count();
-        long transferListSize = transferList.size();
-        
-        String resolvedTouchpoint = resolveTouchpointName(paymentOption.getTouchpoint());
-        String resolvedPaymentMethod = resolvePaymentTypeName(paymentOption.getPaymentMethod());
-        List<String> transferCategories = utilityComponent.getTransferCategoryList(paymentOption);
-
-        return cachedBundles.stream()
-                .filter(bundle -> matchesPaymentAmount(bundle, paymentOption.getPaymentAmount()))
-                .filter(bundle -> matchesTouchpoint(bundle.getTouchpoint(), resolvedTouchpoint))
-                .filter(bundle -> matchesPaymentType(bundle.getPaymentType(), resolvedPaymentMethod))
-                .filter(bundle -> matchesPspList(bundle, paymentOption.getIdPspList()))
-                .filter(bundle -> matchesTransferCategories(bundle, transferCategories))
-                .filter(bundle -> matchesAllCcp(bundle, allCcp))
-                .filter(bundle -> matchesPspBlacklist(bundle))
-                .filter(bundle -> matchesCart(bundle, paymentOption))
-                .filter(bundle -> CosmosRepository.digitalStampFilter(transferListSize, onlyMarcaBolloDigitale, bundle))
-                .map(this::copyValidBundleForRuntimeUse)
-                .filter(bundle -> globalAndRelatedFilterInMemory(paymentOption, bundle))
-                .toList();
-    }
-    
-    private String resolveTouchpointName(String requestTouchpoint) {
-        if (requestTouchpoint == null || requestTouchpoint.equalsIgnoreCase("any")) {
-            return null;
-        }
-
-        return touchpointRepository.findByName(requestTouchpoint)
-                .map(Touchpoint::getName)
-                .orElseThrow(() -> new AppException(
-                        HttpStatus.NOT_FOUND,
-                        "Touchpoint not found",
-                        "Cannot find touchpoint with name: '" + requestTouchpoint + "'"
-                ));
-    }
-    
-    private String resolvePaymentTypeName(String requestPaymentMethod) {
-        if (requestPaymentMethod == null || requestPaymentMethod.equalsIgnoreCase("any")) {
-            return null;
-        }
-
-        return paymentTypeRepository.findByName(requestPaymentMethod)
-                .map(PaymentType::getName)
-                .orElseThrow(() -> new AppException(
-                        HttpStatus.NOT_FOUND,
-                        "PaymentType not found",
-                        "Cannot find payment type with name: '" + requestPaymentMethod + "'"
-                ));
-    }
-    
-    private boolean matchesPaymentAmount(ValidBundle bundle, long paymentAmount) {
-        return bundle.getMinPaymentAmount() < paymentAmount && bundle.getMaxPaymentAmount() >= paymentAmount;
-    }
-    
-    private boolean matchesTouchpoint(String bundleTouchpoint, String resolvedTouchpoint) {
-        if (resolvedTouchpoint == null) {
-            return true;
-        }
-
-        return bundleTouchpoint == null
-                || bundleTouchpoint.equalsIgnoreCase("any")
-                || bundleTouchpoint.equalsIgnoreCase(resolvedTouchpoint);
-    }
-    
-    private boolean matchesPaymentType(String bundlePaymentType, String resolvedPaymentMethod) {
-        if (resolvedPaymentMethod == null) {
-            return true;
-        }
-
-        // Preserve repository behavior: exact match or null wildcard only.
-        return bundlePaymentType == null || bundlePaymentType.equalsIgnoreCase(resolvedPaymentMethod);
-    }
-    
-    private boolean matchesPspList(ValidBundle bundle, List<it.gov.pagopa.afm.calculator.model.PspSearchCriteria> idPspList) {
-        if (idPspList == null || idPspList.isEmpty()) {
-            return true;
-        }
-
-        return idPspList.stream().anyMatch(pspSearch ->
-                Objects.equals(bundle.getIdPsp(), pspSearch.getIdPsp())
-                        && (StringUtils.isEmpty(pspSearch.getIdChannel()) || Objects.equals(bundle.getIdChannel(), pspSearch.getIdChannel()))
-                        && (StringUtils.isEmpty(pspSearch.getIdBrokerPsp()) || Objects.equals(bundle.getIdBrokerPsp(), pspSearch.getIdBrokerPsp()))
-        );
-    }
-    
-    private boolean matchesTransferCategories(ValidBundle bundle, List<String> categories) {
-        if (categories == null) {
-            return true;
-        }
-
-        List<String> nonEmptyCategories = categories.stream()
-                .filter(Objects::nonNull)
-                .filter(elem -> !elem.isEmpty())
-                .toList();
-
-        if (nonEmptyCategories.isEmpty()) {
-            return bundle.getTransferCategoryList() == null;
-        }
-
-        return bundle.getTransferCategoryList() == null
-                || bundle.getTransferCategoryList().stream().anyMatch(nonEmptyCategories::contains);
-    }
-    
-    private boolean matchesAllCcp(ValidBundle bundle, boolean allCcp) {
-        return allCcp || !Objects.equals(bundle.getIdPsp(), pspPosteId);
-    }
-    
-    private boolean matchesPspBlacklist(ValidBundle bundle) {
-        return pspBlacklist == null || pspBlacklist.isEmpty() || !pspBlacklist.contains(bundle.getIdPsp());
-    }
-    
-    private boolean matchesCart(ValidBundle bundle, PaymentOptionMulti paymentOption) {
-        if (paymentOption.getPaymentNotice().size() <= 1) {
-            return true;
-        }
-
-        return Boolean.TRUE.equals(bundle.getCart());
-    }
-    
-    private ValidBundle copyValidBundleForRuntimeUse(ValidBundle bundle) {
-        // Return a defensive copy so downstream filters do not mutate the cached snapshot.
-        return ValidBundle.builder()
-                .id(bundle.getId())
-                .idChannel(bundle.getIdChannel())
-                .name(bundle.getName())
-                .description(bundle.getDescription())
-                .paymentAmount(bundle.getPaymentAmount())
-                .minPaymentAmount(bundle.getMinPaymentAmount())
-                .maxPaymentAmount(bundle.getMaxPaymentAmount())
-                .touchpoint(bundle.getTouchpoint())
-                .paymentType(bundle.getPaymentType())
-                .idBrokerPsp(bundle.getIdBrokerPsp())
-                .idPsp(bundle.getIdPsp())
-                .abi(bundle.getAbi())
-                .pspBusinessName(bundle.getPspBusinessName())
-                .onUs(bundle.getOnUs())
-                .digitalStamp(bundle.getDigitalStamp())
-                .digitalStampRestriction(bundle.getDigitalStampRestriction())
-                .transferCategoryList(bundle.getTransferCategoryList() == null ? null : new ArrayList<>(bundle.getTransferCategoryList()))
-                .ciBundleList(bundle.getCiBundleList() == null ? new ArrayList<>() : new ArrayList<>(bundle.getCiBundleList()))
-                .type(bundle.getType())
-                .cart(bundle.getCart())
-                .build();
-    }
-    
-    private boolean globalAndRelatedFilterInMemory(PaymentOption paymentOption, ValidBundle bundle) {
-        bundle.setCiBundleList(filterByCIInMemory(paymentOption.getPrimaryCreditorInstitution(), bundle));
-        return UtilityComponent.isGlobal(bundle) || belongsCIInMemory(bundle);
-    }
-    
-    private boolean globalAndRelatedFilterInMemory(PaymentOptionMulti paymentOption, ValidBundle bundle) {
-        bundle.setCiBundleList(filteredCiBundlesInMemory(paymentOption, bundle));
-        return UtilityComponent.isGlobal(bundle) || belongsCIInMemory(bundle);
-    }
-    
-    private List<CiBundle> filterByCIInMemory(String ciFiscalCode, ValidBundle bundle) {
-        return bundle.getCiBundleList() != null
-                ? bundle.getCiBundleList().stream()
-                        .filter(ciBundle -> ciFiscalCode.equals(ciBundle.getCiFiscalCode()))
-                        .toList()
-                : null;
-    }
-
-    private List<CiBundle> filteredCiBundlesInMemory(PaymentOptionMulti paymentOption, ValidBundle bundle) {
-        if (bundle.getCiBundleList() != null) {
-            List<String> ciBundlesFiscalCodes = bundle.getCiBundleList().stream()
-                    .map(CiBundle::getCiFiscalCode)
-                    .toList();
-
-            boolean allCiBundlesPresent = paymentOption.getPaymentNotice().stream()
-                    .anyMatch(paymentNoticeItem -> ciBundlesFiscalCodes.contains(paymentNoticeItem.getPrimaryCreditorInstitution()));
-
-            return allCiBundlesPresent ? bundle.getCiBundleList() : new ArrayList<>();
-        }
-        return new ArrayList<>();
-    }
-
-    private boolean belongsCIInMemory(ValidBundle bundle) {
-        return bundle.getCiBundleList() != null && !bundle.getCiBundleList().isEmpty();
-    }
-    
-    private FeeRangeCandidate buildFeeRangeCandidate(PaymentOptionMulti paymentOption, ValidBundle bundle) {
-        Long actualPayerFee = calculateBestActualPayerFeeWithoutCartesianProduct(paymentOption, bundle);
-
-        if (actualPayerFee == null) {
-            return null;
-        }
-
-        return new FeeRangeCandidate(
-                bundle.getIdPsp(),
-                bundle.getPaymentAmount(),
-                actualPayerFee,
-                getOnUsValue(bundle, paymentOption),
-                bundle.getAbi()
-        );
-    }
-    
-    private Long calculateBestActualPayerFeeWithoutCartesianProduct(
-            PaymentOptionMulti paymentOption,
-            ValidBundle bundle
-    ) {
-        if (bundle.getCiBundleList() == null || bundle.getCiBundleList().isEmpty()) {
-            return bundle.getPaymentAmount();
-        }
-
-        long totalBestCiIncurredFee = 0;
-
-        for (PaymentNoticeItem paymentNoticeItem : paymentOption.getPaymentNotice()) {
-            Long bestCiFee = findBestCiIncurredFee(paymentNoticeItem, bundle);
-
-            if (bestCiFee == null) {
-                return bundle.getPaymentAmount();
-            }
-
-            totalBestCiIncurredFee += bestCiFee;
-        }
-
-        return Math.max(0, bundle.getPaymentAmount() - totalBestCiIncurredFee);
-    }
-    
-    private Long findBestCiIncurredFee(PaymentNoticeItem paymentNoticeItem, ValidBundle bundle) {
-        List<String> primaryTransferCategoryList =
-                utilityComponent.getPrimaryTransferCategoryListMulti(
-                        paymentNoticeItem,
-                        paymentNoticeItem.getPrimaryCreditorInstitution()
-                );
-
-        Long bestFee = null;
-
-        for (CiBundle ciBundle : bundle.getCiBundleList()) {
-            if (!paymentNoticeItem.getPrimaryCreditorInstitution().equals(ciBundle.getCiFiscalCode())) {
-                continue;
-            }
-
-            if (ciBundle.getAttributes() == null || ciBundle.getAttributes().isEmpty()) {
-                continue;
-            }
-
-            for (var attribute : ciBundle.getAttributes()) {
-                boolean matches =
-                        attribute.getTransferCategory() == null
-                                || (TransferCategoryRelation.EQUAL.equals(attribute.getTransferCategoryRelation())
-                                && primaryTransferCategoryList.contains(attribute.getTransferCategory()))
-                                || (TransferCategoryRelation.NOT_EQUAL.equals(attribute.getTransferCategoryRelation())
-                                && !primaryTransferCategoryList.contains(attribute.getTransferCategory()));
-
-                if (matches) {
-                    long fee = Math.min(bundle.getPaymentAmount(), attribute.getMaxPaymentAmount());
-
-                    if (bestFee == null || fee > bestFee) {
-                        bestFee = fee;
-                    }
-                }
-            }
-        }
-
-        return bestFee;
-    }
-    
-    private record FeeRangeCandidate(
-            String idPsp,
-            Long taxPayerFee,
-            Long actualPayerFee,
-            Boolean onUs,
-            String abi
-    ) {
     }
 
 

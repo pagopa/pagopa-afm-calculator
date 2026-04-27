@@ -1060,4 +1060,19 @@ public class TestUtil {
 
         return bundles;
     }
+    
+    public static List<ValidBundle> getMockRepositoryFilteredMultipleValidBundlesMultiPsp() {
+        List<ValidBundle> source = getMockMultipleValidBundlesMultiPsp();
+
+        return new ArrayList<>(List.of(
+                source.get(0),  // DEF - GLOBAL - CHECKOUT - TAX1
+                source.get(1),  // GHI - GLOBAL - CHECKOUT - TAX1
+                source.get(2),  // JKL - GLOBAL - CHECKOUT - TAX1
+                source.get(3),  // JKL - GLOBAL - CHECKOUT - TAX1 cheaper
+                source.get(7),  // PQR - GLOBAL - CHECKOUT - TAX1
+                source.get(14), // MNO - GLOBAL - CHECKOUT - TAX1
+                source.get(15), // PQR - GLOBAL - CHECKOUT - TAX1 worse
+                source.get(16)  // STU - GLOBAL - CHECKOUT - TAX1
+        ));
+    }
 }
