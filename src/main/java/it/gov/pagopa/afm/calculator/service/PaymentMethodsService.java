@@ -67,6 +67,8 @@ public class PaymentMethodsService {
         List<PaymentMethod> candidates = getPaymentMethodsCandidates(request);
 
         // Reuse the same in-memory filtering logic already used by fee calculation endpoints.
+        boolean allCcp = Boolean.TRUE.equals(request.getAllCCp());
+
         List<ValidBundle> bundlesAllPaymentMethods = calculatorService.getFilteredValidBundlesForPaymentMethods(
                 PaymentOptionMulti.builder()
                         .paymentMethod(null)
@@ -74,7 +76,7 @@ public class PaymentMethodsService {
                         .idPspList(null)
                         .paymentNotice(paymentNoticeItems)
                         .build(),
-                request.getAllCCp()
+                allCcp
         );
 
         GroupedValidBundles groupedBundles = groupingBundlesByPaymentMethods(bundlesAllPaymentMethods);

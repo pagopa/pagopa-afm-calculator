@@ -40,6 +40,8 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -495,6 +497,166 @@ class PaymentMethodsServiceTest {
         assertEquals("PAYPAL", response.getPaymentMethods().get(1).getPaymentMethodId());
         assertEquals("GOOGLEPAY", response.getPaymentMethods().get(2).getPaymentMethodId());
         assertEquals("BBB", response.getPaymentMethods().get(3).getPaymentMethodId());
+    }
+    
+    @Test
+    void searchPaymentMethods_allCcpNull_shouldUseFalseAndNotThrow() throws IOException {
+        when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
+                .thenReturn(List.of(PaymentMethod.builder()
+                        .paymentMethodId("PAYPAL")
+                        .status(PaymentMethodStatus.ENABLED)
+                        .group("PPAL")
+                        .paymentMethodTypes(List.of(PaymentMethodType.APP))
+                        .target(null)
+                        .validityDateFrom(LocalDate.now().minusDays(1))
+                        .rangeAmount(FeeRange.builder()
+                                .min(0L)
+                                .max(100000L)
+                                .build())
+                        .build()));
+
+        when(calculatorService.getFilteredValidBundlesForPaymentMethods(
+                any(PaymentOptionMulti.class),
+                eq(false)
+        )).thenReturn(List.of(ValidBundle.builder()
+                .paymentType("PPAL")
+                .build()));
+
+        when(calculatorService.calculateForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class),
+                anyInt(),
+                anyBoolean(),
+                anyString()
+        )).thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                .belowThreshold(false)
+                .bundleOptions(List.of(Transfer.builder()
+                        .taxPayerFee(100L)
+                        .build()))
+                .build());
+
+        PaymentMethodRequest request = TestUtil.readObjectFromFile(
+                "requests/paymentOptionsSearch.json",
+                PaymentMethodRequest.class
+        );
+        request.setAllCCp(null);
+
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
+
+        assertNotNull(response);
+        assertEquals(1, response.getPaymentMethods().size());
+        assertEquals(PaymentMethodStatus.ENABLED, response.getPaymentMethods().get(0).getStatus());
+
+        verify(calculatorService).getFilteredValidBundlesForPaymentMethods(
+                any(PaymentOptionMulti.class),
+                eq(false)
+        );
+    }
+    
+    @Test
+    void searchPaymentMethods_allCcpTrue_shouldPassTrueToCalculatorService() throws IOException {
+        when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
+                .thenReturn(List.of(PaymentMethod.builder()
+                        .paymentMethodId("PAYPAL")
+                        .status(PaymentMethodStatus.ENABLED)
+                        .group("PPAL")
+                        .paymentMethodTypes(List.of(PaymentMethodType.APP))
+                        .target(null)
+                        .validityDateFrom(LocalDate.now().minusDays(1))
+                        .rangeAmount(FeeRange.builder()
+                                .min(0L)
+                                .max(100000L)
+                                .build())
+                        .build()));
+
+        when(calculatorService.getFilteredValidBundlesForPaymentMethods(
+                any(PaymentOptionMulti.class),
+                eq(true)
+        )).thenReturn(List.of(ValidBundle.builder()
+                .paymentType("PPAL")
+                .build()));
+
+        when(calculatorService.calculateForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class),
+                anyInt(),
+                anyBoolean(),
+                anyString()
+        )).thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                .belowThreshold(false)
+                .bundleOptions(List.of(Transfer.builder()
+                        .taxPayerFee(100L)
+                        .build()))
+                .build());
+
+        PaymentMethodRequest request = TestUtil.readObjectFromFile(
+                "requests/paymentOptionsSearch.json",
+                PaymentMethodRequest.class
+        );
+        request.setAllCCp(true);
+
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
+
+        assertNotNull(response);
+        assertEquals(1, response.getPaymentMethods().size());
+
+        verify(calculatorService).getFilteredValidBundlesForPaymentMethods(
+                any(PaymentOptionMulti.class),
+                eq(true)
+        );
+    } 
+    
+    @Test
+    void searchPaymentMethods_allCcpFalse_shouldPassFalseToCalculatorService() throws IOException {
+        when(paymentMethodRepository.findByTouchpointAndDevice(anyString(), anyString()))
+                .thenReturn(List.of(PaymentMethod.builder()
+                        .paymentMethodId("PAYPAL")
+                        .status(PaymentMethodStatus.ENABLED)
+                        .group("PPAL")
+                        .paymentMethodTypes(List.of(PaymentMethodType.APP))
+                        .target(null)
+                        .validityDateFrom(LocalDate.now().minusDays(1))
+                        .rangeAmount(FeeRange.builder()
+                                .min(0L)
+                                .max(100000L)
+                                .build())
+                        .build()));
+
+        when(calculatorService.getFilteredValidBundlesForPaymentMethods(
+                any(PaymentOptionMulti.class),
+                eq(false)
+        )).thenReturn(List.of(ValidBundle.builder()
+                .paymentType("PPAL")
+                .build()));
+
+        when(calculatorService.calculateForPaymentMethods(
+                anyList(),
+                any(PaymentOptionMulti.class),
+                anyInt(),
+                anyBoolean(),
+                anyString()
+        )).thenReturn(it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+                .belowThreshold(false)
+                .bundleOptions(List.of(Transfer.builder()
+                        .taxPayerFee(100L)
+                        .build()))
+                .build());
+
+        PaymentMethodRequest request = TestUtil.readObjectFromFile(
+                "requests/paymentOptionsSearch.json",
+                PaymentMethodRequest.class
+        );
+        request.setAllCCp(false);
+
+        PaymentMethodsResponse response = paymentMethodsService.searchPaymentMethods(request);
+
+        assertNotNull(response);
+        assertEquals(1, response.getPaymentMethods().size());
+
+        verify(calculatorService).getFilteredValidBundlesForPaymentMethods(
+                any(PaymentOptionMulti.class),
+                eq(false)
+        );
     }
 
     private static List<PaymentMethod> getMethodList() {
