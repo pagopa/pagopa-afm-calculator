@@ -1056,7 +1056,7 @@ public class CalculatorService {
                                 && !primaryTransferCategoryList.contains(attribute.getTransferCategory()));
 
                 if (matches) {
-                    long fee = attribute.getMaxPaymentAmount();
+                    long fee = Math.min(bundle.getPaymentAmount(), attribute.getMaxPaymentAmount());
 
                     if (bestFee == null || fee > bestFee) {
                         bestFee = fee;

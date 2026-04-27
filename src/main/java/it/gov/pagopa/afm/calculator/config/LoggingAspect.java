@@ -174,7 +174,7 @@ public class LoggingAspect {
             MDC.put(REQUEST_ID, requestId);
         }
         String params = getParams(joinPoint);
-        MDC.put(ARGS, getParams(joinPoint));
+        MDC.put(ARGS, params);
 
         log.info("Invoking API operation {} - args: {}", joinPoint.getSignature().getName(), params);
 
