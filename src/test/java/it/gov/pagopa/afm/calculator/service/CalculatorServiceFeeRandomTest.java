@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.calculator.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -124,7 +125,7 @@ class CalculatorServiceFeeRandomTest {
             var options = result.getBundleOptions();
 
             assertFalse(options.isEmpty(), "Expected at least one resulting bundle option");
-            assertTrue(Boolean.TRUE.equals(options.get(0).getOnUs()),
+            assertEquals(Boolean.TRUE, options.get(0).getOnUs(),
                     "First element should be onUs at iteration " + i);
 
             for (int j = 2; j < options.size(); j++) {

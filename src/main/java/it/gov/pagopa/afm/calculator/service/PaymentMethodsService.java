@@ -58,54 +58,13 @@ public class PaymentMethodsService {
         List<ValidBundle> wildCardBundle = bundleMap.getOrDefault(null, new ArrayList<>());
 
         for (PaymentMethod candidate : candidates) {
-            Pair<PaymentMethodDisabledReason, PaymentMethodStatus> filterReason =
-                    filterByCandidateProperties(candidate, request);
-
-            if (filterReason.getLeft() != null) {
-                paymentMethodsItems.add(buildPaymentMethodItem(candidate, null, filterReason));
-                continue;
-            }
-
-            List<ValidBundle> candidateBundles = bundleMap.getOrDefault(candidate.getGroup(), wildCardBundle);
-
-            if (candidateBundles.isEmpty()) {
-                paymentMethodsItems.add(buildPaymentMethodItem(
-                        candidate,
-                        null,
-                        Pair.of(PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE, PaymentMethodStatus.DISABLED)
-                ));
-                continue;
-            }
-
-            BundleOption bundles = calculatorService.calculateForPaymentMethods(
-                    candidateBundles,
-                    PaymentOptionMulti.builder()
-                            .paymentMethod(candidate.getGroup())
-                            .touchpoint(request.getUserTouchpoint().name())
-                            .idPspList(null)
-                            .paymentNotice(paymentNoticeItems)
-                            .build(),
-                    Integer.MAX_VALUE,
-                    false,
-                    "fee"
-            );
-
-            FeeRange feeRange = null;
-
-            if (bundles == null || bundles.getBundleOptions() == null || bundles.getBundleOptions().isEmpty()) {
-                filterReason = Pair.of(PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE, PaymentMethodStatus.DISABLED);
-            } else {
-                int last = bundles.getBundleOptions().size() - 1;
-                Long minFee = bundles.getBundleOptions().get(0).getTaxPayerFee();
-                Long maxFee = bundles.getBundleOptions().get(last).getTaxPayerFee();
-
-                feeRange = FeeRange.builder()
-                        .min(minFee)
-                        .max(maxFee)
-                        .build();
-            }
-
-            paymentMethodsItems.add(buildPaymentMethodItem(candidate, feeRange, filterReason));
+            paymentMethodsItems.add(buildPaymentMethodsItem(
+                    candidate,
+                    request,
+                    paymentNoticeItems,
+                    bundleMap,
+                    wildCardBundle
+            ));
         }
 
         PaymentMethodComparatorUtil.sortMethods(request, paymentMethodsItems);
@@ -183,12 +142,10 @@ public class PaymentMethodsService {
       Map<String, List<ValidBundle>> groupedMap = specifics.stream()
           .collect(Collectors.groupingBy(ValidBundle::getPaymentType));
 
-      if (!wildcards.isEmpty()) {
-        if (!groupedMap.isEmpty()) {
-          for (List<ValidBundle> groupList : groupedMap.values()) {
-            groupList.addAll(wildcards);
-          }
-        }
+      if (!wildcards.isEmpty() && !groupedMap.isEmpty()) {
+    	  for (List<ValidBundle> groupList : groupedMap.values()) {
+    		  groupList.addAll(wildcards);
+    	  }
       }
       groupedMap.put(null, new ArrayList<>(wildcards));
 
@@ -214,6 +171,63 @@ public class PaymentMethodsService {
                 .paymentMethodsBrandAssets(candidate.getPaymentMethodsBrandAssets())
                 .disabledReason(filterReason.getLeft())
                 .status(filterReason.getRight())
+                .build();
+    }
+    
+    private PaymentMethodsItem buildPaymentMethodsItem(
+            PaymentMethod candidate,
+            PaymentMethodRequest request,
+            List<PaymentNoticeItem> paymentNoticeItems,
+            Map<String, List<ValidBundle>> bundleMap,
+            List<ValidBundle> wildCardBundle
+    ) {
+        Pair<PaymentMethodDisabledReason, PaymentMethodStatus> filterReason =
+                filterByCandidateProperties(candidate, request);
+
+        FeeRange feeRange = null;
+
+        if (filterReason.getLeft() == null) {
+            List<ValidBundle> candidateBundles = bundleMap.getOrDefault(candidate.getGroup(), wildCardBundle);
+
+            if (candidateBundles.isEmpty()) {
+                filterReason = Pair.of(
+                        PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE,
+                        PaymentMethodStatus.DISABLED
+                );
+            } else {
+                BundleOption bundles = calculatorService.calculateForPaymentMethods(
+                        candidateBundles,
+                        PaymentOptionMulti.builder()
+                                .paymentMethod(candidate.getGroup())
+                                .touchpoint(request.getUserTouchpoint().name())
+                                .idPspList(null)
+                                .paymentNotice(paymentNoticeItems)
+                                .build(),
+                        Integer.MAX_VALUE,
+                        false,
+                        "fee"
+                );
+
+                if (bundles == null || bundles.getBundleOptions() == null || bundles.getBundleOptions().isEmpty()) {
+                    filterReason = Pair.of(
+                            PaymentMethodDisabledReason.NO_BUNDLE_AVAILABLE,
+                            PaymentMethodStatus.DISABLED
+                    );
+                } else {
+                    feeRange = buildFeeRange(bundles);
+                }
+            }
+        }
+
+        return buildPaymentMethodItem(candidate, feeRange, filterReason);
+    }
+    
+    private FeeRange buildFeeRange(BundleOption bundles) {
+        int last = bundles.getBundleOptions().size() - 1;
+
+        return FeeRange.builder()
+                .min(bundles.getBundleOptions().get(0).getTaxPayerFee())
+                .max(bundles.getBundleOptions().get(last).getTaxPayerFee())
                 .build();
     }
 }
