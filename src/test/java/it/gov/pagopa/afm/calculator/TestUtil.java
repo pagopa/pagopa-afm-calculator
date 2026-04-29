@@ -10,7 +10,9 @@ import lombok.experimental.UtilityClass;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,17 +21,23 @@ import java.util.Objects;
 
 @UtilityClass
 public class TestUtil {
+	
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /**
      * @param relativePath Path from source root of the json file
      * @return the Json string read from the file
-     * @throws IOException if an I/O error occurs reading from the file or a malformed or unmappable
-     *                     byte sequence is read
+     * @throws IOException if an I/O error occurs reading from the resource
      */
     public String readStringFromFile(String relativePath) throws IOException {
         ClassLoader classLoader = TestUtil.class.getClassLoader();
-        File file = new File(Objects.requireNonNull(classLoader.getResource(relativePath)).getPath());
-        return Files.readString(file.toPath());
+
+        try (InputStream inputStream = Objects.requireNonNull(
+                classLoader.getResourceAsStream(relativePath),
+                "Resource not found: " + relativePath
+        )) {
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 
     /**
@@ -38,7 +46,15 @@ public class TestUtil {
      */
     public File readFile(String relativePath) {
         ClassLoader classLoader = TestUtil.class.getClassLoader();
-        return new File(Objects.requireNonNull(classLoader.getResource(relativePath)).getFile());
+
+        try {
+            return new File(Objects.requireNonNull(
+                    classLoader.getResource(relativePath),
+                    "Resource not found: " + relativePath
+            ).toURI());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid resource URI: " + relativePath, e);
+        }
     }
 
     /**
@@ -47,7 +63,7 @@ public class TestUtil {
      * @throws JsonProcessingException if there is an error during the parsing of the object
      */
     public String toJson(Object object) throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(object);
+        return OBJECT_MAPPER.writeValueAsString(object);
     }
 
     /**
@@ -58,8 +74,14 @@ public class TestUtil {
      * @throws IOException if an IO error occurs
      */
     public <T> T readObjectFromFile(String relativePath, Class<T> valueType) throws IOException {
-        var jsonFile = readFile(relativePath);
-        return new ObjectMapper().readValue(jsonFile, valueType);
+        ClassLoader classLoader = TestUtil.class.getClassLoader();
+
+        try (InputStream inputStream = Objects.requireNonNull(
+                classLoader.getResourceAsStream(relativePath),
+                "Resource not found: " + relativePath
+        )) {
+            return OBJECT_MAPPER.readValue(inputStream, valueType);
+        }
     }
 
     public static ValidBundle getMockGlobalValidBundle() {
@@ -943,5 +965,114 @@ public class TestUtil {
             .build());
 
         return bundles;
+    }
+    
+    public static List<ValidBundle> getMockMultiBundlesWithRealOnUsAndOffUs() {
+        List<ValidBundle> bundles = new ArrayList<>();
+
+        ValidBundle onUsBundle = getMockValidBundle();
+        onUsBundle.setId("1");
+        onUsBundle.setName("bundle-onus");
+        onUsBundle.setIdPsp("PSP_ONUS");
+        onUsBundle.setPspBusinessName("PSP ONUS");
+        onUsBundle.setOnUs(true);
+        onUsBundle.setAbi("14156");
+        onUsBundle.setIdChannel("13212880150_01_ONUS");
+        onUsBundle.setPaymentAmount(30L);
+
+        ValidBundle offUsBundle = getMockValidBundle();
+        offUsBundle.setId("2");
+        offUsBundle.setName("bundle-offus");
+        offUsBundle.setIdPsp("PSP_OFFUS");
+        offUsBundle.setPspBusinessName("PSP OFFUS");
+        offUsBundle.setOnUs(false);
+        offUsBundle.setAbi("99991");
+        offUsBundle.setIdChannel("13212880150_02");
+        offUsBundle.setPaymentAmount(30L);
+
+        bundles.add(offUsBundle);
+        bundles.add(onUsBundle);
+
+        return bundles;
+    }
+    
+    public static List<ValidBundle> getMockFeeRandomBundlesSameFeeOffUs() {
+        List<ValidBundle> source = getMockMultipleValidBundlesMultiPsp();
+        List<ValidBundle> bundles = new ArrayList<>();
+
+        ValidBundle b1 = source.get(0); // DEF - GLOBAL - TAX1
+        b1.setPaymentAmount(30L);
+        b1.setOnUs(false);
+        b1.setAbi("99991");
+        b1.setIdChannel("13212880150_01");
+
+        ValidBundle b2 = source.get(1); // GHI - GLOBAL - TAX1
+        b2.setPaymentAmount(30L);
+        b2.setOnUs(false);
+        b2.setAbi("99992");
+        b2.setIdChannel("13212880150_02");
+
+        ValidBundle b3 = source.get(7); // PQR - GLOBAL - TAX1
+        b3.setPaymentAmount(30L);
+        b3.setOnUs(false);
+        b3.setAbi("99993");
+        b3.setIdChannel("13212880160_02");
+
+        bundles.add(b1);
+        bundles.add(b2);
+        bundles.add(b3);
+
+        return bundles;
+    } 
+    
+    public static List<ValidBundle> getMockFeeRandomBundlesSameFeeWithOnUs() {
+        List<ValidBundle> source = getMockMultipleValidBundlesMultiPsp();
+        List<ValidBundle> bundles = new ArrayList<>();
+
+        ValidBundle onUs = source.get(4); // ABC - GLOBAL - TAX1 - onUs=true
+        onUs.setPaymentAmount(30L);
+        onUs.setOnUs(true);
+        onUs.setAbi("14156");
+        onUs.setIdChannel("13212880150_01_ONUS");
+
+        ValidBundle offUs1 = source.get(0); // DEF - GLOBAL - TAX1
+        offUs1.setPaymentAmount(30L);
+        offUs1.setOnUs(false);
+        offUs1.setAbi("99991");
+        offUs1.setIdChannel("13212880150_01");
+
+        ValidBundle offUs2 = source.get(1); // GHI - GLOBAL - TAX1
+        offUs2.setPaymentAmount(30L);
+        offUs2.setOnUs(false);
+        offUs2.setAbi("99992");
+        offUs2.setIdChannel("13212880150_02");
+
+        ValidBundle offUs3 = source.get(7); // PQR - GLOBAL - TAX1
+        offUs3.setPaymentAmount(30L);
+        offUs3.setOnUs(false);
+        offUs3.setAbi("99993");
+        offUs3.setIdChannel("13212880160_02");
+
+        bundles.add(onUs);
+        bundles.add(offUs1);
+        bundles.add(offUs2);
+        bundles.add(offUs3);
+
+        return bundles;
+    }
+    
+    public static List<ValidBundle> getMockRepositoryFilteredMultipleValidBundlesMultiPsp() {
+        List<ValidBundle> source = getMockMultipleValidBundlesMultiPsp();
+
+        return new ArrayList<>(List.of(
+                source.get(0),  // DEF - GLOBAL - CHECKOUT - TAX1
+                source.get(1),  // GHI - GLOBAL - CHECKOUT - TAX1
+                source.get(2),  // JKL - GLOBAL - CHECKOUT - TAX1
+                source.get(3),  // JKL - GLOBAL - CHECKOUT - TAX1 cheaper
+                source.get(7),  // PQR - GLOBAL - CHECKOUT - TAX1
+                source.get(14), // MNO - GLOBAL - CHECKOUT - TAX1
+                source.get(15), // PQR - GLOBAL - CHECKOUT - TAX1 worse
+                source.get(16)  // STU - GLOBAL - CHECKOUT - TAX1
+        ));
     }
 }
