@@ -58,7 +58,7 @@ public class PaymentMethodsService {
         List<ValidBundle> wildCardBundle = bundleMap.getOrDefault(null, new ArrayList<>());
 
         for (PaymentMethod candidate : candidates) {
-            paymentMethodsItems.add(buildPaymentMethodsItem(
+            paymentMethodsItems.add(buildPaymentMethodsItemForCandidate(
                     candidate,
                     request,
                     paymentNoticeItems,
@@ -152,29 +152,7 @@ public class PaymentMethodsService {
       return groupedMap;
     }
     
-    private PaymentMethodsItem buildPaymentMethodItem(
-            PaymentMethod candidate,
-            FeeRange feeRange,
-            Pair<PaymentMethodDisabledReason, PaymentMethodStatus> filterReason
-    ) {
-        return PaymentMethodsItem.builder()
-                .paymentMethodId(candidate.getPaymentMethodId())
-                .name(candidate.getName())
-                .description(candidate.getDescription())
-                .validityDateFrom(candidate.getValidityDateFrom())
-                .group(candidate.getGroup())
-                .paymentMethodTypes(candidate.getPaymentMethodTypes())
-                .metadata(candidate.getMetadata())
-                .feeRange(feeRange)
-                .paymentMethodAsset(candidate.getPaymentMethodAsset())
-                .methodManagement(candidate.getMethodManagement())
-                .paymentMethodsBrandAssets(candidate.getPaymentMethodsBrandAssets())
-                .disabledReason(filterReason.getLeft())
-                .status(filterReason.getRight())
-                .build();
-    }
-    
-    private PaymentMethodsItem buildPaymentMethodsItem(
+    private PaymentMethodsItem buildPaymentMethodsItemForCandidate(
             PaymentMethod candidate,
             PaymentMethodRequest request,
             List<PaymentNoticeItem> paymentNoticeItems,
@@ -220,6 +198,28 @@ public class PaymentMethodsService {
         }
 
         return buildPaymentMethodItem(candidate, feeRange, filterReason);
+    }
+    
+    private PaymentMethodsItem buildPaymentMethodItem(
+            PaymentMethod candidate,
+            FeeRange feeRange,
+            Pair<PaymentMethodDisabledReason, PaymentMethodStatus> filterReason
+    ) {
+        return PaymentMethodsItem.builder()
+                .paymentMethodId(candidate.getPaymentMethodId())
+                .name(candidate.getName())
+                .description(candidate.getDescription())
+                .validityDateFrom(candidate.getValidityDateFrom())
+                .group(candidate.getGroup())
+                .paymentMethodTypes(candidate.getPaymentMethodTypes())
+                .metadata(candidate.getMetadata())
+                .feeRange(feeRange)
+                .paymentMethodAsset(candidate.getPaymentMethodAsset())
+                .methodManagement(candidate.getMethodManagement())
+                .paymentMethodsBrandAssets(candidate.getPaymentMethodsBrandAssets())
+                .disabledReason(filterReason.getLeft())
+                .status(filterReason.getRight())
+                .build();
     }
     
     private FeeRange buildFeeRange(BundleOption bundles) {
