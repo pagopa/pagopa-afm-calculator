@@ -60,16 +60,16 @@ microservice-chart:
     allowPrivilegeEscalation: false
   resources:
     requests:
-      memory: "1024Mi"
-      cpu: "0.4"
+      memory: "512Mi"
+      cpu: "0.5"
     limits:
-      memory: "1540Mi"
-      cpu: "0.8"
+      memory: "1024Mi"
+      cpu: "1.0"
   autoscaling:
     enable: true
-    minReplica: 3
-    maxReplica: 6
-    pollingInterval: 30 # seconds
+    minReplica: 1
+    maxReplica: 1
+    pollingInterval: 10 # seconds
     cooldownPeriod: 60 # seconds
     triggers:
       - type: cpu
@@ -87,10 +87,6 @@ microservice-chart:
     WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
     ENV: 'uat'
     APP_LOGGING_LEVEL: 'INFO'
-    JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp"
-    SERVER_TOMCAT_THREADS_MAX: '20'
-    SERVER_TOMCAT_THREADS_MIN_SPARE: '4'
-    SERVER_TOMCAT_ACCEPT_COUNT: '20'
     CACHE_DEFAULT_SIZE: '1000'
     CACHE_DEFAULT_EVICT_SECONDS: '180'
     CACHE_ISSUER_RANGE_TABLE_EVICT_SECONDS: '43200'
