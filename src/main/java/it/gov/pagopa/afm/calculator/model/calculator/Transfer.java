@@ -5,11 +5,14 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.Comparator;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Builder
 @Data
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(name = "CalculatorTransfer")
 public class Transfer implements Comparable<Transfer>, Serializable {
     /**
      * generated serialVersionUID
