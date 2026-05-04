@@ -148,6 +148,14 @@ public class CalculatorService {
                 .build();
     }
 
+    public it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption calculateForPaymentMethods(List<ValidBundle> filteredBundles, @Valid PaymentOptionMulti paymentOption, int limit, boolean onUsFirst, String orderType) {
+
+      return it.gov.pagopa.afm.calculator.model.calculatormulti.BundleOption.builder()
+          .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))
+          .bundleOptions(calculateTaxPayerFeeMulti(paymentOption, limit, filteredBundles, orderType, onUsFirst))
+          .build();
+    }
+
     private List<Transfer> calculateTaxPayerFee(
             PaymentOption paymentOption, int limit, List<ValidBundle> bundles) {
 

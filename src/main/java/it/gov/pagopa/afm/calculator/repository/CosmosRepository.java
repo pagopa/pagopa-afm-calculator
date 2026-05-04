@@ -16,7 +16,6 @@ import it.gov.pagopa.afm.calculator.model.TransferListItem;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.repository.query.parser.Part;
@@ -43,7 +42,6 @@ public class CosmosRepository {
     private final String pspPosteId;
     private final List<String> pspBlacklist;
 
-    @Autowired
     public CosmosRepository(
             CosmosTemplate cosmosTemplate,
             TouchpointRepository touchpointRepository,

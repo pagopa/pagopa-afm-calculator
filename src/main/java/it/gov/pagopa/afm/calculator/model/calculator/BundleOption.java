@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(name = "CalculatorBundleOption")
 public class BundleOption implements Serializable {
     /**
      * generated serialVersionUID

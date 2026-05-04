@@ -245,17 +245,17 @@ public class CalculatorController {
             @Parameter(
                     description =
                             "Affects the sorting logic [default = true]." +
-                                    " true → if the onus bundle is present, it is returned in the first position, regardless of the chosen sorting logic." +
-                                    " false → the sorting logic is also applied to the onus bundle, which may therefore appear in positions other than the first")
+                                    " true -> if the onus bundle is present, it is returned in the first position, regardless of the chosen sorting logic." +
+                                    " false -> the sorting logic is also applied to the onus bundle, which may therefore appear in positions other than the first")
             String onUsFirst,
             @RequestParam(required = false, defaultValue = "random")
             @Parameter(
                     description =
                             "Sorting logic to be applied to the bundles [default = RANDOM]." +
-                                    " random → bundles are sorted randomly." +
-                                    " fee → sorted by increasing fee, if fees are equal then by PSP name." +
-                                    " pspname → sorted by PSP name." +
-                                    " feerandom → sorted by increasing fee, if fees are equal then randomly sorted")
+                                    " random -> bundles are sorted randomly." +
+                                    " fee -> sorted by increasing fee, if fees are equal then by PSP name." +
+                                    " pspname -> sorted by PSP name." +
+                                    " feerandom -> sorted by increasing fee, if fees are equal then randomly sorted")
             String orderBy) {
         PaymentOptionMulti paymentOption =
                 PaymentOptionMulti.builder()
@@ -341,17 +341,17 @@ public class CalculatorController {
             @Parameter(
                     description =
                             "Affects the sorting logic [default = true]." +
-                                    " true → if the onus bundle is present, it is returned in the first position, regardless of the chosen sorting logic." +
-                                    " false → the sorting logic is also applied to the onus bundle, which may therefore appear in positions other than the first")
+                                    " true -> if the onus bundle is present, it is returned in the first position, regardless of the chosen sorting logic." +
+                                    " false -> the sorting logic is also applied to the onus bundle, which may therefore appear in positions other than the first")
             String onUsFirst,
             @RequestParam(required = false, defaultValue = "random")
             @Parameter(
                     description =
                             "Sorting logic to be applied to the bundles [default = RANDOM]." +
-                                    " random → bundles are sorted randomly." +
-                                    " fee → sorted by increasing fee, if fees are equal then by PSP name." +
-                                    " pspname → sorted by PSP name." +
-                                    " feerandom → sorted by increasing fee, if fees are equal then randomly sorted")
+                                    " random -> bundles are sorted randomly." +
+                                    " fee -> sorted by increasing fee, if fees are equal then by PSP name." +
+                                    " pspname -> sorted by PSP name." +
+                                    " feerandom -> sorted by increasing fee, if fees are equal then randomly sorted")
             String orderBy) {
         return calculatorService.calculateMulti(
                 paymentOption, maxOccurrences, getAllCCP(allCcp), getOnUsFirst(onUsFirst), getOrderBy(orderBy));

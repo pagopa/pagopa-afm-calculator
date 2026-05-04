@@ -5,6 +5,9 @@ import lombok.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(name = "CalculatorMultiTransfer")
 public class Transfer implements Comparable<Transfer>, Serializable {
     /**
      * generated serialVersionUID
