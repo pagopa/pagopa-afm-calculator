@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.13.1-11-PIDM-1391-cache-in-memory-valid-bundles-solution"
+    tag: "2.13.2"
     pullPolicy: Always
   livenessProbe:
     httpGet:
