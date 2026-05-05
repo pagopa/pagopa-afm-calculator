@@ -59,6 +59,7 @@ public class LoggingAspect {
     private static final String PAYMENT_METHOD_TYPES = "paymentMethodTypes";
     private static final String METHOD_MANAGEMENT = "methodManagement";
     private static final String VALIDITY_DATE_FROM = "validityDateFrom";
+    private static final String SANITIZATION_ERROR = "sanitizationError";
 
     @Autowired
     HttpServletRequest httRequest;
@@ -113,9 +114,22 @@ public class LoggingAspect {
             return new ObjectMapper()
                     .registerModule(new JavaTimeModule())
                     .writeValueAsString(param);
-        } catch (JsonProcessingException e) {
+        } catch (JsonProcessingException | RuntimeException e) {
             log.warn("An error occurred when trying to parse a parameter", e);
             return "parsing error";
+        }
+    }
+
+    private static Object toSafeLogValueSafely(Object value) {
+        try {
+            return toSafeLogValue(value);
+        } catch (RuntimeException e) {
+            log.warn("An error occurred when trying to sanitize log value", e);
+
+            Map<String, Object> fallback = new HashMap<>();
+            fallback.put(TYPE, value != null ? value.getClass().getSimpleName() : null);
+            fallback.put(SANITIZATION_ERROR, true);
+            return fallback;
         }
     }
 
@@ -127,7 +141,7 @@ public class LoggingAspect {
         if (value instanceof ResponseEntity<?> responseEntity) {
             Map<String, Object> response = new HashMap<>();
             response.put(STATUS, responseEntity.getStatusCodeValue());
-            response.put(BODY, toSafeLogValue(responseEntity.getBody()));
+            response.put(BODY, toSafeLogValueSafely(responseEntity.getBody()));
             return response;
         }
 
@@ -210,7 +224,7 @@ public class LoggingAspect {
         Map<String, Object> rawMap = objectMapper.convertValue(value, Map.class);
         Map<String, Object> safeMap = new HashMap<>();
 
-        rawMap.forEach((key, fieldValue) -> safeMap.put(key, toSafeLogValue(fieldValue)));
+        rawMap.forEach((key, fieldValue) -> safeMap.put(key, toSafeLogValueSafely(fieldValue)));
 
         return safeMap;
     }
@@ -248,6 +262,7 @@ public class LoggingAspect {
         MDC.put(METHOD, joinPoint.getSignature().getName());
         MDC.put(START_TIME, String.valueOf(System.currentTimeMillis()));
         MDC.put(OPERATION_ID, UUID.randomUUID().toString());
+
         if (MDC.get(REQUEST_ID) == null) {
             var requestId = UUID.randomUUID().toString();
             MDC.put(REQUEST_ID, requestId);
@@ -259,7 +274,7 @@ public class LoggingAspect {
         log.info("Invoking API operation {} - args: {}", joinPoint.getSignature().getName(), params);
 
         Object result = joinPoint.proceed();
-        Object safeResult = toSafeLogValue(result);
+        Object safeResult = toSafeLogValueSafely(result);
 
         MDC.put(STATUS, "OK");
         MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
@@ -283,7 +298,7 @@ public class LoggingAspect {
 
     @AfterReturning(value = "execution(* *..exception.ErrorHandler.*(..))", returning = "result")
     public void throwingApiInvocation(JoinPoint joinPoint, ResponseEntity<ProblemJson> result) {
-        Object safeResult = toSafeLogValue(result);
+        Object safeResult = toSafeLogValueSafely(result);
 
         MDC.put(STATUS, "KO");
         MDC.put(CODE, result != null ? String.valueOf(result.getStatusCodeValue()) : "-");
@@ -311,7 +326,7 @@ public class LoggingAspect {
         log.debug(
                 "Return method {} - result: {}",
                 joinPoint.getSignature().toShortString(),
-                toSafeLogValue(result)
+                toSafeLogValueSafely(result)
         );
 
         return result;
