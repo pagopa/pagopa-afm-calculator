@@ -79,13 +79,15 @@ public class LoggingAspect {
     private static String getDetail(ResponseEntity<ProblemJson> result) {
         if (result != null && result.getBody() != null && result.getBody().getDetail() != null) {
             return result.getBody().getDetail();
-        } else return AppError.UNKNOWN.getDetails();
+        }
+        return AppError.UNKNOWN.getDetails();
     }
 
     private static String getTitle(ResponseEntity<ProblemJson> result) {
         if (result != null && result.getBody() != null && result.getBody().getTitle() != null) {
             return result.getBody().getTitle();
-        } else return AppError.UNKNOWN.getTitle();
+        }
+        return AppError.UNKNOWN.getTitle();
     }
 
     public static String getExecutionTime() {
@@ -102,10 +104,12 @@ public class LoggingAspect {
         CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
         Map<String, Object> params = new HashMap<>();
         int i = 0;
+
         for (var paramName : codeSignature.getParameterNames()) {
             Object param = joinPoint.getArgs()[i++];
             params.put(paramName, param);
         }
+
         return toJsonString(params);
     }
 
@@ -264,8 +268,7 @@ public class LoggingAspect {
         MDC.put(OPERATION_ID, UUID.randomUUID().toString());
 
         if (MDC.get(REQUEST_ID) == null) {
-            var requestId = UUID.randomUUID().toString();
-            MDC.put(REQUEST_ID, requestId);
+            MDC.put(REQUEST_ID, UUID.randomUUID().toString());
         }
 
         String params = getParams(joinPoint);
@@ -273,27 +276,47 @@ public class LoggingAspect {
 
         log.info("Invoking API operation {} - args: {}", joinPoint.getSignature().getName(), params);
 
-        Object result = joinPoint.proceed();
-        Object safeResult = toSafeLogValueSafely(result);
+        try {
+            Object result = joinPoint.proceed();
+            Object safeResult = toSafeLogValueSafely(result);
 
-        MDC.put(STATUS, "OK");
-        MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
-        MDC.put(RESPONSE_TIME, getExecutionTime());
-        MDC.put(RESPONSE, toJsonString(safeResult));
+            MDC.put(STATUS, "OK");
+            MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
+            MDC.put(RESPONSE_TIME, getExecutionTime());
+            MDC.put(RESPONSE, toJsonString(safeResult));
 
-        log.info(
-                "Successful API operation {} - result: {}",
-                joinPoint.getSignature().getName(),
-                safeResult
-        );
+            log.info(
+                    "Successful API operation {} - result: {}",
+                    joinPoint.getSignature().getName(),
+                    safeResult
+            );
 
-        MDC.remove(RESPONSE);
-        MDC.remove(STATUS);
-        MDC.remove(CODE);
-        MDC.remove(RESPONSE_TIME);
-        MDC.remove(START_TIME);
+            return result;
 
-        return result;
+        } catch (Throwable throwable) {
+            MDC.put(STATUS, "KO");
+            MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
+            MDC.put(RESPONSE_TIME, getExecutionTime());
+            MDC.put(FAULT_CODE, throwable.getClass().getSimpleName());
+            MDC.put(FAULT_DETAIL, throwable.getMessage());
+
+            log.error(
+                    "API operation {} failed before successful response logging",
+                    joinPoint.getSignature().getName(),
+                    throwable
+            );
+
+            throw throwable;
+
+        } finally {
+            MDC.remove(RESPONSE);
+            MDC.remove(STATUS);
+            MDC.remove(CODE);
+            MDC.remove(RESPONSE_TIME);
+            MDC.remove(FAULT_CODE);
+            MDC.remove(FAULT_DETAIL);
+            MDC.remove(START_TIME);
+        }
     }
 
     @AfterReturning(value = "execution(* *..exception.ErrorHandler.*(..))", returning = "result")
