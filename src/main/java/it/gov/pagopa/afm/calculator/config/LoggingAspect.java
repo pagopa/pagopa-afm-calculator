@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Aspect
 @Component
@@ -52,14 +53,12 @@ public class LoggingAspect {
     private static final String BODY = "body";
     private static final String PAYMENT_METHODS = "paymentMethods";
     private static final String PAYMENT_METHODS_SIZE = "paymentMethodsSize";
-    private static final String PAYMENT_METHOD_ID = "paymentMethodId";
-    private static final String GROUP = "group";
-    private static final String DISABLED_REASON = "disabledReason";
-    private static final String FEE_RANGE = "feeRange";
-    private static final String PAYMENT_METHOD_TYPES = "paymentMethodTypes";
-    private static final String METHOD_MANAGEMENT = "methodManagement";
-    private static final String VALIDITY_DATE_FROM = "validityDateFrom";
+    private static final String PAYMENT_METHODS_STATUS_COUNTERS = "paymentMethodsStatusCounters";
+    private static final String PAYMENT_METHODS_DISABLED_REASON_COUNTERS = "paymentMethodsDisabledReasonCounters";
     private static final String SANITIZATION_ERROR = "sanitizationError";
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
 
     @Autowired
     HttpServletRequest httRequest;
@@ -115,9 +114,7 @@ public class LoggingAspect {
 
     private static String toJsonString(Object param) {
         try {
-            return new ObjectMapper()
-                    .registerModule(new JavaTimeModule())
-                    .writeValueAsString(param);
+            return OBJECT_MAPPER.writeValueAsString(param);
         } catch (JsonProcessingException | RuntimeException e) {
             log.warn("An error occurred when trying to parse a parameter", e);
             return "parsing error";
@@ -195,55 +192,35 @@ public class LoggingAspect {
             return safeResponse;
         }
 
-        List<Map<String, Object>> safePaymentMethods = paymentMethods.stream()
-                .map(LoggingAspect::toSafePaymentMethodsItemSafely)
-                .toList();
+        Map<String, Object> paymentMethodsInfo = new HashMap<>();
+        paymentMethodsInfo.put(TYPE, paymentMethods.getClass().getSimpleName());
+        paymentMethodsInfo.put(SIZE, paymentMethods.size());
 
-        safeResponse.put(PAYMENT_METHODS, safePaymentMethods);
-        safeResponse.put(PAYMENT_METHODS_SIZE, safePaymentMethods.size());
+        Map<String, Long> statusCounters = paymentMethods.stream()
+                .filter(item -> item != null && item.getStatus() != null)
+                .collect(Collectors.groupingBy(
+                        item -> item.getStatus().name(),
+                        Collectors.counting()
+                ));
+
+        Map<String, Long> disabledReasonCounters = paymentMethods.stream()
+                .filter(item -> item != null && item.getDisabledReason() != null)
+                .collect(Collectors.groupingBy(
+                        item -> item.getDisabledReason().name(),
+                        Collectors.counting()
+                ));
+
+        safeResponse.put(PAYMENT_METHODS, paymentMethodsInfo);
+        safeResponse.put(PAYMENT_METHODS_SIZE, paymentMethods.size());
+        safeResponse.put(PAYMENT_METHODS_STATUS_COUNTERS, statusCounters);
+        safeResponse.put(PAYMENT_METHODS_DISABLED_REASON_COUNTERS, disabledReasonCounters);
 
         return safeResponse;
     }
 
-    private static Map<String, Object> toSafePaymentMethodsItemSafely(PaymentMethodsItem item) {
-        try {
-            return toSafePaymentMethodsItem(item);
-        } catch (RuntimeException e) {
-            log.warn("An error occurred when trying to sanitize a payment method item", e);
-
-            Map<String, Object> fallback = new HashMap<>();
-            fallback.put(TYPE, item != null ? item.getClass().getSimpleName() : null);
-            fallback.put(SANITIZATION_ERROR, true);
-            return fallback;
-        }
-    }
-
-    private static Map<String, Object> toSafePaymentMethodsItem(PaymentMethodsItem item) {
-        Map<String, Object> safeItem = new HashMap<>();
-
-        if (item == null) {
-            safeItem.put(TYPE, null);
-            return safeItem;
-        }
-
-        safeItem.put(PAYMENT_METHOD_ID, item.getPaymentMethodId());
-        safeItem.put(STATUS, item.getStatus());
-        safeItem.put(GROUP, item.getGroup());
-        safeItem.put(DISABLED_REASON, item.getDisabledReason());
-        safeItem.put(FEE_RANGE, item.getFeeRange());
-        safeItem.put(PAYMENT_METHOD_TYPES, item.getPaymentMethodTypes());
-        safeItem.put(METHOD_MANAGEMENT, item.getMethodManagement());
-        safeItem.put(VALIDITY_DATE_FROM, item.getValidityDateFrom());
-
-        return safeItem;
-    }
-
     @SuppressWarnings("unchecked")
     private static Map<String, Object> toSafeObjectMap(Object value) {
-        ObjectMapper objectMapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule());
-
-        Map<String, Object> rawMap = objectMapper.convertValue(value, Map.class);
+        Map<String, Object> rawMap = OBJECT_MAPPER.convertValue(value, Map.class);
         Map<String, Object> safeMap = new HashMap<>();
 
         rawMap.forEach((key, fieldValue) -> safeMap.put(key, toSafeLogValueSafely(fieldValue)));
@@ -297,19 +274,18 @@ public class LoggingAspect {
         try {
             Object result = joinPoint.proceed();
 
+            Object safeResult = toSafeLogValueSafely(result);
+
             MDC.put(STATUS, "OK");
             MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
             MDC.put(RESPONSE_TIME, getExecutionTime());
+            MDC.put(RESPONSE, toJsonString(safeResult));
 
-            Object safeResult = toSafeLogValueSafely(result);
-            String safeResultJson = toJsonString(safeResult);
-            MDC.put(RESPONSE, safeResultJson);
-
-            log.info(
-                    "Successful API operation {} - result: {}",
-                    joinPoint.getSignature().getName(),
-                    safeResultJson
-            );
+            /*
+             * Keep the log message compact.
+             * The response details are stored in the MDC field "response".
+             */
+            log.info("Successful API operation {}", joinPoint.getSignature().getName());
 
             return result;
 
@@ -342,16 +318,15 @@ public class LoggingAspect {
     @AfterReturning(value = "execution(* *..exception.ErrorHandler.*(..))", returning = "result")
     public void throwingApiInvocation(JoinPoint joinPoint, ResponseEntity<ProblemJson> result) {
         Object safeResult = toSafeLogValueSafely(result);
-        String safeResultJson = toJsonString(safeResult);
 
         MDC.put(STATUS, "KO");
         MDC.put(CODE, result != null ? String.valueOf(result.getStatusCodeValue()) : "-");
         MDC.put(RESPONSE_TIME, getExecutionTime());
-        MDC.put(RESPONSE, safeResultJson);
+        MDC.put(RESPONSE, toJsonString(safeResult));
         MDC.put(FAULT_CODE, getTitle(result));
         MDC.put(FAULT_DETAIL, getDetail(result));
 
-        log.info("Failed API operation {} - error: {}", MDC.get(METHOD), safeResultJson);
+        log.info("Failed API operation {}", MDC.get(METHOD));
 
         MDC.clear();
     }
