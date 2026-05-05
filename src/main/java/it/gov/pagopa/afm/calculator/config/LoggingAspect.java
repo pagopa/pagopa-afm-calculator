@@ -196,7 +196,7 @@ public class LoggingAspect {
         }
 
         List<Map<String, Object>> safePaymentMethods = paymentMethods.stream()
-                .map(LoggingAspect::toSafePaymentMethodsItem)
+                .map(LoggingAspect::toSafePaymentMethodsItemSafely)
                 .toList();
 
         safeResponse.put(PAYMENT_METHODS, safePaymentMethods);
@@ -205,8 +205,26 @@ public class LoggingAspect {
         return safeResponse;
     }
 
+    private static Map<String, Object> toSafePaymentMethodsItemSafely(PaymentMethodsItem item) {
+        try {
+            return toSafePaymentMethodsItem(item);
+        } catch (RuntimeException e) {
+            log.warn("An error occurred when trying to sanitize a payment method item", e);
+
+            Map<String, Object> fallback = new HashMap<>();
+            fallback.put(TYPE, item != null ? item.getClass().getSimpleName() : null);
+            fallback.put(SANITIZATION_ERROR, true);
+            return fallback;
+        }
+    }
+
     private static Map<String, Object> toSafePaymentMethodsItem(PaymentMethodsItem item) {
         Map<String, Object> safeItem = new HashMap<>();
+
+        if (item == null) {
+            safeItem.put(TYPE, null);
+            return safeItem;
+        }
 
         safeItem.put(PAYMENT_METHOD_ID, item.getPaymentMethodId());
         safeItem.put(STATUS, item.getStatus());
@@ -278,17 +296,19 @@ public class LoggingAspect {
 
         try {
             Object result = joinPoint.proceed();
-            Object safeResult = toSafeLogValueSafely(result);
 
             MDC.put(STATUS, "OK");
             MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
             MDC.put(RESPONSE_TIME, getExecutionTime());
-            MDC.put(RESPONSE, toJsonString(safeResult));
+
+            Object safeResult = toSafeLogValueSafely(result);
+            String safeResultJson = toJsonString(safeResult);
+            MDC.put(RESPONSE, safeResultJson);
 
             log.info(
                     "Successful API operation {} - result: {}",
                     joinPoint.getSignature().getName(),
-                    safeResult
+                    safeResultJson
             );
 
             return result;
@@ -322,15 +342,16 @@ public class LoggingAspect {
     @AfterReturning(value = "execution(* *..exception.ErrorHandler.*(..))", returning = "result")
     public void throwingApiInvocation(JoinPoint joinPoint, ResponseEntity<ProblemJson> result) {
         Object safeResult = toSafeLogValueSafely(result);
+        String safeResultJson = toJsonString(safeResult);
 
         MDC.put(STATUS, "KO");
         MDC.put(CODE, result != null ? String.valueOf(result.getStatusCodeValue()) : "-");
         MDC.put(RESPONSE_TIME, getExecutionTime());
-        MDC.put(RESPONSE, toJsonString(safeResult));
+        MDC.put(RESPONSE, safeResultJson);
         MDC.put(FAULT_CODE, getTitle(result));
         MDC.put(FAULT_DETAIL, getDetail(result));
 
-        log.info("Failed API operation {} - error: {}", MDC.get(METHOD), safeResult);
+        log.info("Failed API operation {} - error: {}", MDC.get(METHOD), safeResultJson);
 
         MDC.clear();
     }
@@ -349,7 +370,7 @@ public class LoggingAspect {
         log.debug(
                 "Return method {} - result: {}",
                 joinPoint.getSignature().toShortString(),
-                toSafeLogValueSafely(result)
+                toJsonString(toSafeLogValueSafely(result))
         );
 
         return result;
