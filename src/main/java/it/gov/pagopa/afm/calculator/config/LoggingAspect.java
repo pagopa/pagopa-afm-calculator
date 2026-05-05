@@ -111,29 +111,54 @@ public class LoggingAspect {
         }
 
         if (value instanceof ResponseEntity<?> responseEntity) {
-            Object body = responseEntity.getBody();
-            return "ResponseEntity(status=" + responseEntity.getStatusCodeValue()
-                    + ", bodyType=" + (body != null ? body.getClass().getSimpleName() : "null")
-                    + ")";
+            Map<String, Object> response = new HashMap<>();
+            response.put(STATUS, responseEntity.getStatusCodeValue());
+            response.put("body", toSafeLogValue(responseEntity.getBody()));
+            return response;
+        }
+
+        if (value instanceof CharSequence
+                || value instanceof Number
+                || value instanceof Boolean
+                || value instanceof Enum<?>) {
+            return value;
         }
 
         if (value instanceof Collection<?> collection) {
-            return value.getClass().getSimpleName() + "(size=" + collection.size() + ")";
+            Map<String, Object> collectionInfo = new HashMap<>();
+            collectionInfo.put("type", value.getClass().getSimpleName());
+            collectionInfo.put("size", collection.size());
+            return collectionInfo;
         }
 
         if (value instanceof Map<?, ?> map) {
-            return value.getClass().getSimpleName() + "(size=" + map.size() + ")";
+            Map<String, Object> mapInfo = new HashMap<>();
+            mapInfo.put("type", value.getClass().getSimpleName());
+            mapInfo.put("size", map.size());
+            return mapInfo;
         }
 
         if (value.getClass().isArray()) {
-            return value.getClass().getComponentType().getSimpleName() + "[]";
+            Map<String, Object> arrayInfo = new HashMap<>();
+            arrayInfo.put("type", value.getClass().getComponentType().getSimpleName() + "[]");
+            arrayInfo.put("size", java.lang.reflect.Array.getLength(value));
+            return arrayInfo;
         }
 
-        return value.getClass().getSimpleName();
+        return toSafeObjectMap(value);
     }
 
-    private static String toSafeJsonString(Object value) {
-        return toJsonString(toSafeLogValue(value));
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> toSafeObjectMap(Object value) {
+        ObjectMapper objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule());
+
+        Map<String, Object> rawMap = objectMapper.convertValue(value, Map.class);
+        Map<String, Object> safeMap = new HashMap<>();
+
+        rawMap.forEach((key, fieldValue) -> safeMap.put(key, toSafeLogValue(fieldValue)));
+
+        return safeMap;
     }
 
     @Pointcut("@within(org.springframework.web.bind.annotation.RestController)")
@@ -179,15 +204,16 @@ public class LoggingAspect {
         log.info("Invoking API operation {} - args: {}", joinPoint.getSignature().getName(), params);
 
         Object result = joinPoint.proceed();
+        Object safeResult = toSafeLogValue(result);
 
         MDC.put(STATUS, "OK");
         MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
         MDC.put(RESPONSE_TIME, getExecutionTime());
-        MDC.put(RESPONSE, toSafeJsonString(result));
+        MDC.put(RESPONSE, toJsonString(safeResult));
         log.info(
                 "Successful API operation {} - result: {}",
                 joinPoint.getSignature().getName(),
-                toSafeLogValue(result)
+                safeResult
         );
         MDC.remove(RESPONSE);
         MDC.remove(STATUS);
@@ -198,14 +224,16 @@ public class LoggingAspect {
     }
 
     @AfterReturning(value = "execution(* *..exception.ErrorHandler.*(..))", returning = "result")
-    public void trowingApiInvocation(JoinPoint joinPoint, ResponseEntity<ProblemJson> result) {
+    public void throwingApiInvocation(JoinPoint joinPoint, ResponseEntity<ProblemJson> result) {
+    	Object safeResult = toSafeLogValue(result);
+    	
         MDC.put(STATUS, "KO");
-        MDC.put(CODE, String.valueOf(result.getStatusCodeValue()));
+        MDC.put(CODE, result != null ? String.valueOf(result.getStatusCodeValue()) : "-");
         MDC.put(RESPONSE_TIME, getExecutionTime());
-        MDC.put(RESPONSE, toSafeJsonString(result));
+        MDC.put(RESPONSE, toJsonString(safeResult));
         MDC.put(FAULT_CODE, getTitle(result));
         MDC.put(FAULT_DETAIL, getDetail(result));
-        log.info("Failed API operation {} - error: {}", MDC.get(METHOD), toSafeLogValue(result));
+        log.info("Failed API operation {} - error: {}", MDC.get(METHOD), safeResult);
         MDC.clear();
     }
 
