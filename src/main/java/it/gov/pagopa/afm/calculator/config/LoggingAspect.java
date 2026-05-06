@@ -143,7 +143,7 @@ public class LoggingAspect {
         String params = getParams(joinPoint);
         MDC.put(ARGS, getParams(joinPoint));
 
-        log.info("Invoking API operation {} - args: {}", joinPoint.getSignature().getName(), params);
+        log.info("{\"Operation\":\"{}\",\"step\":\"Invoking\",\"args\":\"{}\"}", joinPoint.getSignature().getName(), params);
 
         Object result = joinPoint.proceed();
 
@@ -151,7 +151,7 @@ public class LoggingAspect {
         MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
         MDC.put(RESPONSE_TIME, getExecutionTime());
         MDC.put(RESPONSE, toJsonString(result));
-        log.info("Successful API operation {} - result: {}", joinPoint.getSignature().getName(), result);
+        log.info("{\"Operation\":\"{}\",\"step\":\"Success\",\"result\":\"{}\"}", joinPoint.getSignature().getName(), toJsonString(result));
         MDC.remove(RESPONSE);
         MDC.remove(STATUS);
         MDC.remove(CODE);
