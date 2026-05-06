@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic - API AFM-Calculator for node v2",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.14.1-8-hot-fix-kibana-dashboard"
+    "version": "2.14.1-9-hot-fix-kibana-dashboard"
   },
   "servers": [
     {
