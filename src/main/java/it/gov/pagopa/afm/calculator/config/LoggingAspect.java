@@ -133,11 +133,11 @@ public class LoggingAspect {
 
     @Around(value = "restController()")
     public Object logApiInvocation(ProceedingJoinPoint joinPoint) throws Throwable {
+        String requestId = UUID.randomUUID().toString();
         MDC.put(METHOD, joinPoint.getSignature().getName());
         MDC.put(START_TIME, String.valueOf(System.currentTimeMillis()));
         MDC.put(OPERATION_ID, UUID.randomUUID().toString());
         if (MDC.get(REQUEST_ID) == null) {
-            var requestId = UUID.randomUUID().toString();
             MDC.put(REQUEST_ID, requestId);
         }
 
@@ -149,7 +149,7 @@ public class LoggingAspect {
         MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
         MDC.put(RESPONSE_TIME, getExecutionTime());
         MDC.put(RESPONSE, toJsonString(result));
-        log.info("{\"Operation\":\"{}\",\"step\":\"Success\"}", joinPoint.getSignature().getName());
+        log.info("Successful API operation {} request-id {}", joinPoint.getSignature().getName(), requestId);
         MDC.remove(RESPONSE);
         MDC.remove(STATUS);
         MDC.remove(CODE);
