@@ -140,10 +140,8 @@ public class LoggingAspect {
             var requestId = UUID.randomUUID().toString();
             MDC.put(REQUEST_ID, requestId);
         }
-        String params = getParams(joinPoint);
-        MDC.put(ARGS, getParams(joinPoint));
 
-        log.info("{\"Operation\":\"{}\",\"step\":\"Invoking\"}", joinPoint.getSignature().getName());
+        MDC.put(ARGS, getParams(joinPoint));
 
         Object result = joinPoint.proceed();
 
