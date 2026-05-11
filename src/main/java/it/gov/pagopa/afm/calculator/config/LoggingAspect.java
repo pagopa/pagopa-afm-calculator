@@ -22,8 +22,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -45,6 +43,11 @@ public class LoggingAspect {
     public static final String OPERATION_ID = "operationId";
     public static final String ARGS = "args";
 
+    private static final String PARSING_ERROR = "parsing error";
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
+
     @Autowired
     HttpServletRequest httRequest;
 
@@ -63,13 +66,15 @@ public class LoggingAspect {
     private static String getDetail(ResponseEntity<ProblemJson> result) {
         if (result != null && result.getBody() != null && result.getBody().getDetail() != null) {
             return result.getBody().getDetail();
-        } else return AppError.UNKNOWN.getDetails();
+        }
+        return AppError.UNKNOWN.getDetails();
     }
 
     private static String getTitle(ResponseEntity<ProblemJson> result) {
         if (result != null && result.getBody() != null && result.getBody().getTitle() != null) {
             return result.getBody().getTitle();
-        } else return AppError.UNKNOWN.getTitle();
+        }
+        return AppError.UNKNOWN.getTitle();
     }
 
     public static String getExecutionTime() {
@@ -86,54 +91,22 @@ public class LoggingAspect {
         CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
         Map<String, Object> params = new HashMap<>();
         int i = 0;
-        for (var paramName : codeSignature.getParameterNames()) {
+
+        for (String paramName : codeSignature.getParameterNames()) {
             Object param = joinPoint.getArgs()[i++];
             params.put(paramName, param);
         }
-        return toJsonString(params);
 
+        return toJsonString(params);
     }
 
     private static String toJsonString(Object param) {
         try {
-            return new ObjectMapper()
-                    .registerModule(new JavaTimeModule())
-                    .writeValueAsString(param);
+            return OBJECT_MAPPER.writeValueAsString(param);
         } catch (JsonProcessingException e) {
             log.warn("An error occurred when trying to parse a parameter", e);
-            return "parsing error";
+            return PARSING_ERROR;
         }
-    }
-    
-    private static Object toSafeLogValue(Object value) {
-        if (value == null) {
-            return null;
-        }
-
-        if (value instanceof ResponseEntity<?> responseEntity) {
-            Object body = responseEntity.getBody();
-            return "ResponseEntity(status=" + responseEntity.getStatusCodeValue()
-                    + ", bodyType=" + (body != null ? body.getClass().getSimpleName() : "null")
-                    + ")";
-        }
-
-        if (value instanceof Collection<?> collection) {
-            return value.getClass().getSimpleName() + "(size=" + collection.size() + ")";
-        }
-
-        if (value instanceof Map<?, ?> map) {
-            return value.getClass().getSimpleName() + "(size=" + map.size() + ")";
-        }
-
-        if (value.getClass().isArray()) {
-            return value.getClass().getComponentType().getSimpleName() + "[]";
-        }
-
-        return value.getClass().getSimpleName();
-    }
-
-    private static String toSafeJsonString(Object value) {
-        return toJsonString(toSafeLogValue(value));
     }
 
     @Pointcut("@within(org.springframework.web.bind.annotation.RestController)")
@@ -153,7 +126,7 @@ public class LoggingAspect {
 
     @Pointcut("execution(* *..client.*(..))")
     public void client() {
-        // all service methods
+        // all client methods
     }
 
     /**
@@ -166,46 +139,51 @@ public class LoggingAspect {
 
     @Around(value = "restController()")
     public Object logApiInvocation(ProceedingJoinPoint joinPoint) throws Throwable {
+        String requestId = UUID.randomUUID().toString();
+
         MDC.put(METHOD, joinPoint.getSignature().getName());
         MDC.put(START_TIME, String.valueOf(System.currentTimeMillis()));
         MDC.put(OPERATION_ID, UUID.randomUUID().toString());
+
         if (MDC.get(REQUEST_ID) == null) {
-            var requestId = UUID.randomUUID().toString();
             MDC.put(REQUEST_ID, requestId);
         }
-        String params = getParams(joinPoint);
-        MDC.put(ARGS, params);
 
-        log.info("Invoking API operation {} - args: {}", joinPoint.getSignature().getName(), params);
+        MDC.put(ARGS, getParams(joinPoint));
 
         Object result = joinPoint.proceed();
 
         MDC.put(STATUS, "OK");
         MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
         MDC.put(RESPONSE_TIME, getExecutionTime());
-        MDC.put(RESPONSE, toSafeJsonString(result));
+        MDC.put(RESPONSE, toJsonString(result));
+
         log.info(
-                "Successful API operation {} - result: {}",
+                "{\"Operation\":\"{}\",\"step\":\"Success\", \"Request-id\": \"{}\"}",
                 joinPoint.getSignature().getName(),
-                toSafeLogValue(result)
+                requestId
         );
+
         MDC.remove(RESPONSE);
         MDC.remove(STATUS);
         MDC.remove(CODE);
         MDC.remove(RESPONSE_TIME);
         MDC.remove(START_TIME);
+
         return result;
     }
 
     @AfterReturning(value = "execution(* *..exception.ErrorHandler.*(..))", returning = "result")
-    public void trowingApiInvocation(JoinPoint joinPoint, ResponseEntity<ProblemJson> result) {
+    public void throwingApiInvocation(JoinPoint joinPoint, ResponseEntity<ProblemJson> result) {
         MDC.put(STATUS, "KO");
         MDC.put(CODE, String.valueOf(result.getStatusCodeValue()));
         MDC.put(RESPONSE_TIME, getExecutionTime());
-        MDC.put(RESPONSE, toSafeJsonString(result));
+        MDC.put(RESPONSE, toJsonString(result));
         MDC.put(FAULT_CODE, getTitle(result));
         MDC.put(FAULT_DETAIL, getDetail(result));
-        log.info("Failed API operation {} - error: {}", MDC.get(METHOD), toSafeLogValue(result));
+
+        log.info("Failed API operation {} - error: {}", MDC.get(METHOD), result);
+
         MDC.clear();
     }
 
@@ -216,15 +194,12 @@ public class LoggingAspect {
         }
 
         String params = getParams(joinPoint);
+
         log.debug("Call method {} - args: {}", joinPoint.getSignature().toShortString(), params);
 
         Object result = joinPoint.proceed();
 
-        log.debug(
-                "Return method {} - result: {}",
-                joinPoint.getSignature().toShortString(),
-                toSafeLogValue(result)
-        );
+        log.debug("Return method {} - result: {}", joinPoint.getSignature().toShortString(), result);
 
         return result;
     }
