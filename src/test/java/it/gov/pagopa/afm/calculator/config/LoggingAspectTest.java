@@ -269,7 +269,7 @@ class LoggingAspectTest {
     }
 
     @Test
-    void getExecutionTime_shouldReturnElapsedTimeWhenStartTimeIsPresent() throws InterruptedException {
+    void getExecutionTime_shouldReturnElapsedTimeWhenStartTimeIsPresent() {
         /*
          * This test verifies that getExecutionTime calculates the elapsed time
          * using the START_TIME value stored in MDC.
@@ -297,11 +297,6 @@ class LoggingAspectTest {
 
     @Test
     void toJsonString_shouldReturnParsingErrorForNonSerializableObject() throws Exception {
-        /*
-         * This test verifies the fallback behavior of toJsonString.
-         * If Jackson cannot serialize an object, the method must not throw;
-         * it must return the expected fallback string.
-         */
         Object nonSerializable = new Object() {
             @SuppressWarnings("unused")
             public Object getBrokenValue() {
