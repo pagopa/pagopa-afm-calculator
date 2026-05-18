@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.14.2"
+    tag: "2.14.2-1-haproxy"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -46,6 +46,13 @@ microservice-chart:
     host: "weudev.afm.internal.dev.platform.pagopa.it"
     path: /pagopa-afm-calculator-service/(.*)
     servicePort: 8080
+    haproxy:
+      create: true
+      host: "my-app.itn.internal.devopslab.pagopa.it"
+      path: "/my-app-path"
+      rewriteTarget: "/"
+      annotations:
+        haproxy.org/check: "true"
   serviceAccount:
     name: "afm-workload-identity"
   azure:
