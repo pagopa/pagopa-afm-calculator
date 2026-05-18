@@ -46,6 +46,13 @@ microservice-chart:
     host: "weudev.afm.internal.dev.platform.pagopa.it"
     path: /pagopa-afm-calculator-service/(.*)
     servicePort: 8080
+    haproxy:
+      create: true
+      host: "my-app.itn.internal.devopslab.pagopa.it"
+      path: "/my-app-path"
+      rewriteTarget: "/"
+      annotations:
+        haproxy.org/check: "true"
   serviceAccount:
     name: "afm-workload-identity"
   azure:
