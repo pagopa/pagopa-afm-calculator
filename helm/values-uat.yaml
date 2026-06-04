@@ -94,6 +94,8 @@ microservice-chart:
     COSMOS_URI: https://pagopa-u-weu-afm-marketplace-cosmos-account.documents.azure.com:443/
     ISSUER_RANGE_TABLE: 'pagopauweuafmsaissuerrangetable'
     AMOUNT_THRESHOLD: '0'
+    ALL_CCP_NEW_FILTER_ENABLED: 'false'
+    ID_CANALI_POSTE: 'TODO'
     ID_PSP_POSTE: 'BPPIITRRXXX'
     AMEX_ABI: 'AMREX'
     PSP_BLACKLIST: ''

@@ -33,13 +33,16 @@ import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
 @Repository
 public class CosmosRepository {
     private static final String ID_PSP_PARAM = "idPsp";
+    private static final String ID_CHANNEL_FIELD_NAME = "idChannel";
     private static final String TRANSFER_CATEGORY_LIST = "transferCategoryList";
     private static final String CART_PARAM = "cart";
     private final CosmosTemplate cosmosTemplate;
     private final TouchpointRepository touchpointRepository;
     private final PaymentTypeRepository paymentTypeRepository;
     private final UtilityComponent utilityComponent;
+    private final Boolean allCcpNewFilterEnabled;
     private final String pspPosteId;
+    private final List<String> posteChannelIds;
     private final List<String> pspBlacklist;
 
     public CosmosRepository(
@@ -47,14 +50,18 @@ public class CosmosRepository {
             TouchpointRepository touchpointRepository,
             PaymentTypeRepository paymentTypeRepository,
             UtilityComponent utilityComponent,
+            @Value("${allCcp.newFilter.enabled}") Boolean allCcpNewFilterEnabled,
             @Value("${pspPoste.id}") String pspPosteId,
+            @Value("#{'${psp.poste.channelIds}'.split(',')}") List<String> posteChannelIds,
             @Value("#{'${psp.blacklist}'.split(',')}") List<String> pspBlacklist
     ) {
         this.cosmosTemplate = cosmosTemplate;
         this.touchpointRepository = touchpointRepository;
         this.paymentTypeRepository = paymentTypeRepository;
         this.utilityComponent = utilityComponent;
+        this.allCcpNewFilterEnabled = allCcpNewFilterEnabled;
         this.pspPosteId = pspPosteId;
+        this.posteChannelIds = posteChannelIds;
         this.pspBlacklist = pspBlacklist;
     }
 
@@ -242,7 +249,7 @@ public class CosmosRepository {
 
         // add filter for Poste bundles
         if (Boolean.FALSE.equals(allCcp)) {
-            var allCcpFilter = isNotEqual(ID_PSP_PARAM, pspPosteId);
+            var allCcpFilter = getPosteCriteria();
             queryResult = and(queryResult, allCcpFilter);
         }
 
@@ -259,6 +266,7 @@ public class CosmosRepository {
         // execute the query
         return cosmosTemplate.find(new CosmosQuery(queryResult), ValidBundle.class, "validbundles");
     }
+
 
     /**
      * Null value are ignored -> they are skipped when building the filters
@@ -335,7 +343,7 @@ public class CosmosRepository {
 
         // add filter for Poste bundles
         if (!allCcp) {
-            var allCcpFilter = isNotEqual(ID_PSP_PARAM, pspPosteId);
+            var allCcpFilter = getPosteCriteria();
             queryResult = and(queryResult, allCcpFilter);
         }
 
@@ -415,7 +423,7 @@ public class CosmosRepository {
             var pspSearch = iterator.next();
             var queryItem = isEqual(ID_PSP_PARAM, pspSearch.getIdPsp());
             if (StringUtils.isNotEmpty(pspSearch.getIdChannel())) {
-                queryItem = and(queryItem, isEqual("idChannel", pspSearch.getIdChannel()));
+                queryItem = and(queryItem, isEqual(ID_CHANNEL_FIELD_NAME, pspSearch.getIdChannel()));
             }
             if (StringUtils.isNotEmpty(pspSearch.getIdBrokerPsp())) {
                 queryItem = and(queryItem, isEqual("idBrokerPsp", pspSearch.getIdBrokerPsp()));
@@ -436,5 +444,14 @@ public class CosmosRepository {
             queryResult = and(queryResult, pspNotIn);
         }
         return queryResult;
+    }
+
+    private Criteria getPosteCriteria() {
+        if (Boolean.TRUE.equals(allCcpNewFilterEnabled)) {
+            // new version of allCcp filter by channel id
+            return notIn(ID_CHANNEL_FIELD_NAME, posteChannelIds);
+        }
+        // old version of allCcp filter by psp id
+        return isNotEqual(ID_PSP_PARAM, pspPosteId);
     }
 }
