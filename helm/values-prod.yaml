@@ -29,7 +29,7 @@ microservice-chart:
         maxUnavailable: 0
         maxSurge: 1
   serviceMonitor:
-    create: true
+    create: false
     endpoints:
       - interval: 10s #jmx-exporter
         targetPort: 12345

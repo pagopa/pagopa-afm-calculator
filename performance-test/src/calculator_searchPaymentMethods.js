@@ -23,13 +23,13 @@ const validBundlesNum = `${vars.validBundlesNum}`;
 
 const cosmosPrimaryKey = `${__ENV.COSMOS_SUBSCRIPTION_KEY}`;
 
-export function setup() {
+/*export function setup() {
     for (let i = 0; i < validBundlesNum; i++) {
         let validBundle = getValidBundle("int-test-"+i);
         let response = createDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundle, validBundle['idPsp']);
         check(response, { "status is 201": (res) => (res.status === 201) });
     }
-}
+}*/
 
 export default function calculator() {
 
@@ -74,10 +74,10 @@ export default function calculator() {
 
 }
 
-export function teardown() {
+/*export function teardown() {
     for (let i = 0; i < validBundlesNum; i++) {
         let validBundle = getValidBundle("int-test-"+i);
         let response = deleteDocument(cosmosDBURI, databaseID, "validbundles", cosmosPrimaryKey, validBundle['id'], validBundle['idPsp']);
         check(response, { "status is 204": (res) => (res.status === 204) });
     }
-}
+}*/
