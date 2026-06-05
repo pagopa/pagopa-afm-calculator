@@ -170,7 +170,7 @@ public class CosmosRepository {
     }
 
     @Cacheable(value = "findValidBundlesMulti")
-    public List<ValidBundle> findByPaymentOption(PaymentOptionMulti paymentOption, Boolean allCcp) {
+    public List<ValidBundle> findByPaymentOption(PaymentOptionMulti paymentOption, boolean allCcp) {
         Iterable<ValidBundle> validBundles = findValidBundlesMulti(paymentOption, allCcp);
         return getFilteredBundlesMulti(paymentOption, validBundles);
     }
@@ -181,7 +181,7 @@ public class CosmosRepository {
      * @param paymentOptionMulti Get the Body of the Request
      * @return the filtered bundles
      */
-    private Iterable<ValidBundle> findValidBundlesMulti(PaymentOptionMulti paymentOptionMulti, Boolean allCcp) {
+    private Iterable<ValidBundle> findValidBundlesMulti(PaymentOptionMulti paymentOptionMulti, boolean allCcp) {
 
         // add filter by Payment Amount: minPaymentAmount <= paymentAmount < maxPaymentAmount
         var minFilter =
@@ -248,7 +248,7 @@ public class CosmosRepository {
         }
 
         // add filter for Poste bundles
-        if (Boolean.FALSE.equals(allCcp)) {
+        if (!allCcp) {
             var allCcpFilter = getPosteCriteria();
             queryResult = and(queryResult, allCcpFilter);
         }
