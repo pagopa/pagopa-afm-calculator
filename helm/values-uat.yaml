@@ -95,7 +95,7 @@ microservice-chart:
     ISSUER_RANGE_TABLE: 'pagopauweuafmsaissuerrangetable'
     AMOUNT_THRESHOLD: '0'
     ALL_CCP_NEW_FILTER_ENABLED: 'false'
-    ID_CANALI_POSTE: 'TODO'
+    POSTE_CHANNEL_IDS: 'TODO'
     ID_PSP_POSTE: 'BPPIITRRXXX'
     AMEX_ABI: 'AMREX'
     PSP_BLACKLIST: ''
