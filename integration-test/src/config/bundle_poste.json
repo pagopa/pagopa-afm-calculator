@@ -1,0 +1,24 @@
+{
+  "bundles": [
+    {
+      "id": "int-test-poste-1",
+      "idBrokerPsp": "00348170101",
+      "digitalStamp": false,
+      "digitalStampRestriction": false,
+      "name": "pacchetto poste 1",
+      "description": "pacchetto poste 1",
+      "paymentAmount": 100,
+      "minPaymentAmount": 669999999999998,
+      "maxPaymentAmount": 7799999999999,
+      "type": "GLOBAL",
+      "validityDateFrom": null,
+      "validityDateTo": null,
+      "touchpoint": "ANY",
+      "paymentType": null,
+      "abi": 14156,
+      "pspBusinessName": "psp business name int-test-1",
+      "cart" : null,
+      "onUs" : null
+    }
+  ]
+}

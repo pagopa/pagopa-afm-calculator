@@ -10,6 +10,10 @@ const afm_host_V2 = process.env.AFM_HOST_V2;
 const afm_api_extension_V2 = process.env.AFM_API_EXTENSION_V2;
 const afm_marketplace_host = process.env.AFM_MARKETPLACE_HOST;
 
+const idPSPPoste = process.env.ID_PSP_POSTE;
+const posteChannelIds = process.env.POSTE_CHANNEL_IDS?.split(",");
+const allCcpNewFilterEnabled = process.env.ALL_CCP_NEW_FILTER_ENABLED;
+
 /*increased the default timeout of the promise to allow
 the correct execution of the smoke tests*/
 setDefaultTimeout(30000);
@@ -68,7 +72,8 @@ Given('the configuration {string}', async function(filePath) {
   let file = fs.readFileSync('./config/' + filePath);
   let config = JSON.parse(file);
 
-  validBundles = mapToValidBundles(config);
+  let posteBundles = filePath === "bundle_poste.json";
+  validBundles = mapToValidBundles(config, posteBundles);
 
   let result = await post(afm_host + '/configuration/bundles/add',
     validBundles);
@@ -156,10 +161,30 @@ Then('the body response has one bundle for each psp', function () {
   }
 });
 
-Then('the body response does not contain the Poste idPsp', function () {
-  for (let i=0; i<responseToCheck.data.bundleOptions.length; i++){
-    let bodyPsp = responseToCheck.data.bundleOptions[i].idPsp;
-    assert.notEqual(bodyPsp, process.env.ID_PSP_POSTE);
+Then('the body response contain the Poste bundles', function () {
+  let foundPosteBundle = false;
+  for (const bundle of responseToCheck.data.bundleOptions) {
+    if (allCcpNewFilterEnabled === false) {
+      if (bundle.idPsp === idPSPPoste) {
+        foundPosteBundle = true;
+      }
+    } else {
+      if (posteChannelIds.contains(bundle.idChannel)) {
+        foundPosteBundle = true;
+      }
+    }
+  }
+  assert.strictEqual(foundPosteBundle, true);
+});
+
+Then('the body response does not contain the Poste bundles', function () {
+  for (const bundle of responseToCheck.data.bundleOptions) {
+    if (allCcpNewFilterEnabled === false) {
+      assert.notEqual(bundle.idPsp, idPSPPoste);
+    } else {
+      let bundleChannel = bundle.idChannel
+      assert.strictEqual(posteChannelIds.contains(bundleChannel), false);
+    }
   }
 });
 
@@ -271,12 +296,22 @@ Then(/^the the cart is first and others in alphabetic order$/, function () {
 });
 
 
-function mapToValidBundles(config) {
-
+function mapToValidBundles(config, posteBundles) {
   let validbundles = [];
 
   for (let bundle of config["bundles"]) {
     let validBundle = bundle;
+
+    if (posteBundles) {
+      if (allCcpNewFilterEnabled === true) {
+        validBundle.idPsp = "ABI50004";
+        validBundle.idChannel = posteChannelIds[0];
+      } else {
+        validBundle.idPsp = idPSPPoste;
+        validBundle.idChannel = "65434098438_01";
+      }
+    }
+
     validBundle.ciBundleList = [];
     for (let cibundle of config["ciBundles"]) {
       if (cibundle.idBundle === bundle.id) {
