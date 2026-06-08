@@ -17,8 +17,9 @@
       "paymentType": null,
       "abi": 14156,
       "pspBusinessName": "psp business name int-test-1",
-      "cart" : null,
-      "onUs" : null
+      "cart": null,
+      "onUs": null
     }
-  ]
+  ],
+  "ciBundles": []
 }
