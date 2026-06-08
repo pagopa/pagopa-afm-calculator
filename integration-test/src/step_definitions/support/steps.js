@@ -302,6 +302,8 @@ function mapToValidBundles(config, posteBundles) {
   for (let bundle of config["bundles"]) {
     let validBundle = bundle;
 
+    console.log("posteBundles", posteBundles);
+    console.log("allCcpNewFilterEnabled", allCcpNewFilterEnabled);
     if (posteBundles) {
       if (allCcpNewFilterEnabled === true) {
         validBundle.idPsp = "ABI50004";
@@ -310,6 +312,7 @@ function mapToValidBundles(config, posteBundles) {
         validBundle.idPsp = idPSPPoste;
         validBundle.idChannel = "65434098438_01";
       }
+      console.log("validBundle", validBundle);
     }
 
     validBundle.ciBundleList = [];
