@@ -86,7 +86,7 @@ jobs:
         run: |
           export CANARY=${{ inputs.canary }}
           export TYPE=$([ ${{ inputs.allure }} = true ] && echo "allure" || echo "cucumber")
-          export ALL_CCP_NEW_FILTER_ENABLED=${{ inputs.allCcp_filter_logic }}
+          export ALL_CCP_NEW_FILTER_ENABLED=${{ inputs.new_allCcp_filter_logic }}
 
           cd ./integration-test
           chmod +x ./run_integration_test.sh
