@@ -14,6 +14,8 @@ const idPSPPoste = process.env.ID_PSP_POSTE;
 const posteChannelIds = process.env.POSTE_CHANNEL_IDS?.split(",") || [];
 const allCcpNewFilterEnabled = process.env.ALL_CCP_NEW_FILTER_ENABLED;
 
+const isAllCcpNewFilterEnabled = String(allCcpNewFilterEnabled).toLowerCase() === "true";
+
 /*increased the default timeout of the promise to allow
 the correct execution of the smoke tests*/
 setDefaultTimeout(30000);
@@ -91,20 +93,17 @@ Given('the configuration {string}', async function(filePath) {
 });
 
 Given('the poste bundles configuration {string}', async function(filePath) {
-  let file = fs.readFileSync('./config/' + filePath);
-  let config = JSON.parse(file);
+  const config = JSON.parse(fs.readFileSync(`./config/${filePath}`, 'utf8'));
+  const posteBundles = config["bundles"];
 
-  let validbundles = config["bundles"];
-  if (allCcpNewFilterEnabled === true) {
-      validbundles[0].idPsp = "ABI50004";
-      validbundles[0].idChannel = posteChannelIds[0];
-  } else {
-      validbundles[0].idPsp = idPSPPoste;
-      validbundles[0].idChannel = "65434098438_01";
-  }
-  let result = await post(afm_host + '/configuration/bundles/add',
-      validbundles);
+  posteBundles.forEach((bundle, i) => Object.assign(bundle, isAllCcpNewFilterEnabled
+    ? { idPsp: "ABI50004", idChannel: posteChannelIds[i] ?? posteChannelIds[0] }
+    : { idPsp: idPSPPoste, idChannel: "65434098438_01" }
+  ));
+
+  const result = await post(afm_host + '/configuration/bundles/add', posteBundles);
   assert.strictEqual(result.status, 201);
+  validBundles.push(...posteBundles);
 });
 
 Given('the payment methods configuration {string}', async function(filePath) {
@@ -180,7 +179,7 @@ Then('the body response has one bundle for each psp', function () {
 Then('the body response contain the Poste bundles', function () {
   let foundPosteBundle = false;
   for (const bundle of responseToCheck.data.bundleOptions) {
-    if (allCcpNewFilterEnabled === false) {
+    if (!isAllCcpNewFilterEnabled) {
       if (bundle.idPsp === idPSPPoste) {
         foundPosteBundle = true;
       }
@@ -193,11 +192,10 @@ Then('the body response contain the Poste bundles', function () {
 
 Then('the body response does not contain the Poste bundles', function () {
   for (const bundle of responseToCheck.data.bundleOptions) {
-    if (allCcpNewFilterEnabled === false) {
-      assert.notEqual(bundle.idPsp, idPSPPoste);
+    if (isAllCcpNewFilterEnabled) {
+      assert.strictEqual(posteChannelIds.includes(bundle.idChannel), false);
     } else {
-      let bundleChannel = bundle.idChannel
-      assert.strictEqual(posteChannelIds.includes(bundleChannel), false);
+      assert.notEqual(bundle.idPsp, idPSPPoste);
     }
   }
 });
