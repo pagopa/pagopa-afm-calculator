@@ -2,7 +2,7 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
 
   Background: 
     Given the configuration "data.json"
-    And the configuration "bundle_poste.json"
+    And the poste bundles configuration "bundle_poste.json"
 
   Scenario: Execute a GetFees request with allCcp flag set to false
     Given initial json
