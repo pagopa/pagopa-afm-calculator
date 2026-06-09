@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.14.2"
+    tag: "2.14.2-1-PAGOPA-3595-new-all-ccp-filter-version"
     pullPolicy: Always
   livenessProbe:
     httpGet:
