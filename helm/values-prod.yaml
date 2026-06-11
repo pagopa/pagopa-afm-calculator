@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.14.2-1-PAGOPA-3595-new-all-ccp-filter-version"
+    tag: "2.14.3"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -50,7 +50,7 @@ microservice-chart:
     name: "afm-workload-identity"
   azure:
     workloadIdentityClientId: <workload-identity-client-id-set-automatically-by-gha>
-  podAnnotations: { }
+  podAnnotations: {}
   podSecurityContext:
     seccompProfile:
       type: RuntimeDefault
@@ -80,7 +80,7 @@ microservice-chart:
           # Required
           type: Utilization # Allowed types are 'Utilization' or 'AverageValue'
           value: "80"
-  fileConfig: { }
+  fileConfig: {}
   envConfig:
     WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
     ENV: 'prod'
@@ -114,8 +114,8 @@ microservice-chart:
   keyvault:
     name: "pagopa-p-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
-  nodeSelector: { }
-  tolerations: [ ]
+  nodeSelector: {}
+  tolerations: []
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
@@ -132,7 +132,7 @@ microservice-chart:
             labelSelector:
               matchLabels:
                 app.kubernetes.io/instance: pagopaafmcalculator
-            namespaces: [ "afm" ]
+            namespaces: ["afm"]
             topologyKey: topology.kubernetes.io/zone
   canaryDelivery:
     create: false
@@ -145,5 +145,5 @@ microservice-chart:
       repository: ghcr.io/pagopa/pagopa-afm-calculator
       tag: "2.14.2"
       pullPolicy: Always
-    envConfig: { }
-    envSecret: { }
+    envConfig: {}
+    envSecret: {}
