@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.14.2-1-PIDM-2033-microservice-slowdown"
+    tag: "2.14.3"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -92,6 +92,9 @@ microservice-chart:
     COSMOS_URI: https://pagopa-d-weu-afm-marketplace-cosmos-account.documents.azure.com:443/
     ISSUER_RANGE_TABLE: 'pagopadweuafmsaissuerrangetable'
     AMOUNT_THRESHOLD: '0'
+    # TODO: Remove this on PROD activation (31 dic 2026) https://pagopa.atlassian.net/browse/PAGOPA-3595
+    ALL_CCP_NEW_FILTER_ENABLED: 'true'
+    POSTE_CHANNEL_IDS: '17103880000_01'
     ID_PSP_POSTE: 'BPPIITRRZZZ'
     AMEX_ABI: 'AMREX'
     PSP_BLACKLIST: ''

@@ -1,7 +1,8 @@
 Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
 
-  Background: 
+  Background:
     Given the configuration "data.json"
+    And the poste bundles configuration "bundle_poste.json"
 
   Scenario: Execute a GetFees request
     Given initial json
@@ -28,12 +29,11 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
-    | onUs  |
-    | true  |
-    | false |
-    | false |
-    
-    
+      | onUs  |
+      | true  |
+      | false |
+      | false |
+
 
   Scenario: Execute a GetFees request 2
     Given initial json
@@ -60,15 +60,15 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
-    | onUs  |
-    | true  |
-    | true  |
-    | false |
-    | false |
-    | false |
-    | false |
-    | false |
-    | false |
+      | onUs  |
+      | true  |
+      | true  |
+      | false |
+      | false |
+      | false |
+      | false |
+      | false |
+      | false |
 
   Scenario: Get List of fees by CI, amount, method and single PSP
     Given initial json
@@ -95,10 +95,10 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
-    | onUs  |
-    | true |
-    | false |
-    
+      | onUs  |
+      | true  |
+      | false |
+
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP
     Given initial json
@@ -125,11 +125,11 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
-    | onUs  |
-    | true |
-    | false |
-    | false |
-    
+      | onUs  |
+      | true  |
+      | false |
+      | false |
+
 
   Scenario: Get List of fees by CI, amount, touchpoint and single PSP 2
     Given initial json
@@ -209,10 +209,10 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
-    | onUs  |
-    | false |
-    | false |
-   
+      | onUs  |
+      | false |
+      | false |
+
 
   Scenario: Execute a GetFees request and above threshold
     Given initial json
@@ -239,16 +239,16 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
-    | onUs  |
-    | true  |
-    | true  |
-    | false |
-    | false |
-    | false |
-    | false |
-    | false |
-    | false |
-    
+      | onUs  |
+      | true  |
+      | true  |
+      | false |
+      | false |
+      | false |
+      | false |
+      | false |
+      | false |
+
 
   Scenario: Execute a GetFees request with non-existing bin
     Given initial json
@@ -275,13 +275,13 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
-    | onUs  |
+      | onUs |
 
   Scenario: Execute a GetFees request with allCcp flag set to false
     Given initial json
       """
       {
-        "paymentAmount": 799999999999998,
+        "paymentAmount": 61201,
         "primaryCreditorInstitution": "77777777777",
         "bin": "309500",
         "paymentMethod": "CP",
@@ -301,9 +301,35 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
       """
     When the client send POST to /fees?maxOccurrences=10&allCcp=false
     Then check statusCode is 200
-    And the body response does not contain the Poste idPsp
-    
-    Scenario: Execute a GetFees request for AMEX payment
+    And the body response does not contain the Poste bundles
+
+  Scenario: Execute a GetFees request with allCcp flag set to true
+    Given initial json
+      """
+      {
+        "paymentAmount": 61201,
+        "primaryCreditorInstitution": "77777777777",
+        "bin": "309500",
+        "paymentMethod": "CP",
+        "touchpoint": null,
+        "idPspList": null,
+        "transferList": [
+          {
+            "creditorInstitution": "77777777777",
+            "transferCategory": "TAX1"
+          },
+          {
+            "creditorInstitution": "77777777778",
+            "transferCategory": "TAX2"
+          }
+        ]
+      }
+      """
+    When the client send POST to /fees?maxOccurrences=10&allCcp=true
+    Then check statusCode is 200
+    And the body response contain the Poste bundles
+
+  Scenario: Execute a GetFees request for AMEX payment
     Given initial json
       """
       {
@@ -328,5 +354,5 @@ Feature: GetFees - Get List of fees by CI, amount, method, touchpoint
     When the client send POST to /fees?maxOccurrences=10
     Then check statusCode is 200
     And the body response ordering for the bundleOptions.onUs field for the "V1" API is:
-    | onUs  |
-    | true  |
+      | onUs |
+      | true |
