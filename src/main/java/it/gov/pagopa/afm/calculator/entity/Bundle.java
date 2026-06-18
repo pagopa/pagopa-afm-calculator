@@ -6,10 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -25,24 +23,28 @@ public class Bundle {
 
     @Id
     private String id;
+
     @PartitionKey
     private String idPsp;
 
     private String abi;
+
     private String pspBusinessName;
 
     private String name;
+
     private String description;
 
     private Long paymentAmount;
+
     private Long minPaymentAmount;
+
     private Long maxPaymentAmount;
 
     private String paymentType;
 
     private String touchpoint;
 
-    @Enumerated(EnumType.STRING)
     private BundleType type;
 
     private List<String> transferCategoryList;

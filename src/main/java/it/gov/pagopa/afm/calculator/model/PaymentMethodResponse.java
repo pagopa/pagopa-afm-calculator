@@ -8,7 +8,6 @@ import it.gov.pagopa.afm.calculator.model.paymentmethods.enums.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
