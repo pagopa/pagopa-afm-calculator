@@ -56,6 +56,10 @@ microservice-chart:
       type: RuntimeDefault
   securityContext:
     allowPrivilegeEscalation: false
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "1"  
   resources:
     requests:
       memory: "1024Mi"

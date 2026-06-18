@@ -3,7 +3,7 @@ package it.gov.pagopa.afm.calculator.entity;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import lombok.*;
 
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
 import javax.validation.constraints.NotNull;
 
 @Getter
