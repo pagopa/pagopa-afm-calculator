@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.14.3"
+    tag: "2.14.3-1-PIDM-2033-microservice-slowdown"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -61,7 +61,7 @@ microservice-chart:
   dnsConfig:
     options:
       - name: ndots
-        value: "1"  
+        value: "1"
   resources:
     requests:
       memory: "1024Mi"
