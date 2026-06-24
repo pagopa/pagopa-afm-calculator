@@ -24,6 +24,7 @@ microservice-chart:
     failureThreshold: 18
   deployment:
     create: true
+    ndots: 1
     replicas: 1 # (default) same as HPA minReplica
     strategy:
       type: RollingUpdate
@@ -57,11 +58,7 @@ microservice-chart:
     seccompProfile:
       type: RuntimeDefault
   securityContext:
-    allowPrivilegeEscalation: false
-  dnsConfig:
-    options:
-      - name: ndots
-        value: "1"  
+    allowPrivilegeEscalation: false 
   resources:
     requests:
       memory: "1024Mi"

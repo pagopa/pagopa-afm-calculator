@@ -47,7 +47,7 @@ public class CacheConfig {
 
 
             long maxSize = maxSizeMap.getOrDefault(name,
-                    ttlMap.getOrDefault("default", 100L));
+            		maxSizeMap.getOrDefault("default", 100L));
 
             Caffeine<Object, Object> builder = Caffeine.newBuilder()
                     .expireAfterWrite(ttl, TimeUnit.SECONDS)

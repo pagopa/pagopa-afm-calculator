@@ -88,8 +88,7 @@ microservice-chart:
   envConfig:
     WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
     ENV: 'prod'
-    APP_LOGGING_LEVEL: 'OFF'
-    JAVA_TOOL_OPTIONS: "-XX:+UseG1GC -Xms1024m -Xmx1024m -XX:MaxGCPauseMillis=50 -XX:InitiatingHeapOccupancyPercent=25 -Xlog:gc*:stdout:time,level,tags"
+    APP_LOGGING_LEVEL: 'INFO'
     CACHE_DEFAULT_SIZE: '1000'
     CACHE_DEFAULT_EVICT_SECONDS: '180'
     CACHE_ISSUER_RANGE_TABLE_EVICT_SECONDS: '43200'
