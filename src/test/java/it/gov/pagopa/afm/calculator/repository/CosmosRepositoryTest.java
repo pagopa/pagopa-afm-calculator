@@ -31,6 +31,7 @@ class CosmosRepositoryTest {
 
     private static final String POSTE_PSP_ID = "BPPIITRRXXX";
     private static final List<String> POSTE_CHANNEL_IDS = List.of("CHANNEL_POSTE_1", "CHANNEL_POSTE_2");
+    private static final List<String> POSTE_PAY_CHANNEL_IDS = List.of("CHANNEL_POSTE_PAY_1", "CHANNEL_POSTE_PAY_2");
     private static final String ID_PSP = "idPsp";
     private static final String ID_CHANNEL = "idChannel";
 
@@ -63,10 +64,12 @@ class CosmosRepositoryTest {
         verify(cosmosTemplate).find(captor.capture(), eq(ValidBundle.class), eq("validbundles"));
 
         Criteria root = captor.getValue().getCriteria();
-        assertTrue(findCriteria(root, CriteriaType.NOT_IN, ID_CHANNEL).isEmpty(),
-                "When allCcp=true the new channel-based Poste filter must not be applied");
+        Optional<Criteria> postepayFilter = findCriteria(root, CriteriaType.NOT_IN, ID_CHANNEL);
+        assertTrue(postepayFilter.isPresent(),
+            "When allCcp=true a NOT_IN filter on idChannel with Postepay channels must be applied");
+        assertEquals(Collections.singletonList(POSTE_PAY_CHANNEL_IDS), postepayFilter.get().getSubjectValues());
         assertTrue(findCriteria(root, CriteriaType.NOT, ID_PSP).isEmpty(),
-                "When allCcp=true the legacy psp-based Poste filter must not be applied");
+            "The legacy psp-based Poste filter must never be applied when allCcp=true");
     }
 
     @Test
@@ -135,7 +138,9 @@ class CosmosRepositoryTest {
         verify(cosmosTemplate).find(captor.capture(), eq(ValidBundle.class), eq("validbundles"));
 
         Criteria root = captor.getValue().getCriteria();
-        assertTrue(findCriteria(root, CriteriaType.NOT_IN, ID_CHANNEL).isEmpty());
+        Optional<Criteria> postepayFilter = findCriteria(root, CriteriaType.NOT_IN, ID_CHANNEL);
+        assertTrue(postepayFilter.isPresent());
+        assertEquals(Collections.singletonList(POSTE_PAY_CHANNEL_IDS), postepayFilter.get().getSubjectValues());
         assertTrue(findCriteria(root, CriteriaType.NOT, ID_PSP).isEmpty());
     }
 
@@ -182,6 +187,7 @@ class CosmosRepositoryTest {
                 allCcpNewFilterEnabled,
                 POSTE_PSP_ID,
                 POSTE_CHANNEL_IDS,
+                POSTE_PAY_CHANNEL_IDS,
                 Collections.emptyList()
         );
     }
