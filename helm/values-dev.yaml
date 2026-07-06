@@ -95,7 +95,7 @@ microservice-chart:
     # TODO: Remove this on PROD activation (31 dic 2026) https://pagopa.atlassian.net/browse/PAGOPA-3595
     ALL_CCP_NEW_FILTER_ENABLED: 'true'
     POSTE_CHANNEL_IDS: '17103880000_01'
-    POSTE_PAY_CHANNEL_IDS: '',
+    POSTE_PAY_CHANNEL_IDS: ''
     ID_PSP_POSTE: 'BPPIITRRZZZ'
     AMEX_ABI: 'AMREX'
     PSP_BLACKLIST: ''
