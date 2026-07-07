@@ -252,8 +252,10 @@ public class CosmosRepository {
 
         // add filter for Poste bundles
 
-        var allCcpFilter = getPosteCriteria(allCcp);
-        queryResult = and(queryResult, allCcpFilter);
+        if (Boolean.TRUE.equals(allCcpNewFilterEnabled) || !allCcp) {
+            var allCcpFilter = getPosteCriteria(allCcp);
+            queryResult = and(queryResult, allCcpFilter);
+        }
 
 
         // add filter for PSP blacklist
@@ -346,8 +348,10 @@ public class CosmosRepository {
 
         // add filter for Poste bundles
 
-        var allCcpFilter = getPosteCriteria(allCcp);
-        queryResult = and(queryResult, allCcpFilter);
+        if (Boolean.TRUE.equals(allCcpNewFilterEnabled) || !allCcp) {
+            var allCcpFilter = getPosteCriteria(allCcp);
+            queryResult = and(queryResult, allCcpFilter);
+        }
 
 
         // add filter for PSP blacklist
@@ -450,11 +454,12 @@ public class CosmosRepository {
     }
 
     private Criteria getPosteCriteria(boolean allCcp) {
-        if (allCcp) {
-            // allCcp = true -> exclude bundles with Postepay channels
-            return notIn(ID_CHANNEL_FIELD_NAME, postePayChannelIds);
-        }
+
         if (Boolean.TRUE.equals(allCcpNewFilterEnabled)) {
+            if (allCcp) {
+                // allCcp = true -> exclude bundles with Postepay channels
+                return notIn(ID_CHANNEL_FIELD_NAME, postePayChannelIds);
+            }
             // new version of allCcp filter by channel id
             return notIn(ID_CHANNEL_FIELD_NAME, posteChannelIds);
         }
