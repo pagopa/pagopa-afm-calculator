@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.14.2"
+    tag: "2.14.3-1-PIDM-2033-microservice-slowdown"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -22,6 +22,7 @@ microservice-chart:
     periodSeconds: 10
   deployment:
     create: true
+	ndots: 1
     replicas: 3 # same as HPA minReplica
     strategy:
       type: RollingUpdate
@@ -50,16 +51,12 @@ microservice-chart:
     name: "afm-workload-identity"
   azure:
     workloadIdentityClientId: <workload-identity-client-id-set-automatically-by-gha>
-  podAnnotations: { }
+  podAnnotations: {}
   podSecurityContext:
     seccompProfile:
       type: RuntimeDefault
   securityContext:
     allowPrivilegeEscalation: false
-  dnsConfig:
-    options:
-      - name: ndots
-        value: "1"  
   resources:
     requests:
       memory: "1024Mi"
@@ -84,7 +81,7 @@ microservice-chart:
           # Required
           type: Utilization # Allowed types are 'Utilization' or 'AverageValue'
           value: "80"
-  fileConfig: { }
+  fileConfig: {}
   envConfig:
     WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
     ENV: 'prod'
@@ -118,8 +115,8 @@ microservice-chart:
   keyvault:
     name: "pagopa-p-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
-  nodeSelector: { }
-  tolerations: [ ]
+  nodeSelector: {}
+  tolerations: []
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
@@ -136,7 +133,7 @@ microservice-chart:
             labelSelector:
               matchLabels:
                 app.kubernetes.io/instance: pagopaafmcalculator
-            namespaces: [ "afm" ]
+            namespaces: ["afm"]
             topologyKey: topology.kubernetes.io/zone
   canaryDelivery:
     create: false
@@ -149,5 +146,5 @@ microservice-chart:
       repository: ghcr.io/pagopa/pagopa-afm-calculator
       tag: "2.14.2"
       pullPolicy: Always
-    envConfig: { }
-    envSecret: { }
+    envConfig: {}
+    envSecret: {}
