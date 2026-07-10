@@ -251,7 +251,10 @@ public class CosmosRepository {
         }
 
         // add filter for Poste bundles
-        getPosteCriteria(allCcp).ifPresent(query::addCriteria);
+        Optional<Criteria> posteCriteria = getPosteCriteria(allCcp);
+        if (posteCriteria.isPresent()) {
+            queryResult = and(queryResult, posteCriteria.get());
+        }
 
 
         // add filter for PSP blacklist
@@ -343,7 +346,10 @@ public class CosmosRepository {
         }
 
         // add filter for Poste bundles
-        getPosteCriteria(allCcp).ifPresent(query::addCriteria);
+        Optional<Criteria> posteCriteria = getPosteCriteria(allCcp);
+        if (posteCriteria.isPresent()) {
+            queryResult = and(queryResult, posteCriteria.get());
+        }
 
 
         // add filter for PSP blacklist
