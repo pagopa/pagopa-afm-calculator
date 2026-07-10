@@ -15,7 +15,6 @@ import it.gov.pagopa.afm.calculator.model.PspSearchCriteria;
 import it.gov.pagopa.afm.calculator.model.TransferListItem;
 import it.gov.pagopa.afm.calculator.service.UtilityComponent;
 import it.gov.pagopa.afm.calculator.util.CriteriaBuilder;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -32,7 +31,6 @@ import static it.gov.pagopa.afm.calculator.service.UtilityComponent.isGlobal;
 import static it.gov.pagopa.afm.calculator.util.CriteriaBuilder.*;
 
 @Repository
-@Slf4j
 public class CosmosRepository {
     private static final String ID_PSP_PARAM = "idPsp";
     private static final String ID_CHANNEL_FIELD_NAME = "idChannel";
@@ -462,7 +460,7 @@ public class CosmosRepository {
             // new version of allCcp filter by channel id
             return Optional.of(notIn(ID_CHANNEL_FIELD_NAME, posteChannelIds));
         }
-
+git pull
         // old version of allCcp filter by psp id
         return Optional.of(isNotEqual(ID_PSP_PARAM, pspPosteId));
     }
