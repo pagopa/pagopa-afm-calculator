@@ -460,7 +460,6 @@ public class CosmosRepository {
             // new version of allCcp filter by channel id
             return Optional.of(notIn(ID_CHANNEL_FIELD_NAME, posteChannelIds));
         }
-git pull
         // old version of allCcp filter by psp id
         return Optional.of(isNotEqual(ID_PSP_PARAM, pspPosteId));
     }
