@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.14.3-1-PIDM-2185-filtrare-pacchetti-comm-poste-allCcp"
+    tag: "2.14.4"
     pullPolicy: Always
   livenessProbe:
     httpGet:
