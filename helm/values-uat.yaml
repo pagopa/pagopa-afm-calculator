@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.14.3"
+    tag: "2.14.3-1-PIDM-2185-filtrare-pacchetti-comm-poste-allCcp"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -97,6 +97,7 @@ microservice-chart:
     # TODO: Remove this on PROD activation (31 dic 2026) https://pagopa.atlassian.net/browse/PAGOPA-3595
     ALL_CCP_NEW_FILTER_ENABLED: 'false'
     POSTE_CHANNEL_IDS: '97103880585_07,97103880585_07_ONUS,97103880585_21,97103880585_25,97103880585_26'
+    POSTE_PAY_CHANNEL_IDS: '97103880585_37,97103880585_37_ONUS,97103880585_35,97103880585_31,97103880585_36,97103880585_38'
     ID_PSP_POSTE: 'BPPIITRRXXX'
     AMEX_ABI: 'AMREX'
     PSP_BLACKLIST: ''

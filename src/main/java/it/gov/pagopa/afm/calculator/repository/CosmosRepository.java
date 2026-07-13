@@ -43,6 +43,7 @@ public class CosmosRepository {
     private final Boolean allCcpNewFilterEnabled;
     private final String pspPosteId;
     private final List<String> posteChannelIds;
+    private final List<String> postePayChannelIds;
     private final List<String> pspBlacklist;
 
     public CosmosRepository(
@@ -53,6 +54,7 @@ public class CosmosRepository {
             @Value("${allCcp.newFilter.enabled}") Boolean allCcpNewFilterEnabled,
             @Value("${pspPoste.id}") String pspPosteId,
             @Value("#{'${psp.poste.channelIds}'.split(',')}") List<String> posteChannelIds,
+            @Value("#{'${psp.postepay.channelIds}'.split(',')}") List<String> postePayChannelIds,
             @Value("#{'${psp.blacklist}'.split(',')}") List<String> pspBlacklist
     ) {
         this.cosmosTemplate = cosmosTemplate;
@@ -62,6 +64,7 @@ public class CosmosRepository {
         this.allCcpNewFilterEnabled = allCcpNewFilterEnabled;
         this.pspPosteId = pspPosteId;
         this.posteChannelIds = posteChannelIds;
+        this.postePayChannelIds = postePayChannelIds;
         this.pspBlacklist = pspBlacklist;
     }
 
@@ -248,10 +251,11 @@ public class CosmosRepository {
         }
 
         // add filter for Poste bundles
-        if (!allCcp) {
-            var allCcpFilter = getPosteCriteria();
-            queryResult = and(queryResult, allCcpFilter);
+        Optional<Criteria> posteCriteria = getPosteCriteria(allCcp);
+        if (posteCriteria.isPresent()) {
+            queryResult = and(queryResult, posteCriteria.get());
         }
+
 
         // add filter for PSP blacklist
         queryResult = blackListCriteria(queryResult);
@@ -342,10 +346,11 @@ public class CosmosRepository {
         }
 
         // add filter for Poste bundles
-        if (!allCcp) {
-            var allCcpFilter = getPosteCriteria();
-            queryResult = and(queryResult, allCcpFilter);
+        Optional<Criteria> posteCriteria = getPosteCriteria(allCcp);
+        if (posteCriteria.isPresent()) {
+            queryResult = and(queryResult, posteCriteria.get());
         }
+
 
         // add filter for PSP blacklist
         queryResult = blackListCriteria(queryResult);
@@ -446,12 +451,22 @@ public class CosmosRepository {
         return queryResult;
     }
 
-    private Criteria getPosteCriteria() {
+    private Optional<Criteria> getPosteCriteria(boolean allCcp) {
+
+        if (!Boolean.TRUE.equals(allCcpNewFilterEnabled) && allCcp) {
+            return Optional.empty();
+        }
+
         if (Boolean.TRUE.equals(allCcpNewFilterEnabled)) {
+            if (allCcp) {
+                // allCcp = true -> exclude bundles with Postepay channels
+                return Optional.of(notIn(ID_CHANNEL_FIELD_NAME, postePayChannelIds));
+            }
+
             // new version of allCcp filter by channel id
-            return notIn(ID_CHANNEL_FIELD_NAME, posteChannelIds);
+            return Optional.of(notIn(ID_CHANNEL_FIELD_NAME, posteChannelIds));
         }
         // old version of allCcp filter by psp id
-        return isNotEqual(ID_PSP_PARAM, pspPosteId);
+        return Optional.of(isNotEqual(ID_PSP_PARAM, pspPosteId));
     }
 }
