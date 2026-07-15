@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.14.3-2-PIDM-2033-microservice-slowdown"
+    tag: "2.14.3-3-PIDM-2033-microservice-slowdown"
     pullPolicy: Always
   livenessProbe:
     httpGet:
