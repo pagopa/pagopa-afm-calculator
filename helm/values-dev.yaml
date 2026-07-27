@@ -129,7 +129,7 @@ microservice-chart:
                 values:
                   - user
   canaryDelivery:
-    create: false
+    create: true
     ingress:
       type: header
       headerName: X-Canary
@@ -137,7 +137,7 @@ microservice-chart:
       weightPercent: 0
     image:
       repository: ghcr.io/pagopa/pagopa-afm-calculator
-      tag: "2.12.6"
+      tag: "2.14.3-5-PIDM-2033-microservice-slowdown"
       pullPolicy: Always
     envConfig: {}
     envSecret: {}
