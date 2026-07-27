@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.14.3-3-PIDM-2033-microservice-slowdown"
+    tag: "2.14.3-4-PIDM-2033-microservice-slowdown"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -86,12 +86,7 @@ microservice-chart:
     ENV: 'dev'
     APP_LOGGING_LEVEL: 'DEBUG'
     JAVA_TOOL_OPTIONS: >-
-      -XX:+UseZGC
-      -XX:+ZGenerational
-      -Xms512m
-      -Xmx640m
-      -XX:SoftMaxHeapSize=384m
-      -Xlog:gc*,safepoint:stdout:time,uptime,level,tags
+      -XX:+UseZGC -XX:+ZGenerational -Xms512m -Xmx640m -XX:SoftMaxHeapSize=384m -Xlog:gc*,safepoint:stdout:time,uptime,level,tags
     CACHE_DEFAULT_SIZE: '1000'
     CACHE_DEFAULT_EVICT_SECONDS: '180'
     CACHE_ISSUER_RANGE_TABLE_EVICT_SECONDS: '43200'
@@ -102,6 +97,7 @@ microservice-chart:
     # TODO: Remove this on PROD activation (31 dic 2026) https://pagopa.atlassian.net/browse/PAGOPA-3595
     ALL_CCP_NEW_FILTER_ENABLED: 'true'
     POSTE_CHANNEL_IDS: '17103880000_01'
+    POSTE_PAY_CHANNEL_IDS: '17103880000_02'
     ID_PSP_POSTE: 'BPPIITRRZZZ'
     AMEX_ABI: 'AMREX'
     PSP_BLACKLIST: ''
