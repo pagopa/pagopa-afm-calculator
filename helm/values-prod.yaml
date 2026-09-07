@@ -88,6 +88,8 @@ microservice-chart:
     CACHE_DEFAULT_SIZE: '1000'
     CACHE_DEFAULT_EVICT_SECONDS: '180'
     CACHE_ISSUER_RANGE_TABLE_EVICT_SECONDS: '43200'
+    CACHE_PAYMENT_METHOD_SIZE: '100'
+    CACHE_PAYMENT_METHOD_EVICT_SECONDS: '3600'
     CACHE_ENABLED: 'true'
     COSMOS_URI: https://pagopa-p-weu-afm-marketplace-cosmos-account.documents.azure.com:443/
     ISSUER_RANGE_TABLE: 'pagopapweuafmsaissuerrangetable'

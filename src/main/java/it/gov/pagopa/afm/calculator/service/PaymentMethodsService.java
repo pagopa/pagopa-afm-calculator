@@ -16,6 +16,7 @@ import it.gov.pagopa.afm.calculator.util.PaymentMethodComparatorUtil;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.internal.Pair;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -75,7 +76,11 @@ public class PaymentMethodsService {
     }
 
 
-
+    @Cacheable(
+            value = "paymentMethod",
+            key = "#paymentMethodId",
+            sync = true
+    )
     public PaymentMethodResponse getPaymentMethod(String paymentMethodId) {
         List<PaymentMethod> result = paymentMethodRepository.findByPaymentMethodId(paymentMethodId);
         if (result.isEmpty()) {
