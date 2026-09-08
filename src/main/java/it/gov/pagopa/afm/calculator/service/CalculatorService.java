@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -130,7 +131,7 @@ public class CalculatorService {
 
     public BundleOption calculate(@Valid PaymentOption paymentOption, int limit, boolean allCcp) {
         List<ValidBundle> filteredBundles = cosmosRepository.findByPaymentOption(paymentOption, allCcp);
-        Collections.shuffle(filteredBundles, new Random());
+        Collections.shuffle(filteredBundles, ThreadLocalRandom.current());
 
         return BundleOption.builder()
                 .belowThreshold(isBelowThreshold(paymentOption.getPaymentAmount()))

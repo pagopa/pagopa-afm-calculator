@@ -26,7 +26,7 @@ See the [OpenApi 3 here](https://editor.swagger.io/?url=https://raw.githubuserco
 ---
 
 ## Technology Stack
-- Java 17
+- Java 21
 - Spring Boot
 - Spring Web
 - Hibernate
