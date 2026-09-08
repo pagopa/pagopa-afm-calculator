@@ -74,6 +74,7 @@ public class ConfigurationService {
     @CacheEvict(cacheNames = {
             "touchpoint",
             "paymentType",
+            "paymentMethod",
             "paymentMethodTouchpoint",
             "paymentMethodTouchpointDevice",
             "issuerRangeTable",

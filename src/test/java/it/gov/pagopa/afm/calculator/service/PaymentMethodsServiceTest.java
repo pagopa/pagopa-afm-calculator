@@ -29,6 +29,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -518,6 +519,55 @@ class PaymentMethodsServiceTest {
         assertEquals(1, response.getPaymentMethods().size());
 
         verify(cosmosRepository).findByPaymentOption(any(PaymentOptionMulti.class), eq(false));
+    }
+    
+    @Test
+    void searchPaymentMethods_NotYetValid() throws IOException {
+    	LocalDate today = LocalDate.now(ZoneOffset.UTC);
+
+        when(paymentMethodRepository.findByTouchpointAndDevice(
+                anyString(),
+                anyString()
+        )).thenReturn(List.of(
+                PaymentMethod.builder()
+                        .paymentMethodId("PAYPAL")
+                        .status(PaymentMethodStatus.ENABLED)
+                        .group("PPAL")
+                        .paymentMethodTypes(List.of(PaymentMethodType.APP))
+                        .target(List.of("user"))
+                        .validityDateFrom(today.plusDays(1))
+                        .rangeAmount(
+                                FeeRange.builder()
+                                        .min(0L)
+                                        .max(1000L)
+                                        .build()
+                        )
+                        .build()
+        ));
+
+        when(cosmosRepository.findByPaymentOption(
+                any(PaymentOptionMulti.class),
+                anyBoolean()
+        )).thenReturn(Collections.emptyList());
+
+        PaymentMethodRequest request =
+                TestUtil.readObjectFromFile(
+                        "requests/paymentOptionsSearch.json",
+                        PaymentMethodRequest.class
+                );
+
+        PaymentMethodsResponse response =
+                paymentMethodsService.searchPaymentMethods(request);
+
+        assertEquals(1, response.getPaymentMethods().size());
+        assertEquals(
+                PaymentMethodStatus.DISABLED,
+                response.getPaymentMethods().get(0).getStatus()
+        );
+        assertEquals(
+                PaymentMethodDisabledReason.NOT_YET_VALID,
+                response.getPaymentMethods().get(0).getDisabledReason()
+        );
     }
 
     private static PaymentMethod enabledPaymentMethod(
