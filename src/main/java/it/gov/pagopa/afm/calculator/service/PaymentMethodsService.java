@@ -20,6 +20,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -115,7 +116,7 @@ public class PaymentMethodsService {
         }
 
         // validity date filtering
-        if (candidate.getValidityDateFrom().isAfter(LocalDate.now())) {
+        if (candidate.getValidityDateFrom().isAfter(LocalDate.now(ZoneOffset.UTC))) {
             return Pair.of(PaymentMethodDisabledReason.NOT_YET_VALID, PaymentMethodStatus.DISABLED);
         }
 
