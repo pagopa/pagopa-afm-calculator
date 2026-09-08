@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Logic - API AFM-Calculator v1",
     "description": "Calculator Logic microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "2.14.4-1-PIDM-2033-paymentMethods-cache"
+    "version": "2.15.0"
   },
   "servers": [
     {
