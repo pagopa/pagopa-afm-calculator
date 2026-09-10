@@ -1,7 +1,7 @@
 #
 # Build
 #
-FROM maven:3.9.11-eclipse-temurin-21 AS buildtime
+FROM maven:3.9.11-eclipse-temurin-21@sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237 AS buildtime
 WORKDIR /build
 COPY . .
 RUN mvn clean package -Dmaven.test.skip=true
@@ -10,7 +10,7 @@ RUN mvn clean package -Dmaven.test.skip=true
 #
 # Extract Spring Boot layers
 #
-FROM eclipse-temurin:21-jre AS builder
+FROM eclipse-temurin:21-jre@sha256:a80c51f2d09a3e7e00d521f1c817bbceb6b3be94109b4a784d46078099882dda AS builder
 WORKDIR /builder
 COPY --from=buildtime /build/target/*.jar application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
@@ -19,7 +19,7 @@ RUN java -Djarmode=layertools -jar application.jar extract
 #
 # Runtime
 #
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jre@sha256:a80c51f2d09a3e7e00d521f1c817bbceb6b3be94109b4a784d46078099882dda
 
 WORKDIR /app
 
