@@ -40,4 +40,4 @@ USER spring:spring
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-javaagent:opentelemetry-javaagent.jar","org.springframework.boot.loader.JarLauncher"]
+ENTRYPOINT ["java","-XX:-UseBASE64Intrinsics","-XX:UseAVX=2","-javaagent:opentelemetry-javaagent.jar","org.springframework.boot.loader.JarLauncher"]
