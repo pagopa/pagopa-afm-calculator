@@ -82,6 +82,7 @@ microservice-chart:
           value: "70"
   fileConfig: {}
   envConfig:
+    JAVA_OPTS: "-XX:-UseBASE64Intrinsics"
     WEBSITE_SITE_NAME: 'pagopaafmcalculator' # required to show cloud role name in application insights
     ENV: 'dev'
     APP_LOGGING_LEVEL: 'DEBUG'
@@ -139,5 +140,5 @@ microservice-chart:
       repository: ghcr.io/pagopa/pagopa-afm-calculator
       tag: "2.12.6"
       pullPolicy: Always
-    envConfig: {}
+    envConfig: {JAVA_OPTS: "-XX:-UseBASE64Intrinsics"}
     envSecret: {}
