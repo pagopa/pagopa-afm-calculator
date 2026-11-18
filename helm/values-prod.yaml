@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.15.1-1-fix-vulnerability"
+    tag: "2.15.2"
     pullPolicy: Always
   livenessProbe:
     httpGet:
