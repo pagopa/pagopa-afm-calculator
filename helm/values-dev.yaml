@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-calculator
-    tag: "2.15.1"
+    tag: "2.15.1-1-fix-vulnerability"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -101,6 +101,7 @@ microservice-chart:
     ID_PSP_POSTE: 'BPPIITRRZZZ'
     AMEX_ABI: 'AMREX'
     PSP_BLACKLIST: ''
+    JAVA_OPTS: "-XX:-UseBASE64Intrinsics"
     OTEL_SERVICE_NAME: "pagopa-afm-calculator"
     OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=dev"
     OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.elastic-system.svc:4317"
